@@ -1,0 +1,225 @@
+// ignore_for_file: unused_local_variable
+
+import 'dart:convert';
+
+import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
+import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
+import 'package:archiving_flutter_project/utils/constants/key.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// ignore: depend_on_referenced_packages
+import 'package:http/http.dart' as http;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+class ApiService {
+  final storage = const FlutterSecureStorage();
+  static String urlServer = "";
+
+  Future getRequest(String api) async {
+    String? token = await storage.read(key: 'jwt');
+
+    var requestUrl = "$urlServer/$api";
+    try {
+      var response = await http.get(
+        Uri.parse(requestUrl),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+      print("--------------------------------------------");
+      print("token $token");
+      print("urlll $requestUrl");
+      print("responseCode ${response.statusCode}");
+
+      if (response.statusCode != 200) {
+        if (response.body == "Wrong Credentials") {
+          return response;
+        }
+
+        checkErrorDec(response);
+      }
+      return response;
+    } catch (e) {
+      // Handle network-related exceptions (e.g., no internet connection)
+      // You can show an error message to the user or log the error.
+    }
+  }
+
+  Future putRequest(String api, dynamic toJson) async {
+    String? token = await storage.read(key: 'jwt');
+    var requestUrl = "$urlServer/$api";
+    var response = await http.put(
+      Uri.parse(requestUrl),
+      headers: {
+        "Accept": "application/json",
+        "Content-type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+      body: json.encode(toJson),
+    );
+    print("--------------------------------------------");
+    print("token $token");
+    print("urlll $requestUrl");
+    print("urlllbody ${json.encode(toJson)}");
+    print("responseCode ${response.statusCode}");
+
+    if (api == logInApi &&
+        (response.statusCode == 400 || response.statusCode == 406)) {
+      return response;
+    } else if (response.statusCode != 200) {
+      if (response.body == "Wrong Credentials") {
+        return response;
+      }
+
+      checkErrorDec(response);
+    }
+    return response;
+  }
+
+  Future deleteRequest(String api, dynamic toJson) async {
+    String? token = await storage.read(key: 'jwt');
+
+    var requestUrl = "$urlServer/$api";
+    var response = await http.delete(
+      Uri.parse(requestUrl),
+      headers: {
+        "Accept": "application/json",
+        "Content-type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+      body: json.encode(toJson),
+    );
+
+    print("--------------------------------------------");
+    print("token $token");
+    print("urlll $requestUrl");
+    print("urlllbody ${json.encode(toJson)}");
+    print("responseCode ${response.statusCode}");
+
+    if (api == logInApi &&
+        (response.statusCode == 400 || response.statusCode == 406)) {
+      return response;
+    } else if (response.statusCode != 200) {
+      if (response.body == "Wrong Credentials") {
+        return response;
+      }
+
+      checkErrorDec(response);
+    }
+    return response;
+  }
+
+  Future postRequest(String api, dynamic toJson, {bool? isStart}) async {
+    String? token = await storage.read(key: 'jwt');
+    final context2 = navigatorKey.currentState!.overlay!.context;
+
+    var requestUrl = "$urlServer/$api";
+    print("requestUrl ${requestUrl}");
+    try {
+      var response = await http.post(
+        Uri.parse(requestUrl),
+        headers: {
+          "Accept": "application/json",
+          "Content-type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: json.encode(toJson),
+      );
+      print("--------------------------------------------");
+      print("token $token");
+      print("urlll $requestUrl");
+      print("urlllbody ${json.encode(toJson)}");
+      print("responseCode ${response.statusCode}");
+
+      if (api == logInApi &&
+          (response.statusCode == 400 ||
+              response.statusCode == 406 ||
+              response.statusCode == 402)) {
+        return response;
+      } else if (response.statusCode != 200) {
+        // if (response.statusCode == 401) {
+        //   // ignore: use_build_context_synchronously
+        //   // Navigator.pop(context2);']
+        //   print("INSHHHOWWWWWWWDIALOG");
+        //   await storage.delete(key: "jwt").then((value) {
+        //     // isLoginDialog = true;
+
+        //     showDialog(
+        //         context: context2,
+        //         barrierDismissible: false,
+        //         builder: (builder) {
+        //           return const LoginDialog();
+        //         });
+        //     return;
+        //   });
+        // } else {
+        if (response.body == "Wrong Credentials") {
+          return response;
+        }
+        // }
+      }
+
+      return response;
+    } catch (e) {
+      print("INNNNNNNN CATTTTTTCHH");
+      if (api == logInApi) {
+        final context = navigatorKey.currentState!.overlay!.context;
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+        // ignore: use_build_context_synchronously
+
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.error_sharp,
+                errorDetails: AppLocalizations.of(context)!.error500,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 500);
+          },
+        );
+        // ignore: use_build_context_synchronously
+        // Navigator.pop(context);
+      } else {
+        final context = navigatorKey.currentState!.overlay!.context;
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.error_sharp,
+                errorDetails: AppLocalizations.of(context)!.error500,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 500);
+          },
+        );
+      }
+      // Handle network-related exceptions (e.g., no internet connection)
+      // You can show an error message to the user or log the error.
+    }
+  }
+
+  checkErrorDec(http.Response response) {
+    // try {
+    //   var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+    //   ErorrDTO erorrDTO = ErorrDTO.fromJson(jsonData);
+    //   ErrorController.openErrorDialog(response.statusCode, "",
+    //       erorrDto: erorrDTO);
+    // } catch (e) {
+    //   ErrorController.openErrorDialog(response.statusCode, response.body);
+    // }
+  }
+
+//Using later
+  // getUrl() async {
+  //   await storage.read(key: 'api').then((value) {
+  //     // ApiURL().setUrl(value!);
+  //     urlServer = value;
+  //   });
+  // }
+}
