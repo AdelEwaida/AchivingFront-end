@@ -82,6 +82,7 @@ class _LogInScreenState extends State<LoginScreen>
       children: [
         Container(
           decoration: const BoxDecoration(
+            // shape: BoxShape.circle,
             image: DecorationImage(
               image: AssetImage('assets/images/books.jpg'),
               fit: BoxFit.cover,
@@ -102,12 +103,20 @@ class _LogInScreenState extends State<LoginScreen>
 
   Widget imageSection() {
     return ClipPath(
-      // Custom clipper to create the curve
-      clipper: CurveClipper(),
-      child: SizedBox(
-        width: width * 0.5,
-        height: height * 1,
-        child: imageBackground(),
+      clipper: CircularOneSideClipper(0.5),
+      child: Stack(
+        children: [
+          SizedBox(
+            width: width * 0.5,
+            height: height * 1,
+            child: imageBackground(),
+          ),
+          // Container(
+          //   width: width * 0.25,
+          //   height: height * 1,
+          //   color: Colors.white,
+          // )
+        ],
       ),
     );
   }
