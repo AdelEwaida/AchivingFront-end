@@ -39,5 +39,12 @@
 "documents":"الملفات",
 "documentExplorer":"قائمة الملفات",
 "addDocument":"إضافة ملف",
-"searchByContnet":"البحث حسب المحتوى"
+"searchByContnet":"البحث حسب المحتوى",
+    "users":"المستخدمون",
+    "addUser":"إضافة مستخرم جديد",
+    "viewUser":"قائمة المستخدمين",
+    "userCategories":"تصنيف المستخدمين",
+    "addUserCategories":"إضافة صلاحية مستخدم لتصنيف معين",
+    "viewUserCategories":"قائمة صلاحيات المستخدمين ",
+    "changePassword":"تعديل كلمة المرور"
 }

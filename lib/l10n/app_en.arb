@@ -30,13 +30,21 @@
     "worningPassOrEmeail": "Wrong password or email",
     "wrongInput": "Please verify your password or email",
         "accountAlreadyLoggedIn": "This account was logged in previously, do you want to log out from all accounts?",
-"systemSetup":"System Setup",
-"listOfCategories":"list of categories",
-"listOfDepartment":"list of department",
-"addDepartment": "Add Department",
-"listOfReminders":"list of reminders",
-"documents": "Documents",
-"documentExplorer":"Document Explorer",
-"addDocument": "Add Document",
-"searchByContnet": "Search By Contnet" 
-    }
+    "systemSetup":"System Setup",
+    "listOfCategories":"list of categories",
+    "listOfDepartment":"list of department",
+    "addDepartment": "Add Department",
+    "listOfReminders":"list of reminders",
+    "documents": "Documents",
+    "documentExplorer":"Document Explorer",
+    "addDocument": "Add Document",
+    "searchByContnet": "Search By Contnet",
+    "users":"Users",
+    "addUser":"Add user",
+    "viewUser":"View user",
+    "userCategories":"User Categories",
+    "addUserCategories":"Add User Categories",
+    "viewUserCategories":"View User Categories",
+    "changePassword":"Change Password"
+
+}

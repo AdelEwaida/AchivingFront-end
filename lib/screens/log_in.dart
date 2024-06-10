@@ -17,6 +17,8 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../widget/curve_clipper.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -30,8 +32,8 @@ class _LogInScreenState extends State<LoginScreen>
   double width = 0;
   double height = 0;
   late AppLocalizations _locale;
-  TextEditingController _userNameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   double radius = 7;
   FocusNode userNameFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
@@ -81,20 +83,32 @@ class _LogInScreenState extends State<LoginScreen>
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/login_wallpaper.jpg'),
+              image: AssetImage('assets/images/documents.jpg'),
               fit: BoxFit.cover,
             ),
           ),
         ),
-        Positioned.fill(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-            child: Container(
-              color: Colors.transparent,
-            ),
-          ),
-        ),
+        // Positioned.fill(
+        //   child: BackdropFilter(
+        //     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        //     child: Container(
+        //       color: Colors.transparent,
+        //     ),
+        //   ),
+        // ),
       ],
+    );
+  }
+
+  Widget imageSection() {
+    return ClipPath(
+      // Custom clipper to create the curve
+      clipper: CurveClipper(),
+      child: SizedBox(
+        width: width * 0.5,
+        height: height,
+        child: imageBackground(),
+      ),
     );
   }
 
@@ -102,10 +116,9 @@ class _LogInScreenState extends State<LoginScreen>
     return Container(
       width: width * widthFactor,
       height: height * heightFactor,
-      // color: Colors.white,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(30), // Adjust the radius as needed
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -117,6 +130,7 @@ class _LogInScreenState extends State<LoginScreen>
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             logo(),
             space(),
@@ -135,7 +149,7 @@ class _LogInScreenState extends State<LoginScreen>
 
   SizedBox space() {
     return SizedBox(
-      height: height * 0.02,
+      height: height * 0.032,
     );
   }
 
@@ -201,7 +215,7 @@ class _LogInScreenState extends State<LoginScreen>
                       )
                 : null,
             border: InputBorder.none,
-            contentPadding: EdgeInsets.all(10),
+            contentPadding: const EdgeInsets.all(10),
             hintText: hint,
           ),
         ),
@@ -222,9 +236,9 @@ class _LogInScreenState extends State<LoginScreen>
     return Container(
       alignment: Alignment.topCenter,
       child: Image.asset(
-        'assets/images/scope_logo.png',
-        width: width * 0.9,
-        height: height * 0.08,
+        'assets/images/asd.png',
+        width: width * 0.12,
+        height: height * 0.1,
       ),
     );
   }
@@ -236,7 +250,7 @@ class _LogInScreenState extends State<LoginScreen>
           borderRadius: BorderRadius.all(Radius.circular(5)),
         ),
         fixedSize: Size(isDesktop ? width * 0.28 : width * 0.8, 50),
-        backgroundColor: leftBackColor,
+        backgroundColor: Color(0xFFE27F24),
         foregroundColor: whiteColor,
         textStyle: const TextStyle(fontSize: 18),
       ),
@@ -287,7 +301,7 @@ class _LogInScreenState extends State<LoginScreen>
   }
 
   logIn() async {
-        GoRouter.of(context).go(mainScreenRoute);
+    GoRouter.of(context).go(mainScreenRoute);
 
     // openLoadinDialog();
     // String key = "scope@e2024A/key@team.CT";
@@ -354,13 +368,18 @@ class _LogInScreenState extends State<LoginScreen>
   }
 
   Widget desktopView() {
-    return Stack(
-      children: [
-        imageBackground(),
-        Center(
-          child: formSection(0.34, 0.48),
-        ),
-      ],
+    return Container(
+      color: Colors.white,
+      child: Row(
+        children: [
+          imageSection(),
+          Expanded(
+            child: Center(
+              child: formSection(0.34, 0.8),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

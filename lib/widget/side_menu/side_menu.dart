@@ -1,4 +1,3 @@
-
 import 'package:archiving_flutter_project/data/side_menu_data.dart';
 import 'package:archiving_flutter_project/models/dto/side_menu/menu_model.dart';
 import 'package:archiving_flutter_project/providers/local_provider.dart';
@@ -97,7 +96,7 @@ class _SideMenuState extends State<SideMenu> {
           ),
           const Divider(), // Add a line before the logout button
           const Padding(padding: EdgeInsets.all(10)),
-          LogoutTab(isCollapse:false), // Pass the isCollapsed state
+          LogoutTab(isCollapse: false), // Pass the isCollapsed state
         ],
       ),
     );
@@ -121,7 +120,7 @@ class _SideMenuState extends State<SideMenu> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8.0, vertical: 15),
                           child: Image.asset(
-                            "assets/images/scope_logo.png",
+                            "assets/images/asd.png",
                             width: isDesktop ? width * 0.06 : width * 0.5,
                           ),
                         ),
