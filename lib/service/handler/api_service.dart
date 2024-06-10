@@ -19,6 +19,7 @@ class ApiService {
     String? token = await storage.read(key: 'jwt');
 
     var requestUrl = "$urlServer/$api";
+    print("requestUrlrequestUrl ${requestUrl}");
     try {
       var response = await http.get(
         Uri.parse(requestUrl),
@@ -42,6 +43,7 @@ class ApiService {
       }
       return response;
     } catch (e) {
+      print("exceptions $e");
       // Handle network-related exceptions (e.g., no internet connection)
       // You can show an error message to the user or log the error.
     }

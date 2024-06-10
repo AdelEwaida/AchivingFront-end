@@ -1,5 +1,6 @@
 import 'package:archiving_flutter_project/models/dto/side_menu/menu_model.dart';
 import 'package:archiving_flutter_project/models/dto/side_menu/sub_menu_model.dart';
+import 'package:archiving_flutter_project/screens/categories_screens/categories_screen.dart';
 import 'package:archiving_flutter_project/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -74,13 +75,13 @@ List<MenuModel> getMenus(AppLocalizations locale) {
 
 Widget getScreenContent(int index) {
   // print("index")
-  // switch (index) {
-  //   case 0:
-  //     return const HomePage();
+  switch (index) {
+    case 2:
+      return const DealClassificationTreeScreen();
 
-  //   // case 2:
-  //   //   return UsersScreen();
-  // }
+    // case 2:
+    //   return UsersScreen();
+  }
   return Container();
 }
 
