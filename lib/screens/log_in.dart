@@ -103,7 +103,7 @@ class _LogInScreenState extends State<LoginScreen>
 
   Widget imageSection() {
     return ClipPath(
-      clipper: CircularOneSideClipper(0.5),
+      clipper: CurveClipper(),
       child: Stack(
         children: [
           SizedBox(
@@ -323,8 +323,7 @@ class _LogInScreenState extends State<LoginScreen>
         _userNameController.text, key, byteArray);
     print(passEncrypted);
     print(emailEncrypted);
-    LogInModel userModel =
-        LogInModel(emailEncrypted, passEncrypted);
+    LogInModel userModel = LogInModel(emailEncrypted, passEncrypted);
     const storage = FlutterSecureStorage();
     storage.write(key: "userName", value: _userNameController.text);
     await LoginController()
@@ -335,7 +334,6 @@ class _LogInScreenState extends State<LoginScreen>
         GoRouter.of(context).go(mainScreenRoute);
       } else {
         Navigator.pop(context);
-
       }
     });
   }

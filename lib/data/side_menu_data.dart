@@ -64,7 +64,7 @@ List<MenuModel> getMenus(AppLocalizations locale) {
     MenuModel(
         title: locale.changePassword,
         icon: Icons.password_outlined,
-        isParent: true,
+        isParent: false,
         pageNumber: 8,
         isOpened: false,
         subMenuList: []),
