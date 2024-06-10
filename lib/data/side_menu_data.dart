@@ -41,6 +41,33 @@ List<MenuModel> getMenus(AppLocalizations locale) {
           SubMenuModel(title: locale.searchByContnet, pageNumber: 8)
         ],
         isOpened: false),
+    MenuModel(
+        title: locale.users,
+        icon: Icons.supervised_user_circle_sharp,
+        isParent: true,
+        pageNumber: 6,
+        subMenuList: [
+          SubMenuModel(title: locale.addUser, pageNumber: 9),
+          SubMenuModel(title: locale.viewUser, pageNumber: 10),
+        ],
+        isOpened: false),
+    MenuModel(
+        title: locale.userCategories,
+        icon: Icons.supervised_user_circle_sharp,
+        isParent: true,
+        pageNumber: 7,
+        subMenuList: [
+          SubMenuModel(title: locale.addUserCategories, pageNumber: 11),
+          SubMenuModel(title: locale.viewUserCategories, pageNumber: 12),
+        ],
+        isOpened: false),
+    MenuModel(
+        title: locale.changePassword,
+        icon: Icons.password_outlined,
+        isParent: false,
+        pageNumber: 8,
+        isOpened: false,
+        subMenuList: []),
   ];
 
   return menus;

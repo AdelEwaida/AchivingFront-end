@@ -42,4 +42,12 @@
 "searchByContnet":"البحث حسب المحتوى",
 "notes":"ملاحظات",
 "search":"بحث"
+"searchByContnet":"البحث حسب المحتوى",
+    "users":"المستخدمون",
+    "addUser":"إضافة مستخدم جديد",
+    "viewUser":"قائمة المستخدمين",
+    "userCategories":"تصنيف المستخدمين",
+    "addUserCategories":"إضافة صلاحية مستخدم لتصنيف معين",
+    "viewUserCategories":"قائمة صلاحيات المستخدمين ",
+    "changePassword":"تعديل كلمة المرور"
 }

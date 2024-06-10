@@ -40,5 +40,22 @@
 "addDocument": "Add Document",
 "searchByContnet": "Search By Contnet" ,
 "notes": "notes",
-"search": "Search"
-    }
+"search": "Search",
+    "systemSetup":"System Setup",
+    "listOfCategories":"list of categories",
+    "listOfDepartment":"list of department",
+    "addDepartment": "Add Department",
+    "listOfReminders":"list of reminders",
+    "documents": "Documents",
+    "documentExplorer":"Document Explorer",
+    "addDocument": "Add Document",
+    "searchByContnet": "Search By Contnet",
+    "users":"Users",
+    "addUser":"Add user",
+    "viewUser":"View user",
+    "userCategories":"User Categories",
+    "addUserCategories":"Add User Categories",
+    "viewUserCategories":"View User Categories",
+    "changePassword":"Change Password"
+
+}

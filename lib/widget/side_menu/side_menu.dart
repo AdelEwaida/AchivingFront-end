@@ -1,4 +1,3 @@
-
 import 'package:archiving_flutter_project/data/side_menu_data.dart';
 import 'package:archiving_flutter_project/models/dto/side_menu/menu_model.dart';
 import 'package:archiving_flutter_project/providers/local_provider.dart';
@@ -60,7 +59,7 @@ class _SideMenuState extends State<SideMenu> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    fontSize = width * 0.008;
+    fontSize = width * 0.009;
     isDesktop = Responsive.isDesktop(context);
 
     screenProvider = context.read<ScreenContentProvider>();
@@ -68,7 +67,7 @@ class _SideMenuState extends State<SideMenu> {
       height: height,
       width: drawerWidth(),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 253, 253, 253),
+        color: Color.fromARGB(255, 253, 253, 253),
         boxShadow: [
           BoxShadow(
             color: shadowColor,
@@ -97,7 +96,7 @@ class _SideMenuState extends State<SideMenu> {
           ),
           const Divider(), // Add a line before the logout button
           const Padding(padding: EdgeInsets.all(10)),
-          LogoutTab(isCollapse:false), // Pass the isCollapsed state
+          LogoutTab(isCollapse: false), // Pass the isCollapsed state
         ],
       ),
     );
@@ -121,8 +120,8 @@ class _SideMenuState extends State<SideMenu> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8.0, vertical: 15),
                           child: Image.asset(
-                            "assets/images/scope_logo.png",
-                            width: isDesktop ? width * 0.06 : width * 0.5,
+                            "assets/images/asd.png",
+                            width: isDesktop ? width * 0.07 : width * 0.5,
                           ),
                         ),
                         LanguageWidget(
@@ -370,7 +369,7 @@ class _SideMenuState extends State<SideMenu> {
                 width: 10,
               ),
               SizedBox(
-                width: isDesktop ? width * 0.07 : width * 0.3,
+                width: isDesktop ? width * 0.09 : width * 0.3,
                 child: Text(
                   title,
                   style: TextStyle(
@@ -408,7 +407,7 @@ class _SideMenuState extends State<SideMenu> {
 
   double drawerWidth() {
     if (isDesktop) {
-      return !isCollapsed ? width * 0.132 : 50;
+      return !isCollapsed ? width * 0.15 : 50;
     } else {
       return width * 0.6;
     }
@@ -416,7 +415,7 @@ class _SideMenuState extends State<SideMenu> {
 
   double menuWidth() {
     if (isDesktop) {
-      return !isCollapsed ? width * 0.122 : 35;
+      return !isCollapsed ? width * 0.14 : 35;
     } else {
       return width * 0.55;
     }
