@@ -5,7 +5,7 @@ class CurveClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     var path = Path();
     path.moveTo(0.0, 0.0); // Move to top-left corner
-    path.quadraticBezierTo(0, size.height * 0.4, size.width * 0.3,
+    path.quadraticBezierTo(0, size.height * 0.3, size.width * 0.1,
         size.height); // Create a concave curve
     path.lineTo(size.width, size.height); // Line to bottom-right corner
     path.lineTo(size.width, 0.0); // Line to top-right corner

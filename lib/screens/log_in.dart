@@ -83,7 +83,7 @@ class _LogInScreenState extends State<LoginScreen>
         Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/documents.jpg'),
+              image: AssetImage('assets/images/books.jpg'),
               fit: BoxFit.cover,
             ),
           ),
@@ -106,7 +106,7 @@ class _LogInScreenState extends State<LoginScreen>
       clipper: CurveClipper(),
       child: SizedBox(
         width: width * 0.5,
-        height: height,
+        height: height * 1,
         child: imageBackground(),
       ),
     );
