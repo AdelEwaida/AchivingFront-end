@@ -4,16 +4,17 @@ import 'package:archiving_flutter_project/models/db/categories_models/document_c
 import 'package:archiving_flutter_project/models/tree_model/my_node.dart';
 import 'package:archiving_flutter_project/models/tree_model/tree_tile.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
-import 'package:archiving_flutter_project/utils/constants/styles.dart';
+import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
+import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../utils/constants/colors.dart';
-
+import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
 
 class DealClassificationTreeScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class DealClassificationTreeScreen extends StatefulWidget {
       : super(key: key);
 
   final DocumentCategory? selectedModel;
+
   @override
   DealClassificationTreeScreenState createState() =>
       DealClassificationTreeScreenState();
@@ -39,8 +41,7 @@ class DealClassificationTreeScreenState
   bool isLoading = false;
   ValueNotifier selectedCamp = ValueNotifier("");
   ValueNotifier selectedValue = ValueNotifier("");
-  bool expand = true;
-  Color currentColor = const Color.fromARGB(255, 65, 185, 225);
+  Color currentColor = Color.fromARGB(255, 225, 65, 65);
   Color selectedColor = Colors.grey;
 
   List<MyNode> roots = [];
@@ -50,6 +51,7 @@ class DealClassificationTreeScreenState
   bool _enabled = true;
 
   final MethodChannel _channel = SystemChannels.contextMenu;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -107,53 +109,84 @@ class DealClassificationTreeScreenState
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  if (!isLoading)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomSearchField(
+                  label: _locale.search,
+                  width: screenWidth * 0.2,
+                  // height: screenHeight * 0.1,
+                  controller: searchController,
+                  // decoration: InputDecoration(
+                  //   labelText: 'Search',
+                  //   hintText: 'Search categories',
+                  //   prefixIcon: Icon(Icons.search),
+                  //   border: OutlineInputBorder(
+                  //     borderRadius: BorderRadius.circular(8),
+                  //   ),
+                  // ),
+                  onChanged: (value) {
+                    searchTree(value);
+                    // Add search functionality if needed
+                  },
+                ),
+              ],
+            ),
+            if (isLoading)
+              Expanded(
+                child: Center(
+                  child: SpinKitCircle(
+                    color: Theme.of(context).primaryColor,
+                    size: 50.0,
+                  ),
+                ),
+              )
+            else
+              Expanded(
+                child: Stack(
+                  children: [
                     TreeView<MyNode>(
                       key: ValueKey(treeController),
-                      shrinkWrap: true,
                       treeController: treeController,
                       nodeBuilder:
                           (BuildContext context, TreeEntry<MyNode> entry) {
                         return MyTreeTile(
+                          onPointerDown: (p0) {},
                           key: ValueKey(entry.node),
                           entry: entry,
                           folderOnTap: () {
                             if (entry.node.children.isNotEmpty) {
+                              selectedCategory = entry.node.extra;
+                              selectedCamp.value = selectedCategory!
+                                  .docCatParent!.txtDescription!;
+                              selectedValue.value =
+                                  selectedCategory!.docCatParent!.txtShortcode;
                               treeController.toggleExpansion(entry.node);
                             } else {
-                              if (!entry.node.isRoot) {
+                              // if (!entry.node.isRoot) {
                                 selectedCategory = entry.node.extra;
                                 selectedCamp.value = selectedCategory!
                                     .docCatParent!.txtDescription!;
                                 selectedValue.value =
-                                    selectedCategory!.docCatParent!.txtKey;
-                              }
+                                  selectedCategory!.docCatParent!.txtShortcode;
+                              // }
                             }
                           },
                           textWidget: nodeDesign(entry.node),
-                          onPointerDown: (event) {
-                            if (entry.node.children.isEmpty) {
-                              // _onPointerDown(event, node: entry.node);
-                            }
-                          },
                         );
                       },
-                    )
-                  else
-                    const SizedBox(),
-                  if (isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
                     ),
-                ],
+                    if (isLoading)
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                  ],
+                ),
               ),
-            ),
             const Divider(height: 3),
           ],
         ),
@@ -161,17 +194,69 @@ class DealClassificationTreeScreenState
     );
   }
 
+  void searchTree(String query) {
+    if (query == "") {
+      selectedCamp.value = "";
+      selectedValue.value = "";
+
+      treeController.roots = [];
+      treeNodes = [];
+      treeController.collapseAll();
+      convertToTreeList(campClassificationList);
+      MyNode node =
+          MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
+      treeController.toggleExpansion(node);
+      treeController.roots = <MyNode>[node];
+      setState(() {});
+    } else {
+      for (final node in treeNodes) {
+        if (searchNode(node, query)) {
+          print("INNNNNNNNN SEEEEEEAAAAAAAAAARCH");
+          // selectedCategory = node;
+          selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
+          selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+
+          treeController.roots = [];
+          treeNodes = [];
+
+          convertToTreeList(campClassificationList);
+          MyNode node = MyNode(
+              title: '/', children: treeNodes, extra: null, isRoot: true);
+          treeController.toggleExpansion(node);
+          treeController.roots = <MyNode>[node];
+          setState(() {});
+          break;
+        }
+      }
+    }
+  }
+
+  bool searchNode(MyNode node, String query) {
+    if (node.title.contains(query)) {
+      selectedCategory = node.extra;
+      selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
+      selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+      return true;
+    }
+    for (final child in node.children) {
+      if (searchNode(child, query)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   Widget nodeDesign(MyNode node) {
     return SizedBox(
       width: node.isRoot ? 100 : 180,
       child: InkWell(
         onTap: () {
-          if (!node.isRoot && node.children.isEmpty) {
+          // if (!node.isRoot && node.children.isEmpty) {
             selectedCategory = node.extra;
             selectedCamp.value =
                 selectedCategory!.docCatParent!.txtDescription!;
-            selectedValue.value = selectedCategory!.docCatParent!.txtKey;
-          }
+          selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+          // }
         },
         onDoubleTap: () {
           if (!node.isRoot && node.children.isEmpty) {

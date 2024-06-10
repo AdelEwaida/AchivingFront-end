@@ -38,5 +38,7 @@
 "documents": "Documents",
 "documentExplorer":"Document Explorer",
 "addDocument": "Add Document",
-"searchByContnet": "Search By Contnet" 
+"searchByContnet": "Search By Contnet" ,
+"notes": "notes",
+"search": "Search"
     }
