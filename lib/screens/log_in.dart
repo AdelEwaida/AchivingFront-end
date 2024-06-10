@@ -287,30 +287,31 @@ class _LogInScreenState extends State<LoginScreen>
   }
 
   logIn() async {
-        GoRouter.of(context).go(mainScreenRoute);
+    // GoRouter.of(context).go(mainScreenRoute);
 
-    // openLoadinDialog();
-    // String key = "scope@e2024A/key@team.CT";
-    // final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
-    // final byteArray =
-    //     Uint8List.fromList(iv.map((bit) => bit == 1 ? 0x01 : 0x00).toList());
-    // String passEncrypted = Encryption.performAesEncryption(
-    //     _passwordController.text, key, byteArray);
-    // String emailEncrypted = Encryption.performAesEncryption(
-    //     _userNameController.text, key, byteArray);
-    // print(passEncrypted);
-    // print(emailEncrypted);
-    // LogInModel userModel = LogInModel(emailEncrypted, passEncrypted);
-    // const storage = FlutterSecureStorage();
-    // storage.write(key: "userName", value: _userNameController.text);
-    // await LoginController()
-    //     .logInPost(userModel, AppLocalizations.of(context)!)
-    //     .then((value) async {
-    //   if (value) {
-    //     Navigator.pop(context);
-    //     GoRouter.of(context).go(mainScreenRoute);
-    //   }
-    // });
+    openLoadinDialog();
+    String key = "archiveProj@s2024ASD/Key@team.CT";
+    final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
+    final byteArray =
+        Uint8List.fromList(iv.map((bit) => bit == 1 ? 0x01 : 0x00).toList());
+    String passEncrypted = Encryption.performAesEncryption(
+        _passwordController.text, key, byteArray);
+    String emailEncrypted = Encryption.performAesEncryption(
+        _userNameController.text, key, byteArray);
+    print(passEncrypted);
+    print(emailEncrypted);
+    LogInModel userModel =
+        LogInModel(_userNameController.text, _passwordController.text);
+    const storage = FlutterSecureStorage();
+    storage.write(key: "userName", value: _userNameController.text);
+    await LoginController()
+        .logInPost(userModel, AppLocalizations.of(context)!)
+        .then((value) async {
+      if (value) {
+        Navigator.pop(context);
+        GoRouter.of(context).go(mainScreenRoute);
+      }
+    });
   }
 
   void openLoadinDialog() {
