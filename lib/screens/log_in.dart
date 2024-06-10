@@ -324,7 +324,7 @@ class _LogInScreenState extends State<LoginScreen>
     print(passEncrypted);
     print(emailEncrypted);
     LogInModel userModel =
-        LogInModel(_userNameController.text, _passwordController.text);
+        LogInModel(emailEncrypted, passEncrypted);
     const storage = FlutterSecureStorage();
     storage.write(key: "userName", value: _userNameController.text);
     await LoginController()
@@ -333,6 +333,9 @@ class _LogInScreenState extends State<LoginScreen>
       if (value) {
         Navigator.pop(context);
         GoRouter.of(context).go(mainScreenRoute);
+      } else {
+        Navigator.pop(context);
+
       }
     });
   }
