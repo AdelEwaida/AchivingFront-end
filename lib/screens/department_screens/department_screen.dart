@@ -54,6 +54,14 @@ class _OfficeScreenState extends State<DepartemntScreen> {
         // enableFilterMenuItem: true,
       ),
       PlutoColumn(
+        title: _locale.txtShortcode,
+        field: "txtShortcode",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.3 : width * 0.2,
+        backgroundColor: columnColors,
+        // enableFilterMenuItem: true,
+      ),
+      PlutoColumn(
         // suppressedAutoSize: true,
         title: _locale.txtDescription,
         field: "txtDescription",
@@ -62,14 +70,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
         // width: width * 0.2,
         backgroundColor: columnColors,
       ),
-      PlutoColumn(
-        title: _locale.txtShortcode,
-        field: "txtShortcode",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.3 : width * 0.2,
-        backgroundColor: columnColors,
-        // enableFilterMenuItem: true,
-      ),
+    
     ]);
     getCount();
     super.didChangeDependencies();

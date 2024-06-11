@@ -95,7 +95,7 @@ class _SideMenuState extends State<SideMenu> {
             ),
           ),
           const Divider(), // Add a line before the logout button
-          const Padding(padding: EdgeInsets.all(10)),
+          // const Padding(padding: EdgeInsets.all(5)),
           LogoutTab(isCollapse: false), // Pass the isCollapsed state
         ],
       ),

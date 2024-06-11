@@ -132,11 +132,11 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
         description: descriptionController.text,
         id: widget.category!.docCatParent!.txtShortcode,
         shortCode: "");
-    await categoriesController.addCategory(insertCategoryModel).then((value) {
-      print("valuuuu${value.statusCode}");
-      if (value.statusCode == 200) {
-        Navigator.pop(context, true);
-      }
-    });
+   
+    var response = await categoriesController.addCategory(insertCategoryModel);
+    if (response.statusCode == 200) {
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context, true);
+    }
   }
 }

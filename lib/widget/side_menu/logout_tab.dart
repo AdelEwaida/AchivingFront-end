@@ -60,6 +60,8 @@ class _LogoutTabState extends State<LogoutTab> {
 
   Widget logoutTab(bool isDesktop, bool isTablet) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Divider(),
         InkWell(
