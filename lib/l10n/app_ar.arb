@@ -106,7 +106,19 @@
     "areYouSureToDelete": "هل انت متأكد من حذف  {name} ؟",
     "recurring":"تكرار",
     "editAction":"تعديل التنبيه",
-    "areYouSureToLogOut":"هل انت متاكد من تسجيل الخروج؟"
+    "areYouSureToLogOut":"هل انت متاكد من تسجيل الخروج؟",
+    "fromDate":"من تاريخ",
+        "toDate": "إلى تاريخ",
+        "issueNo":"رقم الاشارة",
+        "classification":"التصنيف",
+        "keyword":"كلمات تعريفية",
+        "contractType":"نوع العقد",
+        "ref1":"المرجع 1",
+        "ref2":"المرجع 2",
+        "otherRef":"مراجع اخرى",
+        "organization":"الجهة",
+        "following":"متابعة",
+        "sortedBy":"ترتيب حسب"
 
 
 

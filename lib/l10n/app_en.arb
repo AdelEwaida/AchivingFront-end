@@ -121,7 +121,19 @@
 
     "recurring":"Recurring",
     "editAction":"Edit Action",
-        "areYouSureToLogOut":"Are you sure to logout"
+        "areYouSureToLogOut":"Are you sure to logout",
+    "fromDate":"From Date",
+    "toDate":"To Date",
+        "issueNo": "Issue No",
+                "classification": "classification",
+        "keyword": "keyword",
+        "contractType": "contract Type",
+                "ref1": "Reference 1",
+                "ref2": "Reference 2",
+                "otherRef": "Other Reference",
+                "organization":"organization",
+                        "following": "following",
+        "sortedBy":"Sorted By"
 
 
 }

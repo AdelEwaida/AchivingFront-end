@@ -28,6 +28,7 @@ class DepartmentModel {
       'txtShortcode': txtShortcode,
     };
   }
+
   Map<String, dynamic> toJsonEdit() {
     return {
       'id': txtKey,
@@ -39,9 +40,9 @@ class DepartmentModel {
   Map<String, dynamic> toJsonDelete() {
     return {
       'id': txtKey,
-      
     };
   }
+
   Map<String, dynamic> toJsonAdd() {
     return {
       'shortCode': txtShortcode,
@@ -57,11 +58,18 @@ class DepartmentModel {
       'txtShortcode': PlutoCell(value: txtShortcode ?? ""),
     });
   }
+
   static DepartmentModel fromPlutoRow(PlutoRow row) {
     return DepartmentModel(
       txtKey: row.cells['txtKey']?.value,
       txtDescription: row.cells['txtDescription']?.value,
       txtShortcode: row.cells['txtShortcode']?.value,
     );
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return txtDescription ?? "";
   }
 }

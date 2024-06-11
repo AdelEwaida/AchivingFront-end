@@ -1,13 +1,14 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-
-import '../utils/constants/key.dart';
+import '../../utils/constants/colors.dart';
+import '../../utils/constants/key.dart';
 
 // ignore: must_be_immutable
-class CustomDropDown extends StatefulWidget {
+class DropDown extends StatefulWidget {
   double? width;
   double? padding;
   String? bordeText;
+  double? height;
   Key? customKey;
   final List<dynamic>? items;
   final ValueChanged<dynamic> onChanged;
@@ -20,17 +21,21 @@ class CustomDropDown extends StatefulWidget {
   dynamic object;
   Color? color;
   String? selectedVal;
+  bool? visiableClearIcon;
   Widget? suffixIcon;
+  final Function()? onClearIconPressed;
   final Function()? onPressed;
   Icon? icon;
   final Future<List<dynamic>> Function(String)? onSearch;
   final bool? showBorder;
   bool? isEnabled;
   bool? isMandatory;
-  bool? isReports;
-  CustomDropDown(
+  DropDown(
       {Key? key,
+      this.onClearIconPressed,
+      this.visiableClearIcon,
       this.width,
+      this.height,
       this.initialValue,
       this.valSelected,
       this.onValidator,
@@ -51,17 +56,14 @@ class CustomDropDown extends StatefulWidget {
       this.icon,
       this.onBeforeOpening,
       this.showBorder,
-      this.isReports = false,
       this.color})
       : super(key: key);
-
   @override
-  State<CustomDropDown> createState() => _CustomDropDownState();
+  State<DropDown> createState() => _CustomDropDownState();
 }
 
-class _CustomDropDownState extends State<CustomDropDown> {
+class _CustomDropDownState extends State<DropDown> {
   FocusNode focusNode = FocusNode();
-
   @override
   void initState() {
     super.initState();
@@ -74,10 +76,15 @@ class _CustomDropDownState extends State<CustomDropDown> {
     double height = MediaQuery.of(context).size.height * 0.3;
     return Column(
       children: [
-        SizedBox(
-          width: width,
-          height: widget.isReports! ? height * 0.15 : height * 0.15,
+        Container(
+          color: widget.color ?? Colors.white,
+          width: widget.width,
+          height: widget.height,
           child: DropdownSearch<dynamic>(
+            clearButtonProps: ClearButtonProps(
+                alignment: Alignment.topCenter,
+                isVisible: widget.visiableClearIcon ?? false,
+                icon: Icon(Icons.close, color: redColor)),
             enabled: widget.isEnabled ?? true,
             validator: (value) =>
                 widget.onValidator == null ? null : widget.onValidator!(value),
@@ -89,35 +96,38 @@ class _CustomDropDownState extends State<CustomDropDown> {
                     icon: widget.icon!,
                     onPressed: widget.onPressed ?? () {})
                 : const DropdownButtonProps(),
-            dropdownDecoratorProps: widget.icon != null &&
-                    widget.valSelected == null
-                ? const DropDownDecoratorProps()
-                : DropDownDecoratorProps(
-                    dropdownSearchDecoration: widget.showBorder == false
-                        ? const InputDecoration(
-                            contentPadding: EdgeInsets.all(8),
-                            border:
-                                OutlineInputBorder(borderSide: BorderSide.none))
-                        : InputDecoration(
-                            contentPadding: const EdgeInsets.all(8),
-                            border: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 68, 67, 67),
-                                width: 0.5,
+            dropdownDecoratorProps:
+                widget.icon != null && widget.valSelected == null
+                    ? const DropDownDecoratorProps()
+                    : DropDownDecoratorProps(
+                        dropdownSearchDecoration: widget.valSelected == false
+                            ? InputDecoration(
+                                contentPadding: EdgeInsets.all(10),
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                    color: primary2,
+                                    width: 0.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(3.0),
+                                ))
+                            : InputDecoration(
+                                contentPadding: const EdgeInsets.all(10),
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                    color: primary2,
+                                    width: 0.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(3.0),
+                                ),
+                                labelText: widget.bordeText,
+                                labelStyle: const TextStyle(
+                                  fontSize: 12.0,
+                                  color: Color.fromARGB(235, 158, 158, 158),
+                                ),
+                                alignLabelWithHint: true,
                               ),
-                              borderRadius: BorderRadius.circular(1.0),
-                            ),
-                            labelText: widget.bordeText,
-                            labelStyle: const TextStyle(
-                              fontSize: 12.0,
-                              color: Color.fromARGB(235, 158, 158, 158),
-                            ),
-                            alignLabelWithHint: true,
-                          ),
-                  ),
-            dropdownBuilder: widget.selectedVal != null || widget.icon != null
-                ? _customDropDownPrograms
-                : null,
+                      ),
+            dropdownBuilder: _customDropDownPrograms,
             popupProps: PopupProps.menu(
               searchDelay: const Duration(milliseconds: 1),
               showSearchBox: widget.searchBox ?? true,
@@ -125,7 +135,10 @@ class _CustomDropDownState extends State<CustomDropDown> {
               searchFieldProps: TextFieldProps(
                   autofocus: true,
                   decoration: InputDecoration(
-                    border: const OutlineInputBorder(borderSide: BorderSide()),
+                    border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                      color: primary2,
+                    )),
                     constraints: BoxConstraints.tightFor(height: height * .18),
                   )),
               constraints:
@@ -136,11 +149,10 @@ class _CustomDropDownState extends State<CustomDropDown> {
                     item.toString(),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 12, // Set your desired font size here
+                      fontSize: 11, // Set your desired font size here
                       color: isSelected ? Colors.white : Colors.black,
                     ),
                   ),
-
                   // Add any other customization for the ListTile here
                 );
               },
@@ -161,74 +173,85 @@ class _CustomDropDownState extends State<CustomDropDown> {
     final context = navigatorKey.currentState!.overlay!.context;
     double height = MediaQuery.of(context).size.height;
     double width = widget.width ?? MediaQuery.of(context).size.width * 0.15;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        widget.selectedVal !=
-                null //Show selected item when select from dialog or wanna display text or number doesn't exist in the drop down
-            ? Padding(
-                padding: const EdgeInsets.only(right: 4.0),
-                child: SizedBox(
-                  width: width * .6,
-                  child: Text(
-                    widget.selectedVal!,
-                    overflow: TextOverflow.ellipsis,
-                    style:
-                        TextStyle(fontSize: height * .018, color: Colors.black),
+        widget.selectedVal != null
+            ? Tooltip(
+                message: widget.selectedVal,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: SizedBox(
+                    width: width * .6,
+                    child: Text(
+                      widget.selectedVal!,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: height * .018, color: Colors.black),
+                    ),
                   ),
                 ),
               )
-            : item != null //Show item if select from drop down list
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 4.0),
-                    child: SizedBox(
-                      width: width * .6,
-                      child: Text(
-                        item.toString(),
-                        // textAlign: TextAlign.start,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: height * .018, color: Colors.black),
+            : item != null
+                ? Tooltip(
+                    message: item.toString(),
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 1.0),
+                      child: SizedBox(
+                        width: width * .5,
+                        child: Text(
+                          item.toString(),
+                          // textAlign: TextAlign.start,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: height * .018, color: Colors.black),
+                        ),
                       ),
                     ),
                   )
                 : widget.isMandatory! == false
                     ? Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: SizedBox(
-                          width: width * .6,
-                          child: Text(
-                            widget.bordeText!,
-                            // textAlign: TextAlign.start,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: height * .018,
-                                color:
-                                    const Color.fromARGB(235, 158, 158, 158)),
+                        padding: const EdgeInsets.only(right: 1.0),
+                        child: Tooltip(
+                          message: widget.bordeText!,
+                          child: SizedBox(
+                            width: width * .6,
+                            child: Text(
+                              widget.bordeText!,
+                              // textAlign: TextAlign.start,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: height * .018,
+                                  color:
+                                      const Color.fromARGB(235, 158, 158, 158)),
+                            ),
                           ),
                         ),
                       )
                     : Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
+                        padding: const EdgeInsets.only(right: 1.0),
                         child: SizedBox(
                           width: width * .6,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(widget.bordeText!,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: height * .018,
-                                      color:
-                                          Color.fromARGB(235, 158, 158, 158))),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 3),
-                              ),
-                              const Text('*',
-                                  style: TextStyle(
-                                      color: Color.fromARGB(235, 199, 52, 52))),
-                            ],
+                          child: Tooltip(
+                            message: widget.bordeText!,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(widget.bordeText!,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: height * .018,
+                                        color: Color.fromARGB(
+                                            235, 158, 158, 158))),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 3),
+                                ),
+                                const Text('*',
+                                    style: TextStyle(
+                                        color:
+                                            Color.fromARGB(235, 199, 52, 52))),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -237,11 +260,29 @@ class _CustomDropDownState extends State<CustomDropDown> {
                 padding: EdgeInsets.only(bottom: 8.0, top: 2),
                 child: Icon(
                   Icons.arrow_drop_down,
-                  size: 15,
                   color: Color.fromARGB(235, 158, 158, 158),
                 ),
               )
-            : Container()
+            : SizedBox.shrink()
+        // IconButton(
+        //   padding: const EdgeInsets.only(bottom: 2, top: 2),
+        //   icon: const Icon(Icons.close),
+        //   onPressed: (() {
+        //     if (widget.onClearIconPressed != null) {
+        //       print("innCLEEEEEEEAR");
+        //       print("innCLEEEEEEEAR");
+        //       widget.onChanged(null);
+        //       widget.selectedVal = null;
+        //       widget.valSelected = false;
+        //       if (widget.selectedVal != null) {}
+        //       widget.onSearch!("");
+        //       widget.onClearIconPressed!();
+        //       setState(() {});
+        //     }
+        //     // setState(() {});
+        //   }),
+        //   color: const Color.fromARGB(235, 158, 158, 158),
+        // )
       ],
     );
   }
