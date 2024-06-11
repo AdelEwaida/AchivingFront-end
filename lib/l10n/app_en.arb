@@ -106,7 +106,7 @@
     "timeConflict": "Time Conflict",
     "validDay": "Please enter a valid day",
     "validMonth": "Please enter a valid month",
-    "validDate": "Please enter a valid date"
+    "validDate": "Please enter a valid date",
     "department":"Department",
     "editDep": "Edit Department",
     "editDoneSucess": "Edited successfully",
