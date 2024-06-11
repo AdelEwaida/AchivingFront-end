@@ -15,6 +15,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../dialogs/error_dialgos/categories_dialogs/add_category_dialog.dart';
 import '../../dialogs/error_dialgos/categories_dialogs/edit_category_dialog.dart';
+import '../../dialogs/error_dialgos/confirm_dialog.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
@@ -165,7 +166,15 @@ class DealClassificationTreeScreenState
                       size: 20,
                     )),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return CustomConfirmDialog(
+                              confirmMessage: _locale.sureToDeleteThisCat);
+                        },
+                      );
+                    },
                     icon: const Icon(
                       Icons.delete,
                       color: Colors.red,
