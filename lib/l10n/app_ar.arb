@@ -119,7 +119,20 @@
     "organization":"الجهة",
     "following":"متابعة",
     "fileName":"اسم الملف",
-    "uploadFile":"تحميل الملف"
+    "uploadFile":"تحميل الملف",
+    "areYouSureToLogOut":"هل انت متاكد من تسجيل الخروج؟",
+    "fromDate":"من تاريخ",
+        "toDate": "إلى تاريخ",
+        "issueNo":"رقم الاشارة",
+        "classification":"التصنيف",
+        "keyword":"كلمات تعريفية",
+        "contractType":"نوع العقد",
+        "ref1":"المرجع 1",
+        "ref2":"المرجع 2",
+        "otherRef":"مراجع اخرى",
+        "organization":"الجهة",
+        "following":"متابعة",
+        "sortedBy":"ترتيب حسب"
 
 
 

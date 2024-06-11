@@ -26,7 +26,7 @@ class ActionController {
 
   Future updateAction(ActionModel actionModel) async {
     return await ApiService()
-        .postRequest(updateDepApi, actionModel.toJsonEdit());
+        .postRequest(updateActionApi, actionModel.toJsonEdit());
   }
 
   Future deleteAction(ActionModel actionModel) async {
