@@ -9,6 +9,7 @@ import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/custom_drop_down.dart';
+import '../../widget/custom_drop_down2.dart';
 import '../../widget/date_time_component.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
@@ -85,7 +86,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                       // mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        CustomDropDown(
+                        CustomDropDown2(
                           width: width * 0.13,
                           onChanged: (value) {},
                           searchBox: true,
@@ -97,7 +98,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                         SizedBox(
                           width: width * 0.015,
                         ),
-                        CustomDropDown(
+                        CustomDropDown2(
                           width: width * 0.13,
                           onChanged: (value) {},
                           searchBox: true,
@@ -180,7 +181,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                       SizedBox(
                         width: width * 0.015,
                       ),
-                      CustomDropDown(
+                      CustomDropDown2(
                         width: width * 0.13,
                         onChanged: (value) {},
                         searchBox: true,

@@ -87,6 +87,8 @@ Widget getScreenContent(int index) {
       return const DepartemntScreen();
     case 7:
       return const AddFileScreen();
+    case 4:
+      return const ActionScreen();
     case 6:
       return const FileListScreen();
     // case 2:
