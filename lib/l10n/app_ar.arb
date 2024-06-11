@@ -103,7 +103,8 @@
     "editDoneSucess":"تم التعديل بنجاح",
     "areYouSureToDelete": "هل انت متأكد من حذف  {name} ؟",
     "recurring":"تكرار",
-    "editAction":"تعديل التنبيه"
+    "editAction":"تعديل التنبيه",
+    "areYouSureToLogOut":"هل انت متاكد من تسجيل الخروج؟"
 
 
 

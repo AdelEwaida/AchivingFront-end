@@ -44,6 +44,12 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
     _locale = AppLocalizations.of(context)!;
     dateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    if (widget.actionModel != null) {
+      dateController.text = widget.actionModel!.datDate!;
+      descController.text = widget.actionModel!.txtDescription!;
+      notesController.text = widget.actionModel!.txtNotes!;
+      isRecurring = widget.actionModel!.intRecurring == 1 ? true : false;
+    }
     super.didChangeDependencies();
   }
 
@@ -60,7 +66,8 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       backgroundColor: dBackground,
       title: TitleDialogWidget(
-        title: widget.actionModel == null ? _locale.addAction : _locale.editAction,
+        title:
+            widget.actionModel == null ? _locale.addAction : _locale.editAction,
         width: isDesktop ? width * 0.25 : width * 0.8,
         height: height * 0.07,
       ),
@@ -296,11 +303,12 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       editMethod();
     } else {
       ActionModel actionModel = ActionModel(
-          txtKey: null,
-          txtDescription: descController.text,
-          txtNotes: notesController.text,
-          datDate: dateController.text,
-          intRecurring: 0);
+        txtKey: null,
+        txtDescription: descController.text,
+        txtNotes: notesController.text,
+        datDate: dateController.text,
+        intRecurring: isRecurring == false ? 0 : 1,
+      );
       await actionController.addAction(actionModel).then((value) {
         if (value.statusCode == 200) {
           showDialog(

@@ -74,6 +74,7 @@ class ActionModel {
 
   static ActionModel fromPlutoRow(PlutoRow row) {
     return ActionModel(
+        datDate: row.cells['datDate']?.value,
         txtKey: row.cells['txtKey']?.value,
         txtDescription: row.cells['txtDescription']?.value,
         txtNotes: row.cells['txtNotes']?.value,

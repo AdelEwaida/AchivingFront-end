@@ -118,9 +118,8 @@
         }
     },
     "recurring":"Recurring",
-    "editAction":"Edit Action"
-
-
+    "editAction":"Edit Action",
+        "areYouSureToLogOut":"Are you sure to logout"
 
 
 }
