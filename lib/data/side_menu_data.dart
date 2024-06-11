@@ -6,6 +6,8 @@ import 'package:archiving_flutter_project/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../screens/actions_screens/action_screen.dart';
+
 List<MenuModel> getMenus(AppLocalizations locale) {
   List<MenuModel> menus = [
     MenuModel(
@@ -81,6 +83,8 @@ Widget getScreenContent(int index) {
       return const DealClassificationTreeScreen();
     case 3:
       return const DepartemntScreen();
+    case 4:
+      return const ActionScreen();
     // case 2:
     //   return UsersScreen();
   }
