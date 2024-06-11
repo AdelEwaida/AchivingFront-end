@@ -14,6 +14,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../dialogs/error_dialgos/categories_dialogs/add_category_dialog.dart';
+import '../../dialogs/error_dialgos/categories_dialogs/edit_category_dialog.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
@@ -150,7 +151,15 @@ class DealClassificationTreeScreenState
                       size: 20,
                     )),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return const EditCategoryDialog();
+                          }).then((value) {
+                        if (value != null) {}
+                      });
+                    },
                     icon: const Icon(
                       Icons.edit,
                       size: 20,
