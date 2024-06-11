@@ -12,3 +12,17 @@ ButtonStyle customButtonStyle(Size size, double fontSize, Color color) {
       textStyle: TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal),
       alignment: Alignment.center);
 }
+
+ButtonStyle customButtonStyle1(Size size, double fontSize, Color color) {
+  return ElevatedButton.styleFrom(
+      backgroundColor: color,
+      fixedSize: size,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      textStyle: TextStyle(
+        fontSize: fontSize,
+        fontWeight: FontWeight.normal,
+      ),
+      alignment: Alignment.center);
+}
