@@ -116,8 +116,8 @@
             "type": "String",
             "example": "name"
         }
-    }
-
+    },
+    "areYouSureToLogOut": "Are You sure to logout"
 
 
 }

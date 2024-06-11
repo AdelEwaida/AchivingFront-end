@@ -101,9 +101,8 @@
     "department":"الدائرة/الفرع",
     "editDep":"تعديل دائرة/فرع",
     "editDoneSucess":"تم التعديل بنجاح",
-    "areYouSureToDelete": "هل انت متأكد من حذف  {name} ؟"
-
-
+    "areYouSureToDelete": "هل انت متأكد من حذف  {name} ؟",
+    "areYouSureToLogOut":"هل انت متأكد من تسجيل الخروج؟"
 
 
 

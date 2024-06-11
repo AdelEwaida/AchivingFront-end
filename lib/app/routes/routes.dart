@@ -23,7 +23,7 @@ class AppRoutes {
         GoRoute(
           path: mainScreenRoute,
           builder: (_, state) => const HomePage(),
-          redirect: (context, state) => _redirect2(context, mainScreenRoute),
+          redirect: (context, state) => _redirect(context, mainScreenRoute),
         ),
         // GoRoute(
         //   path: officesScreenRoute,

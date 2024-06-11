@@ -1,3 +1,5 @@
+import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
+import 'package:archiving_flutter_project/utils/constants/routes_constant.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -24,7 +26,7 @@ class _LogoutTabState extends State<LogoutTab> {
   double fontSize = 0;
   bool isDesktop = false;
   Color selectedColor = const Color.fromARGB(255, 14, 1, 1).withOpacity(0.3);
-
+  FlutterSecureStorage storage = FlutterSecureStorage();
   @override
   void didChangeDependencies() {
     locale = AppLocalizations.of(context)!;
@@ -104,16 +106,19 @@ class _LogoutTabState extends State<LogoutTab> {
   }
 
   confirmDialog() {
-    // showDialog(
-    //   context: context,
-    //   builder: (context) {
-    //     return CustomConfirmDialog(confirmMessage: locale.areYouSureToLogOut);
-    //   },
-    // ).then((value) async {
-    //   if (value) {
-    //     // LoginController().logOut(locale);
-    //   }
-    // });
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CustomConfirmDialog(confirmMessage: locale.areYouSureToLogOut);
+      },
+    ).then((value) async {
+      if (value) {
+        await storage.delete(key: "jwt").then((value) {
+          GoRouter.of(context).go(loginScreenRoute);
+        });
+        // LoginController().logOut(locale);
+      }
+    });
   }
 
   getActiveColor() {
