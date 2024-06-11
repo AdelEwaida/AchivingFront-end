@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:archiving_flutter_project/dialogs/dep_dialogs/departemnt_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
@@ -163,8 +164,11 @@ class _OfficeScreenState extends State<DepartemntScreen> {
                 key: UniqueKey(),
                 tableHeigt: height * 0.85,
                 tableWidth: width,
+                delete: deleteDep,
                 add: addDep,
+                genranlEdit: editDep,
                 plCols: polCols,
+                mode: PlutoGridMode.selectWithOneTap,
                 polRows: [],
                 footerBuilder: (stateManager) {
                   return lazyLoadingfooter(stateManager);
@@ -238,7 +242,48 @@ class _OfficeScreenState extends State<DepartemntScreen> {
     );
   }
 
-  void exportToExcel() {}
+  void deleteDep() async {
+    if (selectedRow != null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return CustomConfirmDialog(
+              confirmMessage: _locale.areYouSureToDelete(
+                  selectedRow!.cells['txtDescription']!.value));
+        },
+      ).then((value) async {
+        if (value) {
+          await departmentController
+              .deleteDep(
+                  DepartmentModel(txtKey: selectedRow!.cells['txtKey']!.value))
+              .then((value) {
+            if (value.statusCode == 200) {
+              reloadData();
+            }
+          });
+        }
+      });
+    }
+  }
+
+  void editDep() {
+    if (selectedRow != null) {
+      DepartmentModel departmentModel =
+          DepartmentModel.fromPlutoRow(selectedRow!);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return DepartmentDialog(
+            departmentModel: departmentModel,
+          );
+        },
+      ).then((value) {
+        if (value) {
+          reloadData();
+        }
+      });
+    }
+  }
 
   void addDep() {
     showDialog(
@@ -246,7 +291,24 @@ class _OfficeScreenState extends State<DepartemntScreen> {
       builder: (context) {
         return DepartmentDialog();
       },
-    );
+    ).then((value) {
+      if (value) {
+        reloadData();
+      }
+    });
+  }
+
+  void reloadData() {
+    pageLis.value = 1; // Reset the page to the first one
+    count = 0; // Reset the count
+    rowList.clear(); // Clear the existing rows
+    getCount();
+    stateManager.removeAllRows();
+    stateManager.setShowLoading(true); // Show loading indicator
+    fetch(PlutoInfinityScrollRowsRequest()).then((response) {
+      stateManager.appendRows(response.rows);
+      stateManager.setShowLoading(false); // Hide loading indicator
+    });
   }
 
   int count = 0;

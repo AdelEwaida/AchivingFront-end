@@ -15,7 +15,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
 class DepartmentDialog extends StatefulWidget {
-  const DepartmentDialog({super.key});
+  DepartmentModel? departmentModel;
+  DepartmentDialog({super.key, this.departmentModel});
 
   @override
   State<DepartmentDialog> createState() => _DepartmentDialogState();
@@ -33,6 +34,10 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
+    if (widget.departmentModel != null) {
+      codeController.text = widget.departmentModel!.txtShortcode!;
+      descController.text = widget.departmentModel!.txtDescription!;
+    }
     super.didChangeDependencies();
   }
 
@@ -49,7 +54,9 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       backgroundColor: dBackground,
       title: TitleDialogWidget(
-        title: _locale.addDepartment,
+        title: widget.departmentModel == null
+            ? _locale.addDepartment
+            : _locale.editDep,
         width: isDesktop ? width * 0.25 : width * 0.8,
         height: height * 0.07,
       ),
@@ -205,6 +212,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
               statusCode: 400);
         },
       );
+    } else if (widget.departmentModel != null) {
+      editMethod();
     } else {
       DepartmentModel departmentModel = DepartmentModel(
           txtKey: null,
@@ -229,5 +238,29 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
         }
       });
     }
+  }
+
+  void editMethod() async {
+    DepartmentModel departmentModel = DepartmentModel(
+        txtKey: widget.departmentModel!.txtKey!,
+        txtDescription: descController.text,
+        txtShortcode: codeController.text);
+    await departmentController.updateDep(departmentModel).then((value) {
+      if (value.statusCode == 200) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.done_all,
+                errorDetails: _locale.done,
+                errorTitle: _locale.editDoneSucess,
+                color: Colors.green,
+                statusCode: 200);
+          },
+        ).then((value) {
+          Navigator.pop(context, true);
+        });
+      }
+    });
   }
 }

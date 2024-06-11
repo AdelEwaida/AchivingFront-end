@@ -107,6 +107,16 @@
     "validDay": "Please enter a valid day",
     "validMonth": "Please enter a valid month",
     "validDate": "Please enter a valid date"
+    "department":"Department",
+    "editDep": "Edit Department",
+    "editDoneSucess": "Edited successfully",
+    "areYouSureToDelete": "Are you sure to delete  {name}?",
+    "@areYouSureToDelete": {
+        "name": {
+            "type": "String",
+            "example": "name"
+        }
+    }
 
 
 

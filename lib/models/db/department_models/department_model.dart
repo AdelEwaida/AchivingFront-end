@@ -28,7 +28,20 @@ class DepartmentModel {
       'txtShortcode': txtShortcode,
     };
   }
+  Map<String, dynamic> toJsonEdit() {
+    return {
+      'id': txtKey,
+      'description': txtDescription,
+      'shortCode': txtShortcode,
+    };
+  }
 
+  Map<String, dynamic> toJsonDelete() {
+    return {
+      'id': txtKey,
+      
+    };
+  }
   Map<String, dynamic> toJsonAdd() {
     return {
       'shortCode': txtShortcode,
@@ -39,8 +52,16 @@ class DepartmentModel {
   PlutoRow toPlutoRow(int count) {
     return PlutoRow(cells: {
       'countNumber': PlutoCell(value: count),
+      'txtKey': PlutoCell(value: txtKey),
       'txtDescription': PlutoCell(value: txtDescription ?? ""),
       'txtShortcode': PlutoCell(value: txtShortcode ?? ""),
     });
+  }
+  static DepartmentModel fromPlutoRow(PlutoRow row) {
+    return DepartmentModel(
+      txtKey: row.cells['txtKey']?.value,
+      txtDescription: row.cells['txtDescription']?.value,
+      txtShortcode: row.cells['txtShortcode']?.value,
+    );
   }
 }
