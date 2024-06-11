@@ -1,6 +1,7 @@
 import 'package:archiving_flutter_project/models/dto/side_menu/menu_model.dart';
 import 'package:archiving_flutter_project/models/dto/side_menu/sub_menu_model.dart';
 import 'package:archiving_flutter_project/screens/categories_screens/categories_screen.dart';
+import 'package:archiving_flutter_project/screens/department_screens/department_screen.dart';
 import 'package:archiving_flutter_project/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -78,7 +79,8 @@ Widget getScreenContent(int index) {
   switch (index) {
     case 2:
       return const DealClassificationTreeScreen();
-
+    case 3:
+      return const DepartemntScreen();
     // case 2:
     //   return UsersScreen();
   }
