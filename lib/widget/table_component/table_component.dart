@@ -538,7 +538,8 @@ class _TableComponentState extends State<TableComponent> {
                           onPressed: () {
                             widget.delete!();
                           },
-                          icon: const Icon(
+                          icon: Icon(
+                            color: redColor,
                             Icons.delete,
                             size: 20,
                           )),

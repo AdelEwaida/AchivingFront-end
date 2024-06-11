@@ -1,3 +1,6 @@
+import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
+import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
+import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
 import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,7 +10,8 @@ import '../../../utils/constants/styles.dart';
 import '../../../widget/text_field_widgets/custom_text_field2_.dart';
 
 class EditCategoryDialog extends StatefulWidget {
-  const EditCategoryDialog({super.key});
+  DocumentCategory? category;
+  EditCategoryDialog({super.key, this.category});
   @override
   State<EditCategoryDialog> createState() => _AdvanceSearchLogsDialogState();
 }
@@ -20,11 +24,11 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
 
   double width = 0;
   double height = 0;
-
+  CategoriesController categoriesController = CategoriesController();
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
-
+    descriptionController.text = widget.category!.docCatParent!.txtDescription!;
     super.didChangeDependencies();
   }
 
@@ -85,25 +89,27 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
               onSubmitted: (text) {},
               onChanged: (value) {},
             ),
-            CustomDropDown(
-              width: width * 0.25,
-              onChanged: (value) {},
-              searchBox: true,
-              valSelected: true,
-              bordeText: _locale.department,
-              // width: width * 0.21,
-              heightVal: height * 0.3,
-            ),
-            const SizedBox(height: 20),
+            // CustomDropDown(
+            //   width: width * 0.25,
+            //   onChanged: (value) {},
+            //   searchBox: true,
+            //   valSelected: true,
+            //   bordeText: _locale.department,
+            //   // width: width * 0.21,
+            //   heightVal: height * 0.3,
+            // ),
+            // const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    save();
+                  },
                   style: customButtonStyle1(Size(width * 0.08, height * 0.045),
                       16, const Color(0xff1F6E8C)),
                   child: Text(
-                    _locale.search,
+                    _locale.save,
                     style: const TextStyle(color: whiteColor),
                   ),
                 ),
@@ -125,5 +131,18 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
         ),
       ),
     );
+  }
+
+  void save() {
+    InsertCategoryModel updateModel = InsertCategoryModel(
+      deptCode: widget.category!.docCatParent!.txtDeptcode!,
+      description: descriptionController.text,
+      shortCode: widget.category!.docCatParent!.txtShortcode,
+    );
+    categoriesController.updateCategory(updateModel).then((value) {
+      if (value.statusCode == 200) {
+        Navigator.pop(context, true);
+      }
+    });
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
+import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
 import 'package:archiving_flutter_project/models/tree_model/my_node.dart';
 import 'package:archiving_flutter_project/models/tree_model/tree_tile.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
@@ -139,13 +140,18 @@ class DealClassificationTreeScreenState
                 ),
                 IconButton(
                     onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const AddCategoryDialog();
-                          }).then((value) {
-                        if (value != null) {}
-                      });
+                      if (selectedCategory != null) {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AddCategoryDialog(
+                                  category: selectedCategory);
+                            }).then((value) {
+                          if (value) {
+                            reloadData();
+                          }
+                        });
+                      }
                     },
                     icon: const Icon(
                       Icons.add,
@@ -153,28 +159,30 @@ class DealClassificationTreeScreenState
                     )),
                 IconButton(
                     onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return const EditCategoryDialog();
-                          }).then((value) {
-                        if (value != null) {}
-                      });
+                      if (selectedCategory != null) {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return EditCategoryDialog(
+                                  category: selectedCategory);
+                            }).then((value) {
+                          if (value) {
+                            reloadData();
+                          }
+                        });
+                      }
                     },
                     icon: const Icon(
                       Icons.edit,
                       size: 20,
                     )),
                 IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return CustomConfirmDialog(
-                              confirmMessage: _locale.sureToDeleteThisCat);
-                        },
-                      );
-                    },
+                    onPressed: (selectedCategory != null &&
+                            selectedCategory!.docCatChildren!.isEmpty)
+                        ? () {
+                            deleteMethod();
+                          }
+                        : null,
                     icon: const Icon(
                       Icons.delete,
                       color: Colors.red,
@@ -240,6 +248,80 @@ class DealClassificationTreeScreenState
     );
   }
 
+  void deleteMethod() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CustomConfirmDialog(confirmMessage: _locale.sureToDeleteThisCat);
+      },
+    ).then((value) async {
+      if (value) {
+        await categoriesController
+            .deleteCategory(InsertCategoryModel(
+                shortCode: selectedCategory!.docCatParent!.txtShortcode!))
+            .then((value) {
+          if (value.statusCode == 200) {
+            reloadData();
+          }
+        });
+      }
+    });
+  }
+
+  Future<void> reloadData() async {
+    final expansionState = storeExpansionState();
+
+    setState(() {
+      isLoading = true;
+    });
+
+    campClassificationList = await categoriesController.getCategoriesTree();
+
+    treeNodes.clear();
+    convertToTreeList(campClassificationList);
+
+    children = [];
+    for (int i = 0; i < campClassificationList.length; i++) {
+      children.addAll(getChildren(campClassificationList[i]));
+    }
+
+    restoreExpansionState(expansionState);
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Map<String, bool> storeExpansionState() {
+    final Map<String, bool> expansionState = {};
+    for (final node in treeController.roots) {
+      _storeExpansionState(node, expansionState);
+    }
+    return expansionState;
+  }
+
+  void _storeExpansionState(MyNode node, Map<String, bool> expansionState) {
+    expansionState[node.title] = treeController.getExpansionState(node);
+    for (final child in node.children) {
+      _storeExpansionState(child, expansionState);
+    }
+  }
+
+  void restoreExpansionState(Map<String, bool> expansionState) {
+    for (final node in treeController.roots) {
+      _restoreExpansionState(node, expansionState);
+    }
+  }
+
+  void _restoreExpansionState(MyNode node, Map<String, bool> expansionState) {
+    if (expansionState[node.title] != null) {
+      treeController.setExpansionState(node, expansionState[node.title]!);
+    }
+    for (final child in node.children) {
+      _restoreExpansionState(child, expansionState);
+    }
+  }
+
   void searchTree(String query) {
     if (query == "") {
       selectedCamp.value = "";
@@ -277,6 +359,52 @@ class DealClassificationTreeScreenState
     }
   }
 
+  void removeNodeFromTree(DocumentCategory? category) {
+    if (category == null) return;
+
+    // Find the node in the treeNodes
+    MyNode? nodeToRemove;
+    for (var node in treeNodes) {
+      nodeToRemove = findNode(node, category.docCatParent!.txtShortcode!);
+      if (nodeToRemove != null) {
+        break;
+      }
+    }
+
+    if (nodeToRemove != null) {
+      // Remove the node from its parent's children list
+
+      // If the node is a root node, remove it from the roots list
+      treeNodes.remove(nodeToRemove);
+
+      // Update the tree view
+      setState(() {
+        // Refresh the tree controller to reflect changes
+        treeController = TreeController<MyNode>(
+          roots: treeNodes,
+          childrenProvider: (MyNode node) => node.children,
+        );
+      });
+    }
+  }
+
+  MyNode? findNode(MyNode node, String shortCode) {
+    if (node.extra != null &&
+        (node.extra as DocumentCategory).docCatParent!.txtShortcode ==
+            shortCode) {
+      return node;
+    }
+
+    for (var child in node.children) {
+      var found = findNode(child, shortCode);
+      if (found != null) {
+        return found;
+      }
+    }
+
+    return null;
+  }
+
   bool searchNode(MyNode node, String query) {
     if (node.title.contains(query)) {
       selectedCategory = node.extra;
@@ -301,6 +429,7 @@ class DealClassificationTreeScreenState
           selectedCategory = node.extra;
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+          setState(() {});
           // }
         },
         onDoubleTap: () {
