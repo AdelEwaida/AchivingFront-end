@@ -13,6 +13,7 @@ import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import '../../dialogs/error_dialgos/categories_dialogs/add_category_dialog.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
@@ -118,8 +119,8 @@ class DealClassificationTreeScreenState
               children: [
                 CustomSearchField(
                   label: _locale.search,
-                  width: screenWidth * 0.2,
-                  // height: screenHeight * 0.1,
+                  width: screenWidth * 0.45,
+                  padding: 8,
                   controller: searchController,
                   // decoration: InputDecoration(
                   //   labelText: 'Search',
@@ -134,6 +135,33 @@ class DealClassificationTreeScreenState
                     // Add search functionality if needed
                   },
                 ),
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return const AddCategoryDialog();
+                          }).then((value) {
+                        if (value != null) {}
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      size: 20,
+                    )),
+                IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.edit,
+                      size: 20,
+                    )),
+                IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                      size: 20,
+                    )),
               ],
             ),
             if (isLoading)
@@ -168,10 +196,10 @@ class DealClassificationTreeScreenState
                               treeController.toggleExpansion(entry.node);
                             } else {
                               // if (!entry.node.isRoot) {
-                                selectedCategory = entry.node.extra;
-                                selectedCamp.value = selectedCategory!
-                                    .docCatParent!.txtDescription!;
-                                selectedValue.value =
+                              selectedCategory = entry.node.extra;
+                              selectedCamp.value = selectedCategory!
+                                  .docCatParent!.txtDescription!;
+                              selectedValue.value =
                                   selectedCategory!.docCatParent!.txtShortcode;
                               // }
                             }
@@ -252,9 +280,8 @@ class DealClassificationTreeScreenState
       child: InkWell(
         onTap: () {
           // if (!node.isRoot && node.children.isEmpty) {
-            selectedCategory = node.extra;
-            selectedCamp.value =
-                selectedCategory!.docCatParent!.txtDescription!;
+          selectedCategory = node.extra;
+          selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
           // }
         },

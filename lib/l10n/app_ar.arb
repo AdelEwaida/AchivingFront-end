@@ -31,22 +31,30 @@
     "wrongInput": "يرجى التأكد من اسم المستخدم أو كلمة المرور",
     "accountAlreadyLoggedIn": "تم تسجيل الدخول بهذا الحساب سابقاً، هل تريد تسجيل الخروج من كافة الحسابات؟",
 
-"systemSetup":"إعدادات النظام",
-"listOfCategories":"قائمة أصناف الملفات",
-"listOfDepartment":"قائمة الدوائر / الفروع",
-"addDepartment":"إضافة دائرة/فرع",
-"listOfReminders":"قائمة التنبيهات",
-"documents":"الملفات",
-"documentExplorer":"قائمة الملفات",
-"addDocument":"إضافة ملف",
-"notes":"ملاحظات",
-"search":"بحث",
-"searchByContnet":"البحث حسب المحتوى",
+    "systemSetup":"إعدادات النظام",
+    "listOfCategories":"قائمة أصناف الملفات",
+    "listOfDepartment":"قائمة الدوائر / الفروع",
+    "addDepartment":"إضافة دائرة/فرع",
+    "listOfReminders":"قائمة التنبيهات",
+    "documents":"الملفات",
+    "documentExplorer":"قائمة الملفات",
+    "addDocument":"إضافة ملف",
+    "notes":"ملاحظات",
+    "search":"بحث",
+    "searchByContnet":"البحث حسب المحتوى",
     "users":"المستخدمون",
     "addUser":"إضافة مستخدم جديد",
     "viewUser":"قائمة المستخدمين",
     "userCategories":"تصنيف المستخدمين",
     "addUserCategories":"إضافة صلاحية مستخدم لتصنيف معين",
     "viewUserCategories":"قائمة صلاحيات المستخدمين ",
-    "changePassword":"تعديل كلمة المرور"
+    "changePassword":"تعديل كلمة المرور",
+    "addCategory":"إضافة صنف جديد",
+    "editCategory":"تعديل الصنف",
+    "sureToDeleteThisCat":"هل أنت متأكد من حذف هذا التصنيف؟",
+    "description":"الوصف",
+    "department":"الدائرة/الفرع"
+
+
+
 }

@@ -30,17 +30,17 @@
     "worningPassOrEmeail": "Wrong password or email",
     "wrongInput": "Please verify your password or email",
         "accountAlreadyLoggedIn": "This account was logged in previously, do you want to log out from all accounts?",
-"systemSetup":"System Setup",
-"listOfCategories":"list of categories",
-"listOfDepartment":"list of department",
-"addDepartment": "Add Department",
-"listOfReminders":"list of reminders",
-"documents": "Documents",
-"documentExplorer":"Document Explorer",
-"addDocument": "Add Document",
-"searchByContnet": "Search By Contnet" ,
-"notes": "notes",
-"search": "Search",
+    "systemSetup":"System Setup",
+    "listOfCategories":"list of categories",
+    "listOfDepartment":"list of department",
+    "addDepartment": "Add Department",
+    "listOfReminders":"list of reminders",
+    "documents": "Documents",
+    "documentExplorer":"Document Explorer",
+    "addDocument": "Add Document",
+    "searchByContnet": "Search By Contnet" ,
+    "notes": "notes",
+    "search": "Search",
     "systemSetup":"System Setup",
     "listOfCategories":"list of categories",
     "listOfDepartment":"list of department",
@@ -56,6 +56,13 @@
     "userCategories":"User Categories",
     "addUserCategories":"Add User Categories",
     "viewUserCategories":"View User Categories",
-    "changePassword":"Change Password"
+    "changePassword":"Change Password",
+    "addCategory":"Add Category",
+    "editCategory":"Edit Category",
+    "sureToDeleteThisCat":"Are you sure that you want to delete this node?",
+    "description":"Description",
+    "department":"Department"
+
+
 
 }
