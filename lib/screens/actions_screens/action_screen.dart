@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import '../../dialogs/actions_dialogs/add_action_dialog.dart';
+import '../../dialogs/actions_dialogs/add_edit_action_dialog.dart';
 import '../../dialogs/error_dialgos/confirm_dialog.dart';
 import '../../models/db/actions_models/action_model.dart';
 
@@ -149,7 +149,7 @@ class _OfficeScreenState extends State<ActionScreen> {
                 tableWidth: width,
                 delete: deleteAction,
                 add: addAction,
-                // genranlEdit: null,
+                genranlEdit: editAction,
                 plCols: polCols,
                 mode: PlutoGridMode.selectWithOneTap,
                 polRows: [],
@@ -215,7 +215,7 @@ class _OfficeScreenState extends State<ActionScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        return const AddActionDialog();
+        return AddEditActionDialog();
       },
     ).then((value) {
       if (value) {
@@ -290,5 +290,25 @@ class _OfficeScreenState extends State<ActionScreen> {
       stateManager.appendRows(response.rows);
       stateManager.setShowLoading(false); // Hide loading indicator
     });
+  }
+
+  void editAction() {
+    if (selectedRow != null) {
+      ActionModel actionModel = ActionModel.fromPlutoRow(selectedRow!);
+      print(
+          "actionModelactionModelactionModelactionModel:${actionModel.toJson()}");
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AddEditActionDialog(
+            actionModel: actionModel,
+          );
+        },
+      ).then((value) {
+        if (value) {
+          reloadData();
+        }
+      });
+    }
   }
 }

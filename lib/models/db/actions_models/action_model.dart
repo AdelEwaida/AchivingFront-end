@@ -71,4 +71,22 @@ class ActionModel {
       'id': txtKey,
     };
   }
+
+  static ActionModel fromPlutoRow(PlutoRow row) {
+    return ActionModel(
+        txtKey: row.cells['txtKey']?.value,
+        txtDescription: row.cells['txtDescription']?.value,
+        txtNotes: row.cells['txtNotes']?.value,
+        intRecurring: row.cells['intRecurring']?.value);
+  }
+
+  Map<String, dynamic> toJsonEdit() {
+    return {
+      'id': txtKey,
+      'date': datDate,
+      'description': txtDescription,
+      'text': txtNotes,
+      'recurring': intRecurring
+    };
+  }
 }

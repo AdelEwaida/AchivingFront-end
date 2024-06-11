@@ -116,7 +116,10 @@
             "type": "String",
             "example": "name"
         }
-    }
+    },
+    "recurring":"Recurring",
+    "editAction":"Edit Action"
+
 
 
 
