@@ -9,6 +9,7 @@ var dBackground = Colors.white;
 var shadowColor = const Color.fromARGB(255, 181, 181, 181).withOpacity(0.3);
 var backgroundColor = Colors.white;
 const primary2 = Color(0xff61A3BA);
+const primary3 = Color(0xFFE27F24);
 var columnColors = Colors.grey[100];
 const primary = Color.fromRGBO(48, 66, 125, 1);
 var darkGrey = Color.fromARGB(255, 0, 0, 0);

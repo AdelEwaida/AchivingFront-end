@@ -19,3 +19,6 @@ const getActionCountApi = "actions/count";
 const addActionApi = "actions/insert";
 const deleteActionApi = "actions/delete";
 const updateActionApi = "actions/update";
+
+//docFiles APIs
+const inserttDocFile = "docFilesTrans/insert";

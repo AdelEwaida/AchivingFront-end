@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
-import 'package:archiving_flutter_project/service/controller/actions_controllers.dart/action_controller.dart';
+import 'package:archiving_flutter_project/service/controller/actions_controllers/action_controller.dart';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';

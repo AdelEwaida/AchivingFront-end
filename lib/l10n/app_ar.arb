@@ -106,7 +106,20 @@
     "areYouSureToDelete": "هل انت متأكد من حذف  {name} ؟",
     "recurring":"تكرار",
     "editAction":"تعديل التنبيه",
-    "areYouSureToLogOut":"هل انت متاكد من تسجيل الخروج؟"
+    "areYouSureToLogOut":"هل انت متاكد من تسجيل الخروج؟",
+    "category":"التصنيف",
+    "issueDate":"تاريخ الملف",
+    "issueNo":"رقم الإشارة",
+    "arrivalDate":"تاريخ استلام",
+    "keyWords":"كلمات تعريفية",
+    "contractType":"نوع العقد",
+    "ref1":"المرجع 1",
+    "ref2":"المرجع 2",
+    "otherRef":"مراجع أخرى",
+    "organization":"الجهة",
+    "following":"متابعة",
+    "fileName":"اسم الملف",
+    "uploadFile":"تحميل الملف"
 
 
 

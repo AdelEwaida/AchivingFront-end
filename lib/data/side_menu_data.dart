@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../screens/actions_screens/action_screen.dart';
+import '../screens/file_screens/add_file_screen.dart';
 
 List<MenuModel> getMenus(AppLocalizations locale) {
   List<MenuModel> menus = [
@@ -85,7 +86,10 @@ Widget getScreenContent(int index) {
       return const DepartemntScreen();
     case 4:
       return const ActionScreen();
-    // case 2:
+    case 7:
+      return const AddFileScreen();
+    // case 2:;
+
     //   return UsersScreen();
   }
   return Container();

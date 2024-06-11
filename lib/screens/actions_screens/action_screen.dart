@@ -1,7 +1,7 @@
 import 'package:archiving_flutter_project/dialogs/dep_dialogs/departemnt_dialog.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
-import 'package:archiving_flutter_project/service/controller/actions_controllers.dart/action_controller.dart';
+import 'package:archiving_flutter_project/service/controller/actions_controllers/action_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
