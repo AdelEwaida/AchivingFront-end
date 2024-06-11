@@ -25,6 +25,16 @@ class DepartmentController {
         .postRequest(insertDepApi, departmentModel.toJsonAdd());
   }
 
+  Future updateDep(DepartmentModel departmentModel) async {
+    return await ApiService()
+        .postRequest(updateDepApi, departmentModel.toJsonEdit());
+  }
+
+  Future deleteDep(DepartmentModel departmentModel) async {
+    return await ApiService()
+        .postRequest(deleteDepApi, departmentModel.toJsonDelete());
+  }
+
   Future<int> getOfficeCount() async {
     var api = getDepCountApi;
 

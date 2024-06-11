@@ -6,3 +6,5 @@ const categoriesTreeApi = "docCat/getTree";
 const getDepPageApi = "docDept/page";
 const getDepCountApi = "docDept/count";
 const insertDepApi = "docDept/insert";
+const updateDepApi = "docDept/update";
+const deleteDepApi = "docDept/delete";

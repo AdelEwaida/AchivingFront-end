@@ -97,7 +97,16 @@
     "editCategory":"Edit Category",
     "sureToDeleteThisCat":"Are you sure that you want to delete this node?",
     "description":"Description",
-    "department":"Department"
+    "department":"Department",
+    "editDep": "Edit Department",
+    "editDoneSucess": "Edited successfully",
+    "areYouSureToDelete": "Are you sure to delete  {name}?",
+    "@areYouSureToDelete": {
+        "name": {
+            "type": "String",
+            "example": "name"
+        }
+    }
 
 
 

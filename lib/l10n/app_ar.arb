@@ -88,8 +88,10 @@
     "editCategory":"تعديل الصنف",
     "sureToDeleteThisCat":"هل أنت متأكد من حذف هذا التصنيف؟",
     "description":"الوصف",
-    "department":"الدائرة/الفرع"
-
+    "department":"الدائرة/الفرع",
+    "editDep":"تعديل دائرة/فرع",
+    "editDoneSucess":"تم التعديل بنجاح",
+    "areYouSureToDelete": "هل انت متأكد من حذف  {name} ؟"
 
 
 }
