@@ -154,7 +154,7 @@ class _AddActionDialogState extends State<AddActionDialog> {
           DateTimeComponent(
             label: _locale.date,
             dateController: dateController,
-            dateWidth: width * 0.15,
+            dateWidth: width * 0.2,
             dateControllerToCompareWith: null,
             readOnly: false,
             isInitiaDate: true,
@@ -214,7 +214,7 @@ class _AddActionDialogState extends State<AddActionDialog> {
       isReport: true,
       isMandetory: isMandetory,
       width: width * width1,
-      height: hint == _locale.notes ? height * 0.1 : height * 0.05,
+      height: height * 0.05,
       text: Text(hint),
       controller: controller,
       onSubmitted: (text) {},
@@ -224,7 +224,7 @@ class _AddActionDialogState extends State<AddActionDialog> {
 
   void addAction() async {
     if (descController.text.trim().isEmpty ||
-        dateController.text.trim().isEmpty) {
+        notesController.text.trim().isEmpty) {
       showDialog(
         context: context,
         builder: (context) {
@@ -237,13 +237,13 @@ class _AddActionDialogState extends State<AddActionDialog> {
         },
       );
     } else {
-      ActionModel departmentModel = ActionModel(
+      ActionModel actionModel = ActionModel(
           txtKey: null,
           txtDescription: descController.text,
+          txtNotes: notesController.text,
           datDate: dateController.text,
-          txtNotes: notesController.text);
-      await actionController.addAction(departmentModel).then((value) {
-        print("statusCode ${value.statusCode}");
+          intRecurring: 0);
+      await actionController.addAction(actionModel).then((value) {
         if (value.statusCode == 200) {
           showDialog(
             context: context,

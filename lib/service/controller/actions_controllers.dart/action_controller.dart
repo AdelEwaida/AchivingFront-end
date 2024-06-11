@@ -24,6 +24,16 @@ class ActionController {
         .postRequest(addActionApi, actionModel.toJsonAdd());
   }
 
+  // Future updateDep(ActionModel actionModel) async {
+  //   return await ApiService()
+  //       .postRequest(updateDepApi, actionModel.toJsonEdit());
+  // }
+
+  Future deleteAction(ActionModel actionModel) async {
+    return await ApiService()
+        .postRequest(deleteActionApi, actionModel.toJsonDelete());
+  }
+
   Future<int> getActionCount() async {
     var api = getActionCountApi;
 

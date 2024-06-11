@@ -49,18 +49,26 @@ class ActionModel {
 
   Map<String, dynamic> toJsonAdd() {
     return {
-      'datDate': datDate,
-      'txtDescription': txtDescription,
-      'txtNotes': txtNotes
+      'date': datDate,
+      'description': txtDescription,
+      'text': txtNotes,
+      'recurring': intRecurring
     };
   }
 
   PlutoRow toPlutoRow(int count) {
     return PlutoRow(cells: {
+      'txtKey': PlutoCell(value: txtKey),
       'datDate': PlutoCell(value: datDate),
       'countNumber': PlutoCell(value: count),
       'txtDescription': PlutoCell(value: txtDescription ?? ""),
       'txtNotes': PlutoCell(value: txtNotes ?? ""),
     });
+  }
+
+  Map<String, dynamic> toJsonDelete() {
+    return {
+      'id': txtKey,
+    };
   }
 }

@@ -90,7 +90,7 @@
     "description":"الوصف",
     "department":"الدائرة/الفرع",
     "date":"التاريخ",
-    "addAction":"إضافة دائرة/فرع",
+    "addAction":"إضافة تنبيه جديد",
     "startDateAfterEndDate": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
     "dateConflict": "تعارض التاريخ",
     "startTimeAfterEndTime": "وقت النهاية يجب أن يكون بعد وقت البداية",
