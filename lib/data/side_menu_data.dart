@@ -2,6 +2,7 @@ import 'package:archiving_flutter_project/models/dto/side_menu/menu_model.dart';
 import 'package:archiving_flutter_project/models/dto/side_menu/sub_menu_model.dart';
 import 'package:archiving_flutter_project/screens/categories_screens/categories_screen.dart';
 import 'package:archiving_flutter_project/screens/department_screens/department_screen.dart';
+import 'package:archiving_flutter_project/screens/file_screens/file_list_screen.dart';
 import 'package:archiving_flutter_project/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -48,27 +49,27 @@ List<MenuModel> getMenus(AppLocalizations locale) {
         title: locale.users,
         icon: Icons.supervised_user_circle_sharp,
         isParent: true,
-        pageNumber: 6,
+        pageNumber: 9,
         subMenuList: [
-          SubMenuModel(title: locale.addUser, pageNumber: 9),
-          SubMenuModel(title: locale.viewUser, pageNumber: 10),
+          SubMenuModel(title: locale.addUser, pageNumber: 10),
+          SubMenuModel(title: locale.viewUser, pageNumber: 11),
         ],
         isOpened: false),
     MenuModel(
         title: locale.userCategories,
         icon: Icons.supervised_user_circle_sharp,
         isParent: true,
-        pageNumber: 7,
+        pageNumber: 12,
         subMenuList: [
-          SubMenuModel(title: locale.addUserCategories, pageNumber: 11),
-          SubMenuModel(title: locale.viewUserCategories, pageNumber: 12),
+          SubMenuModel(title: locale.addUserCategories, pageNumber: 13),
+          SubMenuModel(title: locale.viewUserCategories, pageNumber: 14),
         ],
         isOpened: false),
     MenuModel(
         title: locale.changePassword,
         icon: Icons.password_outlined,
         isParent: false,
-        pageNumber: 8,
+        pageNumber: 15,
         isOpened: false,
         subMenuList: []),
   ];
@@ -85,6 +86,8 @@ Widget getScreenContent(int index) {
       return const DepartemntScreen();
     case 4:
       return const ActionScreen();
+    case 6:
+      return const FileListScreen();
     // case 2:
     //   return UsersScreen();
   }
