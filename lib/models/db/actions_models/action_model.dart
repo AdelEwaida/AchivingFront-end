@@ -49,18 +49,45 @@ class ActionModel {
 
   Map<String, dynamic> toJsonAdd() {
     return {
-      'datDate': datDate,
-      'txtDescription': txtDescription,
-      'txtNotes': txtNotes
+      'date': datDate,
+      'description': txtDescription,
+      'text': txtNotes,
+      'recurring': intRecurring
     };
   }
 
   PlutoRow toPlutoRow(int count) {
     return PlutoRow(cells: {
+      'txtKey': PlutoCell(value: txtKey),
       'datDate': PlutoCell(value: datDate),
       'countNumber': PlutoCell(value: count),
       'txtDescription': PlutoCell(value: txtDescription ?? ""),
       'txtNotes': PlutoCell(value: txtNotes ?? ""),
     });
+  }
+
+  Map<String, dynamic> toJsonDelete() {
+    return {
+      'id': txtKey,
+    };
+  }
+
+  static ActionModel fromPlutoRow(PlutoRow row) {
+    return ActionModel(
+        datDate: row.cells['datDate']?.value,
+        txtKey: row.cells['txtKey']?.value,
+        txtDescription: row.cells['txtDescription']?.value,
+        txtNotes: row.cells['txtNotes']?.value,
+        intRecurring: row.cells['intRecurring']?.value);
+  }
+
+  Map<String, dynamic> toJsonEdit() {
+    return {
+      'id': txtKey,
+      'date': datDate,
+      'description': txtDescription,
+      'text': txtNotes,
+      'recurring': intRecurring
+    };
   }
 }

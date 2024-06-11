@@ -117,7 +117,11 @@
             "example": "name"
         }
     },
-    "areYouSureToLogOut": "Are You sure to logout"
+        "areYouSureToLogOut": "Are You sure to logout",
+
+    "recurring":"Recurring",
+    "editAction":"Edit Action",
+        "areYouSureToLogOut":"Are you sure to logout"
 
 
 }

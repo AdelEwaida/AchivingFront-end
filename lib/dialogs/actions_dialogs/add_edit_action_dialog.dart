@@ -18,14 +18,16 @@ import 'package:intl/intl.dart';
 import '../../widget/date_time_component.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
-class AddActionDialog extends StatefulWidget {
-  const AddActionDialog({super.key});
+class AddEditActionDialog extends StatefulWidget {
+  ActionModel? actionModel;
+
+  AddEditActionDialog({super.key, this.actionModel});
 
   @override
-  State<AddActionDialog> createState() => _AddActionDialogState();
+  State<AddEditActionDialog> createState() => _AddEditActionDialogState();
 }
 
-class _AddActionDialogState extends State<AddActionDialog> {
+class _AddEditActionDialogState extends State<AddEditActionDialog> {
   late AppLocalizations _locale;
   double width = 0;
   double height = 0;
@@ -36,11 +38,18 @@ class _AddActionDialogState extends State<AddActionDialog> {
   TextEditingController notesController = TextEditingController();
 
   ActionController actionController = ActionController();
+  bool isRecurring = false;
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
     dateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    if (widget.actionModel != null) {
+      dateController.text = widget.actionModel!.datDate!;
+      descController.text = widget.actionModel!.txtDescription!;
+      notesController.text = widget.actionModel!.txtNotes!;
+      isRecurring = widget.actionModel!.intRecurring == 1 ? true : false;
+    }
     super.didChangeDependencies();
   }
 
@@ -57,14 +66,15 @@ class _AddActionDialogState extends State<AddActionDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       backgroundColor: dBackground,
       title: TitleDialogWidget(
-        title: _locale.addAction,
+        title:
+            widget.actionModel == null ? _locale.addAction : _locale.editAction,
         width: isDesktop ? width * 0.25 : width * 0.8,
         height: height * 0.07,
       ),
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.2 : height * 0.5,
+        height: isDesktop ? height * 0.25 : height * 0.5,
         child: SingleChildScrollView(
           child: formSection(),
         ),
@@ -149,27 +159,55 @@ class _AddActionDialogState extends State<AddActionDialog> {
 
   Widget formSection() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment
+          .start, // Ensure all children are aligned to the start
       children: [
         if (isDesktop)
           DateTimeComponent(
             label: _locale.date,
             dateController: dateController,
-            dateWidth: width * 0.15,
+            dateWidth: width * 0.2,
             dateControllerToCompareWith: null,
             readOnly: false,
             isInitiaDate: true,
             onValue: (isValid, value) {
               if (isValid) {
-                // setState(() {
                 dateController.text = value;
-                // });
               }
             },
             timeControllerToCompareWith: null,
           ),
         customTextField(
-            _locale.txtDescription, descController, isDesktop, 0.2, true),
-        customTextField(_locale.notes, notesController, isDesktop, 0.2, true),
+          _locale.txtDescription,
+          descController,
+          isDesktop,
+          0.2,
+          true,
+        ),
+        customTextField(
+          _locale.notes,
+          notesController,
+          isDesktop,
+          0.2,
+          true,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Checkbox(
+              activeColor: primary2,
+              value: isRecurring,
+              onChanged: (value) {
+                setState(() {
+                  isRecurring = value!;
+                });
+              },
+            ),
+            Text(_locale.recurring),
+          ],
+        ),
         if (!isDesktop) ...[
           DateTimeComponent(
             label: _locale.date,
@@ -180,16 +218,41 @@ class _AddActionDialogState extends State<AddActionDialog> {
             isInitiaDate: true,
             onValue: (isValid, value) {
               if (isValid) {
-                // setState(() {
                 dateController.text = value;
-                // });
               }
             },
             timeControllerToCompareWith: null,
           ),
           customTextField(
-              _locale.txtDescription, descController, isDesktop, 0.8, true),
-          customTextField(_locale.notes, notesController, isDesktop, 0.2, true),
+            _locale.txtDescription,
+            descController,
+            isDesktop,
+            0.8,
+            true,
+          ),
+          customTextField(
+            _locale.notes,
+            notesController,
+            isDesktop,
+            0.2,
+            true,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Checkbox(
+                activeColor: primary2,
+                value: isRecurring,
+                onChanged: (value) {
+                  setState(() {
+                    isRecurring = value!;
+                  });
+                },
+              ),
+              Text(_locale.recurring),
+            ],
+          ),
         ],
       ],
     );
@@ -214,7 +277,7 @@ class _AddActionDialogState extends State<AddActionDialog> {
       isReport: true,
       isMandetory: isMandetory,
       width: width * width1,
-      height: hint == _locale.notes ? height * 0.1 : height * 0.05,
+      height: height * 0.05,
       text: Text(hint),
       controller: controller,
       onSubmitted: (text) {},
@@ -224,7 +287,7 @@ class _AddActionDialogState extends State<AddActionDialog> {
 
   void addAction() async {
     if (descController.text.trim().isEmpty ||
-        dateController.text.trim().isEmpty) {
+        notesController.text.trim().isEmpty) {
       showDialog(
         context: context,
         builder: (context) {
@@ -236,14 +299,17 @@ class _AddActionDialogState extends State<AddActionDialog> {
               statusCode: 400);
         },
       );
+    } else if (widget.actionModel != null) {
+      editMethod();
     } else {
-      ActionModel departmentModel = ActionModel(
-          txtKey: null,
-          txtDescription: descController.text,
-          datDate: dateController.text,
-          txtNotes: notesController.text);
-      await actionController.addAction(departmentModel).then((value) {
-        print("statusCode ${value.statusCode}");
+      ActionModel actionModel = ActionModel(
+        txtKey: null,
+        txtDescription: descController.text,
+        txtNotes: notesController.text,
+        datDate: dateController.text,
+        intRecurring: isRecurring == false ? 0 : 1,
+      );
+      await actionController.addAction(actionModel).then((value) {
         if (value.statusCode == 200) {
           showDialog(
             context: context,
@@ -261,5 +327,31 @@ class _AddActionDialogState extends State<AddActionDialog> {
         }
       });
     }
+  }
+
+  void editMethod() async {
+    ActionModel actionModel = ActionModel(
+        txtKey: widget.actionModel!.txtKey!,
+        txtDescription: descController.text,
+        datDate: dateController.text,
+        intRecurring: isRecurring == false ? 0 : 1,
+        txtNotes: notesController.text);
+    await actionController.updateAction(actionModel).then((value) {
+      if (value.statusCode == 200) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.done_all,
+                errorDetails: _locale.done,
+                errorTitle: _locale.editDoneSucess,
+                color: Colors.green,
+                statusCode: 200);
+          },
+        ).then((value) {
+          Navigator.pop(context, true);
+        });
+      }
+    });
   }
 }

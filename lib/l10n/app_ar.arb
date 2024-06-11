@@ -102,7 +102,14 @@
     "editDep":"تعديل دائرة/فرع",
     "editDoneSucess":"تم التعديل بنجاح",
     "areYouSureToDelete": "هل انت متأكد من حذف  {name} ؟",
-    "areYouSureToLogOut":"هل انت متأكد من تسجيل الخروج؟"
+    "areYouSureToLogOut":"هل انت متأكد من تسجيل الخروج؟",
+    "areYouSureToDelete": "هل انت متأكد من حذف  {name} ؟",
+    "recurring":"تكرار",
+    "editAction":"تعديل التنبيه",
+    "areYouSureToLogOut":"هل انت متاكد من تسجيل الخروج؟"
+
+
+
 
 
 

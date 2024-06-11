@@ -213,6 +213,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
         },
       );
     } else if (widget.departmentModel != null) {
+      print(
+          "departmentModeldepartmentModeldepartmentModel:${widget.departmentModel!.toJson()}");
       editMethod();
     } else {
       DepartmentModel departmentModel = DepartmentModel(
@@ -241,6 +243,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
   }
 
   void editMethod() async {
+    print(
+        "widget.departmentModel!.txtKey!widget.departmentModel!.txtKey!:${widget.departmentModel!.txtKey!}");
     DepartmentModel departmentModel = DepartmentModel(
         txtKey: widget.departmentModel!.txtKey!,
         txtDescription: descController.text,
