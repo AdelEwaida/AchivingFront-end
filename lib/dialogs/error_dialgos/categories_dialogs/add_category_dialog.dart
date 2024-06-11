@@ -1,3 +1,6 @@
+import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
+import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
+import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -6,7 +9,8 @@ import '../../../utils/constants/styles.dart';
 import '../../../widget/text_field_widgets/custom_text_field2_.dart';
 
 class AddCategoryDialog extends StatefulWidget {
-  const AddCategoryDialog({super.key});
+  DocumentCategory? category;
+  AddCategoryDialog({super.key, this.category});
   @override
   State<AddCategoryDialog> createState() => _AdvanceSearchLogsDialogState();
 }
@@ -19,7 +23,7 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
 
   double width = 0;
   double height = 0;
-
+  CategoriesController categoriesController = CategoriesController();
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -77,6 +81,7 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
             ),
             const SizedBox(height: 20),
             CustomTextField2(
+              isMandetory: true,
               text: Text(_locale.description),
               width: width * 0.25,
               height: height * 0.045,
@@ -89,11 +94,13 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    addCategory();
+                  },
                   style: customButtonStyle1(Size(width * 0.08, height * 0.045),
                       16, const Color(0xff1F6E8C)),
                   child: Text(
-                    _locale.search,
+                    _locale.add,
                     style: const TextStyle(color: whiteColor),
                   ),
                 ),
@@ -101,7 +108,9 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
                   width: width * 0.01,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   style: customButtonStyle1(
                       Size(width * 0.1, height * 0.045), 16, redColor),
                   child: Text(
@@ -115,5 +124,19 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
         ),
       ),
     );
+  }
+
+  void addCategory() async {
+    InsertCategoryModel insertCategoryModel = InsertCategoryModel(
+        deptCode: widget.category!.docCatParent!.txtDeptcode!,
+        description: descriptionController.text,
+        id: widget.category!.docCatParent!.txtShortcode,
+        shortCode: "");
+    await categoriesController.addCategory(insertCategoryModel).then((value) {
+      print("valuuuu${value.statusCode}");
+      if (value.statusCode == 200) {
+        Navigator.pop(context, true);
+      }
+    });
   }
 }
