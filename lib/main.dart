@@ -3,10 +3,10 @@ import 'dart:js';
 import 'dart:js_interop';
 import 'dart:ui';
 
-
 import 'package:archiving_flutter_project/app/auth/session_model/session_config.dart';
 import 'package:archiving_flutter_project/app/auth/session_model/session_time_out_manager.dart';
 import 'package:archiving_flutter_project/app/routes/routes.dart';
+import 'package:archiving_flutter_project/providers/dates_provider.dart';
 import 'package:archiving_flutter_project/providers/local_provider.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
 import 'package:archiving_flutter_project/service/handler/api_service.dart';
@@ -27,10 +27,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:js' as js;
 
 void main() {
-   runApp(
+  runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (create) => LocaleProvider()),
-      ChangeNotifierProvider(create: (create)=>ScreenContentProvider()),
+      ChangeNotifierProvider(create: (create) => ScreenContentProvider()),
+      ChangeNotifierProvider(create: (create) => DatesProvider()),
     ], child: MyApp()),
   );
 }
@@ -54,7 +55,7 @@ class MyApp extends StatelessWidget {
       invalidateSessionForAppLostFocus: const Duration(minutes: 60),
       invalidateSessionForUserInactivity: const Duration(minutes: 60),
     );
-  
+
     final provider = Provider.of<LocaleProvider>(context);
     loadApi();
     return SessionTimeoutManager(

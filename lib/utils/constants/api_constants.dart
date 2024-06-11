@@ -12,3 +12,8 @@ const getDepCountApi = "docDept/count";
 const insertDepApi = "docDept/insert";
 const updateDepApi = "docDept/update";
 const deleteDepApi = "docDept/delete";
+
+//Action APIs
+const getActionApi = "actions/page";
+const getActionCountApi = "actions/count";
+const addActionApi = "actions/insert";

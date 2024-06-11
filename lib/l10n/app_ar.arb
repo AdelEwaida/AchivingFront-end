@@ -89,9 +89,23 @@
     "sureToDeleteThisCat":"هل أنت متأكد من حذف هذا التصنيف؟",
     "description":"الوصف",
     "department":"الدائرة/الفرع",
+    "date":"التاريخ",
+    "addAction":"إضافة دائرة/فرع",
+    "startDateAfterEndDate": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
+    "dateConflict": "تعارض التاريخ",
+    "startTimeAfterEndTime": "وقت النهاية يجب أن يكون بعد وقت البداية",
+    "timeConflict": "تعارض الوقت",
+    "validDay": "الرجاء إدخال يوم صالح",
+    "validMonth": "الرجاء إدخال شهر صالح",
+    "validDate": "الرجاء إدخال تاريخ صالح",
+    "department":"الدائرة/الفرع",
     "editDep":"تعديل دائرة/فرع",
     "editDoneSucess":"تم التعديل بنجاح",
     "areYouSureToDelete": "هل انت متأكد من حذف  {name} ؟"
+
+
+
+
 
 
 }
