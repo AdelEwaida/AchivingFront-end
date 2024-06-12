@@ -215,7 +215,9 @@ class _OfficeScreenState extends State<ActionScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        return AddEditActionDialog();
+        return AddEditActionDialog(
+          isFromList: false,
+        );
       },
     ).then((value) {
       if (value) {
@@ -301,6 +303,7 @@ class _OfficeScreenState extends State<ActionScreen> {
         context: context,
         builder: (context) {
           return AddEditActionDialog(
+            isFromList: false,
             actionModel: actionModel,
           );
         },

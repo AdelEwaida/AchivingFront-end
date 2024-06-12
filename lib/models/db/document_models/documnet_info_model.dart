@@ -1,3 +1,5 @@
+import 'package:pluto_grid/pluto_grid.dart';
+
 class DocumentModel {
   String? txtKey;
   String? txtDescription;
@@ -23,11 +25,16 @@ class DocumentModel {
   int? bolHasfile;
   String? datArrvialdate;
   String? txtOriginalfilekey;
-
+  String? txtOrganization;
+  String? txtOtherRef;
+  String? txtFollowing;
   DocumentModel({
     this.txtKey,
     this.txtDescription,
+    this.txtOrganization,
+    this.txtOtherRef,
     this.txtKeywords,
+    this.txtFollowing,
     this.txtReference1,
     this.txtReference2,
     this.intType,
@@ -51,10 +58,11 @@ class DocumentModel {
     this.txtOriginalfilekey,
   });
 
-  // Factory method to create an instance of DocumentModel from a Map
   factory DocumentModel.fromJson(Map<String, dynamic> json) {
     return DocumentModel(
       txtKey: json['txtKey'] ?? "",
+      txtOtherRef: json['txtOtherRef'] ?? "",
+      txtOrganization: json['txtOrganization'] ?? "",
       txtDescription: json['txtDescription'] ?? "",
       txtKeywords: json['txtKeywords'] ?? "",
       txtReference1: json['txtReference1'] ?? "",
@@ -66,6 +74,7 @@ class DocumentModel {
       intVouchtype: json['intVouchtype'] ?? 0,
       intVouchnum: json['intVouchnum'] ?? 0,
       txtJcode: json['txtJcode'] ?? "",
+      txtFollowing: json['txtFollowing'] ?? "",
       txtCategory: json['txtCategory'] ?? "",
       txtDept: json['txtDept'] ?? "",
       txtIssueno: json['txtIssueno'] ?? "",
@@ -81,11 +90,13 @@ class DocumentModel {
     );
   }
 
-  // Method to convert DocumentModel instance to a Map
   Map<String, dynamic> toJson() {
     return {
       'txtKey': txtKey ?? "",
+      "txtOtherRef": txtOtherRef ?? "",
+      'txtOrganization': txtOrganization ?? "",
       'txtDescription': txtDescription ?? "",
+      "txtFollowing": txtFollowing ?? "",
       'txtKeywords': txtKeywords ?? "",
       'txtReference1': txtReference1 ?? "",
       'txtReference2': txtReference2 ?? "",
@@ -109,5 +120,72 @@ class DocumentModel {
       'datArrvialdate': datArrvialdate ?? "",
       'txtOriginalfilekey': txtOriginalfilekey ?? "",
     };
+  }
+
+  PlutoRow toPlutoRow(int count) {
+    return PlutoRow(
+      cells: {
+        'txtOtherRef': PlutoCell(value: txtOtherRef),
+        'txtFollowing': PlutoCell(value: txtFollowing),
+        'countNumber': PlutoCell(value: count),
+        'txtKey': PlutoCell(value: txtKey),
+        'txtOrganization': PlutoCell(value: txtOrganization),
+        'txtDescription': PlutoCell(value: txtDescription),
+        'txtKeywords': PlutoCell(value: txtKeywords),
+        'txtReference1': PlutoCell(value: txtReference1),
+        'txtReference2': PlutoCell(value: txtReference2),
+        'intType': PlutoCell(value: intType),
+        'datCreationdate': PlutoCell(value: datCreationdate),
+        'txtLastupdateduser': PlutoCell(value: txtLastupdateduser),
+        'txtMimetype': PlutoCell(value: txtMimetype),
+        'intVouchtype': PlutoCell(value: intVouchtype),
+        'intVouchnum': PlutoCell(value: intVouchnum),
+        'txtJcode': PlutoCell(value: txtJcode),
+        'txtCategory': PlutoCell(value: txtCategory),
+        'txtDept': PlutoCell(value: txtDept),
+        'txtIssueno': PlutoCell(value: txtIssueno),
+        'datIssuedate': PlutoCell(value: datIssuedate),
+        'txtUsercode': PlutoCell(value: txtUsercode),
+        'txtInsurance': PlutoCell(value: txtInsurance),
+        'txtLicense': PlutoCell(value: txtLicense),
+        'txtMaintenance': PlutoCell(value: txtMaintenance),
+        'txtOtherservices': PlutoCell(value: txtOtherservices),
+        'bolHasfile': PlutoCell(value: bolHasfile),
+        'datArrvialdate': PlutoCell(value: datArrvialdate),
+        'txtOriginalfilekey': PlutoCell(value: txtOriginalfilekey),
+      },
+    );
+  }
+
+  static DocumentModel fromPlutoRow(PlutoRow row) {
+    return DocumentModel(
+      txtKey: row.cells['txtKey']?.value,
+      txtDescription: row.cells['txtDescription']?.value,
+      txtKeywords: row.cells['txtKeywords']?.value,
+      txtReference1: row.cells['txtReference1']?.value,
+      txtReference2: row.cells['txtReference2']?.value,
+      txtOtherRef: row.cells['txtOtherRef']?.value,
+      txtOrganization: row.cells['txtOrganization']?.value,
+      intType: row.cells['intType']?.value,
+      datCreationdate: row.cells['datCreationdate']?.value,
+      txtLastupdateduser: row.cells['txtLastupdateduser']?.value,
+      txtMimetype: row.cells['txtMimetype']?.value,
+      intVouchtype: row.cells['intVouchtype']?.value,
+      intVouchnum: row.cells['intVouchnum']?.value,
+      txtJcode: row.cells['txtJcode']?.value,
+      txtCategory: row.cells['txtCategory']?.value,
+      txtDept: row.cells['txtDept']?.value,
+      txtIssueno: row.cells['txtIssueno']?.value,
+      datIssuedate: row.cells['datIssuedate']?.value,
+      txtFollowing: row.cells['txtFollowing']?.value,
+      txtUsercode: row.cells['txtUsercode']?.value,
+      txtInsurance: row.cells['txtInsurance']?.value,
+      txtLicense: row.cells['txtLicense']?.value,
+      txtMaintenance: row.cells['txtMaintenance']?.value,
+      txtOtherservices: row.cells['txtOtherservices']?.value,
+      bolHasfile: row.cells['bolHasfile']?.value,
+      datArrvialdate: row.cells['datArrvialdate']?.value,
+      txtOriginalfilekey: row.cells['txtOriginalfilekey']?.value,
+    );
   }
 }

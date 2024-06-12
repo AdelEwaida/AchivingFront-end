@@ -1,3 +1,5 @@
+import 'package:pluto_grid/pluto_grid.dart';
+
 class FileUploadModel {
   String? txtKey;
   String? txtHdrkey;
@@ -53,5 +55,22 @@ class FileUploadModel {
       'intLinenum': intLinenum ?? 0,
       'intType': intType ?? 0,
     };
+  }
+  PlutoRow toPlutoRow(int countNumber) {
+    return PlutoRow(
+      cells: {
+        'countNumber': PlutoCell(value: countNumber),
+        'txtKey': PlutoCell(value: txtKey),
+        'txtHdrkey': PlutoCell(value: txtHdrkey),
+        'txtFilename': PlutoCell(value: txtFilename),
+        'imgBlob': PlutoCell(value: imgBlob),
+        'dblFilesize': PlutoCell(value: dblFilesize),
+        'txtUsercode': PlutoCell(value: txtUsercode),
+        'datDate': PlutoCell(value: datDate),
+        'txtMimetype': PlutoCell(value: txtMimetype),
+        'intLinenum': PlutoCell(value: intLinenum),
+        'intType': PlutoCell(value: intType),
+      },
+    );
   }
 }

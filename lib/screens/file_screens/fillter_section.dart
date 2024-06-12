@@ -1,6 +1,12 @@
+import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
+import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
+import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
+import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
+import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
+import 'package:archiving_flutter_project/utils/constants/sorted_by_constant.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
@@ -10,6 +16,8 @@ import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:pluto_grid/pluto_grid.dart';
+import 'package:provider/provider.dart';
 
 class FillterFileSection extends StatefulWidget {
   const FillterFileSection({super.key});
@@ -38,13 +46,21 @@ class _FillterFileSectionState extends State<FillterFileSection> {
   TextEditingController organizationController = TextEditingController();
   TextEditingController followingController = TextEditingController();
   TextEditingController sortedByController = TextEditingController();
+  String selectedDep = "";
+  int selectedSortedType = -1;
+  DocumentsController documentsController = DocumentsController();
+  late DocumentListProvider documentListProvider;
+  late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
+
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
-    // TODO: implement didChangeDependencies
+    documentListProvider = context.read<DocumentListProvider>();
+    calssificatonNameAndCodeProvider =
+        context.read<CalssificatonNameAndCodeProvider>();
     super.didChangeDependencies();
   }
 
@@ -54,7 +70,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
 
     return Container(
       width: width * 0.44,
-      height: height * 0.6,
+      height: height * 0.5,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.orange),
       ),
@@ -105,7 +121,12 @@ class _FillterFileSectionState extends State<FillterFileSection> {
             child: Row(
               children: [
                 DropDown(
-                  onChanged: (value) {},
+                  key: UniqueKey(),
+                  onChanged: (value) {
+                    selectedDep = value.txtKey;
+                    // setState(() {});
+                  },
+                  initialValue: selectedDep.isEmpty ? null : selectedDep,
                   bordeText: _locale.department,
                   width: width * 0.1,
                   height: height * 0.04,
@@ -115,11 +136,18 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                   },
                 ),
                 space(0.01),
-                CustomTextField2(
-                  text: Text(_locale.classification),
-                  controller: classificationController,
-                  width: width * 0.1,
-                  height: height * 0.04,
+                Consumer<CalssificatonNameAndCodeProvider>(
+                  builder: (context, value, child) {
+                    classificationController.text = value.classificatonName;
+
+                    return CustomTextField2(
+                      text: Text(_locale.classification),
+                      controller: classificationController,
+                      width: width * 0.1,
+                      height: height * 0.04,
+                      readOnly: true,
+                    );
+                  },
                 ),
                 space(0.01),
                 CustomTextField2(
@@ -129,16 +157,11 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                   height: height * 0.04,
                 ),
                 space(0.01),
-                DropDown(
-                  onChanged: (value) {},
-                  bordeText: _locale.contractType,
+                CustomTextField2(
+                  text: Text(_locale.ref1),
+                  controller: ref1Controller,
                   width: width * 0.1,
                   height: height * 0.04,
-                  items: ["1", "2"],
-                  // onSearch: (p0) async {
-                  //   return await DepartmentController()
-                  //       .getDep(SearchModel(page: 1));
-                  // },
                 ),
               ],
             ),
@@ -147,13 +170,6 @@ class _FillterFileSectionState extends State<FillterFileSection> {
             padding: const EdgeInsets.all(3.0),
             child: Row(
               children: [
-                CustomTextField2(
-                  text: Text(_locale.ref1),
-                  controller: ref1Controller,
-                  width: width * 0.1,
-                  height: height * 0.04,
-                ),
-                space(0.01),
                 CustomTextField2(
                   text: Text(_locale.ref2),
                   controller: ref2Controller,
@@ -174,6 +190,13 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                   width: width * 0.1,
                   height: height * 0.04,
                 ),
+                space(0.01),
+                CustomTextField2(
+                  text: Text(_locale.following),
+                  controller: followingController,
+                  width: width * 0.1,
+                  height: height * 0.04,
+                ),
               ],
             ),
           ),
@@ -181,18 +204,16 @@ class _FillterFileSectionState extends State<FillterFileSection> {
             padding: const EdgeInsets.all(3.0),
             child: Row(
               children: [
-                // space(0.01),
-                CustomTextField2(
-                  text: Text(_locale.following),
-                  controller: followingController,
-                  width: width * 0.1,
-                  height: height * 0.04,
-                ),
-                space(0.01),
-                //sortedByController
-                CustomTextField2(
-                  text: Text(_locale.sortedBy),
-                  controller: sortedByController,
+                DropDown(
+                  key: UniqueKey(),
+                  onChanged: (value) {
+                    selectedSortedType = getSortedByTyepsCode(_locale, value);
+                  },
+                  initialValue: selectedSortedType == -1
+                      ? null
+                      : getSortedByTyepsByCode(_locale, selectedSortedType),
+                  bordeText: _locale.sortedBy,
+                  items: getSortedByTyeps(_locale),
                   width: width * 0.1,
                   height: height * 0.04,
                 ),
@@ -200,18 +221,38 @@ class _FillterFileSectionState extends State<FillterFileSection> {
             ),
           ),
           Center(
-            child: ElevatedButton(
-              onPressed: () {
-                // addAction();
-              },
-              style: customButtonStyle(
-                  Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
-                  18,
-                  greenColor),
-              child: Text(
-                _locale.search,
-                style: const TextStyle(color: whiteColor),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    search();
+                  },
+                  style: customButtonStyle(
+                      Size(isDesktop ? width * 0.1 : width * 0.4,
+                          height * 0.045),
+                      18,
+                      greenColor),
+                  child: Text(
+                    _locale.search,
+                    style: const TextStyle(color: whiteColor),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    resetForm();
+                  },
+                  style: customButtonStyle(
+                      Size(isDesktop ? width * 0.1 : width * 0.4,
+                          height * 0.045),
+                      18,
+                      Colors.blue),
+                  child: Text(
+                    _locale.resetFilter,
+                    style: const TextStyle(color: whiteColor),
+                  ),
+                ),
+              ],
             ),
           )
         ],
@@ -223,5 +264,46 @@ class _FillterFileSectionState extends State<FillterFileSection> {
     return SizedBox(
       width: width * width1,
     );
+  }
+
+  void resetForm() {
+    fromDateController.text = Converters.getDateBeforeMonth();
+    toDateController.text = Converters.formatDate2(DateTime.now().toString());
+    descreptionController.clear();
+    issueNoController.clear();
+    classificationController.clear();
+    keyWordController.clear();
+    ref1Controller.clear();
+    ref2Controller.clear();
+    otherRefController.clear();
+    organizationController.clear();
+    followingController.clear();
+    selectedDep = "";
+    selectedSortedType = -1;
+    calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
+    calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
+    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
+    setState(() {});
+  }
+
+  Future<void> search() async {
+    SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
+    searchDocumentCriteria.fromIssueDate = fromDateController.text;
+    searchDocumentCriteria.toIssueDate = toDateController.text;
+    searchDocumentCriteria.desc = descreptionController.text;
+    searchDocumentCriteria.issueNo = issueNoController.text;
+    searchDocumentCriteria.dept = selectedDep;
+    searchDocumentCriteria.keywords = keyWordController.text;
+    searchDocumentCriteria.ref1 = ref1Controller.text;
+    searchDocumentCriteria.ref2 = ref2Controller.text;
+    searchDocumentCriteria.otherRef = otherRefController.text;
+    searchDocumentCriteria.cat =
+        calssificatonNameAndCodeProvider.classificatonKey;
+    searchDocumentCriteria.organization = organizationController.text;
+    searchDocumentCriteria.following = followingController.text;
+    searchDocumentCriteria.sortedBy = selectedSortedType;
+    searchDocumentCriteria.page = 1;
+
+    documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
   }
 }

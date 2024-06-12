@@ -22,3 +22,6 @@ const updateActionApi = "actions/update";
 
 //docFiles APIs
 const inserttDocFile = "docFilesTrans/insert";
+const updateDoc = "docInfo/update";
+const searchDocCritereaFile = "docInfo/searchCrit";
+const getFilesByHdrApi = "docFiles/getByHdr";

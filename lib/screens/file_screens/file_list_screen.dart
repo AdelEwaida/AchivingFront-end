@@ -1,8 +1,14 @@
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
+import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
+import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 import 'package:archiving_flutter_project/models/tree_model/my_node.dart';
 import 'package:archiving_flutter_project/models/tree_model/tree_tile.dart';
+import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
+import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/screens/file_screens/fillter_section.dart';
+import 'package:archiving_flutter_project/screens/file_screens/table_file_list_section.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
+import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
@@ -16,6 +22,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:provider/provider.dart';
 
 class FileListScreen extends StatefulWidget {
   const FileListScreen({super.key});
@@ -29,7 +36,7 @@ class _FileListScreenState extends State<FileListScreen> {
   double width = 0;
   double height = 0;
   List<MyNode> treeNodes = [];
-  bool isLoading = false;
+  // bool isLoading = false;
   ValueNotifier selectedCamp = ValueNotifier("");
   ValueNotifier selectedValue = ValueNotifier("");
   Color currentColor = Color.fromARGB(255, 225, 65, 65);
@@ -44,13 +51,19 @@ class _FileListScreenState extends State<FileListScreen> {
       TextEditingController(text: Converters.getDateBeforeMonth());
   TextEditingController toDateController = TextEditingController(
       text: Converters.formatDate2(DateTime.now().toString()));
+  late DocumentListProvider documentListProvider;
+  late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
+  DocumentsController documentsController = DocumentsController();
+  late PlutoGridStateManager stateManager;
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
-    fillColumnTable();
+    documentListProvider = context.read<DocumentListProvider>();
+    calssificatonNameAndCodeProvider =
+        context.read<CalssificatonNameAndCodeProvider>();
     if (treeNodes.isEmpty) {
       roots = <MyNode>[
         MyNode(title: '/', children: treeNodes, extra: null, isRoot: true),
@@ -59,7 +72,7 @@ class _FileListScreenState extends State<FileListScreen> {
         roots: roots,
         childrenProvider: (MyNode node) => node.children,
       );
-      await fetchDate();
+      await fetchData();
     }
     super.didChangeDependencies();
   }
@@ -70,82 +83,104 @@ class _FileListScreenState extends State<FileListScreen> {
     height = MediaQuery.of(context).size.height;
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Adding some spacing between search field and tree
-          Row(
-            children: [
-              Container(
-                width: width * 0.35,
-                height: height * 0.6,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.orange),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Adding some spacing between search field and tree
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: width * 0.35,
+                  height: height * 0.5,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.orange),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomSearchField(
+                        label: _locale.search,
+                        width: width * 0.3,
+                        padding: 8,
+                        controller: searchController,
+                        onChanged: (value) {
+                          searchTree(value);
+                          // Add search functionality if needed
+                        },
+                      ),
+                      Expanded(child: treeSection()),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    CustomSearchField(
-                      label: _locale.search,
-                      width: width * 0.3,
-                      padding: 8,
-                      controller: searchController,
-                      onChanged: (value) {
-                        searchTree(value);
-                        // Add search functionality if needed
-                      },
-                    ),
-                    Expanded(child: treeSection()),
-                  ],
+                SizedBox(
+                  width: width * 0.02,
                 ),
-              ),
-              SizedBox(
-                width: width * 0.02,
-              ),
-              FillterFileSection()
-            ],
-          ),
-        ],
+                FillterFileSection()
+              ],
+            ),
+            Row(
+              children: [
+                TableFileListSection(),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget treeSection() {
-    return isLoading
-        ? Center(
-            child: SpinKitCircle(
-              color: Theme.of(context).primaryColor,
-              size: 50.0,
-            ),
-          )
-        : TreeView<MyNode>(
-            key: ValueKey(treeController),
-            treeController: treeController,
-            nodeBuilder: (BuildContext context, TreeEntry<MyNode> entry) {
-              return MyTreeTile(
-                onPointerDown: (p0) {},
-                key: ValueKey(entry.node),
-                entry: entry,
-                folderOnTap: () {
-                  if (entry.node.children.isNotEmpty) {
-                    selectedCategory = entry.node.extra;
-                    selectedCamp.value =
-                        selectedCategory!.docCatParent!.txtDescription!;
-                    selectedValue.value =
-                        selectedCategory!.docCatParent!.txtShortcode;
-                    treeController.toggleExpansion(entry.node);
-                  } else {
-                    selectedCategory = entry.node.extra;
-                    selectedCamp.value =
-                        selectedCategory!.docCatParent!.txtDescription!;
-                    selectedValue.value =
-                        selectedCategory!.docCatParent!.txtShortcode;
-                  }
+    return ValueListenableBuilder(
+      valueListenable: isLoading,
+      builder: (context, value, child) {
+        return isLoading.value
+            ? Center(
+                child: SpinKitCircle(
+                  color: Theme.of(context).primaryColor,
+                  size: 50.0,
+                ),
+              )
+            : TreeView<MyNode>(
+                key: ValueKey(treeController),
+                treeController: treeController,
+                nodeBuilder: (BuildContext context, TreeEntry<MyNode> entry) {
+                  return MyTreeTile(
+                    onPointerDown: (p0) {},
+                    key: ValueKey(entry.node),
+                    entry: entry,
+                    folderOnTap: () {
+                      if (entry.node.children.isNotEmpty) {
+                        selectedCategory = entry.node.extra;
+                        selectedCamp.value =
+                            selectedCategory!.docCatParent!.txtDescription!;
+
+                        selectedValue.value =
+                            selectedCategory!.docCatParent!.txtShortcode;
+                        calssificatonNameAndCodeProvider
+                            .setSelectedClassificatonName(selectedCamp.value);
+                        calssificatonNameAndCodeProvider
+                            .setSelectedClassificatonKey(
+                                selectedCategory!.docCatParent!.txtKey!);
+                        treeController.toggleExpansion(entry.node);
+                      } else {
+                        selectedCategory = entry.node.extra;
+                        selectedCamp.value =
+                            selectedCategory!.docCatParent!.txtDescription!;
+                        selectedValue.value =
+                            selectedCategory!.docCatParent!.txtShortcode;
+                      }
+                    },
+                    textWidget: nodeDesign(entry.node),
+                  );
                 },
-                textWidget: nodeDesign(entry.node),
               );
-            },
-          );
+      },
+    );
   }
 
   void searchTree(String query) {
@@ -161,7 +196,8 @@ class _FileListScreenState extends State<FileListScreen> {
           MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
       treeController.toggleExpansion(node);
       treeController.roots = <MyNode>[node];
-      setState(() {});
+      treeController.notifyListeners();
+      // setState(() {});
     } else {
       for (final node in treeNodes) {
         if (searchNode(node, query)) {
@@ -178,7 +214,9 @@ class _FileListScreenState extends State<FileListScreen> {
               title: '/', children: treeNodes, extra: null, isRoot: true);
           treeController.toggleExpansion(node);
           treeController.roots = <MyNode>[node];
-          setState(() {});
+          // setState(() {});
+          treeController.notifyListeners();
+
           break;
         }
       }
@@ -208,7 +246,13 @@ class _FileListScreenState extends State<FileListScreen> {
           selectedCategory = node.extra;
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-          setState(() {});
+          calssificatonNameAndCodeProvider
+              .setSelectedClassificatonName(selectedCamp.value);
+          calssificatonNameAndCodeProvider.setSelectedClassificatonKey(
+              selectedCategory!.docCatParent!.txtKey!);
+          treeController.notifyListeners();
+
+          // setState(() {});
         },
         onDoubleTap: () {
           if (!node.isRoot && node.children.isEmpty) {
@@ -237,11 +281,11 @@ class _FileListScreenState extends State<FileListScreen> {
 
   List<DocumentCategory> campClassificationList = [];
   List<DocumentCategory> children = [];
-  Future<void> fetchDate() async {
-    setState(() {
-      isLoading = true;
-    });
-
+  Future<void> fetchData() async {
+    // setState(() {
+    //   isLoading = true;
+    // });
+    isLoading.value = true;
     campClassificationList = await categoriesController.getCategoriesTree();
 
     convertToTreeList(campClassificationList);
@@ -253,14 +297,15 @@ class _FileListScreenState extends State<FileListScreen> {
     treeController.toggleExpansion(roots.first);
   }
 
+  ValueNotifier isLoading = ValueNotifier(false);
   void convertToTreeList(List<DocumentCategory> result) {
     for (int i = 0; i < result.length; i++) {
       treeNodes.add(getNodes(result[i]));
     }
-
-    setState(() {
-      isLoading = false;
-    });
+    isLoading.value = false;
+    // setState(() {
+    //   isLoading = false;
+    // });
   }
 
   MyNode getNodes(DocumentCategory data) {
@@ -314,67 +359,12 @@ class _FileListScreenState extends State<FileListScreen> {
     return false;
   }
 
-  List<PlutoColumn> polCols = [];
-  void fillColumnTable() {
-    polCols.addAll([
-      PlutoColumn(
-        title: "#",
-        field: "countNumber",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.05 : width * 0.15,
-        backgroundColor: columnColors,
-      ),
-      PlutoColumn(
-        title: _locale.description,
-        field: "txtDescription",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.16 : width * 0.4,
-        backgroundColor: columnColors,
-      ),
-      PlutoColumn(
-        title: _locale.issueNo,
-        field: "txtIssueno",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.28 : width * 0.2,
-        backgroundColor: columnColors,
-      ),
-      PlutoColumn(
-        title: _locale.date,
-        field: "datIssuedate",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.35 : width * 0.2,
-        backgroundColor: columnColors,
-      ),
-    ]);
-  }
+ 
 
-  Widget tableSection() {
-    return TableComponent(
-      key: UniqueKey(),
-      tableHeigt: height * 0.85,
-      tableWidth: width,
-      // delete: deleteAction,
-      // add: addAction,
-      // genranlEdit: editAction,
-      plCols: polCols,
-      mode: PlutoGridMode.selectWithOneTap,
-      polRows: [],
-      // footerBuilder: (stateManager) {
-      //   return lazyLoadingfooter(stateManager);
-      // },
-      onLoaded: (PlutoGridOnLoadedEvent event) {
-        // stateManager = event.stateManager;
-        // pageLis.value = pageLis.value > 1 ? 0 : 1;
-        // totalActionsCount.value = 0;
-        // getCount();
-      },
-      doubleTab: (event) async {
-        PlutoRow? tappedRow = event.row;
-      },
-      onSelected: (event) async {
-        PlutoRow? tappedRow = event.row;
-        // selectedRow = tappedRow;
-      },
-    );
+  @override
+  void dispose() {
+    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
+    // TODO: implement dispose
+    super.dispose();
   }
 }

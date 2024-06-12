@@ -21,6 +21,7 @@ class TableComponent extends StatefulWidget {
   final Function(String)? search;
   final Function()? delete;
   final Function()? exportToExcel;
+  final Function()? download;
 
   final Function()? edit1;
   final Function()? genranlEdit;
@@ -28,6 +29,10 @@ class TableComponent extends StatefulWidget {
   final Function()? advanceSearch;
   final Function()? viewLocation;
   final Function()? pollScreen;
+  final Function()? addReminder;
+  final Function()? upload;
+  final Function()? explor;
+
   final Function(PlutoGridOnLoadedEvent event)? onLoaded;
   final Function(PlutoGridOnRowDoubleTapEvent event)? doubleTab;
   final Function(PlutoGridOnRowSecondaryTapEvent event)? rightClickTap;
@@ -47,9 +52,13 @@ class TableComponent extends StatefulWidget {
   TableComponent(
       {this.key,
       this.viewLocation,
+      this.download,
+      this.explor,
       this.tableHeigt,
+      this.upload,
       this.tableWidth,
       this.pollScreen,
+      this.addReminder,
       this.exportToExcel,
       this.advanceSearch,
       this.genranlEdit,
@@ -414,6 +423,7 @@ class _TableComponentState extends State<TableComponent> {
                     },
                     icon: const Icon(Icons.refresh)),
               ),
+
               widget.genranlEdit != null
                   ? Tooltip(
                       message: locale.edit,
@@ -429,6 +439,26 @@ class _TableComponentState extends State<TableComponent> {
                           },
                           icon: const Icon(
                             Icons.edit,
+                            size: 20,
+                          )),
+                    )
+                  : SizedBox.shrink(),
+              widget.explor != null
+                  ? Tooltip(
+                      message: locale.documentExplorer,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.explor!();
+                            // dealsProvider.clearProvider();
+                            // dealsProvider.clearCampModel();
+
+                            // dealsProvider.loadedList = rowList;
+                            // dealsProvider.pageNum = pageLis.value;
+                            // // screenProvider.setPage(32);
+                            // tabsProvider.changeActiveWidget(32, locale);
+                          },
+                          icon: const Icon(
+                            Icons.travel_explore_sharp,
                             size: 20,
                           )),
                     )
@@ -541,6 +571,46 @@ class _TableComponentState extends State<TableComponent> {
                           icon: Icon(
                             color: redColor,
                             Icons.delete,
+                            size: 20,
+                          )),
+                    )
+                  : const SizedBox.shrink(),
+              widget.upload != null
+                  ? Tooltip(
+                      message: locale.uploadFile,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.upload!();
+                          },
+                          icon: const Icon(
+                            // color: redColor,
+                            Icons.upload_rounded,
+                            size: 20,
+                          )),
+                    )
+                  : const SizedBox.shrink(),
+              widget.addReminder != null
+                  ? Tooltip(
+                      message: locale.addReminder,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.addReminder!();
+                          },
+                          icon: const Icon(
+                            Icons.remember_me_sharp,
+                            size: 20,
+                          )),
+                    )
+                  : const SizedBox.shrink(),
+              widget.download != null
+                  ? Tooltip(
+                      message: locale.download,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.download!();
+                          },
+                          icon: const Icon(
+                            Icons.download,
                             size: 20,
                           )),
                     )

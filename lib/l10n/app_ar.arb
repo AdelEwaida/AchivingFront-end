@@ -132,11 +132,12 @@
         "otherRef":"مراجع اخرى",
         "organization":"الجهة",
         "following":"متابعة",
-        "sortedBy":"ترتيب حسب"
-
-
-
-
+        "sortedBy":"ترتيب حسب",
+        "dateCreated":"تاريخ الانشاء",
+        "documentDetails":"تفاصيل الملف",
+        "editDocumentDetails":"تعديل معلومات الملف",
+"addReminder":"إضافة تذكير",
+"download":"تنزيل"
 
 
 

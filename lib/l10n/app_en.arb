@@ -147,7 +147,12 @@
                 "otherRef": "Other Reference",
                 "organization":"organization",
                         "following": "following",
-        "sortedBy":"Sorted By"
+        "sortedBy":"Sorted By",
+        "dateCreated": "Date Created",
+        "documentDetails": "Document Details",
+        "editDocumentDetails": "Edit Document Details",
+        "addReminder":"Add reminder",
+"download": "download"
 
 
 }
