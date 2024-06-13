@@ -32,6 +32,7 @@ class TableComponent extends StatefulWidget {
   final Function()? addReminder;
   final Function()? upload;
   final Function()? explor;
+  final Function()? copy;
 
   final Function(PlutoGridOnLoadedEvent event)? onLoaded;
   final Function(PlutoGridOnRowDoubleTapEvent event)? doubleTab;
@@ -54,6 +55,7 @@ class TableComponent extends StatefulWidget {
       this.viewLocation,
       this.download,
       this.explor,
+      this.copy,
       this.tableHeigt,
       this.upload,
       this.tableWidth,
@@ -408,21 +410,21 @@ class _TableComponentState extends State<TableComponent> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Tooltip(
-                message: locale.refresh,
-                child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        // screenContentProvider
-                        //     .setLastPage(screenContentProvider.getPage());
-                        // screenContentProvider.setPage1(0);
-                        widget.search!("");
-                        screenContentProvider
-                            .setPage1(screenContentProvider.getPage());
-                      });
-                    },
-                    icon: const Icon(Icons.refresh)),
-              ),
+              // Tooltip(
+              //   message: locale.refresh,
+              //   child: IconButton(
+              //       onPressed: () {
+              //         setState(() {
+              //           // screenContentProvider
+              //           //     .setLastPage(screenContentProvider.getPage());
+              //           // screenContentProvider.setPage1(0);
+              //           widget.search!("");
+              //           screenContentProvider
+              //               .setPage1(screenContentProvider.getPage());
+              //         });
+              //       },
+              //       icon: const Icon(Icons.refresh)),
+              // ),
 
               widget.genranlEdit != null
                   ? Tooltip(
@@ -459,6 +461,26 @@ class _TableComponentState extends State<TableComponent> {
                           },
                           icon: const Icon(
                             Icons.travel_explore_sharp,
+                            size: 20,
+                          )),
+                    )
+                  : SizedBox.shrink(),
+              widget.copy != null
+                  ? Tooltip(
+                      message: locale.copy,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.copy!();
+                            // dealsProvider.clearProvider();
+                            // dealsProvider.clearCampModel();
+
+                            // dealsProvider.loadedList = rowList;
+                            // dealsProvider.pageNum = pageLis.value;
+                            // // screenProvider.setPage(32);
+                            // tabsProvider.changeActiveWidget(32, locale);
+                          },
+                          icon: const Icon(
+                            Icons.copy,
                             size: 20,
                           )),
                     )

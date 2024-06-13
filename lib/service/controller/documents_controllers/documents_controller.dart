@@ -15,10 +15,18 @@ class DocumentsController {
   //   return await ApiService()
   //       .postRequest(inserttDocFile, departmentModel.toJsonAdd());
   // }
+  Future uplodFileInDocument(DocumentFileRequest documentFileRequest) async {
+    return await ApiService()
+        .postRequest(uplodeFileInDocApi, documentFileRequest.toJson());
+  }
 
   Future addDocument(DocumentFileRequest documentFileRequest) async {
     return await ApiService()
         .postRequest(inserttDocFile, documentFileRequest.toJson());
+  }
+  Future copyDocument(DocumentModel documentFileRequest) async {
+    return await ApiService()
+        .postRequest(copyFileDocApi, documentFileRequest.toJson());
   }
 
   Future updateDocument(DocumentModel documentFileRequest) async {

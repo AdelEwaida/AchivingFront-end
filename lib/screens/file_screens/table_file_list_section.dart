@@ -59,7 +59,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           tableWidth: width * 0.81,
           addReminder: addRemider,
           upload: uploadFile,
-          // delete: deleteAction,
+          copy: copyFile,
+          delete: deleteFile,
           // add: addAction,
           // genranlEdit: editAction,
           plCols: polCols,
@@ -148,6 +149,20 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           );
         },
       );
+    }
+  }
+
+  void deleteFile() {
+    if (selectedRow != null) {}
+  }
+
+  void copyFile() async {
+    if (selectedRow != null) {
+      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      var response = await documentsController.copyDocument(documentModel);
+      if (response.statusCode == 200) {
+        print("DONE");
+      }
     }
   }
 

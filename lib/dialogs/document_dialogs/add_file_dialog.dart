@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -190,20 +191,20 @@ class _AddFileDialogState extends State<AddFileDialog> {
                             SizedBox(
                               width: width * 0.015,
                             ),
-                            CustomDropDown2(
-                              width: width * 0.13,
-                              onChanged: (value) {},
-                              searchBox: true,
-                              valSelected: true,
-                              bordeText: _locale.contractType,
-                              heightVal: height * 0.3,
+                       
+                            customTextField(
+                              _locale.ref1,
+                              ref1Controller,
+                              isDesktop,
+                              0.13,
+                              false,
                             ),
                             SizedBox(
                               width: width * 0.015,
                             ),
                             customTextField(
-                              _locale.ref1,
-                              ref1Controller,
+                              _locale.ref2,
+                              ref2Controller,
                               isDesktop,
                               0.13,
                               false,
@@ -214,16 +215,8 @@ class _AddFileDialogState extends State<AddFileDialog> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            customTextField(
-                              _locale.ref2,
-                              ref2Controller,
-                              isDesktop,
-                              0.13,
-                              false,
-                            ),
-                            SizedBox(
-                              width: width * 0.015,
-                            ),
+                        
+                           
                             customTextField(
                               _locale.otherRef,
                               otherRefController,
@@ -241,12 +234,9 @@ class _AddFileDialogState extends State<AddFileDialog> {
                               0.13,
                               false,
                             ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
+                            SizedBox(
+                              width: width * 0.015,
+                            ),
                             customTextField(
                               _locale.following,
                               followingController,
@@ -254,18 +244,25 @@ class _AddFileDialogState extends State<AddFileDialog> {
                               0.13,
                               false,
                             ),
-                            SizedBox(
-                              width: width * 0.015,
-                            ),
-                            SizedBox(
-                              width: width * 0.13,
-                            ),
-                            SizedBox(
-                              width: width * 0.015,
-                            ),
-                            SizedBox(
-                              width: width * 0.13,
-                            )
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                         
+                            // SizedBox(
+                            //   width: width * 0.015,
+                            // ),
+                            // SizedBox(
+                            //   width: width * 0.13,
+                            // ),
+                            // SizedBox(
+                            //   width: width * 0.015,
+                            // ),
+                            // SizedBox(
+                            //   width: width * 0.13,
+                            // )
                           ],
                         ),
                         Row(
@@ -407,7 +404,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
       imgBlob: imgBlob ?? "",
       dblFilesize: dblFilesize ?? 0,
       txtUsercode: "",
-      datDate: "",
+      datDate: Converters.formatDate(DateTime.now().toString()),
       txtMimetype: "",
       intLinenum: 1,
       intType: 1,
@@ -418,7 +415,9 @@ class _AddFileDialogState extends State<AddFileDialog> {
       documentFile: fileUploadModel,
     );
 
-    await documentsController.addDocument(documentFileRequest).then((value) {
+    await documentsController
+        .uplodFileInDocument(documentFileRequest)
+        .then((value) {
       if (value.statusCode == 200) {
         showDialog(
           context: context,

@@ -152,7 +152,8 @@
         "documentDetails": "Document Details",
         "editDocumentDetails": "Edit Document Details",
         "addReminder":"Add reminder",
-"download": "download"
+"download": "download",
+"copy": "Copy"
 
 
 }
