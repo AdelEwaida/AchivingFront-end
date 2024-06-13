@@ -39,3 +39,17 @@ getStatusByCode(AppLocalizations localizations, int type) {
   };
   return types[type];
 }
+
+getRecurringName(AppLocalizations localizations) {
+  return [localizations.monthly, localizations.weekly];
+}
+
+getRecurringCode(AppLocalizations localizations, String type) {
+  Map<String, int> types = {localizations.monthly: 1, localizations.weekly: 2};
+  return types[type];
+}
+
+getRecurringByCode(AppLocalizations localizations, int type) {
+  Map<int, String> types = {1: localizations.monthly, 2: localizations.weekly};
+  return types[type];
+}

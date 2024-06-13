@@ -155,7 +155,9 @@
 "download": "download",
 "status":"Status",
 "active":"Active",
-"notActive":"Not Active"
+"notActive":"Not Active",
+"weekly":"Weekly",
+"monthly" :"Monthly"
 
 
 }

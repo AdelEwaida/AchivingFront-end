@@ -15,6 +15,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
+import '../../utils/constants/sorted_by_constant.dart';
+import '../../widget/custom_drop_down.dart';
 import '../../widget/date_time_component.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
@@ -39,6 +41,8 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
 
   ActionController actionController = ActionController();
   bool isRecurring = false;
+
+  int selectedStatus = -1;
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -76,7 +80,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.3 : height * 0.5,
+        height: isDesktop ? height * 0.35 : height * 0.5,
         child: SingleChildScrollView(
           child: formSection(),
         ),
@@ -194,21 +198,34 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
           0.2,
           true,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Checkbox(
-              activeColor: primary2,
-              value: isRecurring,
-              onChanged: (value) {
-                setState(() {
-                  isRecurring = value!;
-                });
-              },
-            ),
-            Text(_locale.recurring),
-          ],
+        // Row(
+        // mainAxisAlignment: MainAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        // children: [
+        //     Checkbox(
+        //       activeColor: primary2,
+        //       value: isRecurring,
+        //       onChanged: (value) {
+        //         setState(() {
+        //           isRecurring = value!;
+        //         });
+        //       },
+        //     ),
+        //     Text(_locale.recurring),
+        //   ],
+        // ),
+        DropDown(
+          key: UniqueKey(),
+          onChanged: (value) {
+            selectedStatus = getRecurringCode(_locale, value);
+          },
+          initialValue: selectedStatus == -1
+              ? null
+              : getRecurringByCode(_locale, selectedStatus),
+          bordeText: _locale.recurring,
+          items: getRecurringName(_locale),
+          width: width * 0.2,
+          height: height * 0.04,
         ),
         if (!isDesktop) ...[
           DateTimeComponent(
@@ -239,21 +256,18 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
             0.2,
             true,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Checkbox(
-                activeColor: primary2,
-                value: isRecurring,
-                onChanged: (value) {
-                  setState(() {
-                    isRecurring = value!;
-                  });
-                },
-              ),
-              Text(_locale.recurring),
-            ],
+          DropDown(
+            key: UniqueKey(),
+            onChanged: (value) {
+              selectedStatus = getRecurringCode(_locale, value);
+            },
+            initialValue: selectedStatus == -1
+                ? null
+                : getRecurringByCode(_locale, selectedStatus),
+            bordeText: _locale.recurring,
+            items: getRecurringName(_locale),
+            width: width * 0.2,
+            height: height * 0.04,
           ),
         ],
       ],

@@ -140,7 +140,9 @@
 "download":"تنزيل",
 "status":"الحالة",
 "active":"فعال",
-"notActive":"غير فعال"
+"notActive":"غير فعال",
+"weekly":"أسبوعي",
+"monthly" :"شهري"
 
 
 
