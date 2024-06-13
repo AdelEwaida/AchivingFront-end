@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
-
+import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,6 +18,7 @@ import '../../widget/custom_drop_down.dart';
 import '../../widget/custom_drop_down2.dart';
 import '../../widget/date_time_component.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
+import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
 
 class AddFileScreen extends StatefulWidget {
   const AddFileScreen({super.key});
@@ -50,6 +51,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
   String? imgBlob;
   int? dblFilesize;
   Uint8List? image;
+  String selectedDep = "";
+
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -142,14 +145,30 @@ class _AddFileScreenState extends State<AddFileScreen> {
                           // mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            CustomDropDown2(
-                              width: width * 0.13,
-                              onChanged: (value) {},
-                              searchBox: true,
-                              valSelected: true,
+                            // CustomDropDown2(
+                            //   width: width * 0.13,
+                            //   onChanged: (value) {},
+                            //   searchBox: true,
+                            //   valSelected: true,
+                            //   bordeText: _locale.department,
+                            //   // width: width * 0.21,
+                            //   heightVal: height * 0.3,
+                            // ),
+                            DropDown(
+                              key: UniqueKey(),
+                              onChanged: (value) {
+                                selectedDep = value.txtKey;
+                                // setState(() {});
+                              },
+                              initialValue:
+                                  selectedDep.isEmpty ? null : selectedDep,
                               bordeText: _locale.department,
-                              // width: width * 0.21,
-                              heightVal: height * 0.3,
+                              width: width * 0.13,
+                              height: height * 0.045,
+                              onSearch: (p0) async {
+                                return await DepartmentController()
+                                    .getDep(SearchModel(page: 1));
+                              },
                             ),
                             SizedBox(
                               width: width * 0.015,

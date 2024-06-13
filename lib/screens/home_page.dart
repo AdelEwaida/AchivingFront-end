@@ -3,7 +3,6 @@ import 'package:archiving_flutter_project/providers/screen_content_provider.dart
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/side_menu/side_menu.dart';
 
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -49,9 +48,14 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  isDesktop ? const SideMenu() : Container(),
+                  isDesktop
+                      ? const SideMenu()
+                      : Container(
+                          color: Colors.white,
+                        ),
                   Expanded(
                     child: Container(
+                      color: Colors.white,
                       child: Consumer<ScreenContentProvider>(
                           builder: (builder, value, child) {
                         Widget tabView =

@@ -19,3 +19,23 @@ getSortedByTyepsByCode(AppLocalizations localizations, int type) {
   };
   return types[type];
 }
+
+getStatusName(AppLocalizations localizations) {
+  return [localizations.active, localizations.notActive];
+}
+
+getStatusCode(AppLocalizations localizations, String type) {
+  Map<String, int> types = {
+    localizations.active: 1,
+    localizations.notActive: 2
+  };
+  return types[type];
+}
+
+getStatusByCode(AppLocalizations localizations, int type) {
+  Map<int, String> types = {
+    1: localizations.active,
+    2: localizations.notActive
+  };
+  return types[type];
+}

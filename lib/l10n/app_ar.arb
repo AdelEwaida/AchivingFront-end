@@ -137,7 +137,10 @@
         "documentDetails":"تفاصيل الملف",
         "editDocumentDetails":"تعديل معلومات الملف",
 "addReminder":"إضافة تذكير",
-"download":"تنزيل"
+"download":"تنزيل",
+"status":"الحالة",
+"active":"فعال",
+"notActive":"غير فعال"
 
 
 
