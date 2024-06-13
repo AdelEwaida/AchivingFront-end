@@ -153,7 +153,16 @@
         "editDocumentDetails": "Edit Document Details",
         "addReminder":"Add reminder",
 "download": "download",
-"copy": "Copy"
+"copy": "Copy",
+"userStatus": "User Status",
+"email": "Email",
+"active": "active",
+"notActive": "Not Active",
+"manager": "manager",
+"user": "user",
+"admin": "admin",
+"userCode": "User Code",
+"userType": "user Type "
 
 
 }

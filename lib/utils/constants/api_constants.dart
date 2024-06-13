@@ -27,3 +27,9 @@ const updateDoc = "docInfo/update";
 const searchDocCritereaFile = "docInfo/searchCrit";
 const getFilesByHdrApi = "docFiles/getByHdr";
 const copyFileDocApi = "docFilesTrans/copyDoc";
+const deleteDocApi = "docFilesTrans/delete";
+//users api
+const getUserSearchApi = "users/searchCrit";
+const addUserApi = "users/insert";
+const deleteUserApi = "users/delete";
+const updateUserApi = "users/update";

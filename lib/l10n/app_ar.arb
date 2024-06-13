@@ -138,8 +138,15 @@
         "editDocumentDetails":"تعديل معلومات الملف",
 "addReminder":"إضافة تذكير",
 "download":"تنزيل",
-"copy":"نسخ"
-
-
+"copy":"نسخ",
+"userStatus":"حالة المستخدم",
+"email":"الايميل",
+"active":"نشط",
+"notActive":"غير نشط",
+"manager":"مدير",
+"user":"مستخدم",
+"admin":"مشرف",
+"userCode":"كود المستخدم",
+"userType":"نوع المستخدم"
 
 }

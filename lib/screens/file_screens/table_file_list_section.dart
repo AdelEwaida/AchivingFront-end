@@ -2,6 +2,7 @@ import 'package:archiving_flutter_project/dialogs/actions_dialogs/add_edit_actio
 import 'package:archiving_flutter_project/dialogs/document_dialogs/add_file_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/info_document_dialogs.dart';
+import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
 import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
@@ -152,8 +153,29 @@ class _TableFileListSectionState extends State<TableFileListSection> {
     }
   }
 
-  void deleteFile() {
-    if (selectedRow != null) {}
+  Future<void> deleteFile() async {
+    if (selectedRow != null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return CustomConfirmDialog(
+              confirmMessage: _locale.areYouSureToDelete(
+                  selectedRow!.cells['txtDescription']!.value));
+        },
+      ).then((value) async {
+        if (value) {
+          DocumentModel documentModel =
+              DocumentModel.fromPlutoRow(selectedRow!);
+          var response =
+              await documentsController.deleteDocument(documentModel);
+          if (response.statusCode == 200) {
+            // print("DONE");
+            documentListProvider.setDocumentSearchCriterea(
+                documentListProvider.searchDocumentCriteria);
+          }
+        }
+      });
+    }
   }
 
   void copyFile() async {

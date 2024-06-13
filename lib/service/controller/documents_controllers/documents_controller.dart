@@ -28,7 +28,10 @@ class DocumentsController {
     return await ApiService()
         .postRequest(copyFileDocApi, documentFileRequest.toJson());
   }
-
+Future deleteDocument(DocumentModel documentFileRequest) async {
+    return await ApiService().postRequest(
+        deleteDocApi, {"documentInfo": documentFileRequest.toJson()});
+  }
   Future updateDocument(DocumentModel documentFileRequest) async {
     return await ApiService()
         .postRequest(updateDoc, documentFileRequest.toJson());
