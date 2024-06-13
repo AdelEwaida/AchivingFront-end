@@ -3,6 +3,7 @@ import 'package:archiving_flutter_project/models/db/document_models/documnet_inf
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
+import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/date_time_component.dart';
 import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
@@ -48,18 +49,32 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     isDesktop = Responsive.isDesktop(context);
     documentModel = widget.documentModel;
     descriptionController.text = documentModel!.txtDescription ?? "";
+
     keyWordController.text = documentModel!.txtKeywords ?? "";
+
     reference1.text = documentModel!.txtReference1 ?? "";
+
     type.text = documentModel!.intType.toString();
+
     department.text = documentModel!.txtDept ?? "";
+
     categoryController.text = documentModel!.txtCategory ?? "";
+
     issueNoController.text = documentModel!.txtIssueno ?? "";
-    issueDateController.text = documentModel!.datIssuedate ?? "";
+
+    issueDateController.text = (documentModel!.datIssuedate!.isEmpty ||
+            documentModel!.datIssuedate == null
+        ? Converters.formatDate2(DateTime.now().toString())
+        : documentModel!.datIssuedate)!;
     refrence2Controller.text = documentModel!.txtReference2 ?? "";
     otherReferences.text = documentModel!.txtOtherRef ?? "";
     organization.text = documentModel!.txtOrganization ?? "";
     following.text = documentModel!.txtFollowing ?? "";
-    arrivalDate.text = documentModel!.datArrvialdate ?? "";
+    arrivalDate.text = (documentModel!.datArrvialdate!.isEmpty ||
+            documentModel!.datArrvialdate == null
+        ? Converters.formatDate2(DateTime.now().toString())
+        : documentModel!.datArrvialdate)!;
+
     super.didChangeDependencies();
   }
 
@@ -295,7 +310,8 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               // },
               readOnly: !widget.isEdit,
               height: height * 0.05,
-              dateWidth: width * 0.1, dateControllerToCompareWith: null,
+              dateWidth: width * 0.1,
+              dateControllerToCompareWith: null,
             ),
             spaceWidth(0.01),
             CustomTextField2(
@@ -342,8 +358,10 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               label: _locale.arrivalDate,
 
               height: height * 0.05,
-              dateWidth: width * 0.1, dateControllerToCompareWith: null,
-              isInitiaDate: false, timeControllerToCompareWith: null,
+              dateWidth: width * 0.1,
+              dateControllerToCompareWith: null,
+              isInitiaDate: false,
+              timeControllerToCompareWith: null,
             ),
           ],
         ),

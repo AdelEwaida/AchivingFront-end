@@ -142,8 +142,19 @@
 "active":"فعال",
 "notActive":"غير فعال",
 "weekly":"أسبوعي",
-"monthly" :"شهري"
+"monthly" :"شهري",
 
 
+"download":"تنزيل",
+"copy":"نسخ",
+"userStatus":"حالة المستخدم",
+"email":"الايميل",
+"active":"نشط",
+"notActive":"غير نشط",
+"manager":"مدير",
+"user":"مستخدم",
+"admin":"مشرف",
+"userCode":"كود المستخدم",
+"userType":"نوع المستخدم"
 
 }

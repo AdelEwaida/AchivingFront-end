@@ -1,7 +1,9 @@
 class SearchModel {
   int? page;
-  SearchModel({this.page});
+  String? searchField;
+  int? status;
+  SearchModel({this.page, this.searchField, this.status});
   Map<String, dynamic> toJson() {
-    return {"page": page};
+    return {"page": page, "searchField": searchField, "status": status};
   }
 }

@@ -3,7 +3,9 @@ import 'package:archiving_flutter_project/models/dto/side_menu/sub_menu_model.da
 import 'package:archiving_flutter_project/screens/categories_screens/categories_screen.dart';
 import 'package:archiving_flutter_project/screens/department_screens/department_screen.dart';
 import 'package:archiving_flutter_project/screens/file_screens/file_list_screen.dart';
+import 'package:archiving_flutter_project/screens/file_screens/search_file_screen.dart';
 import 'package:archiving_flutter_project/screens/home_page.dart';
+import 'package:archiving_flutter_project/screens/user_screen/user_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -91,6 +93,10 @@ Widget getScreenContent(int index) {
       return const ActionScreen();
     case 6:
       return const FileListScreen();
+    case 8:
+      return const SearchFileScreen();
+    case 11:
+      return const UserScreen();
 
     // case 2:
     //   return UsersScreen();

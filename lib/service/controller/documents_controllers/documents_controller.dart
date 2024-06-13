@@ -11,11 +11,28 @@ import '../../../utils/constants/api_constants.dart';
 import '../../handler/api_service.dart';
 
 class DocumentsController {
+  //modify this method
+  // Future addDocument7(DepartmentModel departmentModel) async {
+  //   return await ApiService()
+  //       .postRequest(inserttDocFile, departmentModel.toJsonAdd());
+  // }
+  Future uplodFileInDocument(DocumentFileRequest documentFileRequest) async {
+    return await ApiService()
+        .postRequest(uplodeFileInDocApi, documentFileRequest.toJson());
+  }
+
   Future addDocument(DocumentFileRequest documentFileRequest) async {
     return await ApiService()
         .postRequest(inserttDocFile, documentFileRequest.toJson());
   }
-
+  Future copyDocument(DocumentModel documentFileRequest) async {
+    return await ApiService()
+        .postRequest(copyFileDocApi, documentFileRequest.toJson());
+  }
+Future deleteDocument(DocumentModel documentFileRequest) async {
+    return await ApiService().postRequest(
+        deleteDocApi, {"documentInfo": documentFileRequest.toJson()});
+  }
   Future updateDocument(DocumentModel documentFileRequest) async {
     return await ApiService()
         .postRequest(updateDoc, documentFileRequest.toJson());

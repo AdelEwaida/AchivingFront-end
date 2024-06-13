@@ -158,6 +158,17 @@
 "notActive":"Not Active",
 "weekly":"Weekly",
 "monthly" :"Monthly"
+"download": "download",
+"copy": "Copy",
+"userStatus": "User Status",
+"email": "Email",
+"active": "active",
+"notActive": "Not Active",
+"manager": "manager",
+"user": "user",
+"admin": "admin",
+"userCode": "User Code",
+"userType": "user Type "
 
 
 }
