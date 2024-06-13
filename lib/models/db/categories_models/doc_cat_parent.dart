@@ -40,4 +40,9 @@ class DocCatParent {
       'txtMainparent': txtMainparent,
     };
   }
+
+  @override
+  String toString() {
+    return txtDescription.toString();
+  }
 }

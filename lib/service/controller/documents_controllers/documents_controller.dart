@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 
+import '../../../models/db/categories_models/doc_cat_parent.dart';
 import '../../../models/db/department_models/department_model.dart';
 import '../../../models/db/document_models/document_request.dart';
 import '../../../models/db/document_models/documnet_info_model.dart';
@@ -10,12 +11,6 @@ import '../../../utils/constants/api_constants.dart';
 import '../../handler/api_service.dart';
 
 class DocumentsController {
-  //modify this method
-  // Future addDocument7(DepartmentModel departmentModel) async {
-  //   return await ApiService()
-  //       .postRequest(inserttDocFile, departmentModel.toJsonAdd());
-  // }
-
   Future addDocument(DocumentFileRequest documentFileRequest) async {
     return await ApiService()
         .postRequest(inserttDocFile, documentFileRequest.toJson());
@@ -50,6 +45,19 @@ class DocumentsController {
         list.add(FileUploadModel.fromJson(stock));
       }
     }
+    return list;
+  }
+
+  Future<List<DocCatParent>> getDocCategoryList() async {
+    List<DocCatParent> list = [];
+    await ApiService().getRequest(getDocCategory).then((response) {
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+        for (var stock in jsonData) {
+          list.add(DocCatParent.fromJson(stock));
+        }
+      }
+    });
     return list;
   }
 }

@@ -25,3 +25,6 @@ const inserttDocFile = "docFilesTrans/insert";
 const updateDoc = "docInfo/update";
 const searchDocCritereaFile = "docInfo/searchCrit";
 const getFilesByHdrApi = "docFiles/getByHdr";
+
+//docCat APIs
+const getDocCategory = "docCat/getAll";
