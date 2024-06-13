@@ -4,6 +4,7 @@ import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_d
 import 'package:archiving_flutter_project/dialogs/document_dialogs/info_document_dialogs.dart';
 import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
+import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
 import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
@@ -16,14 +17,14 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-class TableFileListSection extends StatefulWidget {
-  const TableFileListSection({super.key});
+class SearchFileScreen extends StatefulWidget {
+  const SearchFileScreen({super.key});
 
   @override
-  State<TableFileListSection> createState() => _TableFileListSectionState();
+  State<SearchFileScreen> createState() => _SearchFileScreenState();
 }
 
-class _TableFileListSectionState extends State<TableFileListSection> {
+class _SearchFileScreenState extends State<SearchFileScreen> {
   List<PlutoColumn> polCols = [];
   late AppLocalizations _locale;
   double width = 0;
@@ -33,6 +34,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
   DocumentsController documentsController = DocumentsController();
   late DocumentListProvider documentListProvider;
   late PlutoGridStateManager stateManager;
+  ValueNotifier isSearch = ValueNotifier(false);
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -51,43 +53,65 @@ class _TableFileListSectionState extends State<TableFileListSection> {
   PlutoRow? selectedRow;
   @override
   Widget build(BuildContext context) {
-    return Consumer<DocumentListProvider>(
-      builder: (context, value, child) {
-        return TableComponent(
-          key: UniqueKey(),
-          tableHeigt: height * 0.45,
-          tableWidth: width * 0.81,
-          addReminder: addRemider,
-          upload: uploadFile,
-          copy: copyFile,
-          delete: deleteFile,
-          // add: addAction,
-          // genranlEdit: editAction,
-          plCols: polCols,
-          mode: PlutoGridMode.selectWithOneTap,
-          polRows: [],
-          footerBuilder: (stateManager) {
-            return lazyLoadingfooter(stateManager);
-          },
-          explor: explorFiels,
-          view: viewDocumentInfo,
-          genranlEdit: editDocumentInfo,
-          onLoaded: (PlutoGridOnLoadedEvent event) {
-            stateManager = event.stateManager;
-            // pageLis.value = pageLis.value > 1 ? 0 : 1;
-            // totalActionsCount.value = 0;
-            // getCount();
-          },
-          doubleTab: (event) async {
-            PlutoRow? tappedRow = event.row;
-          },
-          onSelected: (event) async {
-            PlutoRow? tappedRow = event.row;
-            selectedRow = tappedRow;
-          },
-        );
+    return TableComponent(
+      key: UniqueKey(),
+      tableHeigt: height * 0.85,
+      tableWidth: width * 0.85,
+      addReminder: addRemider,
+      upload: uploadFile,
+      copy: copyFile,
+      delete: deleteFile,
+      // add: addAction,
+      // genranlEdit: editAction,
+      plCols: polCols,
+      mode: PlutoGridMode.selectWithOneTap,
+      polRows: [],
+      footerBuilder: (stateManager) {
+        return lazyLoadingfooter(stateManager);
+      },
+      search: search,
+      explor: explorFiels,
+      view: viewDocumentInfo,
+      genranlEdit: editDocumentInfo,
+      onLoaded: (PlutoGridOnLoadedEvent event) {
+        stateManager = event.stateManager;
+        // pageLis.value = pageLis.value > 1 ? 0 : 1;
+        // totalActionsCount.value = 0;
+        // getCount();
+      },
+      doubleTab: (event) async {
+        PlutoRow? tappedRow = event.row;
+      },
+      onSelected: (event) async {
+        PlutoRow? tappedRow = event.row;
+        selectedRow = tappedRow;
       },
     );
+  }
+
+  search(String text) async {
+    isSearch.value = true;
+    if (text.trim().isEmpty) {
+      isSearch.value = false;
+    } else if (isSearch.value) {
+      List<DocumentModel> result = [];
+      List<PlutoRow> topList = [];
+      result = await documentsController
+          .searchDocCriterea(SearchDocumentCriteria(searchField: text));
+      if (documentListProvider.searchDocumentCriteria.page! >= 1) {
+        documentListProvider.searchDocumentCriteria.page =
+            documentListProvider.searchDocumentCriteria.page! + 1;
+      } else {
+        rowList.clear();
+        rowList = [];
+      }
+      for (int i = 0; i < result.length; i++) {
+        rowList.add(result[i].toPlutoRow(i + 1));
+        topList.add(result[i].toPlutoRow(rowList.length));
+      }
+      stateManager.removeAllRows();
+      stateManager.appendRows(topList);
+    }
   }
 
   void explorFiels() {
@@ -237,33 +261,38 @@ class _TableFileListSectionState extends State<TableFileListSection> {
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
     bool isLast = false;
-    if (documentListProvider.searchDocumentCriteria.fromIssueDate != null &&
-        documentListProvider.searchDocumentCriteria.page! <= 1) {
-      stateManager.removeAllRows();
-      rowList.clear();
-    }
-    List<DocumentModel> result = [];
-    List<PlutoRow> topList = [];
-    result = await documentsController
-        .searchDocCriterea(documentListProvider.searchDocumentCriteria);
-    if (documentListProvider.searchDocumentCriteria.page! >= 1) {
-      documentListProvider.searchDocumentCriteria.page =
-          documentListProvider.searchDocumentCriteria.page! + 1;
-    } else {
-      rowList.clear();
-      rowList = [];
-    }
-    for (int i = 0; i < result.length; i++) {
-      rowList.add(result[i].toPlutoRow(i + 1));
-      topList.add(result[i].toPlutoRow(rowList.length));
-    }
+    // if (documentListProvider.searchDocumentCriteria.fromIssueDate != null &&
+    //     documentListProvider.searchDocumentCriteria.page! <= 1) {
+    //   stateManager.removeAllRows();
+    //   rowList.clear();
+    // }
 
-    isLast = documentListProvider.searchDocumentCriteria.page == -1
-        ? true
-        : topList.isEmpty
-            ? true
-            : false;
+    if (!isSearch.value) {
+      List<DocumentModel> result = [];
+      List<PlutoRow> topList = [];
+      result = await documentsController
+          .searchDocCriterea(documentListProvider.searchDocumentCriteria);
+      if (documentListProvider.searchDocumentCriteria.page! >= 1) {
+        documentListProvider.searchDocumentCriteria.page =
+            documentListProvider.searchDocumentCriteria.page! + 1;
+      } else {
+        rowList.clear();
+        rowList = [];
+      }
+      for (int i = 0; i < result.length; i++) {
+        rowList.add(result[i].toPlutoRow(i + 1));
+        topList.add(result[i].toPlutoRow(rowList.length));
+      }
+
+      isLast = documentListProvider.searchDocumentCriteria.page == -1
+          ? true
+          : topList.isEmpty
+              ? true
+              : false;
+      return Future.value(
+          PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
+    }
     return Future.value(
-        PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
+        PlutoInfinityScrollRowsResponse(isLast: isLast, rows: []));
   }
 }

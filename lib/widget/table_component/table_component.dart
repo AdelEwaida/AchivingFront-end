@@ -293,10 +293,12 @@ class _TableComponentState extends State<TableComponent> {
         children: [
           widget.search != null
               ? Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomSearchField(
                       horizontalPadding: 0,
-                      width: width * .4,
+                      width: width * .35,
                       label: locale.search,
                       padding: 7,
                       inputFormatters: [MyInputFormatter()],
