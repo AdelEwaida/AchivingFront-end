@@ -54,7 +54,7 @@ List<MenuModel> getMenus(AppLocalizations locale) {
         isParent: true,
         pageNumber: 9,
         subMenuList: [
-          SubMenuModel(title: locale.addUser, pageNumber: 10),
+          // SubMenuModel(title: locale.addUser, pageNumber: 10),
           SubMenuModel(title: locale.viewUser, pageNumber: 11),
         ],
         isOpened: false),

@@ -44,7 +44,7 @@ class UserModel {
       'txtNamee': txtNamee,
       'txtPwd': txtPwd,
       'intType': intType,
-      'bolActive': bolActive == true ? 1 : 0,
+      'bolActive': bolActive,
       'txtDeptkey': txtDeptkey,
       'email': email,
       'activeToken': activeToken,

@@ -165,11 +165,14 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void refreshTable() async {
-    // stateManager.removeAllRows();
-    // rowList.clear();
-    // pageLis.value = 1; // Reset page to 1
-    // await fetch(PlutoInfinityScrollRowsRequest());
-    // stateManager.resetCurrentState();
+    stateManager.removeAllRows();
+    stateManager.notifyListeners(true);
+    rowList.clear();
+    pageLis.value = 1;
+    var response = await fetch(PlutoInfinityScrollRowsRequest());
+    stateManager.appendRows(response.rows);
+    stateManager.notifyListeners(true);
+    stateManager.resetCurrentState();
   }
 
   void fillColumnTable() {
