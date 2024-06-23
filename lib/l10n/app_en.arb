@@ -172,6 +172,11 @@
     "editUser": "Edit User",
         "chooseListOfDepartment": "Choose list of Department",
         "updateUserCat":"Update User Categories",
-    "pleaseSelectCat": "Please Select Category"
+    "pleaseSelectCat": "Please Select Category",
+        "updateUserCat":"Update User Categories",
+        "oldPass":"Old Password",
+        "newPass":"New password",
+            "wrongPass":"Wrong password"
+
 
 }
