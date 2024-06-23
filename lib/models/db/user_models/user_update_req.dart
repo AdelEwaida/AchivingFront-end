@@ -3,6 +3,7 @@ import 'package:archiving_flutter_project/models/db/user_models/user_category.da
 class UserUpdateReq {
   String? userCategory;
   List<UserCategory>? users;
+
   UserUpdateReq({this.userCategory, this.users});
 
   factory UserUpdateReq.fromJson(Map<String, dynamic> json) {

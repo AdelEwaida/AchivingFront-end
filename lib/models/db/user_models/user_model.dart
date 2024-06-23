@@ -83,4 +83,9 @@ class UserModel {
       activeToken: row.cells['activeToken']?.value,
     );
   }
+  @override
+  String toString() {
+    // TODO: implement toString
+    return txtNamee!;
+  }
 }
