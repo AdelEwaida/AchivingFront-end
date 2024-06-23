@@ -1,5 +1,6 @@
 import 'dart:html';
 
+import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_update_req.dart';
@@ -200,50 +201,72 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
             const Divider(height: 3),
             Tooltip(
               message: hintUsers,
-              child: TestDropdown(
-                cleanPrevSelectedItem: true,
-                icon: const Icon(Icons.search),
-                isEnabled: true,
-                stringValue:
-                    usersListModel!.map((e) => e.txtNamee!).join(', ').isEmpty
-                        ? null
-                        : usersListModel!.map((e) => e.txtNamee!).join(', '),
-                borderText: _locale.users,
-                onClearIconPressed: () {
-                  setState(() {
-                    usersListModel!.clear();
-                    listOfUsersCode!.clear();
-                    hintUsers = "";
-                    usersListModel = [];
-                  });
-                },
-                onChanged: (val) {
-                  listOfUsersCode!.clear();
-                  // usersListCode.clear();
-                  for (int i = 0; i < val.length; i++) {
-                    listOfUsersCode!.add(val[i].txtCode);
-                  }
-                  // usersListModel!.addAll(usersListCode);
-                  // if (usersListModel!.isEmpty) {
-                  //   hintUsers = "";
-                  // } else {
-                  //   hintUsers = "";
+              child: Column(
+                children: [
+                  Container(
+                    width: screenWidth * 0.2,
+                    height: screenHeight * 0.08,
+                    child: TestDropdown(
+                      key: UniqueKey(),
+                      cleanPrevSelectedItem: true,
+                      // icon: const Icon(Icons.close),
+                      isEnabled: true,
+                      stringValue: usersListModel!
+                              .map((e) => e.txtNamee!)
+                              .join(', ')
+                              .isEmpty
+                          ? null
+                          : usersListModel!.map((e) => e.txtNamee!).join(', '),
+                      borderText: _locale.users,
+                      onPressed: () {
+                        setState(() {
+                          usersListModel!.clear();
+                          listOfUsersCode!.clear();
+                          hintUsers = "";
+                          usersListModel = [];
+                        });
+                      },
+                      onClearIconPressed: () {
+                        setState(() {
+                          usersListModel!.clear();
+                          listOfUsersCode!.clear();
+                          hintUsers = "";
+                          usersListModel = [];
+                        });
+                      },
+                      onChanged: (val) {
+                        listOfUsersCode!.clear();
+                        // usersListCode.clear();
+                        for (int i = 0; i < val.length; i++) {
+                          listOfUsersCode!.add(val[i].txtCode);
+                        }
+                        // usersListModel!.addAll(usersListCode);
+                        // if (usersListModel!.isEmpty) {
+                        //   hintUsers = "";
+                        // } else {
+                        //   hintUsers = "";
 
-                  //   hintUsers =
-                  //       usersListModel!.map((e) => e.userId!).join(', ');
-                  //   // Removing the last comma and space if exists
-                  //   if (hintUsers.endsWith(', ')) {
-                  //     hintUsers = hintUsers.substring(0, hintUsers.length - 2);
-                  //   }
-                  // }
+                        //   hintUsers =
+                        //       usersListModel!.map((e) => e.userId!).join(', ');
+                        //   // Removing the last comma and space if exists
+                        //   if (hintUsers.endsWith(', ')) {
+                        //     hintUsers = hintUsers.substring(0, hintUsers.length - 2);
+                        //   }
+                        // }
 
-                  // setState(() {});
-                },
-                onSearch: (text) async {
-                  List<UserModel> newList = await userController.getUsers(
-                      SearchModel(searchField: text.trim(), page: -1));
-                  return newList;
-                },
+                        // setState(() {});
+                      },
+                      onSearch: (text) async {
+                        List<UserModel> newList = await userController.getUsers(
+                            SearchModel(
+                                searchField: text.trim(),
+                                page: -1,
+                                status: -1));
+                        return newList;
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(
@@ -295,7 +318,35 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   }
 
   save() async {
-    // UserUpdateReq userUpdateReq = UserUpdateReq(userCategory: selectedKey.value,users: );
+    UserUpdateReq userUpdateReq =
+        UserUpdateReq(categoryId: selectedKey.value, users: listOfUsersCode);
+    var response = await userController.updateUserCatgeory(userUpdateReq);
+    if (response.statusCode == 200) {
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) {
+          return ErrorDialog(
+              icon: Icons.done_all,
+              errorDetails: _locale.done,
+              errorTitle: _locale.addDoneSucess,
+              color: Colors.green,
+              statusCode: 200);
+        },
+      ).then((value) {
+        // setState(() {});
+        // resetPage(); // reloadData();
+      });
+    }
+  }
+
+  Future<void> resetPage() async {
+    selectedCamp.value = "";
+    selectedValue.value = "";
+    selectedKey.value = "";
+    treeController.collapseAll();
+
+    await reloadData();
   }
 
   Future<void> reloadData() async {
