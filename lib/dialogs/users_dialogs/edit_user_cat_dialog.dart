@@ -35,7 +35,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
   UserController userController = UserController();
 
   String hintUsers = "";
-  List<String>? usersList;
+  List<String>? usersList = [];
   List<UserCategory> usersListCode = [];
   List<UserCategory>? usersListModel = [];
 
@@ -43,12 +43,24 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
     if (widget.userCategoryModel != null) {
-      hintUsers = widget.userCategoryModel!.userName!;
+      getUsersForCategory(widget.userCategoryModel!.categoryId!);
     }
     super.didChangeDependencies();
   }
 
   bool isDesktop = false;
+  void getUsersForCategory(String categoryId) async {
+      List<UserCategory> userList =
+          await userController.getUsersByCatMethod(categoryId);
+      setState(() {
+        usersListModel = userList;
+        hintUsers = usersListModel!.map((e) => e.userName!).join(', ');
+        if (hintUsers.endsWith(', ')) {
+          hintUsers = hintUsers.substring(0, hintUsers.length - 2);
+        }
+      });
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,22 +182,21 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                 setState(() {
                   usersListCode.clear();
                   hintUsers = "";
-                  usersListCode = [];
+                  usersList!.clear();
                 });
               },
               onChanged: (val) {
                 usersListCode.clear();
+                usersList!.clear();
                 for (int i = 0; i < val.length; i++) {
                   usersListCode.add(val[i]);
+                  usersList!.add(val[i].userId!);
                 }
                 usersListModel!.addAll(usersListCode);
                 if (usersListModel!.isEmpty) {
                   hintUsers = "";
                 } else {
-                  hintUsers = "";
-
                   hintUsers = usersListModel!.map((e) => e.userId!).join(', ');
-                  // Removing the last comma and space if exists
                   if (hintUsers.endsWith(', ')) {
                     hintUsers = hintUsers.substring(0, hintUsers.length - 2);
                   }
@@ -251,8 +262,8 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
   void editMethod() async {
     if (widget.userCategoryModel != null) {
       UserUpdateReq userUpdateReq = UserUpdateReq(
-        userCategory: widget.userCategoryModel!.categoryId,
-        users: usersListCode,
+        categoryId: widget.userCategoryModel!.categoryId,
+        users: usersList,
       );
 
       await userController.updateUserCatgeory(userUpdateReq).then((value) {
