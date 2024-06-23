@@ -105,4 +105,8 @@ class UserController {
   Future updateUserCatgeory(UserUpdateReq updateReq) async {
     return await ApiService().postRequest(updateUserCatApi, updateReq);
   }
+
+  Future deleteUserCategory(UserCategory userModel) async {
+    return await ApiService().postRequest(deleteUserCatApi, userModel);
+  }
 }

@@ -143,7 +143,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
                 key: UniqueKey(),
                 tableHeigt: height * 0.85,
                 tableWidth: width,
-                // delete: deleteDep,
+                delete: deleteDep,
                 // add: addDep,
                 genranlEdit: editDep,
                 plCols: polCols,
@@ -221,29 +221,29 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
     );
   }
 
-  // void deleteDep() async {
-  //   if (selectedRow != null) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return CustomConfirmDialog(
-  //             confirmMessage: _locale.areYouSureToDelete(
-  //                 selectedRow!.cells['txtDescription']!.value));
-  //       },
-  //     ).then((value) async {
-  //       if (value) {
-  //         await actionController
-  //             .deleteDep(
-  //                 DepartmentModel(txtKey: selectedRow!.cells['txtKey']!.value))
-  //             .then((value) {
-  //           if (value.statusCode == 200) {
-  //             reloadData();
-  //           }
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
+  void deleteDep() async {
+    if (selectedRow != null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return CustomConfirmDialog(
+              confirmMessage: _locale.areYouSureToDelete(
+                  selectedRow!.cells['categoryId']!.value));
+        },
+      ).then((value) async {
+        if (value) {
+          await userController
+              .deleteUserCategory(
+                  UserCategory(categoryId: selectedRow!.cells['categoryId']!.value))
+              .then((value) {
+            if (value.statusCode == 200) {
+              reloadData();
+            }
+          });
+        }
+      });
+    }
+  }
 
   void editDep() {
     if (selectedRow != null) {
