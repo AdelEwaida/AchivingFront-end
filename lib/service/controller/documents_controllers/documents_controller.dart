@@ -51,7 +51,19 @@ Future deleteDocument(DocumentModel documentFileRequest) async {
     }
     return list;
   }
-
+  Future<List<DocumentModel>> searchByContent(
+      SearchDocumentCriteria searchDocumentCriteria) async {
+    List<DocumentModel> list = [];
+    var response = await ApiService()
+        .postRequest(searchByContentApi, searchDocumentCriteria);
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+      for (var stock in jsonData) {
+        list.add(DocumentModel.fromJson(stock));
+      }
+    }
+    return list;
+  }
   Future<List<FileUploadModel>> getFilesByHdrKey(String hdrKey) async {
     List<FileUploadModel> list = [];
     var response =

@@ -67,7 +67,7 @@ class _UserScreenState extends State<UserScreen> {
       delete: deleteUser,
       add: addUser,
       chooseDep: addDepartmentUser,
-      // genranlEdit: editAction,
+      search: search,
       plCols: polCols,
       mode: PlutoGridMode.selectWithOneTap,
       polRows: [],
@@ -75,8 +75,7 @@ class _UserScreenState extends State<UserScreen> {
         return lazyLoadingfooter(stateManager);
       },
       genranlEdit: editUser,
-      // search: search,
-      // explor: explorFiels,
+      
       onLoaded: (PlutoGridOnLoadedEvent event) {
         stateManager = event.stateManager;
         // pageLis.value = pageLis.value > 1 ? 0 : 1;
@@ -92,7 +91,8 @@ class _UserScreenState extends State<UserScreen> {
       },
     );
   }
-void addDepartmentUser() {
+
+  void addDepartmentUser() {
     if (selectedRow != null) {
       UserModel userModel = UserModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
@@ -248,6 +248,28 @@ void addDepartmentUser() {
       fetch: fetch,
       stateManager: stateManager,
     );
+  }
+
+  search(String text) async {
+    isSearch.value = true;
+    if (text.trim().isEmpty) {
+      isSearch.value = false;
+      stateManager.removeAllRows();
+      stateManager.appendRows(rowList);
+    } else if (isSearch.value) {
+      List<UserModel> result = [];
+      List<PlutoRow> topList = [];
+      pageLis.value = 1;
+      result = await userController.getUsers(SearchModel(
+          searchField: text.trim(), page: pageLis.value, status: -1));
+      pageLis.value = pageLis.value + 1;
+      for (int i = 0; i < result.length; i++) {
+        // rowList.add(result[i].toPlutoRow(i + 1));
+        topList.add(result[i].toPlutoRow(rowList.length, _locale));
+      }
+      stateManager.removeAllRows();
+      stateManager.appendRows(topList);
+    }
   }
 
   List<PlutoRow> rowList = [];
