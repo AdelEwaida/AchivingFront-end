@@ -5,7 +5,9 @@ import 'package:archiving_flutter_project/models/db/user_models/user_model.dart'
 import 'package:archiving_flutter_project/service/handler/api_service.dart';
 import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
 
+import '../../../models/db/count_model.dart';
 import '../../../models/db/user_models/user_category.dart';
+import '../../../models/db/user_models/user_update_req.dart';
 import '../../../models/dto/searchs_model/search_model.dart';
 
 class UserController {
@@ -58,7 +60,9 @@ class UserController {
 
   Future<List<UserCategory>> getUserCategory(SearchModel searchModel) async {
     List<UserCategory> list = [];
-    await ApiService().postRequest(getUserCatPageAPI, searchModel).then((response) {
+    await ApiService()
+        .postRequest(getUserCatPageAPI, searchModel)
+        .then((response) {
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
         for (var stock in jsonData) {
@@ -67,5 +71,38 @@ class UserController {
       }
     });
     return list;
+  }
+
+  Future<int> getUserCatCount() async {
+    var api = getUserCatCountApi;
+
+    int itemCount = 0;
+    await ApiService().getRequest(api).then((value) {
+      if (value.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
+        itemCount = CountModel.fromJson(jsonData).count!;
+      }
+    });
+
+    return itemCount;
+  }
+
+  Future<List<UserCategory>> getUsersByCatMethod(String userModel) async {
+    List<UserCategory> list = [];
+
+    await ApiService()
+        .postRequest(getUsersByCat, {"categoryId": userModel}).then((response) {
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+        for (var stock in jsonData) {
+          list.add(UserCategory.fromJson(stock));
+        }
+      }
+    });
+    return list;
+  }
+
+  Future updateUserCatgeory(UserUpdateReq updateReq) async {
+    return await ApiService().postRequest(updateUserCatApi, updateReq);
   }
 }

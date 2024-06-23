@@ -156,5 +156,7 @@
     "newPassword":"كلمة المرور الجديدة",
     "editPassword":"تعديل كلمة المرور",
     "editUser":"تعديل معلومات المستخدم",
-    "chooseListOfDepartment":"إختيار الدوائر /الفروع"
+    "chooseListOfDepartment":"إختيار الدوائر /الفروع",
+    "updateUserCat":"تعديل ربط تصنيف مع المستخدمين"
+
 }

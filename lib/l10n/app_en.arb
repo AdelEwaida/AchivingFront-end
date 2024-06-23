@@ -170,5 +170,7 @@
     "newPassword": "New Password",
     "editPassword": "Edit Password",
     "editUser": "Edit User",
-        "chooseListOfDepartment": "Choose list of Department"
+        "chooseListOfDepartment": "Choose list of Department",
+        "updateUserCat":"Update User Categories"
+
 }

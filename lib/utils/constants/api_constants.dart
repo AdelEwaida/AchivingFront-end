@@ -44,3 +44,6 @@ const getDocCategory = "docCat/getAll";
 
 //user category
 const getUserCatPageAPI = "userCategory/page";
+const getUserCatCountApi = "userCategory/count";
+const updateUserCatApi = "userCategory/update";
+const getUsersByCat = "userCategory/getUsersByCat";
