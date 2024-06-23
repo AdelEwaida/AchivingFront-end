@@ -50,16 +50,15 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
 
   bool isDesktop = false;
   void getUsersForCategory(String categoryId) async {
-      List<UserCategory> userList =
-          await userController.getUsersByCatMethod(categoryId);
-      setState(() {
-        usersListModel = userList;
-        hintUsers = usersListModel!.map((e) => e.userName!).join(', ');
-        if (hintUsers.endsWith(', ')) {
-          hintUsers = hintUsers.substring(0, hintUsers.length - 2);
-        }
-      });
-    
+    List<UserCategory> userList =
+        await userController.getUsersByCatMethod(categoryId);
+    setState(() {
+      usersListModel = userList;
+      hintUsers = usersListModel!.map((e) => e.userName!).join(', ');
+      if (hintUsers.endsWith(', ')) {
+        hintUsers = hintUsers.substring(0, hintUsers.length - 2);
+      }
+    });
   }
 
   @override
@@ -183,6 +182,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                   usersListCode.clear();
                   hintUsers = "";
                   usersList!.clear();
+                  usersListModel!.clear();
                 });
               },
               onChanged: (val) {
