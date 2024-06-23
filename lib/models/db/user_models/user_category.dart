@@ -8,7 +8,6 @@ class UserCategory {
   String? categoryName;
   String? userName;
 
-
   UserCategory({
     this.categoryId,
     this.userId,
@@ -23,7 +22,6 @@ class UserCategory {
       userId: json['userId'],
       categoryName: json['categoryName'],
       userName: json['userName'],
-
     );
   }
 
@@ -34,7 +32,6 @@ class UserCategory {
       'userId': userId,
       'categoryName': categoryName,
       'userName': userName,
-     
     };
   }
 
@@ -45,20 +42,24 @@ class UserCategory {
         "count": PlutoCell(value: count),
         'categoryId': PlutoCell(value: categoryId),
         'userId': PlutoCell(value: userId),
-        'categoryName': PlutoCell(value: categoryName),      
+        'categoryName': PlutoCell(value: categoryName),
         'userName': PlutoCell(value: userName),
-  
       },
     );
   }
 
-  factory UserCategory.fromPlutoRow(PlutoRow row, AppLocalizations localizations) {
+  factory UserCategory.fromPlutoRow(
+      PlutoRow row, AppLocalizations localizations) {
     return UserCategory(
       categoryId: row.cells['categoryId']?.value,
       userId: row.cells['userId']?.value,
       categoryName: row.cells['categoryName']?.value,
       userName: row.cells['userName']?.value,
-
     );
+  }
+  @override
+  String toString() {
+    // TODO: implement toString
+    return userName!;
   }
 }

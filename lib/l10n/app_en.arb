@@ -168,7 +168,8 @@
 "user": "user",
 "admin": "admin",
 "userCode": "User Code",
-"userType": "user Type "
+"userType": "user Type ",
+"updateUserCat":"Update User Categories"
 
 
 }

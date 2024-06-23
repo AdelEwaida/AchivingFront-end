@@ -40,7 +40,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
   TextEditingController notesController = TextEditingController();
 
   ActionController actionController = ActionController();
-  bool isRecurring = false;
+  String isRecurring = "";
 
   int selectedStatus = -1;
   @override
@@ -54,7 +54,9 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       dateController.text = widget.actionModel!.datDate!;
       descController.text = widget.actionModel!.txtDescription!;
       notesController.text = widget.actionModel!.txtNotes!;
-      isRecurring = widget.actionModel!.intRecurring == 1 ? true : false;
+      isRecurring = widget.actionModel!.intRecurring == 1
+          ? _locale.monthly
+          : _locale.weekly;
     }
     super.didChangeDependencies();
   }
@@ -219,9 +221,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
           onChanged: (value) {
             selectedStatus = getRecurringCode(_locale, value);
           },
-          initialValue: selectedStatus == -1
-              ? null
-              : getRecurringByCode(_locale, selectedStatus),
+          initialValue: isRecurring == "" ? null : isRecurring,
           bordeText: _locale.recurring,
           items: getRecurringName(_locale),
           width: width * 0.2,

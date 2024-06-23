@@ -29,7 +29,7 @@ class _DailyRemindersState extends State<DailyReminders> {
   ActionController actionController = ActionController();
   late PlutoGridStateManager stateManager;
   ValueNotifier isSearch = ValueNotifier(false);
-    String todayDate = DatesController().formatDateReverse(
+  String todayDate = DatesController().formatDateReverse(
       DatesController().formatDate(DatesController().todayDate()));
   @override
   void didChangeDependencies() {
@@ -38,7 +38,7 @@ class _DailyRemindersState extends State<DailyReminders> {
     polCols = [];
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
- 
+
     fillColumnTable();
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
@@ -80,55 +80,55 @@ class _DailyRemindersState extends State<DailyReminders> {
       //   backgroundColor: columnColors,
       // ),
       //txtCode
-      PlutoColumn(
-        title: _locale.userCode,
-        field: "txtServicecode",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.16 : width * 0.4,
-        backgroundColor: columnColors,
-      ),
+      // PlutoColumn(
+      //   title: _locale.userCode,
+      //   field: "txtServicecode",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.16 : width * 0.4,
+      //   backgroundColor: columnColors,
+      // ),
       PlutoColumn(
         title: _locale.description,
         field: "txtDescription",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.16 : width * 0.4,
+        width: isDesktop ? width * 0.45 : width * 0.4,
         backgroundColor: columnColors,
       ),
-      PlutoColumn(
-        title: _locale.date,
-        field: "datDate",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.07 : width * 0.2,
-        backgroundColor: columnColors,
-      ),
+      // PlutoColumn(
+      //   title: _locale.date,
+      //   field: "datDate",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.07 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
       PlutoColumn(
         title: _locale.notes,
         field: "txtNotes",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.07 : width * 0.2,
+        width: isDesktop ? width * 0.36 : width * 0.2,
         backgroundColor: columnColors,
       ),
-      PlutoColumn(
-        title: _locale.email,
-        field: "txtDocumentcode",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.1 : width * 0.2,
-        backgroundColor: columnColors,
-      ),
-      PlutoColumn(
-        title: _locale.userCode,
-        field: "txtUsercode",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.1 : width * 0.2,
-        backgroundColor: columnColors,
-      ),
-      PlutoColumn(
-        title: _locale.recurring,
-        field: "intRecurring",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.1 : width * 0.2,
-        backgroundColor: columnColors,
-      ),
+      // PlutoColumn(
+      //   title: _locale.email,
+      //   field: "txtDocumentcode",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.1 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.userCode,
+      //   field: "txtUsercode",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.1 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.recurring,
+      //   field: "intRecurring",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.1 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
     ]);
   }
 

@@ -12,6 +12,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../screens/actions_screens/action_screen.dart';
 import '../screens/actions_screens/daily_reminders.dart';
 import '../screens/file_screens/add_file_screen.dart';
+import '../screens/user_screen/user_category_screen.dart';
 
 List<MenuModel> getMenus(AppLocalizations locale) {
   List<MenuModel> menus = [
@@ -100,7 +101,8 @@ Widget getScreenContent(int index) {
       return const SearchFileScreen();
     case 11:
       return const UserScreen();
-
+    case 14:
+      return const UserCategoryScreen();
     // case 2:
     //   return UsersScreen();
   }

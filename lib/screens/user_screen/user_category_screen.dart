@@ -1,4 +1,3 @@
-
 import 'dart:typed_data';
 
 import 'package:archiving_flutter_project/dialogs/dep_dialogs/departemnt_dialog.dart';
@@ -17,6 +16,11 @@ import 'dart:html' as html;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../../dialogs/users_dialogs/edit_user_cat_dialog.dart';
+import '../../models/db/user_models/user_category.dart';
+import '../../service/controller/actions_controllers/action_controller.dart';
+import '../../service/controller/users_controller/user_controller.dart';
+
 class UserCategoryScreen extends StatefulWidget {
   const UserCategoryScreen({super.key});
 
@@ -34,7 +38,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
   ValueNotifier pageLis = ValueNotifier(1);
   ValueNotifier isSearch = ValueNotifier(false);
   PlutoRow? selectedRow;
-  DepartmentController departmentController = DepartmentController();
+  UserController userController = UserController();
   late ScreenContentProvider screenContentProvider;
 
   @override
@@ -48,30 +52,21 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
       //countNumber
       PlutoColumn(
         title: "#",
-        field: "countNumber",
+        field: "count",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.05 : width * 0.15,
+        width: isDesktop ? width * 0.35 : width * 0.15,
         backgroundColor: columnColors,
         // enableFilterMenuItem: true,
       ),
       PlutoColumn(
-        title: _locale.txtShortcode,
-        field: "txtShortcode",
+        title: _locale.category,
+        field: "categoryName",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.3 : width * 0.2,
+        width: isDesktop ? width * 0.43: width * 0.2,
         backgroundColor: columnColors,
         // enableFilterMenuItem: true,
       ),
-      PlutoColumn(
-        // suppressedAutoSize: true,
-        title: _locale.txtDescription,
-        field: "txtDescription",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.3 : width * 0.4,
-        // width: width * 0.2,
-        backgroundColor: columnColors,
-      ),
-    
+     
     ]);
     getCount();
     super.didChangeDependencies();
@@ -79,7 +74,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
 
   ValueNotifier totalDepCount = ValueNotifier(0);
   getCount() {
-    departmentController.getOfficeCount().then((value) {
+    userController.getUserCatCount().then((value) {
       totalDepCount.value = value;
     });
   }
@@ -96,24 +91,6 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
       height: height,
       child: buildMainContent(),
     );
-    // appBar: !isDesktop
-    //     ? AppBar(
-    //         backgroundColor: whiteColor,
-    //         title: const Text(
-    //           "SCOPE",
-    //           style: TextStyle(
-    //             color: Colors.white,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //         ),
-    //       )
-    //     : null,
-    // drawer: !isDesktop ? const SideMenu() : null,
-    //     Responsive(
-    //   mobile: mobileView(),
-    //   tablet: tabletView(),
-    //   desktop: desktopView(),
-    // );
   }
 
   Widget mobileView() {
@@ -166,8 +143,8 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
                 key: UniqueKey(),
                 tableHeigt: height * 0.85,
                 tableWidth: width,
-                delete: deleteDep,
-                add: addDep,
+                // delete: deleteDep,
+                // add: addDep,
                 genranlEdit: editDep,
                 plCols: polCols,
                 mode: PlutoGridMode.selectWithOneTap,
@@ -244,39 +221,39 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
     );
   }
 
-  void deleteDep() async {
-    if (selectedRow != null) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return CustomConfirmDialog(
-              confirmMessage: _locale.areYouSureToDelete(
-                  selectedRow!.cells['txtDescription']!.value));
-        },
-      ).then((value) async {
-        if (value) {
-          await departmentController
-              .deleteDep(
-                  DepartmentModel(txtKey: selectedRow!.cells['txtKey']!.value))
-              .then((value) {
-            if (value.statusCode == 200) {
-              reloadData();
-            }
-          });
-        }
-      });
-    }
-  }
+  // void deleteDep() async {
+  //   if (selectedRow != null) {
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return CustomConfirmDialog(
+  //             confirmMessage: _locale.areYouSureToDelete(
+  //                 selectedRow!.cells['txtDescription']!.value));
+  //       },
+  //     ).then((value) async {
+  //       if (value) {
+  //         await actionController
+  //             .deleteDep(
+  //                 DepartmentModel(txtKey: selectedRow!.cells['txtKey']!.value))
+  //             .then((value) {
+  //           if (value.statusCode == 200) {
+  //             reloadData();
+  //           }
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
 
   void editDep() {
     if (selectedRow != null) {
-      DepartmentModel departmentModel =
-          DepartmentModel.fromPlutoRow(selectedRow!);
+      UserCategory userCategoryModel =
+          UserCategory.fromPlutoRow(selectedRow!,_locale);
       showDialog(
         context: context,
         builder: (context) {
-          return DepartmentDialog(
-            departmentModel: departmentModel,
+          return EditUserCategoryDialog(
+            userCategoryModel: userCategoryModel,
           );
         },
       ).then((value) {
@@ -319,17 +296,17 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
     bool isLast = false;
-    List<DepartmentModel> result = [];
+    List<UserCategory> result = [];
     List<PlutoRow> topList = [];
     if (!isSearch.value) {
-      await departmentController
-          .getDep(SearchModel(page: pageLis.value))
+      await userController
+          .getUserCategory(SearchModel(page: pageLis.value))
           .then((value) {
         result = value;
       });
       for (int i = 0; i < result.length; i++) {
-        topList.add(result[i].toPlutoRow(i + 1));
-        rowList.add(result[i].toPlutoRow(i + 1));
+        topList.add(result[i].toPlutoRow(i + 1, _locale));
+        rowList.add(result[i].toPlutoRow(i + 1, _locale));
       }
       count += result.length;
       if (pageLis.value == 1) {
