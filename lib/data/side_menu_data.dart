@@ -5,6 +5,7 @@ import 'package:archiving_flutter_project/screens/department_screens/department_
 import 'package:archiving_flutter_project/screens/file_screens/file_list_screen.dart';
 import 'package:archiving_flutter_project/screens/file_screens/search_file_screen.dart';
 import 'package:archiving_flutter_project/screens/home_page.dart';
+import 'package:archiving_flutter_project/screens/user_screen/add_user_permisons.dart';
 import 'package:archiving_flutter_project/screens/user_screen/user_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -103,6 +104,8 @@ Widget getScreenContent(int index) {
       return const UserScreen();
     case 14:
       return const UserCategoryScreen();
+    case 13:
+      return const AddUserPermisonsScreen();
     // case 2:
     //   return UsersScreen();
   }
