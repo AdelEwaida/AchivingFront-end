@@ -12,6 +12,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../screens/actions_screens/action_screen.dart';
 import '../screens/actions_screens/daily_reminders.dart';
+import '../screens/change_password_screen.dart';
 import '../screens/file_screens/add_file_screen.dart';
 import '../screens/user_screen/user_category_screen.dart';
 
@@ -106,6 +107,8 @@ Widget getScreenContent(int index) {
       return const UserCategoryScreen();
     case 13:
       return const AddUserPermisonsScreen();
+    case 15:
+      return const ChangePasswordScreen();
     // case 2:
     //   return UsersScreen();
   }

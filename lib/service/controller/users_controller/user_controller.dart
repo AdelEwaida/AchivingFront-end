@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:archiving_flutter_project/models/db/user_models/department_user_model.dart';
+import 'package:archiving_flutter_project/models/db/user_models/update_user_password_model.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
 import 'package:archiving_flutter_project/service/handler/api_service.dart';
 import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
@@ -36,6 +37,10 @@ class UserController {
       }
     }
     return list;
+  }
+
+  Future updateCurrentUserPassword(UpdateUserPassword userModel) async {
+    return await ApiService().postRequest(updateUserPasswordApi, userModel);
   }
 
   Future setUserDepartment(List<DepartmentUserModel> list) async {
