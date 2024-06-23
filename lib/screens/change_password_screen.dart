@@ -42,37 +42,41 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    isDesktop = Responsive.isDesktop(context);
-    width = MediaQuery.of(context).size.width;
-    height = MediaQuery.of(context).size.height;
-    return Container(
-      width: isDesktop ? width * 0.5 : width * 0.9, 
-      height: height * 0.5,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_locale.changePassword),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: height * 0.032),
-            customTextField(_locale.oldPass, oldPasswordController,
-                passwordFocus, true, isDesktop, obscureOldPassword),
-            SizedBox(height: height * 0.032),
-            customTextField(_locale.newPass, newPasswordController,
-                passwordFocus, true, isDesktop, obscureNewPassword),
-            SizedBox(height: height * 0.032),
-            customSubmitButton(),
-          ],
+      body: Center(
+        child: Container(
+          width: isDesktop ? width * 0.5 : width * 0.9,
+          height: height * 0.5,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: height * 0.032),
+                customTextField(_locale.oldPass, oldPasswordController,
+                    passwordFocus, true, isDesktop, obscureOldPassword),
+                SizedBox(height: height * 0.032),
+                customTextField(_locale.newPass, newPasswordController,
+                    passwordFocus, true, isDesktop, obscureNewPassword),
+                SizedBox(height: height * 0.032),
+                customSubmitButton(),
+              ],
+            ),
+          ),
         ),
       ),
     );
