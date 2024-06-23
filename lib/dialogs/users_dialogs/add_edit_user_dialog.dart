@@ -20,7 +20,8 @@ import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
 class AddUserDialog extends StatefulWidget {
   UserModel? userModel;
-  AddUserDialog({super.key, this.userModel});
+  bool isChangePassword;
+  AddUserDialog({super.key, this.userModel, required this.isChangePassword});
 
   @override
   State<AddUserDialog> createState() => _DepartmentDialogState();
@@ -34,6 +35,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
 
   TextEditingController userCodeController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   int? selectedUserType;
   int? userActive;
   UserController userController = UserController();
@@ -68,7 +70,11 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       backgroundColor: dBackground,
       title: TitleDialogWidget(
-        title: _locale.addUser,
+        title: userModel != null && widget.isChangePassword
+            ? _locale.changePassword
+            : userModel != null && !widget.isChangePassword
+                ? _locale.editUser
+                : _locale.addUser,
         width: isDesktop ? width * 0.25 : width * 0.8,
         height: height * 0.07,
       ),
@@ -162,11 +168,14 @@ class _DepartmentDialogState extends State<AddUserDialog> {
     return Column(
       children: [
         if (isDesktop)
-          customTextField(
-              _locale.userCode, userCodeController, isDesktop, 0.2, true),
-        customTextField(
-            _locale.userName, userNameController, isDesktop, 0.2, true),
+          userModel != null
+              ? const SizedBox.shrink()
+              : customTextField(_locale.userCode, userCodeController, isDesktop,
+                  0.2, true, widget.isChangePassword),
+        customTextField(_locale.userName, userNameController, isDesktop, 0.2,
+            true, widget.isChangePassword),
         DropDown(
+          isEnabled: !widget.isChangePassword,
           width: width * 0.2,
           height: height * 0.05,
           bordeText: _locale.userType,
@@ -183,23 +192,28 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Checkbox(
-              activeColor: primary2,
-              value: isActive,
-              onChanged: (value) {
-                setState(() {
-                  isActive = value!;
-                  userActive = isActive ? 1 : 0;
-                });
-              },
-            ),
+                activeColor: primary2,
+                value: isActive,
+                onChanged: !widget.isChangePassword
+                    ? (value) {
+                        setState(() {
+                          isActive = value!;
+                          userActive = isActive ? 1 : 0;
+                        });
+                      }
+                    : null),
             Text(_locale.active),
           ],
         ),
+        userModel != null && widget.isChangePassword
+            ? customTextField(_locale.newPassword, passwordController,
+                isDesktop, 0.8, true, false)
+            : const SizedBox.shrink(),
         if (!isDesktop) ...[
-          customTextField(
-              _locale.userCode, userCodeController, isDesktop, 0.8, true),
-          customTextField(
-              _locale.userName, userCodeController, isDesktop, 0.8, true),
+          customTextField(_locale.userCode, userCodeController, isDesktop, 0.8,
+              true, widget.isChangePassword),
+          customTextField(_locale.userName, userCodeController, isDesktop, 0.8,
+              true, widget.isChangePassword),
         ],
       ],
     );
@@ -218,9 +232,9 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   }
 
   Widget customTextField(String hint, TextEditingController controller,
-      bool isDesktop, double width1, bool isMandetory) {
+      bool isDesktop, double width1, bool isMandetory, bool readOnly) {
     return CustomTextField2(
-      readOnly: false,
+      readOnly: readOnly,
       // inputFormatters: hint == _locale.phoneNumber
       //     ? [
       //         FilteringTextInputFormatter.digitsOnly,
@@ -255,8 +269,10 @@ class _DepartmentDialogState extends State<AddUserDialog> {
               statusCode: 400);
         },
       );
-    } else if (userModel != null) {
+    } else if (userModel != null && widget.isChangePassword == false) {
       editMethod();
+    } else if (userModel != null && widget.isChangePassword) {
+      cahngePasswordMethod();
     } else {
       UserModel userModel = UserModel(
           txtCode: userCodeController.text,
@@ -280,6 +296,28 @@ class _DepartmentDialogState extends State<AddUserDialog> {
             Navigator.pop(context, true);
           });
         }
+      });
+    }
+  }
+
+  void cahngePasswordMethod() async {
+    UserModel tempUserModel =
+        UserModel(txtCode: userModel!.txtCode, txtPwd: passwordController.text);
+    var response = await userController.updateUserPassword(tempUserModel);
+    if (response.statusCode == 200) {
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) {
+          return ErrorDialog(
+              icon: Icons.done_all,
+              errorDetails: _locale.done,
+              errorTitle: _locale.editDoneSucess,
+              color: Colors.green,
+              statusCode: 200);
+        },
+      ).then((value) {
+        Navigator.pop(context, true);
       });
     }
   }

@@ -3,7 +3,8 @@ import 'package:archiving_flutter_project/dialogs/document_dialogs/add_file_dial
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/info_document_dialogs.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
-import 'package:archiving_flutter_project/dialogs/users_dialogs/add_user_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/users_dialogs/add_edit_user_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/users_dialogs/user_department_dialog.dart';
 import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
@@ -62,11 +63,10 @@ class _UserScreenState extends State<UserScreen> {
       key: UniqueKey(),
       tableHeigt: height * 0.85,
       tableWidth: width * 0.85,
-      // addReminder: addRemider,
-      // upload: uploadFile,
-      // copy: copyFile,
+      editPassword: chagnePassword,
       delete: deleteUser,
       add: addUser,
+      chooseDep: addDepartmentUser,
       // genranlEdit: editAction,
       plCols: polCols,
       mode: PlutoGridMode.selectWithOneTap,
@@ -77,8 +77,6 @@ class _UserScreenState extends State<UserScreen> {
       genranlEdit: editUser,
       // search: search,
       // explor: explorFiels,
-      view: viewDocumentInfo,
-      // genranlEdit: editDocumentInfo,
       onLoaded: (PlutoGridOnLoadedEvent event) {
         stateManager = event.stateManager;
         // pageLis.value = pageLis.value > 1 ? 0 : 1;
@@ -94,16 +92,14 @@ class _UserScreenState extends State<UserScreen> {
       },
     );
   }
-
-  void viewDocumentInfo() {
+void addDepartmentUser() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      UserModel userModel = UserModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
-          return InfoDocumentDialog(
-            isEdit: false,
-            documentModel: documentModel,
+          return UserDepartmentDialog(
+            userModel: userModel,
           );
         },
       );
@@ -118,6 +114,7 @@ class _UserScreenState extends State<UserScreen> {
         context: context,
         builder: (context) {
           return AddUserDialog(
+            isChangePassword: false,
             userModel: userModel,
           );
         },
@@ -129,12 +126,29 @@ class _UserScreenState extends State<UserScreen> {
     }
   }
 
+  void chagnePassword() {
+    if (selectedRow != null) {
+      UserModel userModel = UserModel.fromPlutoRow(selectedRow!, _locale);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AddUserDialog(
+            isChangePassword: true,
+            userModel: userModel,
+          );
+        },
+      );
+    }
+  }
+
   void addUser() {
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (context) {
-        return AddUserDialog();
+        return AddUserDialog(
+          isChangePassword: false,
+        );
       },
     ).then((value) {
       if (value == true) {
@@ -165,6 +179,7 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void refreshTable() async {
+    stateManager.setShowLoading(true);
     stateManager.removeAllRows();
     stateManager.notifyListeners(true);
     rowList.clear();
@@ -173,6 +188,7 @@ class _UserScreenState extends State<UserScreen> {
     stateManager.appendRows(response.rows);
     stateManager.notifyListeners(true);
     stateManager.resetCurrentState();
+    stateManager.setShowLoading(false);
   }
 
   void fillColumnTable() {

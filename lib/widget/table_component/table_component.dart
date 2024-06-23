@@ -22,8 +22,9 @@ class TableComponent extends StatefulWidget {
   final Function()? delete;
   final Function()? exportToExcel;
   final Function()? download;
+  final Function()? chooseDep;
 
-  final Function()? edit1;
+  final Function()? editPassword;
   final Function()? genranlEdit;
   final Function()? view;
   final Function()? advanceSearch;
@@ -55,6 +56,7 @@ class TableComponent extends StatefulWidget {
       this.viewLocation,
       this.download,
       this.explor,
+      this.chooseDep,
       this.copy,
       this.tableHeigt,
       this.upload,
@@ -65,7 +67,7 @@ class TableComponent extends StatefulWidget {
       this.advanceSearch,
       this.genranlEdit,
       this.view,
-      this.edit1,
+      this.editPassword,
       this.add,
       this.delete,
       this.count,
@@ -447,6 +449,26 @@ class _TableComponentState extends State<TableComponent> {
                           )),
                     )
                   : SizedBox.shrink(),
+              widget.chooseDep != null
+                  ? Tooltip(
+                      message: locale.chooseListOfDepartment,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.chooseDep!();
+                            // dealsProvider.clearProvider();
+                            // dealsProvider.clearCampModel();
+
+                            // dealsProvider.loadedList = rowList;
+                            // dealsProvider.pageNum = pageLis.value;
+                            // // screenProvider.setPage(32);
+                            // tabsProvider.changeActiveWidget(32, locale);
+                          },
+                          icon: const Icon(
+                            Icons.store_mall_directory_outlined,
+                            size: 20,
+                          )),
+                    )
+                  : SizedBox.shrink(),
               widget.explor != null
                   ? Tooltip(
                       message: locale.documentExplorer,
@@ -581,6 +603,20 @@ class _TableComponentState extends State<TableComponent> {
                           },
                           icon: const Icon(
                             Icons.add,
+                            size: 20,
+                          )),
+                    )
+                  : const SizedBox.shrink(),
+              widget.editPassword != null
+                  ? Tooltip(
+                      message: locale.editPassword,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.editPassword!();
+                          },
+                          icon: const Icon(
+                            // color: redColor,
+                            Icons.password_outlined,
                             size: 20,
                           )),
                     )
