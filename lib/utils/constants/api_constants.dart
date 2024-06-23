@@ -19,6 +19,7 @@ const getActionCountApi = "actions/count";
 const addActionApi = "actions/insert";
 const deleteActionApi = "actions/delete";
 const updateActionApi = "actions/update";
+const getActionByDate = "actions/getByDate";
 
 //docFiles APIs
 const inserttDocFile = "docFilesTrans/insert";
@@ -38,3 +39,6 @@ const getUserDepartmentApi = "userDepts/getByUser";
 const setUserDepartmentApi = "userDepts/setDepts";
 //docCat APIs
 const getDocCategory = "docCat/getAll";
+
+//user category
+const getUserCatPageAPI = "userCategory/page";

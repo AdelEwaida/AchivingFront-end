@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../screens/actions_screens/action_screen.dart';
+import '../screens/actions_screens/daily_reminders.dart';
 import '../screens/file_screens/add_file_screen.dart';
 
 List<MenuModel> getMenus(AppLocalizations locale) {
@@ -83,6 +84,8 @@ List<MenuModel> getMenus(AppLocalizations locale) {
 Widget getScreenContent(int index) {
   // print("index")
   switch (index) {
+    case 0:
+      return const DailyReminders();
     case 2:
       return const DealClassificationTreeScreen();
     case 3:
