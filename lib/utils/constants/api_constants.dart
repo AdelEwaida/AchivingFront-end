@@ -33,6 +33,8 @@ const getUserSearchApi = "users/searchCrit";
 const addUserApi = "users/insert";
 const deleteUserApi = "users/delete";
 const updateUserApi = "users/update";
-
+const updateUserPasswordApi = "users/changePass";
+const getUserDepartmentApi = "userDepts/getByUser";
+const setUserDepartmentApi = "userDepts/setDepts";
 //docCat APIs
 const getDocCategory = "docCat/getAll";
