@@ -22,6 +22,6 @@ class UserUpdateReq {
 
   @override
   String toString() {
-    return userCategory!;
+    return categoryId!;
   }
 }
