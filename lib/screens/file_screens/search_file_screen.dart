@@ -228,7 +228,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
       List<DocumentModel> result = [];
       List<PlutoRow> topList = [];
       result = await documentsController
-          .searchByContent(SearchDocumentCriteria(searchField: text));
+          .searchByContent(SearchDocumentCriteria(searchField: text.trim()));
       if (documentListProvider.searchDocumentCriteria.page! >= 1) {
         documentListProvider.searchDocumentCriteria.page =
             documentListProvider.searchDocumentCriteria.page! + 1;

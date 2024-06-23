@@ -52,6 +52,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
   int? dblFilesize;
   Uint8List? image;
   String selectedDep = "";
+  String selectedCat = "";
 
   @override
   void didChangeDependencies() {
@@ -175,12 +176,18 @@ class _AddFileScreenState extends State<AddFileScreen> {
                             ),
                             CustomDropDown2(
                               width: width * 0.13,
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                selectedCat = value.txtKey;
+                              },
                               searchBox: true,
                               valSelected: true,
                               bordeText: _locale.category,
                               // width: width * 0.21,
                               heightVal: height * 0.3,
+                              onSearch: (p0) async {
+                                return await DocumentsController()
+                                    .getDocCategoryList();
+                              },
                             ),
                             SizedBox(
                               width: width * 0.015,
@@ -227,7 +234,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                             width: width * 0.015,
                           ),
                           DateTimeComponent(
-                            label: _locale.issueDate,
+                            label: _locale.arrivalDate,
                             dateController: arrivalDateController,
                             dateWidth: width * 0.13,
                             dateControllerToCompareWith: null,
@@ -256,14 +263,12 @@ class _AddFileScreenState extends State<AddFileScreen> {
                           SizedBox(
                             width: width * 0.015,
                           ),
-                          CustomDropDown2(
-                            width: width * 0.13,
-                            onChanged: (value) {},
-                            searchBox: true,
-                            valSelected: true,
-                            bordeText: _locale.contractType,
-                            // width: width * 0.21,
-                            heightVal: height * 0.3,
+                          customTextField(
+                            _locale.following,
+                            followingController,
+                            isDesktop,
+                            0.13,
+                            false,
                           ),
                           SizedBox(
                             width: width * 0.015,
@@ -310,31 +315,31 @@ class _AddFileScreenState extends State<AddFileScreen> {
                           ),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.following,
-                            followingController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          SizedBox(
-                            width: width * 0.13,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          SizedBox(
-                            width: width * 0.13,
-                          )
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   crossAxisAlignment: CrossAxisAlignment.center,
+                      //   children: [
+                      //     customTextField(
+                      //       _locale.following,
+                      //       followingController,
+                      //       isDesktop,
+                      //       0.13,
+                      //       false,
+                      //     ),
+                      //     SizedBox(
+                      //       width: width * 0.015,
+                      //     ),
+                      //     SizedBox(
+                      //       width: width * 0.13,
+                      //     ),
+                      //     SizedBox(
+                      //       width: width * 0.015,
+                      //     ),
+                      //     SizedBox(
+                      //       width: width * 0.13,
+                      //     )
+                      //   ],
+                      // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -481,8 +486,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
       intVouchtype: 1,
       intVouchnum: 0,
       txtJcode: "",
-      txtCategory: "",
-      txtDept: "",
+      txtCategory: selectedCat,
+      txtDept: selectedDep,
       txtIssueno: issueNoController.text,
       datIssuedate: arrivalDateController.text,
       txtUsercode: "",
