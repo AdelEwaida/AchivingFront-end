@@ -57,12 +57,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
       key: UniqueKey(),
       tableHeigt: height * 0.85,
       tableWidth: width * 0.85,
-      addReminder: addRemider,
-      upload: uploadFile,
-      copy: copyFile,
-      delete: deleteFile,
-      // add: addAction,
-      // genranlEdit: editAction,
+
+      download: downLoad,
       plCols: polCols,
       mode: PlutoGridMode.selectWithOneTap,
       polRows: [],
@@ -70,9 +66,9 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         return lazyLoadingfooter(stateManager);
       },
       search: search,
-      explor: explorFiels,
+      // explor: explorFiels,
       view: viewDocumentInfo,
-      genranlEdit: editDocumentInfo,
+      // genranlEdit: editDocumentInfo,
       onLoaded: (PlutoGridOnLoadedEvent event) {
         stateManager = event.stateManager;
         // pageLis.value = pageLis.value > 1 ? 0 : 1;
@@ -89,30 +85,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
     );
   }
 
-  search(String text) async {
-    isSearch.value = true;
-    if (text.trim().isEmpty) {
-      isSearch.value = false;
-    } else if (isSearch.value) {
-      List<DocumentModel> result = [];
-      List<PlutoRow> topList = [];
-      result = await documentsController
-          .searchDocCriterea(SearchDocumentCriteria(searchField: text));
-      if (documentListProvider.searchDocumentCriteria.page! >= 1) {
-        documentListProvider.searchDocumentCriteria.page =
-            documentListProvider.searchDocumentCriteria.page! + 1;
-      } else {
-        rowList.clear();
-        rowList = [];
-      }
-      for (int i = 0; i < result.length; i++) {
-        rowList.add(result[i].toPlutoRow(i + 1));
-        topList.add(result[i].toPlutoRow(rowList.length));
-      }
-      stateManager.removeAllRows();
-      stateManager.appendRows(topList);
-    }
-  }
+  void downLoad() {}
 
   void explorFiels() {
     if (selectedRow != null) {
@@ -243,6 +216,34 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         backgroundColor: columnColors,
       ),
     ]);
+  }
+
+  search(String text) async {
+    isSearch.value = true;
+    if (text.trim().isEmpty) {
+      isSearch.value = false;
+      stateManager.removeAllRows();
+      stateManager.appendRows(rowList);
+    } else if (isSearch.value) {
+      List<DocumentModel> result = [];
+      List<PlutoRow> topList = [];
+      result = await documentsController
+          .searchByContent(SearchDocumentCriteria(searchField: text));
+      if (documentListProvider.searchDocumentCriteria.page! >= 1) {
+        documentListProvider.searchDocumentCriteria.page =
+            documentListProvider.searchDocumentCriteria.page! + 1;
+      } else {
+        stateManager.removeAllRows();
+        // rowList.clear();
+        // rowList = [];
+      }
+      for (int i = 0; i < result.length; i++) {
+        // rowList.add(result[i].toPlutoRow(i + 1));
+        topList.add(result[i].toPlutoRow(rowList.length));
+      }
+      stateManager.removeAllRows();
+      stateManager.appendRows(topList);
+    }
   }
 
   PlutoInfinityScrollRows lazyLoadingfooter(

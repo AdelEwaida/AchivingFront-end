@@ -53,11 +53,11 @@ List<MenuModel> getMenus(AppLocalizations locale) {
     MenuModel(
         title: locale.users,
         icon: Icons.supervised_user_circle_sharp,
-        isParent: true,
-        pageNumber: 9,
+        isParent: false,
+        pageNumber: 11,
         subMenuList: [
           // SubMenuModel(title: locale.addUser, pageNumber: 10),
-          SubMenuModel(title: locale.viewUser, pageNumber: 11),
+          // SubMenuModel(title: locale.viewUser, pageNumber: 11),
         ],
         isOpened: false),
     MenuModel(

@@ -26,6 +26,8 @@ const inserttDocFile = "docFilesTrans/insert";
 const uplodeFileInDocApi = "docFilesTrans/uploadFile";
 const updateDoc = "docInfo/update";
 const searchDocCritereaFile = "docInfo/searchCrit";
+const searchByContentApi = "docInfo/searchByContent";
+
 const getFilesByHdrApi = "docFiles/getByHdr";
 const copyFileDocApi = "docFilesTrans/copyDoc";
 const deleteDocApi = "docFilesTrans/delete";
