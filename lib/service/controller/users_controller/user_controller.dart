@@ -4,6 +4,7 @@ import 'package:archiving_flutter_project/models/db/user_models/user_model.dart'
 import 'package:archiving_flutter_project/service/handler/api_service.dart';
 import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
 
+import '../../../models/db/user_models/user_category.dart';
 import '../../../models/dto/searchs_model/search_model.dart';
 
 class UserController {
@@ -31,5 +32,18 @@ class UserController {
 
   Future updateUser(UserModel userModel) async {
     return await ApiService().postRequest(updateUserApi, userModel);
+  }
+
+  Future<List<UserCategory>> getUserCategory(SearchModel searchModel) async {
+    List<UserCategory> list = [];
+    await ApiService().postRequest(getUserCatPageAPI, searchModel).then((response) {
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+        for (var stock in jsonData) {
+          list.add(UserCategory.fromJson(stock));
+        }
+      }
+    });
+    return list;
   }
 }

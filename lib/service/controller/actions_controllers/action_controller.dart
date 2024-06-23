@@ -19,6 +19,21 @@ class ActionController {
     return list;
   }
 
+  Future<List<ActionModel>> getActionByDateMethod(String date) async {
+    List<ActionModel> list = [];
+    await ApiService()
+        .postRequest(getActionByDate, {"date": date}).then((response) {
+      print("responseresponseresponse:${response.statusCode}");
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+        for (var stock in jsonData) {
+          list.add(ActionModel.fromJson(stock));
+        }
+      }
+    });
+    return list;
+  }
+
   Future addAction(ActionModel actionModel) async {
     return await ApiService()
         .postRequest(addActionApi, actionModel.toJsonAdd());

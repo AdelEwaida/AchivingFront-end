@@ -63,7 +63,10 @@ class ActionModel {
       'countNumber': PlutoCell(value: count),
       'txtDescription': PlutoCell(value: txtDescription ?? ""),
       'txtNotes': PlutoCell(value: txtNotes ?? ""),
-      'intRecurring': PlutoCell(value: intRecurring)
+      'intRecurring': PlutoCell(value: intRecurring),
+      'txtUsercode': PlutoCell(value: txtUsercode),
+      'txtDocumentcode': PlutoCell(value: txtDocumentcode),
+      'txtServicecode': PlutoCell(value: txtServicecode),
     });
   }
 
