@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:archiving_flutter_project/dialogs/actions_dialogs/add_edit_action_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/add_file_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
@@ -16,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+
+import '../../utils/func/save_excel_file.dart';
 
 class TableFileListSection extends StatefulWidget {
   const TableFileListSection({super.key});
@@ -60,8 +65,10 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           tableWidth: width * 0.81,
           addReminder: addRemider,
           upload: uploadFile,
+
           copy: copyFile,
           delete: deleteFile,
+          download: download,
           // add: addAction,
           // genranlEdit: editAction,
           plCols: polCols,
@@ -135,6 +142,21 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           );
         },
       );
+    }
+  }
+
+  Future<void> download() async {
+    if (selectedRow != null) {
+      try {
+        Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
+
+        String fileName = selectedRow!.cells['fileName']!.value;
+
+        saveExcelFile(bytes, fileName);
+      } catch (e) {
+        print("Error downloading file: $e");
+        // Handle error here
+      }
     }
   }
 
@@ -226,6 +248,13 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         width: isDesktop ? width * 0.16 : width * 0.4,
         backgroundColor: columnColors,
       ),
+      // PlutoColumn(
+      //   title: _locale.dateCreated,
+      //   field: "datCreationdate",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
       PlutoColumn(
         title: _locale.issueNo,
         field: "txtIssueno",
@@ -234,12 +263,47 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         backgroundColor: columnColors,
       ),
       PlutoColumn(
-        title: _locale.dateCreated,
+        title: _locale.issueDate,
         field: "datIssuedate",
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.35 : width * 0.2,
         backgroundColor: columnColors,
       ),
+      // PlutoColumn(
+      //   title: _locale.userCode,
+      //   field: "txtUsercode",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.arrivalDate,
+      //   field: "datArrvialdate",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.ref1,
+      //   field: "ref1",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.ref2,
+      //   field: "ref2",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.active,
+      //   field: "imgBlob",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
     ]);
   }
 

@@ -43,6 +43,8 @@ class _LogInScreenState extends State<LoginScreen>
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     super.didChangeDependencies();
   }
 

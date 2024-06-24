@@ -23,7 +23,6 @@ class TableComponent extends StatefulWidget {
   final Function()? exportToExcel;
   final Function()? download;
   final Function()? chooseDep;
-
   final Function()? editPassword;
   final Function()? genranlEdit;
   final Function()? view;
@@ -34,6 +33,7 @@ class TableComponent extends StatefulWidget {
   final Function()? upload;
   final Function()? explor;
   final Function()? copy;
+  final Function()? generalDownload;
 
   final Function(PlutoGridOnLoadedEvent event)? onLoaded;
   final Function(PlutoGridOnRowDoubleTapEvent event)? doubleTab;
@@ -88,7 +88,8 @@ class TableComponent extends StatefulWidget {
       this.borderColor,
       this.rowsHeight,
       this.moveAfterEditng,
-      this.rowColor
+      this.rowColor,
+      this.generalDownload
       // required this.stateManger
       });
   @override
@@ -445,6 +446,25 @@ class _TableComponentState extends State<TableComponent> {
                           },
                           icon: const Icon(
                             Icons.edit,
+                            size: 20,
+                          )),
+                    )
+                  : SizedBox.shrink(),
+              widget.generalDownload != null
+                  ? Tooltip(
+                      message: locale.download,
+                      child: IconButton(
+                          onPressed: () {
+                            // dealsProvider.clearProvider();
+                            // dealsProvider.clearCampModel();
+                            widget.generalDownload!();
+                            // dealsProvider.loadedList = rowList;
+                            // dealsProvider.pageNum = pageLis.value;
+                            // // screenProvider.setPage(32);
+                            // tabsProvider.changeActiveWidget(32, locale);
+                          },
+                          icon: const Icon(
+                            Icons.download,
                             size: 20,
                           )),
                     )
