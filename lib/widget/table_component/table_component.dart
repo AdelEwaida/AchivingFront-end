@@ -216,7 +216,9 @@ class _TableComponentState extends State<TableComponent> {
           WidgetSpan(
             child: Text(
               polCols[i].title,
-              style: const TextStyle(fontSize: 14,),
+              style: const TextStyle(
+                fontSize: 14,
+              ),
             ),
           ),
         ],
@@ -401,7 +403,7 @@ class _TableComponentState extends State<TableComponent> {
                         // isSearching = true;
                         // isEnteredSearch = true;
                         // isLoadingData.value = true;
-
+                        widget.search!(value);
                         // searchItem().then((value) {
                         //   isSearching = false;
                         // });

@@ -220,6 +220,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
 
   search(String text) async {
     isSearch.value = true;
+    print(text);
     if (text.trim().isEmpty) {
       isSearch.value = false;
       stateManager.removeAllRows();

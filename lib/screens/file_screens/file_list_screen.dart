@@ -101,7 +101,7 @@ class _FileListScreenState extends State<FileListScreen> {
                     children: [
                       Container(
                         width: width * 0.35,
-                        height: height * 0.5,
+                        height: height * 0.45,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15),
