@@ -81,57 +81,72 @@ class _FileListScreenState extends State<FileListScreen> {
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Adding some spacing between search field and tree
-            Row(
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(_locale.documentExplorer),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: width * 0.35,
-                  height: height * 0.5,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.orange),
-                  ),
-                  child: Column(
+                // Adding some spacing between search field and tree
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomSearchField(
-                        label: _locale.search,
-                        width: width * 0.3,
-                        padding: 8,
-                        controller: searchController,
-                        onChanged: (value) {
-                          searchTree(value);
-                          // Add search functionality if needed
-                        },
+                      Container(
+                        width: width * 0.35,
+                        height: height * 0.5,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 3,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomSearchField(
+                              label: _locale.search,
+                              width: width * 0.3,
+                              padding: 8,
+                              controller: searchController,
+                              onChanged: (value) {
+                                searchTree(value);
+                                // Add search functionality if needed
+                              },
+                            ),
+                            Expanded(child: treeSection()),
+                          ],
+                        ),
                       ),
-                      Expanded(child: treeSection()),
+                      SizedBox(
+                        width: width * 0.02,
+                      ),
+                      const FillterFileSection()
                     ],
                   ),
                 ),
-                SizedBox(
-                  width: width * 0.02,
-                ),
-                FillterFileSection()
+                const Row(
+                  children: [
+                    TableFileListSection(),
+                  ],
+                )
               ],
             ),
-            Row(
-              children: [
-                TableFileListSection(),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Widget treeSection() {
@@ -358,8 +373,6 @@ class _FileListScreenState extends State<FileListScreen> {
     }
     return false;
   }
-
- 
 
   @override
   void dispose() {

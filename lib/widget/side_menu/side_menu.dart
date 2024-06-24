@@ -159,9 +159,7 @@ class _SideMenuState extends State<SideMenu> {
                     },
                     icon: Icon(
                       Icons.flip_to_back_rounded,
-                      color: isEnteredCollapseIcon
-                          ? const Color.fromARGB(95, 0, 32, 216)
-                          : Colors.white,
+                      color: isEnteredCollapseIcon ? primary : Colors.white,
                     ),
                   ),
                 )

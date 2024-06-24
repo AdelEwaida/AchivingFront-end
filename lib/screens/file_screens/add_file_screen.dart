@@ -13,6 +13,7 @@ import '../../models/db/document_models/upload_file_mode.dart';
 import '../../service/controller/documents_controllers/documents_controller.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
+import '../../utils/func/converters.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/custom_drop_down.dart';
 import '../../widget/custom_drop_down2.dart';
@@ -61,52 +62,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
     arrivalDateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-    DocumentModel documentModel = DocumentModel(
-      txtKey: "exampleKey",
-      txtDescription: "Example Description",
-      txtKeywords: "example",
-      txtReference1: "ref1",
-      txtReference2: "ref2",
-      intType: 1,
-      datCreationdate: "2024-06-10",
-      txtLastupdateduser: "user123",
-      txtMimetype: "application/pdf",
-      intVouchtype: 1,
-      intVouchnum: 12345,
-      txtJcode: "J123",
-      txtCategory: "Category1",
-      txtDept: "Department1",
-      txtIssueno: "Issue1",
-      datIssuedate: "2024-06-11",
-      txtUsercode: "user123",
-      txtInsurance: "Insurance1",
-      txtLicense: "License1",
-      txtMaintenance: "Maintenance1",
-      txtOtherservices: "Other Services",
-      bolHasfile: 1,
-      datArrvialdate: "2024-06-12",
-      txtOriginalfilekey: "originalKey",
-    );
 
-    FileUploadModel fileUploadModel = FileUploadModel(
-      txtKey: "fileKey",
-      txtHdrkey: "headerKey",
-      txtFilename: "example.pdf",
-      imgBlob: imgBlob,
-      dblFilesize: 123456,
-      txtUsercode: "user123",
-      datDate: "2024-06-11",
-      txtMimetype: "application",
-      intLinenum: 1,
-      intType: 1,
-    );
-
-    DocumentFileRequest documentFileRequest = DocumentFileRequest(
-      documentInfo: documentModel,
-      documentFile: fileUploadModel,
-    );
-
-    documentsController.addDocument(documentFileRequest);
     super.didChangeDependencies();
   }
 
@@ -165,7 +121,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                                   selectedDep.isEmpty ? null : selectedDep,
                               bordeText: _locale.department,
                               width: width * 0.13,
-                              height: height * 0.045,
+                              height: height * 0.04,
                               onSearch: (p0) async {
                                 return await DepartmentController()
                                     .getDep(SearchModel(page: 1));
@@ -174,8 +130,13 @@ class _AddFileScreenState extends State<AddFileScreen> {
                             SizedBox(
                               width: width * 0.015,
                             ),
-                            CustomDropDown2(
+                            DropDown(
+                              key: UniqueKey(),
+
+                              initialValue:
+                                  selectedCat.isEmpty ? null : selectedCat,
                               width: width * 0.13,
+                              height: height * 0.04,
                               onChanged: (value) {
                                 selectedCat = value.txtKey;
                               },
@@ -183,7 +144,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               valSelected: true,
                               bordeText: _locale.category,
                               // width: width * 0.21,
-                              heightVal: height * 0.3,
+
                               onSearch: (p0) async {
                                 return await DocumentsController()
                                     .getDocCategoryList();
@@ -532,7 +493,24 @@ class _AddFileScreenState extends State<AddFileScreen> {
                 statusCode: 200);
           },
         ).then((value) {
-          // Navigator.pop(context, true);
+          descriptionController.clear();
+          keyWordsController.clear();
+          ref1Controller.clear();
+          ref2Controller.clear();
+          fileDateController.clear();
+          issueNoController.clear();
+          arrivalDateController.clear();
+          fileNameController.clear();
+          selectedDep = "";
+          selectedCat = "";
+          followingController.clear();
+          otherRefController.clear();
+          organizationController.clear();
+          arrivalDateController.text =
+              Converters.formatDate2(DateTime.now().toString());
+          fileDateController.text =
+              Converters.formatDate2(DateTime.now().toString());
+          setState(() {});
         });
       }
     });

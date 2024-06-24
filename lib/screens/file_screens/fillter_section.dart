@@ -72,7 +72,15 @@ class _FillterFileSectionState extends State<FillterFileSection> {
       width: width * 0.44,
       height: height * 0.5,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.orange),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 3,
+          ),
+        ],
       ),
       child: Column(
         children: [

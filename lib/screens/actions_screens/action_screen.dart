@@ -89,12 +89,11 @@ class _OfficeScreenState extends State<ActionScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    return Container(
-      decoration: const BoxDecoration(),
-      width: width,
-      height: height,
-      child: buildMainContent(),
-    );
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(_locale.listOfReminders),
+        ),
+        body: buildMainContent());
   }
 
   Widget mobileView() {
@@ -140,58 +139,60 @@ class _OfficeScreenState extends State<ActionScreen> {
   Widget buildMainContent() {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: TableComponent(
-                key: UniqueKey(),
-                tableHeigt: height * 0.85,
-                tableWidth: width,
-                delete: deleteAction,
-                add: addAction,
-                genranlEdit: editAction,
-                plCols: polCols,
-                mode: PlutoGridMode.selectWithOneTap,
-                polRows: [],
-                footerBuilder: (stateManager) {
-                  return lazyLoadingfooter(stateManager);
-                },
-                onLoaded: (PlutoGridOnLoadedEvent event) {
-                  stateManager = event.stateManager;
-                  pageLis.value = pageLis.value > 1 ? 0 : 1;
-                  totalActionsCount.value = 0;
-                  getCount();
-                },
-                doubleTab: (event) async {
-                  PlutoRow? tappedRow = event.row;
-                },
-                onSelected: (event) async {
-                  PlutoRow? tappedRow = event.row;
-                  selectedRow = tappedRow;
-                },
-              ),
-            )
-          ],
+        Center(
+          child: Container(
+            width: isDesktop ? width * 0.8 : width * 0.9,
+            child: TableComponent(
+              key: UniqueKey(),
+              tableHeigt: height * 0.75,
+              tableWidth: width,
+              delete: deleteAction,
+              add: addAction,
+              genranlEdit: editAction,
+              plCols: polCols,
+              mode: PlutoGridMode.selectWithOneTap,
+              polRows: [],
+              footerBuilder: (stateManager) {
+                return lazyLoadingfooter(stateManager);
+              },
+              onLoaded: (PlutoGridOnLoadedEvent event) {
+                stateManager = event.stateManager;
+                pageLis.value = pageLis.value > 1 ? 0 : 1;
+                totalActionsCount.value = 0;
+                getCount();
+              },
+              doubleTab: (event) async {
+                PlutoRow? tappedRow = event.row;
+              },
+              onSelected: (event) async {
+                PlutoRow? tappedRow = event.row;
+                selectedRow = tappedRow;
+              },
+            ),
+          ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                "${_locale.totalCount}: ",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ValueListenableBuilder(
-                valueListenable: totalActionsCount,
-                builder: ((context, value, child) {
-                  return Text(
-                    "${totalActionsCount.value}",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  );
-                }),
-              ),
-            ],
+        Container(
+          width: isDesktop ? width * 0.8 : width * 0.9,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "${_locale.totalCount}: ",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: totalActionsCount,
+                  builder: ((context, value, child) {
+                    return Text(
+                      "${totalActionsCount.value}",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ],

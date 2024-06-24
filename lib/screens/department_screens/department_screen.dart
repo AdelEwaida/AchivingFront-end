@@ -66,7 +66,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
         title: _locale.txtDescription,
         field: "txtDescription",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.3 : width * 0.4,
+        width: isDesktop ? width * 0.44 : width * 0.4,
         // width: width * 0.2,
         backgroundColor: columnColors,
       ),
@@ -90,27 +90,9 @@ class _OfficeScreenState extends State<DepartemntScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(_locale.dailyReminders),
+          title: Text(_locale.listOfDepartment),
         ),
         body: buildMainContent());
-    // appBar: !isDesktop
-    //     ? AppBar(
-    //         backgroundColor: whiteColor,
-    //         title: const Text(
-    //           "SCOPE",
-    //           style: TextStyle(
-    //             color: Colors.white,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //         ),
-    //       )
-    //     : null,
-    // drawer: !isDesktop ? const SideMenu() : null,
-    //     Responsive(
-    //   mobile: mobileView(),
-    //   tablet: tabletView(),
-    //   desktop: desktopView(),
-    // );
   }
 
   Widget mobileView() {

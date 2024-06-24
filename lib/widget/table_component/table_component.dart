@@ -216,7 +216,7 @@ class _TableComponentState extends State<TableComponent> {
           WidgetSpan(
             child: Text(
               polCols[i].title,
-              style: const TextStyle(fontSize: 10),
+              style: const TextStyle(fontSize: 14,),
             ),
           ),
         ],
