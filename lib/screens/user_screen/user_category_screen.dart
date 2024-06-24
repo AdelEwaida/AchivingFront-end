@@ -62,11 +62,10 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
         title: _locale.category,
         field: "categoryName",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.43: width * 0.2,
+        width: isDesktop ? width * 0.43 : width * 0.2,
         backgroundColor: columnColors,
         // enableFilterMenuItem: true,
       ),
-     
     ]);
     getCount();
     super.didChangeDependencies();
@@ -85,12 +84,11 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    return Container(
-      decoration: const BoxDecoration(),
-      width: width,
-      height: height,
-      child: buildMainContent(),
-    );
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(_locale.listOfReminders),
+        ),
+        body: buildMainContent());
   }
 
   Widget mobileView() {
@@ -136,74 +134,76 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
   Widget buildMainContent() {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: TableComponent(
-                key: UniqueKey(),
-                tableHeigt: height * 0.85,
-                tableWidth: width,
-                delete: deleteDep,
-                // add: addDep,
-                genranlEdit: editDep,
-                plCols: polCols,
-                mode: PlutoGridMode.selectWithOneTap,
-                polRows: [],
-                footerBuilder: (stateManager) {
-                  return lazyLoadingfooter(stateManager);
-                },
-                onLoaded: (PlutoGridOnLoadedEvent event) {
-                  stateManager = event.stateManager;
-                  pageLis.value = pageLis.value > 1 ? 0 : 1;
-                  totalDepCount.value = 0;
-                  getCount();
-                },
-                doubleTab: (event) async {
-                  PlutoRow? tappedRow = event.row;
-                },
-                onSelected: (event) async {
-                  PlutoRow? tappedRow = event.row;
-                  selectedRow = tappedRow;
-                },
-              ),
-            )
-          ],
+        Center(
+          child: Container(
+            width: isDesktop ? width * 0.8 : width * 0.9,
+            child: TableComponent(
+              key: UniqueKey(),
+              tableHeigt: height * 0.8,
+              tableWidth: width,
+              delete: deleteDep,
+              // add: addDep,
+              genranlEdit: editDep,
+              plCols: polCols,
+              mode: PlutoGridMode.selectWithOneTap,
+              polRows: [],
+              footerBuilder: (stateManager) {
+                return lazyLoadingfooter(stateManager);
+              },
+              onLoaded: (PlutoGridOnLoadedEvent event) {
+                stateManager = event.stateManager;
+                pageLis.value = pageLis.value > 1 ? 0 : 1;
+                totalDepCount.value = 0;
+                getCount();
+              },
+              doubleTab: (event) async {
+                PlutoRow? tappedRow = event.row;
+              },
+              onSelected: (event) async {
+                PlutoRow? tappedRow = event.row;
+                selectedRow = tappedRow;
+              },
+            ),
+          ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              // Text(
-              //   "${_locale.officeNumberDisplayed}: ",
-              //   style: const TextStyle(fontWeight: FontWeight.bold),
-              // ),
-              // ValueListenableBuilder(
-              //   valueListenable: officeNumberDisplayed,
-              //   builder: ((context, value, child) {
-              //     return Text(
-              //       "${officeNumberDisplayed.value}",
-              //       style: const TextStyle(fontWeight: FontWeight.bold),
-              //     );
-              //   }),
-              // ),
-              // SizedBox(
-              //   width: width * 0.05,
-              // ),
-              Text(
-                "${_locale.totalCount}: ",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ValueListenableBuilder(
-                valueListenable: totalDepCount,
-                builder: ((context, value, child) {
-                  return Text(
-                    "${totalDepCount.value}",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  );
-                }),
-              ),
-            ],
+        Container(
+          width: isDesktop ? width * 0.8 : width * 0.9,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Text(
+                //   "${_locale.officeNumberDisplayed}: ",
+                //   style: const TextStyle(fontWeight: FontWeight.bold),
+                // ),
+                // ValueListenableBuilder(
+                //   valueListenable: officeNumberDisplayed,
+                //   builder: ((context, value, child) {
+                //     return Text(
+                //       "${officeNumberDisplayed.value}",
+                //       style: const TextStyle(fontWeight: FontWeight.bold),
+                //     );
+                //   }),
+                // ),
+                // SizedBox(
+                //   width: width * 0.05,
+                // ),
+                Text(
+                  "${_locale.totalCount}: ",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: totalDepCount,
+                  builder: ((context, value, child) {
+                    return Text(
+                      "${totalDepCount.value}",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -227,14 +227,14 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
         context: context,
         builder: (context) {
           return CustomConfirmDialog(
-              confirmMessage: _locale.areYouSureToDelete(
-                  selectedRow!.cells['categoryId']!.value));
+              confirmMessage: _locale
+                  .areYouSureToDelete(selectedRow!.cells['categoryId']!.value));
         },
       ).then((value) async {
         if (value) {
           await userController
-              .deleteUserCategory(
-                  UserCategory(categoryId: selectedRow!.cells['categoryId']!.value))
+              .deleteUserCategory(UserCategory(
+                  categoryId: selectedRow!.cells['categoryId']!.value))
               .then((value) {
             if (value.statusCode == 200) {
               reloadData();
@@ -248,7 +248,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
   void editDep() {
     if (selectedRow != null) {
       UserCategory userCategoryModel =
-          UserCategory.fromPlutoRow(selectedRow!,_locale);
+          UserCategory.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {

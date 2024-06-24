@@ -25,14 +25,18 @@ class DocumentsController {
     return await ApiService()
         .postRequest(inserttDocFile, documentFileRequest.toJson());
   }
+
   Future copyDocument(DocumentModel documentFileRequest) async {
+    print("copppppy ${documentFileRequest.toJson()}");
     return await ApiService()
         .postRequest(copyFileDocApi, documentFileRequest.toJson());
   }
-Future deleteDocument(DocumentModel documentFileRequest) async {
+
+  Future deleteDocument(DocumentModel documentFileRequest) async {
     return await ApiService().postRequest(
         deleteDocApi, {"documentInfo": documentFileRequest.toJson()});
   }
+
   Future updateDocument(DocumentModel documentFileRequest) async {
     return await ApiService()
         .postRequest(updateDoc, documentFileRequest.toJson());
@@ -51,6 +55,7 @@ Future deleteDocument(DocumentModel documentFileRequest) async {
     }
     return list;
   }
+
   Future<List<DocumentModel>> searchByContent(
       SearchDocumentCriteria searchDocumentCriteria) async {
     List<DocumentModel> list = [];
@@ -64,6 +69,7 @@ Future deleteDocument(DocumentModel documentFileRequest) async {
     }
     return list;
   }
+
   Future<List<FileUploadModel>> getFilesByHdrKey(String hdrKey) async {
     List<FileUploadModel> list = [];
     var response =

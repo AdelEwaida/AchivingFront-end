@@ -59,37 +59,44 @@ class _UserScreenState extends State<UserScreen> {
   PlutoRow? selectedRow;
   @override
   Widget build(BuildContext context) {
-    return TableComponent(
-      key: UniqueKey(),
-      tableHeigt: height * 0.85,
-      tableWidth: width * 0.85,
-      editPassword: chagnePassword,
-      delete: deleteUser,
-      add: addUser,
-      chooseDep: addDepartmentUser,
-      search: search,
-      plCols: polCols,
-      mode: PlutoGridMode.selectWithOneTap,
-      polRows: [],
-      footerBuilder: (stateManager) {
-        return lazyLoadingfooter(stateManager);
-      },
-      genranlEdit: editUser,
-      
-      onLoaded: (PlutoGridOnLoadedEvent event) {
-        stateManager = event.stateManager;
-        // pageLis.value = pageLis.value > 1 ? 0 : 1;
-        // totalActionsCount.value = 0;
-        // getCount();
-      },
-      doubleTab: (event) async {
-        PlutoRow? tappedRow = event.row;
-      },
-      onSelected: (event) async {
-        PlutoRow? tappedRow = event.row;
-        selectedRow = tappedRow;
-      },
-    );
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(_locale.users),
+        ),
+        body: Center(
+          child: Container(
+              width: isDesktop ? width * 0.8 : width * 0.9,
+              child: TableComponent(
+                key: UniqueKey(),
+                tableHeigt: height * 0.85,
+                tableWidth: width * 0.85,
+                editPassword: chagnePassword,
+                delete: deleteUser,
+                add: addUser,
+                chooseDep: addDepartmentUser,
+                search: search,
+                plCols: polCols,
+                mode: PlutoGridMode.selectWithOneTap,
+                polRows: [],
+                footerBuilder: (stateManager) {
+                  return lazyLoadingfooter(stateManager);
+                },
+                genranlEdit: editUser,
+                onLoaded: (PlutoGridOnLoadedEvent event) {
+                  stateManager = event.stateManager;
+                  // pageLis.value = pageLis.value > 1 ? 0 : 1;
+                  // totalActionsCount.value = 0;
+                  // getCount();
+                },
+                doubleTab: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                },
+                onSelected: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                  selectedRow = tappedRow;
+                },
+              )),
+        ));
   }
 
   void addDepartmentUser() {
@@ -205,28 +212,28 @@ class _UserScreenState extends State<UserScreen> {
         title: _locale.userCode,
         field: "txtCode",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.16 : width * 0.4,
+        width: isDesktop ? width * 0.19 : width * 0.4,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
         title: _locale.userName,
         field: "txtNamee",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.16 : width * 0.4,
+        width: isDesktop ? width * 0.25 : width * 0.4,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
         title: _locale.type,
         field: "intType",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.07 : width * 0.2,
+        width: isDesktop ? width * 0.11 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
         title: _locale.userStatus,
         field: "bolActive",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.07 : width * 0.2,
+        width: isDesktop ? width * 0.09 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:js';
 import 'dart:js_interop';
 import 'dart:ui';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:archiving_flutter_project/app/auth/session_model/session_config.dart';
 import 'package:archiving_flutter_project/app/auth/session_model/session_time_out_manager.dart';
@@ -50,6 +51,57 @@ void main() {
 //   GoRouter.of(context2).go(loginScreenRoute);
 // }
 
+// class MyApp extends StatelessWidget {
+//   MyApp({super.key});
+//   final sessionStateStream = StreamController<SessionState>();
+
+//   // This widget is the root of your application.
+//   Widget build(BuildContext context) {
+//     final sessionConfig = SessionConfig(
+//       invalidateSessionForAppLostFocus: const Duration(minutes: 60),
+//       invalidateSessionForUserInactivity: const Duration(minutes: 60),
+//     );
+
+//     final provider = Provider.of<LocaleProvider>(context);
+//     loadApi();
+//     return SessionTimeoutManager(
+//       sessionConfig: sessionConfig,
+//       child: MaterialApp.router(
+//         // key: UniqueKey\\(),
+//         scrollBehavior: MyCustomScrollBehavior(),
+//         title: 'Scope',
+//         debugShowCheckedModeBanner: false,
+//         localizationsDelegates: const [
+//           AppLocalizations.delegate,
+//           GlobalMaterialLocalizations.delegate,
+//           GlobalCupertinoLocalizations.delegate,
+//           GlobalWidgetsLocalizations.delegate,
+//         ],
+//         locale: provider.locale,
+//         supportedLocales: lang,
+//         // theme: ThemeData.light()
+//         //     .copyWith(textTheme: getFontFamily(context), useMaterial3: false),
+//         routerConfig: AppRoutes.routes,
+
+//         // home: const LoginScreen(),
+//       ),
+//     );
+//   }
+
+//   Future loadApi() async {
+//     const storage = FlutterSecureStorage();
+
+//     await rootBundle.loadString(centralApiPathConstant).then((value) async {
+//       ApiService.urlServer = value.trim();
+
+//       await storage.write(key: 'url', value: ApiService.urlServer);
+//     });
+//     await rootBundle.loadString(centralApiPDFPathConstant).then((value) async {
+//       await storage.write(key: 'urlPdf', value: value.trim());
+//     });
+//     // await storage.write(key: 'logOutApi', value: logOutApi);
+//   }
+// }
 class MyApp extends StatelessWidget {
   MyApp({super.key});
   final sessionStateStream = StreamController<SessionState>();
@@ -78,13 +130,34 @@ class MyApp extends StatelessWidget {
         ],
         locale: provider.locale,
         supportedLocales: lang,
-        // theme: ThemeData.light()
-        //     .copyWith(textTheme: getFontFamily(context), useMaterial3: false),
+        // theme: ThemeData(
+        //   textTheme: GoogleFonts.almaraiTextTheme(
+        //     Theme.of(context).textTheme,
+        //   ),
+        // ),
+        theme: _buildTheme(context, provider.locale),
+
         routerConfig: AppRoutes.routes,
 
         // home: const LoginScreen(),
       ),
     );
+  }
+
+  ThemeData _buildTheme(BuildContext context, Locale? locale) {
+    if (locale != null && locale.languageCode == 'ar') {
+      return ThemeData(
+        textTheme: GoogleFonts.almaraiTextTheme(
+          Theme.of(context).textTheme,
+        ),
+      );
+    } else {
+      return ThemeData(
+        textTheme: GoogleFonts.nunitoTextTheme(
+          Theme.of(context).textTheme,
+        ),
+      );
+    }
   }
 
   Future loadApi() async {

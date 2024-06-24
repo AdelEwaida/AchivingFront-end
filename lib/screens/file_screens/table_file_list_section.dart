@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:archiving_flutter_project/dialogs/actions_dialogs/add_edit_action_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/add_file_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
@@ -206,8 +205,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       var response = await documentsController.copyDocument(documentModel);
       if (response.statusCode == 200) {
         // print("DONE");
-        documentListProvider.setDocumentSearchCriterea(
-            documentListProvider.searchDocumentCriteria);
+        // documentListProvider.setDocumentSearchCriterea(
+        //     documentListProvider.searchDocumentCriteria);
       }
     }
   }
@@ -225,8 +224,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         },
       ).then((value) {
         if (value) {
-          // documentListProvider.setDocumentSearchCriterea(
-          //     documentListProvider.searchDocumentCriteria);
+          documentListProvider.setDocumentSearchCriterea(
+              documentListProvider.searchDocumentCriteria);
         }
       });
     }

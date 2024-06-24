@@ -102,7 +102,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_locale.pleaseSelectCat),
+        title: Text(_locale.addUserCategories),
         actions: [
           IconButton(
             onPressed: () {
@@ -128,20 +128,25 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                   width: screenWidth * 0.45,
                   padding: 8,
                   controller: searchController,
-                  // decoration: InputDecoration(
-                  //   labelText: 'Search',
-                  //   hintText: 'Search categories',
-                  //   prefixIcon: Icon(Icons.search),
-                  //   border: OutlineInputBorder(
-                  //     borderRadius: BorderRadius.circular(8),
-                  //   ),
-                  // ),
+                
                   onChanged: (value) {
                     searchTree(value);
                     // Add search functionality if needed
                   },
                 ),
               ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "${_locale.pleaseSelectCat} " + "*",
+                    style: TextStyle(color: textSecondary),
+                  ),
+                ],
+              ),
             ),
             if (isLoading)
               Expanded(
@@ -198,14 +203,14 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                   ],
                 ),
               ),
-            const Divider(height: 3),
+            // const Divider(height: 3),
             Tooltip(
               message: hintUsers,
               child: Column(
                 children: [
                   Container(
                     width: screenWidth * 0.2,
-                    height: screenHeight * 0.08,
+                    height: screenHeight * 0.05,
                     child: TestDropdown(
                       cleanPrevSelectedItem: true,
                       icon: const Icon(Icons.search),

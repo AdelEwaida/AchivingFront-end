@@ -11,6 +11,10 @@ import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../models/dto/searchs_model/search_model.dart';
+import '../../service/controller/department_controller/department_cotnroller.dart';
+import '../../widget/custom_drop_down.dart';
+
 class InfoDocumentDialog extends StatefulWidget {
   DocumentModel documentModel;
   bool isEdit;
@@ -30,8 +34,8 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
   TextEditingController keyWordController = TextEditingController();
   TextEditingController reference1 = TextEditingController();
   TextEditingController type = TextEditingController();
-  TextEditingController department = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
+  // TextEditingController department = TextEditingController();
+  // TextEditingController categoryController = TextEditingController();
   TextEditingController issueNoController = TextEditingController();
   TextEditingController issueDateController = TextEditingController();
   TextEditingController refrence2Controller = TextEditingController();
@@ -41,6 +45,10 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
   DocumentsController documentsController = DocumentsController();
   TextEditingController arrivalDate = TextEditingController();
   DocumentModel? documentModel;
+
+  String selectedDep = "";
+  String selectedCat = "";
+
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -56,9 +64,9 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
 
     type.text = documentModel!.intType.toString();
 
-    department.text = documentModel!.txtDept ?? "";
-
-    categoryController.text = documentModel!.txtCategory ?? "";
+    // department.text = documentModel!.txtDept ?? "";
+    selectedDep = documentModel!.txtDept ?? "";
+    selectedCat = documentModel!.txtCategory ?? "";
 
     issueNoController.text = documentModel!.txtIssueno ?? "";
 
@@ -263,26 +271,63 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               width: width * 0.1,
             ),
             spaceWidth(0.01),
-            CustomTextField2(
-              controller: department,
-              text: Text(_locale.department),
+            // CustomTextField2(
+            //   controller: department,
+            //   text: Text(_locale.department),
+            //   onChanged: (value) {
+            //     documentModel!.txtDept = value;
+            //   },
+            //   height: height * 0.05,
+            //   width: width * 0.1,
+            //   readOnly: !widget.isEdit,
+            // ),
+            DropDown(
+              key: UniqueKey(),
               onChanged: (value) {
-                documentModel!.txtDept = value;
+                selectedDep = value.txtKey;
+                documentModel!.txtDept = value.txtKey;
+
+                print("selectedDepselectedDepselectedDep:${selectedDep}");
+                // setState(() {});
               },
-              height: height * 0.05,
+              initialValue: selectedDep.isEmpty ? null : selectedDep,
+              bordeText: _locale.department,
               width: width * 0.1,
-              readOnly: !widget.isEdit,
+              height: height * 0.04,
+              onSearch: (p0) async {
+                return await DepartmentController()
+                    .getDep(SearchModel(page: 1));
+              },
             ),
             spaceWidth(0.01),
-            CustomTextField2(
-              controller: categoryController,
-              text: Text(_locale.category),
-              onChanged: (value) {
-                documentModel!.txtCategory = value;
-              },
-              height: height * 0.05,
-              readOnly: !widget.isEdit,
+            // CustomTextField2(
+            //   controller: categoryController,
+            //   text: Text(_locale.category),
+            //   onChanged: (value) {
+            //     documentModel!.txtCategory = value;
+            //   },
+            //   height: height * 0.05,
+            //   readOnly: !widget.isEdit,
+            //   width: width * 0.1,
+            // ),
+            DropDown(
+              key: UniqueKey(),
+
+              initialValue: selectedCat.isEmpty ? null : selectedCat,
               width: width * 0.1,
+              height: height * 0.04,
+              onChanged: (value) {
+                selectedCat = value.txtKey;
+                documentModel!.txtCategory = value.txtKey;
+              },
+              searchBox: true,
+              valSelected: true,
+              bordeText: _locale.category,
+              // width: width * 0.21,
+
+              onSearch: (p0) async {
+                return await DocumentsController().getDocCategoryList();
+              },
             ),
             spaceWidth(0.01),
             CustomTextField2(
