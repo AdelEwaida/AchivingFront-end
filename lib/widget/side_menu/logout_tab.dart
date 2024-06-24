@@ -84,7 +84,7 @@ class _LogoutTabState extends State<LogoutTab> {
                 children: [
                   Icon(Icons.logout,
                       size: isDesktop ? width * 0.011 : width * 0.05,
-                      color: Colors.black),
+                      color: Colors.white),
                   !widget.isCollapse
                       ? const SizedBox(
                           width: 5,
@@ -95,7 +95,7 @@ class _LogoutTabState extends State<LogoutTab> {
                           locale.logout,
                           style: TextStyle(
                               fontSize: isDesktop ? fontSize : width * 0.04,
-                              color: Colors.black),
+                              color: Colors.white),
                         )
                       : Container(),
                 ],

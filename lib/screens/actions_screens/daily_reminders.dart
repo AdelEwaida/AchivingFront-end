@@ -47,27 +47,74 @@ class _DailyRemindersState extends State<DailyReminders> {
   PlutoRow? selectedRow;
   @override
   Widget build(BuildContext context) {
-    return TableComponent(
-      key: UniqueKey(),
-      tableHeigt: height * 0.85,
-      tableWidth: width * 0.85,
-      plCols: polCols,
-      mode: PlutoGridMode.selectWithOneTap,
-      polRows: [],
-      footerBuilder: (stateManager) {
-        return lazyLoadingfooter(stateManager);
-      },
-      onLoaded: (PlutoGridOnLoadedEvent event) {
-        stateManager = event.stateManager;
-      },
-      doubleTab: (event) async {
-        PlutoRow? tappedRow = event.row;
-      },
-      onSelected: (event) async {
-        PlutoRow? tappedRow = event.row;
-        selectedRow = tappedRow;
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_locale.dailyReminders),
+      ),
+      body: Center(
+        child: Container(
+          width: isDesktop ? width * 0.8 : width * 0.9,
+          // height: height * 0.5,
+          // decoration: BoxDecoration(
+          //   color: Colors.white,
+          //   borderRadius: BorderRadius.circular(30),
+          //   boxShadow: [
+          //     BoxShadow(
+          //       color: Colors.black.withOpacity(0.2),
+          //       spreadRadius: 1,
+          //       blurRadius: 5,
+          //     ),
+          //   ],
+          // ),
+          child: TableComponent(
+            key: UniqueKey(),
+            isWhiteText: true,
+            tableHeigt: height * 0.85,
+            tableWidth: width * 0.85,
+            plCols: polCols,
+            mode: PlutoGridMode.selectWithOneTap,
+            polRows: [],
+            footerBuilder: (stateManager) {
+              return lazyLoadingfooter(stateManager);
+            },
+            onLoaded: (PlutoGridOnLoadedEvent event) {
+              stateManager = event.stateManager;
+            },
+            doubleTab: (event) async {
+              PlutoRow? tappedRow = event.row;
+            },
+            onSelected: (event) async {
+              PlutoRow? tappedRow = event.row;
+              selectedRow = tappedRow;
+            },
+          ),
+        ),
+      ),
     );
+    // return Padding(
+    // padding: const EdgeInsets.all(8.0),
+    // child: TableComponent(
+    //   key: UniqueKey(),
+    //   tableHeigt: height * 0.85,
+    //   tableWidth: width * 0.85,
+    //   plCols: polCols,
+    //   mode: PlutoGridMode.selectWithOneTap,
+    //   polRows: [],
+    //   footerBuilder: (stateManager) {
+    //     return lazyLoadingfooter(stateManager);
+    //   },
+    //   onLoaded: (PlutoGridOnLoadedEvent event) {
+    //     stateManager = event.stateManager;
+    //   },
+    //   doubleTab: (event) async {
+    //     PlutoRow? tappedRow = event.row;
+    //   },
+    //   onSelected: (event) async {
+    //     PlutoRow? tappedRow = event.row;
+    //     selectedRow = tappedRow;
+    //   },
+    // ),
+    // );
   }
 
   void fillColumnTable() {
@@ -105,7 +152,7 @@ class _DailyRemindersState extends State<DailyReminders> {
         title: _locale.notes,
         field: "txtNotes",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.36 : width * 0.2,
+        width: isDesktop ? width * 0.35 : width * 0.2,
         backgroundColor: columnColors,
       ),
       // PlutoColumn(

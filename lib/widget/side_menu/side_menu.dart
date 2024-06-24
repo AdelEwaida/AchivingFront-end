@@ -2,6 +2,7 @@ import 'package:archiving_flutter_project/data/side_menu_data.dart';
 import 'package:archiving_flutter_project/models/dto/side_menu/menu_model.dart';
 import 'package:archiving_flutter_project/providers/local_provider.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
+import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/language_widget/language_widget.dart';
 import 'package:archiving_flutter_project/widget/side_menu/logout_tab.dart';
@@ -67,7 +68,7 @@ class _SideMenuState extends State<SideMenu> {
       height: height,
       width: drawerWidth(),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 253, 253, 253),
+        color: secondary,
         boxShadow: [
           BoxShadow(
             color: shadowColor,
@@ -120,12 +121,12 @@ class _SideMenuState extends State<SideMenu> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8.0, vertical: 15),
                           child: Image.asset(
-                            "assets/images/asd.png",
-                            width: isDesktop ? width * 0.07 : width * 0.5,
+                            "assets/images/logo.png",
+                            width: isDesktop ? width * 0.075 : width * 0.5,
                           ),
                         ),
                         LanguageWidget(
-                          color: Colors.black,
+                          color: Colors.white,
                           onLocaleChanged: (locale) {
                             context.read<LocaleProvider>().setLocale(locale);
                             setState(() {});
@@ -160,7 +161,7 @@ class _SideMenuState extends State<SideMenu> {
                       Icons.flip_to_back_rounded,
                       color: isEnteredCollapseIcon
                           ? const Color.fromARGB(95, 0, 32, 216)
-                          : Colors.black,
+                          : Colors.white,
                     ),
                   ),
                 )
@@ -251,7 +252,7 @@ class _SideMenuState extends State<SideMenu> {
                             Icon(
                               icon,
                               size: isDesktop ? width * 0.011 : width * 0.05,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                             !isCollapsed
                                 ? const SizedBox(
@@ -269,7 +270,7 @@ class _SideMenuState extends State<SideMenu> {
                                               fontSize: isDesktop
                                                   ? fontSize
                                                   : width * 0.04,
-                                              color: Colors.black,
+                                              color: Colors.white,
                                             ),
                                             softWrap: true,
                                           )),
@@ -289,7 +290,7 @@ class _SideMenuState extends State<SideMenu> {
                                       : Icons.arrow_right_rounded,
                                   size:
                                       isDesktop ? width * 0.011 : width * 0.05,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 )
                               : Container()
                           : Container(),
@@ -397,12 +398,12 @@ class _SideMenuState extends State<SideMenu> {
   Color getActiveSubColor(int parentIndex, int subMenuIndex) {
     if (selectedMenuIndex == parentIndex &&
         selectedSubMenuIndex == subMenuIndex) {
-      return Colors.blue; // Active color for the selected submenu
+      return textSecondary; // Active color for the selected submenu
     }
     if (selectedSubMenuHover == subMenuIndex) {
       return Colors.grey; // Hover color for the submenu
     }
-    return Colors.black;
+    return Colors.white;
   }
 
   double drawerWidth() {
