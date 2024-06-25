@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -53,7 +54,10 @@ class _AddFileScreenState extends State<AddFileScreen> {
   int? dblFilesize;
   Uint8List? image;
   String selectedDep = "";
+  String selctedDepDesc = "";
   String selectedCat = "";
+  String selectedCatDesc = "";
+  bool saving = false;
 
   @override
   void didChangeDependencies() {
@@ -102,23 +106,17 @@ class _AddFileScreenState extends State<AddFileScreen> {
                           // mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            // CustomDropDown2(
-                            //   width: width * 0.13,
-                            //   onChanged: (value) {},
-                            //   searchBox: true,
-                            //   valSelected: true,
-                            //   bordeText: _locale.department,
-                            //   // width: width * 0.21,
-                            //   heightVal: height * 0.3,
-                            // ),
                             DropDown(
                               key: UniqueKey(),
+                              isMandatory: true,
                               onChanged: (value) {
                                 selectedDep = value.txtKey;
+                                selctedDepDesc = value.txtDescription;
                                 // setState(() {});
                               },
-                              initialValue:
-                                  selectedDep.isEmpty ? null : selectedDep,
+                              initialValue: selctedDepDesc.isEmpty
+                                  ? null
+                                  : selctedDepDesc,
                               bordeText: _locale.department,
                               width: width * 0.13,
                               height: height * 0.04,
@@ -132,13 +130,15 @@ class _AddFileScreenState extends State<AddFileScreen> {
                             ),
                             DropDown(
                               key: UniqueKey(),
-
-                              initialValue:
-                                  selectedCat.isEmpty ? null : selectedCat,
+                              isMandatory: true,
+                              initialValue: selectedCatDesc.isEmpty
+                                  ? null
+                                  : selectedCatDesc,
                               width: width * 0.13,
                               height: height * 0.04,
                               onChanged: (value) {
                                 selectedCat = value.txtKey;
+                                selectedCatDesc = value.txtDescription;
                               },
                               searchBox: true,
                               valSelected: true,
@@ -179,7 +179,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                             descriptionController,
                             isDesktop,
                             0.13,
-                            false,
+                            true,
                           ),
                           SizedBox(
                             width: width * 0.015,
@@ -312,18 +312,34 @@ class _AddFileScreenState extends State<AddFileScreen> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ElevatedButton(
+                  onPressed: saveDocument,
+                  style: customButtonStyle(
+                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
+                    18,
+                    primary3,
+                  ),
+                  child: Text(
+                    _locale.save,
+                    style: const TextStyle(color: whiteColor),
+                  ),
+                ),
+                SizedBox(
+                  width: width * 0.01,
+                ),
+                ElevatedButton(
                   onPressed: () {
-                    saveDocument();
+                    resetForm();
                   },
                   style: customButtonStyle(
                       Size(isDesktop ? width * 0.1 : width * 0.4,
                           height * 0.045),
                       18,
-                      primary3),
+                      primary),
                   child: Text(
-                    _locale.save,
+                    _locale.resetFilter,
                     style: const TextStyle(color: whiteColor),
                   ),
                 ),
@@ -331,6 +347,10 @@ class _AddFileScreenState extends State<AddFileScreen> {
             )
           ],
         ),
+        if (saving)
+          Center(
+            child: CircularProgressIndicator(),
+          ),
         Center(
           child: Visibility(
             visible: isFileLoading,
@@ -386,7 +406,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
               fileNameController,
               isDesktop,
               0.13,
-              false,
+              true,
             ),
           ),
         ],
@@ -434,6 +454,122 @@ class _AddFileScreenState extends State<AddFileScreen> {
   }
 
   void saveDocument() async {
+    print("saveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+    if (saving) return;
+
+    setState(() {
+      saving = true;
+    });
+
+    // Create DocumentModel instance
+    DocumentModel documentModel = DocumentModel(
+      txtKey: "",
+      txtDescription: descriptionController.text,
+      txtKeywords: keyWordsController.text,
+      txtReference1: ref1Controller.text,
+      txtReference2: ref2Controller.text,
+      intType: 1,
+      datCreationdate: fileDateController.text,
+      txtLastupdateduser: "",
+      txtMimetype: "",
+      intVouchtype: 1,
+      intVouchnum: 0,
+      txtJcode: "",
+      txtCategory: selectedCat,
+      txtDept: selectedDep,
+      txtIssueno: issueNoController.text,
+      datIssuedate: arrivalDateController.text,
+      txtUsercode: "",
+      txtInsurance: "",
+      txtLicense: "",
+      txtMaintenance: "",
+      txtOtherservices: "",
+      bolHasfile: 1,
+      datArrvialdate: arrivalDateController.text,
+      txtOriginalfilekey: "",
+    );
+
+    // Create FileUploadModel instance
+    FileUploadModel fileUploadModel = FileUploadModel(
+      txtKey: "",
+      txtHdrkey: "",
+      txtFilename: fileNameController.text,
+      imgBlob: imgBlob ?? "",
+      dblFilesize: dblFilesize ?? 0,
+      txtUsercode: "",
+      datDate: "",
+      txtMimetype: "",
+      intLinenum: 1,
+      intType: 1,
+    );
+
+    // Create DocumentFileRequest instance
+    DocumentFileRequest documentFileRequest = DocumentFileRequest(
+      documentInfo: documentModel,
+      documentFile: fileUploadModel,
+    );
+
+    // Check if all required fields are empty
+    if (selectedDep.isEmpty ||
+        selectedCat.isEmpty ||
+        fileNameController.text.isEmpty ||
+        descriptionController.text.isEmpty) {
+      CoolAlert.show(
+        width: width * 0.4,
+        context: context,
+        type: CoolAlertType.error,
+        title: _locale.fillRequiredFields,
+        text: _locale.fillRequiredFields,
+        confirmBtnText: _locale.ok,
+        onConfirmBtnTap: () {},
+      );
+      setState(() {
+        saving = false;
+      });
+      return;
+    }
+
+    await documentsController.addDocument(documentFileRequest).then((value) {
+      if (value.statusCode == 200) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+              icon: Icons.done_all,
+              errorDetails: _locale.done,
+              errorTitle: _locale.addDoneSucess,
+              color: Colors.green,
+              statusCode: 200,
+            );
+          },
+        ).then((value) {
+          descriptionController.clear();
+          keyWordsController.clear();
+          ref1Controller.clear();
+          ref2Controller.clear();
+          fileDateController.clear();
+          issueNoController.clear();
+          arrivalDateController.clear();
+          fileNameController.clear();
+          selectedDep = "";
+          selectedCat = "";
+          followingController.clear();
+          otherRefController.clear();
+          organizationController.clear();
+          arrivalDateController.text =
+              Converters.formatDate2(DateTime.now().toString());
+          fileDateController.text =
+              Converters.formatDate2(DateTime.now().toString());
+          setState(() {});
+        });
+      }
+    });
+    setState(() {
+      saving = false;
+    });
+  }
+
+  void saveDocument1() async {
     DocumentModel documentModel = DocumentModel(
       txtKey: "",
       txtDescription: descriptionController.text,
@@ -480,39 +616,128 @@ class _AddFileScreenState extends State<AddFileScreen> {
       documentFile: fileUploadModel,
     );
 
-    await documentsController.addDocument(documentFileRequest).then((value) {
-      if (value.statusCode == 200) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-                icon: Icons.done_all,
-                errorDetails: _locale.done,
-                errorTitle: _locale.addDoneSucess,
-                color: Colors.green,
-                statusCode: 200);
-          },
-        ).then((value) {
-          descriptionController.clear();
-          keyWordsController.clear();
-          ref1Controller.clear();
-          ref2Controller.clear();
-          fileDateController.clear();
-          issueNoController.clear();
-          arrivalDateController.clear();
-          fileNameController.clear();
-          selectedDep = "";
-          selectedCat = "";
-          followingController.clear();
-          otherRefController.clear();
-          organizationController.clear();
-          arrivalDateController.text =
-              Converters.formatDate2(DateTime.now().toString());
-          fileDateController.text =
-              Converters.formatDate2(DateTime.now().toString());
-          setState(() {});
-        });
-      }
-    });
+    if (selectedDep.isNotEmpty &&
+        fileNameController.text.isNotEmpty &&
+        descriptionController.text.isNotEmpty &&
+        selectedCat.isNotEmpty) {
+      await documentsController.addDocument(documentFileRequest).then((value) {
+        if (value.statusCode == 200) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return ErrorDialog(
+                  icon: Icons.done_all,
+                  errorDetails: _locale.done,
+                  errorTitle: _locale.addDoneSucess,
+                  color: Colors.green,
+                  statusCode: 200);
+            },
+          ).then((value) {
+            descriptionController.clear();
+            keyWordsController.clear();
+            ref1Controller.clear();
+            ref2Controller.clear();
+            fileDateController.clear();
+            issueNoController.clear();
+            arrivalDateController.clear();
+            fileNameController.clear();
+            selectedDep = "";
+            selectedCat = "";
+            selectedCatDesc = "";
+            selctedDepDesc = "";
+            followingController.clear();
+            otherRefController.clear();
+            organizationController.clear();
+            arrivalDateController.text =
+                Converters.formatDate2(DateTime.now().toString());
+            fileDateController.text =
+                Converters.formatDate2(DateTime.now().toString());
+            setState(() {});
+          });
+        }
+      });
+    } else if (selectedDep.isEmpty) {
+      CoolAlert.show(
+        width: width * 0.4,
+        context: context,
+        type: CoolAlertType.error,
+        title: _locale.pleaseAddAllRequiredFields,
+        text: _locale.fillDepField,
+        confirmBtnText: _locale.ok,
+        onConfirmBtnTap: () {
+          // Navigator.pop(context); // Close the alert
+        },
+      );
+    } else if (selectedCat.isEmpty) {
+      CoolAlert.show(
+        width: width * 0.4,
+        context: context,
+        type: CoolAlertType.error,
+        title: _locale.pleaseAddAllRequiredFields,
+        text: _locale.fillCatField,
+        confirmBtnText: _locale.ok,
+        onConfirmBtnTap: () {
+          // Navigator.pop(context); // Close the alert
+        },
+      );
+    } else if (fileNameController.text.isEmpty) {
+      CoolAlert.show(
+        width: width * 0.4,
+        context: context,
+        type: CoolAlertType.error,
+        title: _locale.pleaseAddAllRequiredFields,
+        text: _locale.fillFileUpload,
+        confirmBtnText: _locale.ok,
+        onConfirmBtnTap: () {
+          // Navigator.pop(context); // Close the alert
+        },
+      );
+    } else if (descriptionController.text.isEmpty) {
+      CoolAlert.show(
+        width: width * 0.4,
+        context: context,
+        type: CoolAlertType.error,
+        title: _locale.pleaseAddAllRequiredFields,
+        text: _locale.fillDescField,
+        confirmBtnText: _locale.ok,
+        onConfirmBtnTap: () {
+          // Navigator.pop(context); // Close the alert
+        },
+      );
+    } else {
+      CoolAlert.show(
+        width: width * 0.4,
+        context: context,
+        type: CoolAlertType.error,
+        title: _locale.fillRequiredFields,
+        text: _locale.fillRequiredFields,
+        confirmBtnText: _locale.ok,
+        onConfirmBtnTap: () {
+          // Navigator.pop(context); // Close the alert
+        },
+      );
+    }
+  }
+
+  void resetForm() {
+    descriptionController.clear();
+    keyWordsController.clear();
+    ref1Controller.clear();
+    ref2Controller.clear();
+    fileDateController.clear();
+    issueNoController.clear();
+    arrivalDateController.clear();
+    fileNameController.clear();
+    selectedDep = "";
+    selectedCat = "";
+    selectedCatDesc = "";
+    selctedDepDesc = "";
+    followingController.clear();
+    otherRefController.clear();
+    organizationController.clear();
+    arrivalDateController.text =
+        Converters.formatDate2(DateTime.now().toString());
+    fileDateController.text = Converters.formatDate2(DateTime.now().toString());
+    setState(() {});
   }
 }

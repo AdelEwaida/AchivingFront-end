@@ -162,6 +162,15 @@
     "newPass":"كلمة المرور الجديدة",
     "wrongPass":"كلمة المرور خاطئة",
     "updateUserCat":"تعديل ربط تصنيف مع المستخدمين",
-    "pleaseSelectCat":"يرجى إختيار التصنيف"
+    "pleaseSelectCat":"يرجى إختيار التصنيف",
+    "emptyFields":"يوجد حقول فارغة",
+      "fillDepField":"يرجى تعبئة حقل الدائرة",
+    "fillCatField":"يرجى تعبئة حقل التصنيف",
+    "fillFileUpload":"يرجى تحميل ملف",
+    "fillDescField":"يرجى إضافة وصف",
+    "fillRequiredFields":"يرجى إضافة جميع الحقول المطلوبة"
+
+
+
 
 }

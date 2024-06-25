@@ -205,8 +205,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       var response = await documentsController.copyDocument(documentModel);
       if (response.statusCode == 200) {
         // print("DONE");
-        // documentListProvider.setDocumentSearchCriterea(
-        //     documentListProvider.searchDocumentCriteria);
+        documentListProvider.setDocumentSearchCriterea(
+            documentListProvider.searchDocumentCriteria);
       }
     }
   }

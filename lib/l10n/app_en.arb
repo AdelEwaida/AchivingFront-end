@@ -170,13 +170,21 @@
     "newPassword": "New Password",
     "editPassword": "Edit Password",
     "editUser": "Edit User",
-        "chooseListOfDepartment": "Choose list of Department",
-        "updateUserCat":"Update User Categories",
+    "chooseListOfDepartment": "Choose list of Department",
+    "updateUserCat":"Update User Categories",
     "pleaseSelectCat": "Please Select Category",
-        "updateUserCat":"Update User Categories",
-        "oldPass":"Old Password",
-        "newPass":"New password",
-            "wrongPass":"Wrong password"
+    "updateUserCat":"Update User Categories",
+    "oldPass":"Old Password",
+    "newPass":"New password",
+    "wrongPass":"Wrong password",
+    "emptyFields":"Empty Fields",
+    "fillDepField":"Please fill department field",
+    "fillCatField":"Please fill category field",
+    "fillFileUpload":"Please add a file",
+    "fillDescField":"Please fill description field",
+    "fillRequiredFields":"Please fill all required fields"
+
+  
 
 
 }

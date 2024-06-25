@@ -23,7 +23,7 @@ class _TitleDialogWidgetState extends State<TitleDialogWidget> {
       width: widget.width,
       height: widget.height,
       decoration: BoxDecoration(
-        color: dBar,
+        color: primary,
         // borderRadius:
         //     BorderRadius.circular(5.0), // Adjust the value as needed
       ),

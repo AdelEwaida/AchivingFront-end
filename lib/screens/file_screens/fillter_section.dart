@@ -88,52 +88,35 @@ class _FillterFileSectionState extends State<FillterFileSection> {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(3.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    DateTimeComponent(
-                        height: height * 0.04,
-                        dateControllerToCompareWith: null,
-                        isInitiaDate: true,
-                        dateWidth: width * 0.1,
-                        dateController: fromDateController,
-                        label: _locale.fromDate,
-                        timeControllerToCompareWith: null),
-                    space(0.01),
-                    DateTimeComponent(
-                        dateControllerToCompareWith: null,
-                        isInitiaDate: true,
-                        height: height * 0.04,
-                        dateWidth: width * 0.1,
-                        dateController: toDateController,
-                        label: _locale.toDate,
-                        timeControllerToCompareWith: null),
-                    space(0.01),
-                    CustomTextField2(
-                      width: width * 0.1,
-                      height: height * 0.04,
-                      text: Text(_locale.description),
-                      controller: descreptionController,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DateTimeComponent(
+                            height: height * 0.04,
+                            dateControllerToCompareWith: null,
+                            isInitiaDate: true,
+                            dateWidth: width * 0.1,
+                            dateController: fromDateController,
+                            label: _locale.fromDate,
+                            timeControllerToCompareWith: null),
+                        space(0.01),
+                        DateTimeComponent(
+                            dateControllerToCompareWith: null,
+                            isInitiaDate: true,
+                            height: height * 0.04,
+                            dateWidth: width * 0.1,
+                            dateController: toDateController,
+                            label: _locale.toDate,
+                            timeControllerToCompareWith: null),
+                      ],
                     ),
                     space(0.01),
-                    CustomTextField2(
-                      width: width * 0.1,
-                      height: height * 0.04,
-                      text: Text(_locale.issueNo),
-                      controller: issueNoController,
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: height * 0.01,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: Row(
-                  children: [
                     DropDown(
                       key: UniqueKey(),
                       onChanged: (value) {
@@ -148,6 +131,37 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                         return await DepartmentController()
                             .getDep(SearchModel(page: 1));
                       },
+                    ),
+                    space(0.01),
+                    DropDown(
+                      key: UniqueKey(),
+                      onChanged: (value) {
+                        selectedSortedType =
+                            getSortedByTyepsCode(_locale, value);
+                      },
+                      initialValue: selectedSortedType == -1
+                          ? null
+                          : getSortedByTyepsByCode(_locale, selectedSortedType),
+                      bordeText: _locale.sortedBy,
+                      items: getSortedByTyeps(_locale),
+                      width: width * 0.1,
+                      height: height * 0.04,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: height * 0.01,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(3.0),
+                child: Row(
+                  children: [
+                    CustomTextField2(
+                      width: width * 0.1,
+                      height: height * 0.04,
+                      text: Text(_locale.description),
+                      controller: descreptionController,
                     ),
                     space(0.01),
                     Consumer<CalssificatonNameAndCodeProvider>(
@@ -218,20 +232,12 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 padding: const EdgeInsets.all(3.0),
                 child: Row(
                   children: [
-                    DropDown(
-                      key: UniqueKey(),
-                      onChanged: (value) {
-                        selectedSortedType =
-                            getSortedByTyepsCode(_locale, value);
-                      },
-                      initialValue: selectedSortedType == -1
-                          ? null
-                          : getSortedByTyepsByCode(_locale, selectedSortedType),
-                      bordeText: _locale.sortedBy,
-                      items: getSortedByTyeps(_locale),
+                    CustomTextField2(
                       width: width * 0.1,
                       height: height * 0.04,
-                    ),
+                      text: Text(_locale.issueNo),
+                      controller: issueNoController,
+                    )
                   ],
                 ),
               ),

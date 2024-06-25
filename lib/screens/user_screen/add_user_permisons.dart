@@ -120,7 +120,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomSearchField(
@@ -128,11 +128,132 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                   width: screenWidth * 0.45,
                   padding: 8,
                   controller: searchController,
-                
                   onChanged: (value) {
                     searchTree(value);
                     // Add search functionality if needed
                   },
+                ),
+                Tooltip(
+                  message: hintUsers,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: screenWidth * 0.2,
+                        height: screenHeight * 0.05,
+                        child: TestDropdown(
+                          cleanPrevSelectedItem: true,
+                          icon: const Icon(Icons.search),
+                          isEnabled: true,
+                          stringValue: usersListModel!
+                                  .map((e) => e.txtNamee!)
+                                  .join(', ')
+                                  .isEmpty
+                              ? null
+                              : usersListModel!
+                                  .map((e) => e.txtNamee!)
+                                  .join(', '),
+                          borderText: _locale.users,
+                          onClearIconPressed: () {
+                            setState(() {
+                              listOfUsersCode!.clear();
+                              hintUsers = "";
+                              usersListModel!.clear();
+                              usersListModel!.clear();
+                            });
+                          },
+                          onChanged: (val) {
+                            listOfUsersCode!.clear();
+                            for (int i = 0; i < val.length; i++) {
+                              listOfUsersCode!.add(val[i].txtCode);
+                              usersListModel!.add(val[i]);
+                              // usersList!.add(val[i].userId!);
+                            }
+                            // usersListModel!.addAll(usersListCode);
+                            if (usersListModel!.isEmpty) {
+                              hintUsers = "";
+                            } else {
+                              hintUsers = usersListModel!
+                                  .map((e) => e.txtCode!)
+                                  .join(', ');
+                              if (hintUsers.endsWith(', ')) {
+                                hintUsers = hintUsers.substring(
+                                    0, hintUsers.length - 2);
+                              }
+                            }
+
+                            setState(() {});
+                          },
+                          onSearch: (text) async {
+                            List<UserModel> newList =
+                                await userController.getUsers(SearchModel(
+                                    searchField: text.trim(),
+                                    page: -1,
+                                    status: -1));
+                            return newList;
+                          },
+                        ),
+                        // child: TestDropdown(
+                        //   key: UniqueKey(),
+                        //   cleanPrevSelectedItem: true,
+                        //   // icon: const Icon(Icons.close),
+                        //   isEnabled: true,
+                        //   stringValue: usersListModel!
+                        //           .map((e) => e.txtNamee!)
+                        //           .join(', ')
+                        //           .isEmpty
+                        //       ? null
+                        //       : usersListModel!.map((e) => e.txtNamee!).join(', '),
+                        //   borderText: _locale.users,
+                        //   onPressed: () {
+                        //     setState(() {
+                        //       usersListModel!.clear();
+                        //       listOfUsersCode!.clear();
+                        //       hintUsers = "";
+                        //       usersListModel = [];
+                        //     });
+                        //   },
+                        //   onClearIconPressed: () {
+                        //     setState(() {
+                        //       usersListModel!.clear();
+                        //       listOfUsersCode!.clear();
+                        //       hintUsers = "";
+                        //       usersListModel = [];
+                        //     });
+                        //   },
+                        //   onChanged: (val) {
+                        //     listOfUsersCode!.clear();
+                        //     // usersListCode.clear();
+                        //     for (int i = 0; i < val.length; i++) {
+                        //       listOfUsersCode!.add(val[i].txtCode);
+                        //     }
+                        //     // usersListModel!.addAll(usersListCode);
+                        //     // if (usersListModel!.isEmpty) {
+                        //     //   hintUsers = "";
+                        //     // } else {
+                        //     //   hintUsers = "";
+
+                        //     //   hintUsers =
+                        //     //       usersListModel!.map((e) => e.userId!).join(', ');
+                        //     //   // Removing the last comma and space if exists
+                        //     //   if (hintUsers.endsWith(', ')) {
+                        //     //     hintUsers = hintUsers.substring(0, hintUsers.length - 2);
+                        //     //   }
+                        //     // }
+
+                        //     // setState(() {});
+                        //   },
+                        //   onSearch: (text) async {
+                        //     List<UserModel> newList = await userController.getUsers(
+                        //         SearchModel(
+                        //             searchField: text.trim(),
+                        //             page: -1,
+                        //             status: -1));
+                        //     return newList;
+                        //   },
+                        // ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -204,149 +325,36 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                 ),
               ),
             // const Divider(height: 3),
-            Tooltip(
-              message: hintUsers,
-              child: Column(
+
+            // SizedBox(
+            //   height: screenHeight * 0.01,
+            // ),
+            Padding(
+              padding: const EdgeInsets.only(bottom:30.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: screenWidth * 0.2,
-                    height: screenHeight * 0.05,
-                    child: TestDropdown(
-                      cleanPrevSelectedItem: true,
-                      icon: const Icon(Icons.search),
-                      isEnabled: true,
-                      stringValue: usersListModel!
-                              .map((e) => e.txtNamee!)
-                              .join(', ')
-                              .isEmpty
-                          ? null
-                          : usersListModel!.map((e) => e.txtNamee!).join(', '),
-                      borderText: _locale.users,
-                      onClearIconPressed: () {
-                        setState(() {
-                          listOfUsersCode!.clear();
-                          hintUsers = "";
-                          usersListModel!.clear();
-                          usersListModel!.clear();
-                        });
-                      },
-                      onChanged: (val) {
-                        listOfUsersCode!.clear();
-                        for (int i = 0; i < val.length; i++) {
-                          listOfUsersCode!.add(val[i].txtCode);
-                          usersListModel!.add(val[i]);
-                          // usersList!.add(val[i].userId!);
-                        }
-                        // usersListModel!.addAll(usersListCode);
-                        if (usersListModel!.isEmpty) {
-                          hintUsers = "";
-                        } else {
-                          hintUsers =
-                              usersListModel!.map((e) => e.txtCode!).join(', ');
-                          if (hintUsers.endsWith(', ')) {
-                            hintUsers =
-                                hintUsers.substring(0, hintUsers.length - 2);
-                          }
-                        }
-
-                        setState(() {});
-                      },
-                      onSearch: (text) async {
-                        List<UserModel> newList = await userController.getUsers(
-                            SearchModel(
-                                searchField: text.trim(),
-                                page: -1,
-                                status: -1));
-                        return newList;
-                      },
+                  ElevatedButton(
+                    onPressed: () {
+                      save();
+                    },
+                    style: customButtonStyle(
+                        Size(isDesktop ? screenWidth * 0.1 : screenWidth * 0.4,
+                            screenHeight * 0.045),
+                        18,
+                        primary3),
+                    child: Text(
+                      _locale.save,
+                      style: const TextStyle(color: whiteColor),
                     ),
-                    // child: TestDropdown(
-                    //   key: UniqueKey(),
-                    //   cleanPrevSelectedItem: true,
-                    //   // icon: const Icon(Icons.close),
-                    //   isEnabled: true,
-                    //   stringValue: usersListModel!
-                    //           .map((e) => e.txtNamee!)
-                    //           .join(', ')
-                    //           .isEmpty
-                    //       ? null
-                    //       : usersListModel!.map((e) => e.txtNamee!).join(', '),
-                    //   borderText: _locale.users,
-                    //   onPressed: () {
-                    //     setState(() {
-                    //       usersListModel!.clear();
-                    //       listOfUsersCode!.clear();
-                    //       hintUsers = "";
-                    //       usersListModel = [];
-                    //     });
-                    //   },
-                    //   onClearIconPressed: () {
-                    //     setState(() {
-                    //       usersListModel!.clear();
-                    //       listOfUsersCode!.clear();
-                    //       hintUsers = "";
-                    //       usersListModel = [];
-                    //     });
-                    //   },
-                    //   onChanged: (val) {
-                    //     listOfUsersCode!.clear();
-                    //     // usersListCode.clear();
-                    //     for (int i = 0; i < val.length; i++) {
-                    //       listOfUsersCode!.add(val[i].txtCode);
-                    //     }
-                    //     // usersListModel!.addAll(usersListCode);
-                    //     // if (usersListModel!.isEmpty) {
-                    //     //   hintUsers = "";
-                    //     // } else {
-                    //     //   hintUsers = "";
-
-                    //     //   hintUsers =
-                    //     //       usersListModel!.map((e) => e.userId!).join(', ');
-                    //     //   // Removing the last comma and space if exists
-                    //     //   if (hintUsers.endsWith(', ')) {
-                    //     //     hintUsers = hintUsers.substring(0, hintUsers.length - 2);
-                    //     //   }
-                    //     // }
-
-                    //     // setState(() {});
-                    //   },
-                    //   onSearch: (text) async {
-                    //     List<UserModel> newList = await userController.getUsers(
-                    //         SearchModel(
-                    //             searchField: text.trim(),
-                    //             page: -1,
-                    //             status: -1));
-                    //     return newList;
-                    //   },
-                    // ),
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: screenHeight * 0.01,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    save();
-                  },
-                  style: customButtonStyle(
-                      Size(isDesktop ? screenWidth * 0.1 : screenWidth * 0.4,
-                          screenHeight * 0.045),
-                      18,
-                      primary3),
-                  child: Text(
-                    _locale.save,
-                    style: const TextStyle(color: whiteColor),
-                  ),
-                ),
-              ],
-            )
+            
           ],
         ),
+          
       ),
     );
   }

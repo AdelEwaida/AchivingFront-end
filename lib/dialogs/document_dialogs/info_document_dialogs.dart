@@ -47,6 +47,8 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
   DocumentModel? documentModel;
 
   String selectedDep = "";
+  String selectedDepKey = "";
+
   String selectedCat = "";
 
   @override
@@ -66,6 +68,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
 
     // department.text = documentModel!.txtDept ?? "";
     selectedDep = documentModel!.txtDept ?? "";
+    // selectedDepKey=documentModel!.txtD
     selectedCat = documentModel!.txtCategory ?? "";
 
     issueNoController.text = documentModel!.txtIssueno ?? "";
@@ -287,7 +290,6 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                 selectedDep = value.txtKey;
                 documentModel!.txtDept = value.txtKey;
 
-                print("selectedDepselectedDepselectedDep:${selectedDep}");
                 // setState(() {});
               },
               initialValue: selectedDep.isEmpty ? null : selectedDep,
@@ -424,6 +426,8 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     // DocumentModel tempDocumentModel = DocumentModel();
     documentModel!.datIssuedate = issueDateController.text;
     documentModel!.datArrvialdate = arrivalDate.text;
+    // documentModel!.txtDept = value.txtKey;
+//
     print(documentModel!.toJson());
     var response = await documentsController.updateDocument(documentModel!);
     if (response.statusCode == 200) {

@@ -141,31 +141,13 @@ class ApiService {
               response.statusCode == 402)) {
         return response;
       } else if (response.statusCode != 200) {
-        // if (response.statusCode == 401) {
-        //   // ignore: use_build_context_synchronously
-        //   // Navigator.pop(context2);']
-        //   print("INSHHHOWWWWWWWDIALOG");
-        //   await storage.delete(key: "jwt").then((value) {
-        //     // isLoginDialog = true;
-
-        //     showDialog(
-        //         context: context2,
-        //         barrierDismissible: false,
-        //         builder: (builder) {
-        //           return const LoginDialog();
-        //         });
-        //     return;
-        //   });
-        // } else {
         if (response.body == "Wrong Credentials") {
           return response;
         }
-        // }
       }
 
       return response;
     } catch (e) {
-      print("INNNNNNNN CATTTTTTCHH");
       if (api == logInApi) {
         final context = navigatorKey.currentState!.overlay!.context;
         // ignore: use_build_context_synchronously
@@ -201,27 +183,8 @@ class ApiService {
           },
         );
       }
-      // Handle network-related exceptions (e.g., no internet connection)
-      // You can show an error message to the user or log the error.
     }
   }
 
-  checkErrorDec(http.Response response) {
-    // try {
-    //   var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
-    //   ErorrDTO erorrDTO = ErorrDTO.fromJson(jsonData);
-    //   ErrorController.openErrorDialog(response.statusCode, "",
-    //       erorrDto: erorrDTO);
-    // } catch (e) {
-    //   ErrorController.openErrorDialog(response.statusCode, response.body);
-    // }
-  }
-
-//Using later
-  // getUrl() async {
-  //   await storage.read(key: 'api').then((value) {
-  //     // ApiURL().setUrl(value!);
-  //     urlServer = value;
-  //   });
-  // }
+  checkErrorDec(http.Response response) {}
 }

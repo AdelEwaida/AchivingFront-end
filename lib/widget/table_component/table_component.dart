@@ -190,12 +190,12 @@ class _TableComponentState extends State<TableComponent> {
         columnFilterHeight: 30,
 
         columnTextStyle: TextStyle(
-            fontSize: 10,
+            fontSize: 14,
             color: widget.isWhiteText ?? false ? Colors.white : Colors.black,
             letterSpacing: 1),
-        rowHeight: widget.rowsHeight ?? 25,
+        rowHeight: widget.rowsHeight ?? 30,
         cellTextStyle: const TextStyle(
-          fontSize: 10,
+          fontSize: 14,
           color: Colors.black,
         ),
       ),
@@ -216,9 +216,7 @@ class _TableComponentState extends State<TableComponent> {
           WidgetSpan(
             child: Text(
               polCols[i].title,
-              style: const TextStyle(
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -955,7 +953,7 @@ class _CustomColumnMenu extends StatelessWidget
                       valueListenable: isDisplayed[element]!,
                       builder: (context, value, child) {
                         return CheckboxListTile(
-                          activeColor: dBar,
+                          activeColor: primary,
 
                           title: Text(
                               element.cells[column.field]!.value.toString()),
