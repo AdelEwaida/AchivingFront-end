@@ -85,8 +85,8 @@ class _AddFileDialogState extends State<AddFileDialog> {
               style: TextStyle(fontSize: 25),
             ),
             Container(
-              width: width * 0.45,
-              height: height * 0.6,
+              width: width * 0.3,
+              height: height * 0.4,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(
@@ -103,210 +103,11 @@ class _AddFileDialogState extends State<AddFileDialog> {
                       Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          // mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            DropDown(
-                              key: UniqueKey(),
-                              isMandatory: true,
-                              onChanged: (value) {
-                                selectedDep = value.txtKey;
-                                selctedDepDesc = value.txtDescription;
-                                // setState(() {});
-                              },
-                              initialValue: selctedDepDesc.isEmpty
-                                  ? null
-                                  : selctedDepDesc,
-                              bordeText: _locale.department,
-                              width: width * 0.13,
-                              height: height * 0.04,
-                              onSearch: (p0) async {
-                                return await DepartmentController()
-                                    .getDep(SearchModel(page: 1));
-                              },
-                            ),
-                            SizedBox(
-                              width: width * 0.015,
-                            ),
-                            DropDown(
-                              key: UniqueKey(),
-                              isMandatory: true,
-                              initialValue: selectedCatDesc.isEmpty
-                                  ? null
-                                  : selectedCatDesc,
-                              width: width * 0.13,
-                              height: height * 0.04,
-                              onChanged: (value) {
-                                selectedCat = value.txtKey;
-                                selectedCatDesc = value.txtDescription;
-                              },
-                              searchBox: true,
-                              // valSelected: true,
-                              bordeText: _locale.category,
-                              // width: width * 0.21,
-
-                              onSearch: (p0) async {
-                                return await DocumentsController()
-                                    .getDocCategoryList();
-                              },
-                            ),
-                            SizedBox(
-                              width: width * 0.015,
-                            ),
-                            DateTimeComponent(
-                              label: _locale.issueDate,
-                              dateController: fileDateController,
-                              dateWidth: width * 0.13,
-                              dateControllerToCompareWith: null,
-                              readOnly: false,
-                              isInitiaDate: true,
-                              onValue: (isValid, value) {
-                                if (isValid) {
-                                  fileDateController.text = value;
-                                }
-                              },
-                              timeControllerToCompareWith: null,
-                            ),
+                            buildFileUpload(),
                           ],
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.txtDescription,
-                            descriptionController,
-                            isDesktop,
-                            0.13,
-                            true,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.issueNo,
-                            issueNoController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          DateTimeComponent(
-                            label: _locale.arrivalDate,
-                            dateController: arrivalDateController,
-                            dateWidth: width * 0.13,
-                            dateControllerToCompareWith: null,
-                            readOnly: false,
-                            isInitiaDate: true,
-                            onValue: (isValid, value) {
-                              if (isValid) {
-                                arrivalDateController.text = value;
-                              }
-                            },
-                            timeControllerToCompareWith: null,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.keyWords,
-                            keyWordsController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.following,
-                            followingController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.ref1,
-                            ref1Controller,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.ref2,
-                            ref2Controller,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.otherRef,
-                            otherRefController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.organization,
-                            organizationController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                        ],
-                      ),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   children: [
-                      //     customTextField(
-                      //       _locale.following,
-                      //       followingController,
-                      //       isDesktop,
-                      //       0.13,
-                      //       false,
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.015,
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.13,
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.015,
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.13,
-                      //     )
-                      //   ],
-                      // ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          buildFileUpload(),
-                        ],
-                      ),
+                      )
                     ]),
               ),
             ),
@@ -453,7 +254,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
     );
   }
 
-  void saveDocument() async {
+  void saveDocument1() async {
     if (saving) return;
 
     setState(() {
@@ -552,34 +353,14 @@ class _AddFileDialogState extends State<AddFileDialog> {
     });
   }
 
-  void saveDocument1() async {
-    DocumentModel documentModel = DocumentModel(
-      txtKey: "",
-      txtDescription: descriptionController.text,
-      txtKeywords: keyWordsController.text,
-      txtReference1: ref1Controller.text,
-      txtReference2: ref2Controller.text,
-      intType: 1,
-      datCreationdate: fileDateController.text,
-      txtLastupdateduser: "",
-      txtMimetype: "",
-      intVouchtype: 1,
-      intVouchnum: 0,
-      txtJcode: "",
-      txtCategory: selectedCat,
-      txtDept: selectedDep,
-      txtIssueno: issueNoController.text,
-      datIssuedate: arrivalDateController.text,
-      txtUsercode: "",
-      txtInsurance: "",
-      txtLicense: "",
-      txtMaintenance: "",
-      txtOtherservices: "",
-      bolHasfile: 1,
-      datArrvialdate: arrivalDateController.text,
-      txtOriginalfilekey: "",
-    );
+  void saveDocument() async {
+    if (saving) return;
 
+    setState(() {
+      saving = true;
+    });
+    DocumentModel documentModel = widget.documentModel;
+    print("documentModeldocumentModel:${documentModel.txtKey}");
     // Create the FileUploadModel using the file data
     FileUploadModel fileUploadModel = FileUploadModel(
       txtKey: "",
@@ -599,89 +380,29 @@ class _AddFileDialogState extends State<AddFileDialog> {
       documentFile: fileUploadModel,
     );
 
-    if (selectedDep.isNotEmpty &&
-        fileNameController.text.isNotEmpty &&
-        descriptionController.text.isNotEmpty &&
-        selectedCat.isNotEmpty) {
-      await documentsController.addDocument(documentFileRequest).then((value) {
-        if (value.statusCode == 200) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialog(
-                  icon: Icons.done_all,
-                  errorDetails: _locale.done,
-                  errorTitle: _locale.addDoneSucess,
-                  color: Colors.green,
-                  statusCode: 200);
-            },
-          ).then((value) {
-            resetForm();
-            setState(() {});
-          });
-        }
-      });
-    } else if (selectedDep.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.pleaseAddAllRequiredFields,
-        text: _locale.fillDepField,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    } else if (selectedCat.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.pleaseAddAllRequiredFields,
-        text: _locale.fillCatField,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    } else if (fileNameController.text.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.pleaseAddAllRequiredFields,
-        text: _locale.fillFileUpload,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    } else if (descriptionController.text.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.pleaseAddAllRequiredFields,
-        text: _locale.fillDescField,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    } else {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.fillRequiredFields,
-        text: _locale.fillRequiredFields,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    }
+    await documentsController
+        .uplodFileInDocument(documentFileRequest)
+        .then((value) {
+      if (value.statusCode == 200) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.done_all,
+                errorDetails: _locale.done,
+                errorTitle: _locale.addDoneSucess,
+                color: Colors.green,
+                statusCode: 200);
+          },
+        ).then((value) {
+          Navigator.pop(context, true);
+          resetForm();
+        });
+      }
+    });
+    setState(() {
+      saving = false;
+    });
   }
 
   void resetForm() {

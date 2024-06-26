@@ -113,14 +113,14 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           },
         );
       }).then((value) {
-        print("valuevaluevaluevaluevaluevaluevalue:${value}");
-        if (value != null) {
-          // print("DONE");
-          documentListProvider.setDocumentSearchCriterea(
-              documentListProvider.searchDocumentCriteria);
-          Navigator.pop(context);
-          Navigator.pop(context);
-        }
+        // print("valuevaluevaluevaluevaluevaluevalue:${value}");
+        // if (value != null) {
+        //   // print("DONE");
+        //   documentListProvider.setDocumentSearchCriterea(
+        //       documentListProvider.searchDocumentCriteria);
+        //   Navigator.pop(context);
+        //   Navigator.pop(context);
+        // }
       });
     }
   }
@@ -332,37 +332,80 @@ class _TableFileListSectionState extends State<TableFileListSection> {
   }
 
   List<PlutoRow> rowList = [];
+  ValueNotifier<int> pageLis = ValueNotifier(1);
 
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
     bool isLast = false;
+
     if (documentListProvider.searchDocumentCriteria.fromIssueDate != null &&
         documentListProvider.searchDocumentCriteria.page! <= 1) {
       stateManager.removeAllRows();
       rowList.clear();
     }
+
     List<DocumentModel> result = [];
     List<PlutoRow> topList = [];
+
+    // Update the current page in the search criteria
+    documentListProvider.searchDocumentCriteria.page = pageLis.value;
+
     result = await documentsController
         .searchDocCriterea(documentListProvider.searchDocumentCriteria);
-    if (documentListProvider.searchDocumentCriteria.page! >= 1) {
-      documentListProvider.searchDocumentCriteria.page =
-          documentListProvider.searchDocumentCriteria.page! + 1;
-    } else {
-      rowList.clear();
-      rowList = [];
-    }
+
+    int currentPage = pageLis.value; //1
+
     for (int i = 0; i < result.length; i++) {
-      rowList.add(result[i].toPlutoRow(i + 1));
-      topList.add(result[i].toPlutoRow(rowList.length));
+    
+      int rowIndex = (currentPage - 1) * result.length + (i + 1);
+      PlutoRow row = result[i].toPlutoRow(rowIndex);
+      rowList.add(row);
+      topList.add(row);
     }
 
-    isLast = documentListProvider.searchDocumentCriteria.page == -1
-        ? true
-        : topList.isEmpty
-            ? true
-            : false;
-    return Future.value(
-        PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
+    // Increment the page value
+    pageLis.value = pageLis.value + 1;
+
+    isLast = topList.isEmpty;
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    return Future.value(PlutoInfinityScrollRowsResponse(
+      isLast: isLast,
+      rows: topList.toList(),
+    ));
   }
+
+  // Future<PlutoInfinityScrollRowsResponse> fetch1(
+  //     PlutoInfinityScrollRowsRequest request) async {
+  //   bool isLast = false;
+  //   if (documentListProvider.searchDocumentCriteria.fromIssueDate != null &&
+  //       documentListProvider.searchDocumentCriteria.page! <= 1) {
+  //     stateManager.removeAllRows();
+  //     rowList.clear();
+  //   }
+  //   List<DocumentModel> result = [];
+  //   List<PlutoRow> topList = [];
+  //   result = await documentsController
+  //       .searchDocCriterea(documentListProvider.searchDocumentCriteria);
+  //   if (documentListProvider.searchDocumentCriteria.page! >= 1) {
+  //     documentListProvider.searchDocumentCriteria.page =
+  //         documentListProvider.searchDocumentCriteria.page! + 1;
+  //   } else {
+  //     rowList.clear();
+  //     rowList = [];
+  //   }
+  //   for (int i = 0; i < result.length; i++) {
+  //     rowList.add(result[i].toPlutoRow(i + 1));
+  //     topList.add(result[i].toPlutoRow(rowList.length));
+  //   }
+
+  //   isLast = documentListProvider.searchDocumentCriteria.page == -1
+  //       ? true
+  //       : topList.isEmpty
+  //           ? true
+  //           : false;
+  //   return Future.value(
+  //       PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
+  // }
 }
