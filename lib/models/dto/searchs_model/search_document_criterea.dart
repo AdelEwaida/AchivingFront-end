@@ -46,7 +46,7 @@ class SearchDocumentCriteria {
     this.maintenance,
     this.fromIssueDate,
     this.toIssueDate,
-    this.page = -1,
+    this.page = 0,
     this.searchField,
     this.sortedBy,
   });
@@ -103,7 +103,7 @@ class SearchDocumentCriteria {
       'maintenance': maintenance ?? "",
       'fromIssueDate': fromIssueDate ?? "",
       'toIssueDate': toIssueDate ?? "",
-      'page': page ?? 1,
+      'page': page ?? 0,
       'searchField': searchField ?? "",
       'sortedBy': sortedBy ?? -1,
     };

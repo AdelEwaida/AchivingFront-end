@@ -310,6 +310,8 @@ class _FillterFileSectionState extends State<FillterFileSection> {
     selectedSortedType = -1;
     calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
     calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
+    documentListProvider.setIsSearch(false);
+    documentListProvider.setPage(1);
     documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
     setState(() {});
   }
@@ -330,8 +332,8 @@ class _FillterFileSectionState extends State<FillterFileSection> {
     searchDocumentCriteria.organization = organizationController.text;
     searchDocumentCriteria.following = followingController.text;
     searchDocumentCriteria.sortedBy = selectedSortedType;
-    searchDocumentCriteria.page = 1;
-
+    searchDocumentCriteria.page = 0;
+    documentListProvider.setIsSearch(true);
     documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
   }
 }

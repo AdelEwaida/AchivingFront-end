@@ -4,6 +4,20 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 class DocumentListProvider with ChangeNotifier {
   List<PlutoRow> _documentListCritereaRows = [];
+  int? _page = 1;
+  void setPage(int page) {
+    _page = page;
+    notifyListeners();
+  }
+
+  int? get page => _page;
+  bool _isSearch = false;
+  void setIsSearch(bool isSearch) {
+    _isSearch = isSearch;
+    notifyListeners();
+  }
+
+  bool get isSearch => _isSearch;
   SearchDocumentCriteria _searchDocumentCriteria = SearchDocumentCriteria();
 
   void setFileListCritereaRows(List<PlutoRow> fileListCritereaRows) {
