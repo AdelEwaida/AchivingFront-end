@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/payload_model.dart';
 import 'package:archiving_flutter_project/models/dto/login_model.dart';
@@ -30,6 +29,7 @@ class LoginController {
           utf8.fuse(base64).decode(base64.normalize(encodedPayload));
 
       final payLoad = PayloadModel.fromJson(jsonDecode(payloadData));
+      storage.write(key: 'roles', value: payLoad.roles![0]);
       // SideMenuDate.userType = int.parse(payLoad.roles!.first);
       // storage.write(key: 'roles', value: SideMenuDate.userType.toString());
       print(payLoad.toJson());

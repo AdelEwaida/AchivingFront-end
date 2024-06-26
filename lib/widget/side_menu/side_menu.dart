@@ -7,6 +7,7 @@ import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/language_widget/language_widget.dart';
 import 'package:archiving_flutter_project/widget/side_menu/logout_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -42,6 +43,7 @@ class _SideMenuState extends State<SideMenu> {
   bool isDesktop = false;
 
   late AppLocalizations _locale;
+  FlutterSecureStorage storage = FlutterSecureStorage();
 
   late ScreenContentProvider screenProvider;
   int openedMenuIndex = -1;
@@ -50,7 +52,11 @@ class _SideMenuState extends State<SideMenu> {
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
-    menuList = getMenus(_locale);
+    storage.read(key: "roles").then((value) {
+      print("vaaaaaaaaaaal ${value}");
+      menuList = getMenus(_locale, value!);
+      setState(() {});
+    });
 
     super.didChangeDependencies();
   }

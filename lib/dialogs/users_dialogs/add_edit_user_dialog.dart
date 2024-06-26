@@ -8,6 +8,7 @@ import 'package:archiving_flutter_project/service/controller/users_controller/us
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/constants/user_types_constant/user_types_constant.dart';
+import 'package:archiving_flutter_project/utils/encrypt/encryption.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
 import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
@@ -301,9 +302,15 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   }
 
   void cahngePasswordMethod() async {
+    String key = "archiveProj@s2024ASD/Key@team.CT";
+    final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
+    final byteArray =
+        Uint8List.fromList(iv.map((bit) => bit == 1 ? 0x01 : 0x00).toList());
+    String passEncrypted = Encryption.performAesEncryption(
+        passwordController.text, key, byteArray);
     UserModel tempUserModel =
-        UserModel(txtCode: userModel!.txtCode, txtPwd: passwordController.text);
-    var response = await userController.updateUserPassword(tempUserModel);
+        UserModel(txtCode: userModel!.txtCode, txtPwd: passEncrypted);
+    var response = await userController.updateOtherUserPassword(tempUserModel);
     if (response.statusCode == 200) {
       // ignore: use_build_context_synchronously
       showDialog(

@@ -327,7 +327,9 @@ class _LogInScreenState extends State<LoginScreen>
     print(emailEncrypted);
     LogInModel userModel = LogInModel(emailEncrypted, passEncrypted);
     const storage = FlutterSecureStorage();
+
     storage.write(key: "userName", value: _userNameController.text);
+    
     await LoginController()
         .logInPost(userModel, AppLocalizations.of(context)!)
         .then((value) async {
