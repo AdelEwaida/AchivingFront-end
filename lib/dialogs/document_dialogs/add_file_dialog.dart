@@ -60,11 +60,11 @@ class _AddFileDialogState extends State<AddFileDialog> {
     isDesktop = Responsive.isDesktop(context);
     return Dialog(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-                width: width * 0.4,
-                height: height * 0.45,
-                child: Stack(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: width * 0.4,
+        height: height * 0.45,
+        child: Stack(
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -78,6 +78,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
                   height: height * 0.3,
                   decoration: BoxDecoration(
                     color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.black,
                       width: 0.5,
@@ -86,7 +87,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Center(
@@ -148,9 +149,9 @@ class _AddFileDialogState extends State<AddFileDialog> {
               ),
             ),
           ],
-                ),
-              ),
-        ));
+        ),
+      ),
+    ));
   }
 
   Widget buildFileUpload() {
@@ -189,22 +190,40 @@ class _AddFileDialogState extends State<AddFileDialog> {
     );
   }
 
-  Future pickFile() async {
+  Future<void> pickFile() async {
     setState(() {
       isFileLoading = true;
     });
+
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null && result.files.isNotEmpty) {
       PlatformFile selectedFile = result.files.first;
 
-      setState(() {
-        fileNameController.text = selectedFile.name;
-        txtFilename = selectedFile.name;
-        imgBlob = base64Encode(selectedFile.bytes!);
-        dblFilesize = selectedFile.size;
-        isFileLoading = false;
-      });
+      try {
+        List<int> fileBytes = selectedFile.bytes!;
+
+        // Check if bytes are null or empty
+        if (fileBytes.isEmpty) {
+          throw Exception("File bytes are empty or null");
+        }
+
+        // Encode file bytes to base64
+        String encodedFile = base64Encode(fileBytes);
+
+        setState(() {
+          fileNameController.text = selectedFile.name;
+          txtFilename = selectedFile.name;
+          imgBlob = encodedFile; // Assign the encoded base64 string
+          dblFilesize = selectedFile.size;
+          isFileLoading = false;
+        });
+      } catch (e) {
+        print("Error encoding file: $e");
+        setState(() {
+          isFileLoading = false;
+        });
+      }
     } else {
       setState(() {
         isFileLoading = false;

@@ -170,7 +170,6 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         // String fileName = selectedRow!.cells['fileName']!.value;
         Uint8List bytes = base64Decode(file!.imgBlob!);
 
-        // Get fileName from API response
         String? fileName = file.txtFilename;
         saveExcelFile(bytes, fileName!);
       } catch (e) {
