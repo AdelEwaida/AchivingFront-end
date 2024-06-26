@@ -35,18 +35,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
   late AppLocalizations _locale;
   double width = 0;
   double height = 0;
-  TextEditingController fileDateController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  TextEditingController issueNoController = TextEditingController();
-  TextEditingController arrivalDateController = TextEditingController();
 
-  TextEditingController keyWordsController = TextEditingController();
-  TextEditingController ref1Controller = TextEditingController();
-  TextEditingController ref2Controller = TextEditingController();
-  TextEditingController otherRefController = TextEditingController();
-  TextEditingController organizationController = TextEditingController();
-  TextEditingController followingController = TextEditingController();
-  TextEditingController fileNameController = TextEditingController();
   bool isDesktop = false;
   DocumentsController documentsController = DocumentsController();
   bool isFileLoading = false;
@@ -55,18 +44,13 @@ class _AddFileDialogState extends State<AddFileDialog> {
   int? dblFilesize;
   Uint8List? image;
   bool saving = false;
-  String selectedDep = "";
-  String selctedDepDesc = "";
-  String selectedCat = "";
-  String selectedCatDesc = "";
+
+  TextEditingController fileNameController = TextEditingController();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _locale = AppLocalizations.of(context)!;
-    fileDateController = TextEditingController(
-        text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-    arrivalDateController = TextEditingController(
-        text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   }
 
   @override
@@ -75,108 +59,98 @@ class _AddFileDialogState extends State<AddFileDialog> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
     return Dialog(
-        child: Stack(
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+                width: width * 0.4,
+                height: height * 0.45,
+                child: Stack(
           children: [
-            Text(
-              _locale.addDocument,
-              style: TextStyle(fontSize: 25),
-            ),
-            Container(
-              width: width * 0.3,
-              height: height * 0.4,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  color: Colors.black,
-                  width: 0.5,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            buildFileUpload(),
-                          ],
-                        ),
-                      )
-                    ]),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: saveDocument,
-                  style: customButtonStyle(
-                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
-                    18,
-                    primary3,
+                Text(
+                  _locale.addDocument,
+                  style: const TextStyle(fontSize: 25),
+                ),
+                Container(
+                  width: width * 0.35,
+                  height: height * 0.3,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 0.5,
+                    ),
                   ),
-                  child: Text(
-                    _locale.save,
-                    style: const TextStyle(color: whiteColor),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                buildFileUpload(),
+                              ],
+                            ),
+                          )
+                        ]),
                   ),
                 ),
-                SizedBox(
-                  width: width * 0.01,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    resetForm();
-                  },
-                  style: customButtonStyle(
-                      Size(isDesktop ? width * 0.1 : width * 0.4,
-                          height * 0.045),
-                      18,
-                      primary),
-                  child: Text(
-                    _locale.resetFilter,
-                    style: const TextStyle(color: whiteColor),
-                  ),
-                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: saveDocument,
+                      style: customButtonStyle(
+                        Size(isDesktop ? width * 0.1 : width * 0.4,
+                            height * 0.045),
+                        18,
+                        primary3,
+                      ),
+                      child: Text(
+                        _locale.save,
+                        style: const TextStyle(color: whiteColor),
+                      ),
+                    ),
+                    SizedBox(
+                      width: width * 0.01,
+                    ),
+                  ],
+                )
               ],
-            )
-          ],
-        ),
-        if (saving)
-          Center(
-            child: CircularProgressIndicator(),
-          ),
-        Center(
-          child: Visibility(
-            visible: isFileLoading,
-            child: Container(
-              // color: Colors.black.withOpacity(
-              //     0.08), // Semi-transparent black background for the blur effect
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                    sigmaX: 2.0,
-                    sigmaY: 2.0), // Adjust the blur amount as needed
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                    ],
+            ),
+            if (saving)
+              const Center(
+                child: CircularProgressIndicator(),
+              ),
+            Center(
+              child: Visibility(
+                visible: isFileLoading,
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                      sigmaX: 2.0,
+                      sigmaY: 2.0), // Adjust the blur amount as needed
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-      ],
-    ));
+          ],
+                ),
+              ),
+        ));
   }
 
   Widget buildFileUpload() {
@@ -254,105 +228,6 @@ class _AddFileDialogState extends State<AddFileDialog> {
     );
   }
 
-  void saveDocument1() async {
-    if (saving) return;
-
-    setState(() {
-      saving = true;
-    });
-
-    // Create DocumentModel instance
-    DocumentModel documentModel = DocumentModel(
-      txtKey: widget.documentModel.txtKey,
-      txtDescription: descriptionController.text,
-      txtKeywords: keyWordsController.text,
-      txtReference1: ref1Controller.text,
-      txtReference2: ref2Controller.text,
-      intType: 1,
-      datCreationdate: fileDateController.text,
-      txtLastupdateduser: "",
-      txtMimetype: "",
-      intVouchtype: 1,
-      intVouchnum: 0,
-      txtJcode: "",
-      txtCategory: selectedCat,
-      txtDept: selectedDep,
-      txtIssueno: issueNoController.text,
-      datIssuedate: arrivalDateController.text,
-      txtUsercode: "",
-      txtInsurance: "",
-      txtLicense: "",
-      txtMaintenance: "",
-      txtOtherservices: "",
-      bolHasfile: 1,
-      datArrvialdate: arrivalDateController.text,
-      txtOriginalfilekey: "",
-    );
-
-    // Create FileUploadModel instance
-    FileUploadModel fileUploadModel = FileUploadModel(
-      txtKey: "",
-      txtHdrkey: "",
-      txtFilename: fileNameController.text,
-      imgBlob: imgBlob ?? "",
-      dblFilesize: dblFilesize ?? 0,
-      txtUsercode: "",
-      datDate: "",
-      txtMimetype: "",
-      intLinenum: 1,
-      intType: 1,
-    );
-
-    // Create DocumentFileRequest instance
-    DocumentFileRequest documentFileRequest = DocumentFileRequest(
-      documentInfo: documentModel,
-      documentFile: fileUploadModel,
-    );
-
-    // Check if all required fields are empty
-    if (selectedDep.isEmpty ||
-        selectedCat.isEmpty ||
-        fileNameController.text.isEmpty ||
-        descriptionController.text.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.fillRequiredFields,
-        text: _locale.fillRequiredFields,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {},
-      );
-      setState(() {
-        saving = false;
-      });
-      return;
-    }
-
-    await documentsController.addDocument(documentFileRequest).then((value) {
-      if (value.statusCode == 200) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-              icon: Icons.done_all,
-              errorDetails: _locale.done,
-              errorTitle: _locale.addDoneSucess,
-              color: Colors.green,
-              statusCode: 200,
-            );
-          },
-        ).then((value) {
-          Navigator.pop(context, true);
-          resetForm();
-        });
-      }
-    });
-    setState(() {
-      saving = false;
-    });
-  }
-
   void saveDocument() async {
     if (saving) return;
 
@@ -396,34 +271,11 @@ class _AddFileDialogState extends State<AddFileDialog> {
           },
         ).then((value) {
           Navigator.pop(context, true);
-          resetForm();
         });
       }
     });
     setState(() {
       saving = false;
     });
-  }
-
-  void resetForm() {
-    descriptionController.clear();
-    keyWordsController.clear();
-    ref1Controller.clear();
-    ref2Controller.clear();
-    fileDateController.clear();
-    issueNoController.clear();
-    arrivalDateController.clear();
-    fileNameController.clear();
-    selectedDep = "";
-    selectedCat = "";
-    selectedCatDesc = "";
-    selctedDepDesc = "";
-    followingController.clear();
-    otherRefController.clear();
-    organizationController.clear();
-    arrivalDateController.text =
-        Converters.formatDate2(DateTime.now().toString());
-    fileDateController.text = Converters.formatDate2(DateTime.now().toString());
-    setState(() {});
   }
 }
