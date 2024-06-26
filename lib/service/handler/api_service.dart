@@ -152,10 +152,10 @@ class ApiService {
           (response.statusCode == 400 ||
               response.statusCode == 406 ||
               response.statusCode == 402)) {
-        ErrorController.openErrorDialog(
-          response.statusCode,
-          "there is somthing wrong",
-        );
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   "there is somthing wrong",
+        // );
         return response;
       } else if (response.statusCode != 200) {
         if (response.body == "Wrong Credentials") {
@@ -176,17 +176,17 @@ class ApiService {
         // ignore: use_build_context_synchronously
 
         // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-                icon: Icons.error_sharp,
-                errorDetails: AppLocalizations.of(context)!.error500,
-                errorTitle: AppLocalizations.of(context)!.error,
-                color: Colors.red,
-                statusCode: 500);
-          },
-        );
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return ErrorDialog(
+        //         icon: Icons.error_sharp,
+        //         errorDetails: AppLocalizations.of(context)!.error500,
+        //         errorTitle: AppLocalizations.of(context)!.error,
+        //         color: Colors.red,
+        //         statusCode: 500);
+        //   },
+        // );
         // ignore: use_build_context_synchronously
         // Navigator.pop(context);
       } else {

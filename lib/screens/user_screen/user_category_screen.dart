@@ -227,8 +227,8 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
         context: context,
         builder: (context) {
           return CustomConfirmDialog(
-              confirmMessage: _locale
-                  .areYouSureToDelete(selectedRow!.cells['categoryId']!.value));
+              confirmMessage: _locale.areYouSureToDelete(
+                  selectedRow!.cells['categoryName']!.value));
         },
       ).then((value) async {
         if (value) {

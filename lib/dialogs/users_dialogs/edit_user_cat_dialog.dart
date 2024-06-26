@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
+import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
+import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/service/controller/users_controller/user_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
@@ -30,7 +32,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
   late AppLocalizations _locale;
   double width = 0;
   double height = 0;
-  double radius = 7;
+  double radius1 = 7;
   TextEditingController userListController = TextEditingController();
   UserController userController = UserController();
 
@@ -55,6 +57,8 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
     setState(() {
       usersListModel = userList;
       hintUsers = usersListModel!.map((e) => e.userName!).join(', ');
+      usersList!.add(hintUsers);
+
       if (hintUsers.endsWith(', ')) {
         hintUsers = hintUsers.substring(0, hintUsers.length - 2);
       }
@@ -173,9 +177,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
               icon: const Icon(Icons.search),
               isEnabled: true,
               stringValue:
-                  usersListModel!.map((e) => e.userName!).join(', ').isEmpty
-                      ? null
-                      : usersListModel!.map((e) => e.userName!).join(', '),
+                  usersList!.isEmpty ? null : usersList!.toList().toString(),
               borderText: _locale.users,
               onClearIconPressed: () {
                 setState(() {
@@ -187,16 +189,16 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
               },
               onChanged: (val) {
                 usersListCode.clear();
-                usersList!.clear();
+                // usersList!.clear();
                 for (int i = 0; i < val.length; i++) {
-                  usersListCode.add(val[i]);
-                  usersList!.add(val[i].userId!);
+                  // usersListCode.add(val[i]);
+                  usersList!.add(val[i].txtCode!);
                 }
-                usersListModel!.addAll(usersListCode);
+                // usersListModel!.addAll(usersListCode);
                 if (usersListModel!.isEmpty) {
                   hintUsers = "";
                 } else {
-                  hintUsers = usersListModel!.map((e) => e.userId!).join(', ');
+                  hintUsers = usersList!.toList().toString();
                   if (hintUsers.endsWith(', ')) {
                     hintUsers = hintUsers.substring(0, hintUsers.length - 2);
                   }
@@ -205,8 +207,8 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                 setState(() {});
               },
               onSearch: (text) async {
-                List<UserCategory> newList = await userController
-                    .getUsersByCatMethod(widget.userCategoryModel!.categoryId!);
+                List<UserModel> newList = await userController
+                    .getUsers(SearchModel(page: -1, searchField: text));
                 return newList;
               },
             ),

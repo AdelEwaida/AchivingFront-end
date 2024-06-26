@@ -136,7 +136,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               color: Colors.green,
               statusCode: 200);
         },
-      );
+      ).then((value) {
+        oldPasswordController.clear();
+        newPasswordController.clear();
+      });
     } else if (response.statusCode == 400 || response.statusCode == 406) {
       // Navigator.pop(context);
 

@@ -67,7 +67,7 @@ class _DailyRemindersState extends State<DailyReminders> {
           //   ],
           // ),
           child: TableComponent(
-            key: UniqueKey(),
+            // key: UniqueKey(),
             isWhiteText: true,
             tableHeigt: height * 0.85,
             tableWidth: width * 0.85,

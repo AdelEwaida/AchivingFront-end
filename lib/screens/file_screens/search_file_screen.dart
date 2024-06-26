@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:archiving_flutter_project/dialogs/actions_dialogs/add_edit_action_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/add_file_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/info_document_dialogs.dart';
 import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
+import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
 import 'package:archiving_flutter_project/providers/file_list_provider.dart';
@@ -11,6 +15,7 @@ import 'package:archiving_flutter_project/service/controller/documents_controlle
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
+import 'package:archiving_flutter_project/utils/func/save_excel_file.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -77,7 +82,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
               tableHeigt: height * 0.85,
               tableWidth: width * 0.85,
 
-              download: downLoad,
+              download: download,
               plCols: polCols,
               mode: PlutoGridMode.selectWithOneTap,
               polRows: [],
@@ -106,7 +111,25 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
     );
   }
 
-  void downLoad() {}
+  Future<void> download() async {
+    if (selectedRow != null) {
+      try {
+        FileUploadModel? file = await documentsController
+            .getLatestFileMethod(selectedRow!.cells['txtKey']!.value);
+
+        // Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
+
+        // String fileName = selectedRow!.cells['fileName']!.value;
+        Uint8List bytes = base64Decode(file!.imgBlob!);
+
+        String? fileName = file.txtFilename;
+        saveExcelFile(bytes, fileName!);
+      } catch (e) {
+        print("Error downloading file: $e");
+        // Handle error here
+      }
+    }
+  }
 
   void explorFiels() {
     if (selectedRow != null) {
