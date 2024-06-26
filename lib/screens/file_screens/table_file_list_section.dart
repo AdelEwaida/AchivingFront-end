@@ -374,8 +374,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
 
       result = await documentsController
           .searchDocCriterea(documentListProvider.searchDocumentCriteria);
-      print(
-          "documentListProvider.searchDocumentCriteria.page ${documentListProvider.searchDocumentCriteria.page}");
+      
       for (int i =
               documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
           i < result.length;

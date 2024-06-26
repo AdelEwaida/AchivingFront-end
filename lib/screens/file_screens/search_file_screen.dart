@@ -316,15 +316,16 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
     if (!isSearch.value) {
       List<DocumentModel> result = [];
       List<PlutoRow> topList = [];
+      documentListProvider.searchDocumentCriteria.page = -1;
       result = await documentsController
           .searchDocCriterea(documentListProvider.searchDocumentCriteria);
-      if (documentListProvider.searchDocumentCriteria.page! >= 1) {
-        documentListProvider.searchDocumentCriteria.page =
-            documentListProvider.searchDocumentCriteria.page! + 1;
-      } else {
-        rowList.clear();
-        rowList = [];
-      }
+      // if (documentListProvider.searchDocumentCriteria.page! >= 1) {
+      //   documentListProvider.searchDocumentCriteria.page =
+      //       documentListProvider.searchDocumentCriteria.page! + 1;
+      // } else {
+      //   rowList.clear();
+      //   rowList = [];
+      // }
       for (int i = 0; i < result.length; i++) {
         rowList.add(result[i].toPlutoRow(i + 1));
         topList.add(result[i].toPlutoRow(rowList.length));
