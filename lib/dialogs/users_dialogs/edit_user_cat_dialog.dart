@@ -57,7 +57,9 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
     setState(() {
       usersListModel = userList;
       hintUsers = usersListModel!.map((e) => e.userName!).join(', ');
-      usersList!.add(hintUsers);
+      for (int i = 0; i < usersListModel!.length; i++) {
+        usersList!.add(usersListModel![i].userId!);
+      }
 
       if (hintUsers.endsWith(', ')) {
         hintUsers = hintUsers.substring(0, hintUsers.length - 2);
@@ -193,6 +195,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                 for (int i = 0; i < val.length; i++) {
                   // usersListCode.add(val[i]);
                   usersList!.add(val[i].txtCode!);
+                  print("val[i].txtCode!val[i].txtCode!:${val[i].txtCode!}");
                 }
                 // usersListModel!.addAll(usersListCode);
                 if (usersListModel!.isEmpty) {
