@@ -54,7 +54,9 @@ class UserController {
   Future updateUserPassword(UserModel userModel) async {
     return await ApiService().postRequest(updateUserPasswordApi, userModel);
   }
-
+Future updateOtherUserPassword(UserModel userModel) async {
+    return await ApiService().postRequest(updateOtherUserApi, userModel);
+  }
   Future deleteUser(UserModel userModel) async {
     return await ApiService().postRequest(deleteUserApi, userModel);
   }

@@ -7,6 +7,7 @@ import 'package:archiving_flutter_project/screens/file_screens/search_file_scree
 import 'package:archiving_flutter_project/screens/home_page.dart';
 import 'package:archiving_flutter_project/screens/user_screen/add_user_permisons.dart';
 import 'package:archiving_flutter_project/screens/user_screen/user_screen.dart';
+import 'package:archiving_flutter_project/utils/constants/user_types_constant/user_types_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -16,70 +17,204 @@ import '../screens/change_password_screen.dart';
 import '../screens/file_screens/add_file_screen.dart';
 import '../screens/user_screen/user_category_screen.dart';
 
-List<MenuModel> getMenus(AppLocalizations locale) {
-  List<MenuModel> menus = [
-    MenuModel(
-      title: locale.dailyReminders,
-      icon: Icons.dashboard,
-      pageNumber: 0,
-      isOpened: true,
-      isParent: false,
-      // route: mainScreenRoute,
-      subMenuList: [],
-    ),
-    MenuModel(
-        title: locale.systemSetup,
-        icon: Icons.settings_input_antenna_rounded,
-        isParent: true,
-        pageNumber: 1,
-        subMenuList: [
-          SubMenuModel(
-            title: locale.listOfCategories,
-            pageNumber: 2,
+List<MenuModel> getMenus(AppLocalizations locale, String type) {
+  List<MenuModel> menus = type == USERTYPEADMIN
+      ? [
+          MenuModel(
+            title: locale.dailyReminders,
+            icon: Icons.dashboard,
+            pageNumber: 0,
+            isOpened: true,
+            isParent: false,
+            // route: mainScreenRoute,
+            subMenuList: [],
           ),
-          SubMenuModel(title: locale.listOfDepartment, pageNumber: 3),
-          SubMenuModel(title: locale.listOfReminders, pageNumber: 4)
-        ],
-        isOpened: false),
-    MenuModel(
-        title: locale.documents,
-        icon: Icons.document_scanner_rounded,
-        isParent: true,
-        pageNumber: 5,
-        subMenuList: [
-          SubMenuModel(title: locale.documentExplorer, pageNumber: 6),
-          SubMenuModel(title: locale.addDocument, pageNumber: 7),
-          SubMenuModel(title: locale.searchByContnet, pageNumber: 8)
-        ],
-        isOpened: false),
-    MenuModel(
-        title: locale.users,
-        icon: Icons.supervised_user_circle_sharp,
-        isParent: false,
-        pageNumber: 11,
-        subMenuList: [
-          // SubMenuModel(title: locale.addUser, pageNumber: 10),
-          // SubMenuModel(title: locale.viewUser, pageNumber: 11),
-        ],
-        isOpened: false),
-    MenuModel(
-        title: locale.userCategories,
-        icon: Icons.supervised_user_circle_sharp,
-        isParent: true,
-        pageNumber: 12,
-        subMenuList: [
-          SubMenuModel(title: locale.addUserCategories, pageNumber: 13),
-          SubMenuModel(title: locale.viewUserCategories, pageNumber: 14),
-        ],
-        isOpened: false),
-    MenuModel(
-        title: locale.changePassword,
-        icon: Icons.password_outlined,
-        isParent: false,
-        pageNumber: 15,
-        isOpened: false,
-        subMenuList: []),
-  ];
+          MenuModel(
+              title: locale.systemSetup,
+              icon: Icons.settings_input_antenna_rounded,
+              isParent: true,
+              pageNumber: 1,
+              subMenuList: [
+                SubMenuModel(
+                  title: locale.listOfCategories,
+                  pageNumber: 2,
+                ),
+                SubMenuModel(title: locale.listOfDepartment, pageNumber: 3),
+                SubMenuModel(title: locale.listOfReminders, pageNumber: 4)
+              ],
+              isOpened: false),
+          MenuModel(
+              title: locale.documents,
+              icon: Icons.document_scanner_rounded,
+              isParent: true,
+              pageNumber: 5,
+              subMenuList: [
+                SubMenuModel(title: locale.documentExplorer, pageNumber: 6),
+                SubMenuModel(title: locale.addDocument, pageNumber: 7),
+                SubMenuModel(title: locale.searchByContnet, pageNumber: 8)
+              ],
+              isOpened: false),
+          MenuModel(
+              title: locale.users,
+              icon: Icons.supervised_user_circle_sharp,
+              isParent: false,
+              pageNumber: 11,
+              subMenuList: [
+                // SubMenuModel(title: locale.addUser, pageNumber: 10),
+                // SubMenuModel(title: locale.viewUser, pageNumber: 11),
+              ],
+              isOpened: false),
+          MenuModel(
+              title: locale.userCategories,
+              icon: Icons.supervised_user_circle_sharp,
+              isParent: true,
+              pageNumber: 12,
+              subMenuList: [
+                SubMenuModel(title: locale.addUserCategories, pageNumber: 13),
+                SubMenuModel(title: locale.viewUserCategories, pageNumber: 14),
+              ],
+              isOpened: false),
+          MenuModel(
+              title: locale.changePassword,
+              icon: Icons.password_outlined,
+              isParent: false,
+              pageNumber: 15,
+              isOpened: false,
+              subMenuList: []),
+        ]
+      : type == USERTYPEMANEGER
+          ? [
+              MenuModel(
+                title: locale.dailyReminders,
+                icon: Icons.dashboard,
+                pageNumber: 0,
+                isOpened: true,
+                isParent: false,
+                // route: mainScreenRoute,
+                subMenuList: [],
+              ),
+              // MenuModel(
+              //     title: locale.systemSetup,
+              //     icon: Icons.settings_input_antenna_rounded,
+              //     isParent: true,
+              //     pageNumber: 1,
+              //     subMenuList: [
+              //       SubMenuModel(
+              //         title: locale.listOfCategories,
+              //         pageNumber: 2,
+              //       ),
+              //       SubMenuModel(title: locale.listOfDepartment, pageNumber: 3),
+              //       SubMenuModel(title: locale.listOfReminders, pageNumber: 4)
+              //     ],
+              //     isOpened: false),
+              MenuModel(
+                  title: locale.documents,
+                  icon: Icons.document_scanner_rounded,
+                  isParent: true,
+                  pageNumber: 5,
+                  subMenuList: [
+                    SubMenuModel(title: locale.documentExplorer, pageNumber: 6),
+                    SubMenuModel(title: locale.addDocument, pageNumber: 7),
+                    SubMenuModel(title: locale.searchByContnet, pageNumber: 8)
+                  ],
+                  isOpened: false),
+              // MenuModel(
+              //     title: locale.users,
+              //     icon: Icons.supervised_user_circle_sharp,
+              //     isParent: false,
+              //     pageNumber: 11,
+              //     subMenuList: [
+              //       // SubMenuModel(title: locale.addUser, pageNumber: 10),
+              //       // SubMenuModel(title: locale.viewUser, pageNumber: 11),
+              //     ],
+              //     isOpened: false),
+              // MenuModel(
+              //     title: locale.userCategories,
+              //     icon: Icons.supervised_user_circle_sharp,
+              //     isParent: true,
+              //     pageNumber: 12,
+              //     subMenuList: [
+              //       SubMenuModel(
+              //           title: locale.addUserCategories, pageNumber: 13),
+              //       SubMenuModel(
+              //           title: locale.viewUserCategories, pageNumber: 14),
+              //     ],
+              //     isOpened: false),
+              MenuModel(
+                  title: locale.changePassword,
+                  icon: Icons.password_outlined,
+                  isParent: false,
+                  pageNumber: 15,
+                  isOpened: false,
+                  subMenuList: []),
+            ]
+          : [
+              MenuModel(
+                title: locale.dailyReminders,
+                icon: Icons.dashboard,
+                pageNumber: 0,
+                isOpened: true,
+                isParent: false,
+                // route: mainScreenRoute,
+                subMenuList: [],
+              ),
+              // MenuModel(
+              //     title: locale.systemSetup,
+              //     icon: Icons.settings_input_antenna_rounded,
+              //     isParent: true,
+              //     pageNumber: 1,
+              //     subMenuList: [
+              //       SubMenuModel(
+              //         title: locale.listOfCategories,
+              //         pageNumber: 2,
+              //       ),
+              //       SubMenuModel(title: locale.listOfDepartment, pageNumber: 3),
+              //       SubMenuModel(title: locale.listOfReminders, pageNumber: 4)
+              //     ],
+              //     isOpened: false),
+              MenuModel(
+                  title: locale.documents,
+                  icon: Icons.document_scanner_rounded,
+                  isParent: true,
+                  pageNumber: 5,
+                  subMenuList: [
+                    SubMenuModel(title: locale.documentExplorer, pageNumber: 6),
+                    SubMenuModel(title: locale.addDocument, pageNumber: 7),
+                    SubMenuModel(title: locale.searchByContnet, pageNumber: 8)
+                  ],
+                  isOpened: false),
+              // MenuModel(
+              //     title: locale.users,
+              //     icon: Icons.supervised_user_circle_sharp,
+              //     isParent: false,
+              //     pageNumber: 11,
+              //     subMenuList: [
+              //       // SubMenuModel(title: locale.addUser, pageNumber: 10),
+              //       // SubMenuModel(title: locale.viewUser, pageNumber: 11),
+              //     ],
+              //     isOpened: false),
+              // MenuModel(
+              //     title: locale.userCategories,
+              //     icon: Icons.supervised_user_circle_sharp,
+              //     isParent: true,
+              //     pageNumber: 12,
+              //     subMenuList: [
+              //       SubMenuModel(
+              //           title: locale.addUserCategories, pageNumber: 13),
+              //       SubMenuModel(
+              //           title: locale.viewUserCategories, pageNumber: 14),
+              //     ],
+              //     isOpened: false),
+              MenuModel(
+                  title: locale.changePassword,
+                  icon: Icons.password_outlined,
+                  isParent: false,
+                  pageNumber: 15,
+                  isOpened: false,
+                  subMenuList: []),
+            ];
+  
+
 
   return menus;
 }
