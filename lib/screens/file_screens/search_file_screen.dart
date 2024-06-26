@@ -237,6 +237,11 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.05 : width * 0.15,
         backgroundColor: columnColors,
+        renderer: (rendererContext) {
+          return Center(
+            child: Text((rendererContext.rowIdx + 1).toString()),
+          );
+        },
       ),
       PlutoColumn(
         title: _locale.description,
@@ -272,8 +277,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
     } else if (isSearch.value) {
       List<DocumentModel> result = [];
       List<PlutoRow> topList = [];
-      result = await documentsController
-          .searchByContent(SearchDocumentCriteria(searchField: text.trim()));
+      result = await documentsController.searchByContent(
+          SearchDocumentCriteria(searchField: text.trim(), page: -1));
       if (documentListProvider.searchDocumentCriteria.page! >= 1) {
         documentListProvider.searchDocumentCriteria.page =
             documentListProvider.searchDocumentCriteria.page! + 1;
