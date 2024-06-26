@@ -100,7 +100,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     return AlertDialog(
       titlePadding: EdgeInsets.all(0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: dBackground,
+      backgroundColor: Color(0xFFFFFFFF),
       title: TitleDialogWidget(
         title: widget.isEdit
             ? _locale.editDocumentDetails
@@ -109,8 +109,9 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
         height: height * 0.07,
       ),
       content: Container(
+        // color: dBackground,
         width: width * 0.45,
-        height: height * 0.6,
+        height: height * 0.45,
         child: formSection(),
       ),
       actions: [
@@ -130,7 +131,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
                                 18,
-                                greenColor),
+                                primary),
                             child: Text(
                               _locale.save,
                               style: const TextStyle(color: whiteColor),
@@ -181,7 +182,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
                                 18,
-                                greenColor),
+                                primary),
                             child: Text(
                               _locale.save,
                               style: const TextStyle(color: whiteColor),
@@ -226,7 +227,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                 documentModel!.txtDescription = value;
               },
               readOnly: !widget.isEdit,
-              width: width * 0.1,
+              width: width * 0.13,
             ),
             spaceWidth(0.01),
             CustomTextField2(
@@ -237,7 +238,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               },
               text: Text(_locale.keyword),
               height: height * 0.05,
-              width: width * 0.1,
+              width: width * 0.13,
             ),
             spaceWidth(0.01),
             CustomTextField2(
@@ -247,10 +248,14 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                 documentModel!.txtOrganization = value;
               },
               height: height * 0.05,
-              width: width * 0.1,
+              width: width * 0.13,
               readOnly: !widget.isEdit,
             ),
-            spaceWidth(0.01),
+          ],
+        ),
+        SizedBox(height: height * 0.01),
+        Row(
+          children: [
             CustomTextField2(
               controller: reference1,
               text: Text(_locale.ref1),
@@ -259,8 +264,83 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               },
               height: height * 0.05,
               readOnly: !widget.isEdit,
-              width: width * 0.1,
+              width: width * 0.13,
             ),
+            spaceWidth(0.01),
+            CustomTextField2(
+              controller: refrence2Controller,
+              text: Text(_locale.ref2),
+              onChanged: (value) {
+                documentModel!.txtReference2 = value;
+              },
+              height: height * 0.05,
+              readOnly: !widget.isEdit,
+              width: width * 0.13,
+            ),
+            spaceWidth(0.01),
+            CustomTextField2(
+              controller: otherReferences,
+              text: Text(_locale.otherRef),
+              onChanged: (value) {
+                documentModel!.txtOtherRef = value;
+              },
+              height: height * 0.05,
+              width: width * 0.13,
+              readOnly: !widget.isEdit,
+            ),
+          ],
+        ),
+        SizedBox(height: height * 0.01),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            DropDown(
+              key: UniqueKey(),
+              onChanged: (value) {
+                selectedDep = value.txtKey;
+                documentModel!.txtDept = value.txtKey;
+                selectedDepName = value.txtDescription;
+                // setState(() {});
+              },
+              initialValue: selectedDepName.isEmpty ? null : selectedDepName,
+              bordeText: _locale.department,
+              width: width * 0.13,
+              height: height * 0.05,
+              onSearch: (p0) async {
+                return await DepartmentController()
+                    .getDep(SearchModel(page: 1));
+              },
+            ),
+            spaceWidth(0.01),
+            DateTimeComponent(
+              isInitiaDate: false,
+              timeControllerToCompareWith: null,
+              dateController: issueDateController,
+              label: _locale.issueDate,
+              // onChanged: (value) {
+              //   documentModel!.datIssuedate = value;
+              // },
+              readOnly: !widget.isEdit,
+              height: height * 0.05,
+              dateWidth: width * 0.13,
+              dateControllerToCompareWith: null,
+            ),
+
+            spaceWidth(0.01),
+            DateTimeComponent(
+              dateController: arrivalDate,
+              // controller: ,
+              readOnly: !widget.isEdit,
+              label: _locale.arrivalDate,
+
+              height: height * 0.05,
+              dateWidth: width * 0.13,
+              dateControllerToCompareWith: null,
+              isInitiaDate: false,
+              timeControllerToCompareWith: null,
+            ),
+
+            // spaceWidth(0.01),
           ],
         ),
         SizedBox(height: height * 0.01),
@@ -274,53 +354,40 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               onChanged: (value) {
                 documentModel!.intType = int.parse(value);
               },
-              width: width * 0.1,
+              width: width * 0.13,
             ),
             spaceWidth(0.01),
-            // CustomTextField2(
-            //   controller: department,
-            //   text: Text(_locale.department),
-            //   onChanged: (value) {
-            //     documentModel!.txtDept = value;
-            //   },
-            //   height: height * 0.05,
-            //   width: width * 0.1,
-            //   readOnly: !widget.isEdit,
-            // ),
-            DropDown(
-              key: UniqueKey(),
+            CustomTextField2(
+              controller: issueNoController,
+              text: Text(_locale.issueNo),
               onChanged: (value) {
-                selectedDep = value.txtKey;
-                documentModel!.txtDept = value.txtKey;
-                selectedDepName = value.txtDescription;
-                // setState(() {});
+                documentModel!.txtIssueno = value;
               },
-              initialValue: selectedDepName.isEmpty ? null : selectedDepName,
-              bordeText: _locale.department,
-              width: width * 0.1,
-              height: height * 0.04,
-              onSearch: (p0) async {
-                return await DepartmentController()
-                    .getDep(SearchModel(page: 1));
-              },
+              height: height * 0.05,
+              readOnly: !widget.isEdit,
+              width: width * 0.13,
             ),
             spaceWidth(0.01),
-            // CustomTextField2(
-            //   controller: categoryController,
-            //   text: Text(_locale.category),
-            //   onChanged: (value) {
-            //     documentModel!.txtCategory = value;
-            //   },
-            //   height: height * 0.05,
-            //   readOnly: !widget.isEdit,
-            //   width: width * 0.1,
-            // ),
+            CustomTextField2(
+              readOnly: !widget.isEdit,
+              controller: following,
+              text: Text(_locale.following),
+              onChanged: (value) {
+                documentModel!.txtFollowing = value;
+              },
+              height: height * 0.05,
+              width: width * 0.13,
+            ),
+          ],
+        ),
+        SizedBox(height: height * 0.01),
+        Row(
+          children: [
             DropDown(
               key: UniqueKey(),
-
               initialValue: selectedCatName.isEmpty ? null : selectedCatName,
-              width: width * 0.1,
-              height: height * 0.04,
+              width: width * 0.41,
+              height: height * 0.05,
               onChanged: (value) {
                 selectedCat = value.txtKey;
                 documentModel!.txtCategory = value.txtKey;
@@ -334,85 +401,6 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               onSearch: (p0) async {
                 return await DocumentsController().getDocCategoryList();
               },
-            ),
-            spaceWidth(0.01),
-            CustomTextField2(
-              controller: issueNoController,
-              text: Text(_locale.issueNo),
-              onChanged: (value) {
-                documentModel!.txtIssueno = value;
-              },
-              height: height * 0.05,
-              readOnly: !widget.isEdit,
-              width: width * 0.1,
-            ),
-          ],
-        ),
-        SizedBox(height: height * 0.01),
-        Row(
-          children: [
-            DateTimeComponent(
-              isInitiaDate: false,
-              timeControllerToCompareWith: null,
-              dateController: issueDateController,
-              label: _locale.issueDate,
-              // onChanged: (value) {
-              //   documentModel!.datIssuedate = value;
-              // },
-              readOnly: !widget.isEdit,
-              height: height * 0.05,
-              dateWidth: width * 0.1,
-              dateControllerToCompareWith: null,
-            ),
-            spaceWidth(0.01),
-            CustomTextField2(
-              controller: refrence2Controller,
-              text: Text(_locale.ref2),
-              onChanged: (value) {
-                documentModel!.txtReference2 = value;
-              },
-              height: height * 0.05,
-              readOnly: !widget.isEdit,
-              width: width * 0.1,
-            ),
-            spaceWidth(0.01),
-            CustomTextField2(
-              controller: otherReferences,
-              text: Text(_locale.otherRef),
-              onChanged: (value) {
-                documentModel!.txtOtherRef = value;
-              },
-              height: height * 0.05,
-              width: width * 0.1,
-              readOnly: !widget.isEdit,
-            ),
-            spaceWidth(0.01),
-            CustomTextField2(
-              readOnly: !widget.isEdit,
-              controller: following,
-              text: Text(_locale.following),
-              onChanged: (value) {
-                documentModel!.txtFollowing = value;
-              },
-              height: height * 0.05,
-              width: width * 0.1,
-            ),
-          ],
-        ),
-        SizedBox(height: height * 0.01),
-        Row(
-          children: [
-            DateTimeComponent(
-              dateController: arrivalDate,
-              // controller: ,
-              readOnly: !widget.isEdit,
-              label: _locale.arrivalDate,
-
-              height: height * 0.05,
-              dateWidth: width * 0.1,
-              dateControllerToCompareWith: null,
-              isInitiaDate: false,
-              timeControllerToCompareWith: null,
             ),
           ],
         ),

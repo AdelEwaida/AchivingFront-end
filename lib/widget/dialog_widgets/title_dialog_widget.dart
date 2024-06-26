@@ -22,41 +22,30 @@ class _TitleDialogWidgetState extends State<TitleDialogWidget> {
     return Container(
       width: widget.width,
       height: widget.height,
-      decoration: BoxDecoration(
-        color: primary,
-        // borderRadius:
-        //     BorderRadius.circular(5.0), // Adjust the value as needed
-      ),
+  
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              widget.title,
-              style: const TextStyle(
-                  color: whiteColor, fontSize: 17, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(2, 1, 2, 1),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0), color: redColor),
-              child: IconButton(
-                  alignment: Alignment.center,
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  },
-                  icon: const Icon(
-                    Icons.close_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  )),
-            ),
-          ),
-        ],
-      ),
+           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+           children: [
+             const SizedBox(),
+             Text(widget.title,style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+             Padding(
+               padding: const EdgeInsets.all(8.0),
+               child: Container(
+                 decoration: const BoxDecoration(
+                     shape: BoxShape.rectangle,
+                     color: Color.fromARGB(255, 237, 34, 20)),
+                 child: IconButton(
+                     onPressed: () {
+                       Navigator.pop(context);
+                     },
+                     icon: const Icon(
+                       Icons.close_rounded,
+                       color: Colors.white,
+                     )),
+               ),
+             ),
+           ],
+         ),
     );
   }
 }
