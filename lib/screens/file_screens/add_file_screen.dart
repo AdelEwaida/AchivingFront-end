@@ -114,9 +114,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
                                 selctedDepDesc = value.txtDescription;
                                 // setState(() {});
                               },
-                              initialValue: selctedDepDesc.isEmpty
-                                  ? null
-                                  : selctedDepDesc,
+                              initialValue:
+                                  selctedDepDesc == "" ? null : selctedDepDesc,
                               bordeText: _locale.department,
                               width: width * 0.13,
                               height: height * 0.04,
@@ -454,7 +453,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
   }
 
   void saveDocument() async {
-    print("saveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     if (saving) return;
 
     setState(() {
@@ -543,180 +541,13 @@ class _AddFileScreenState extends State<AddFileScreen> {
             );
           },
         ).then((value) {
-          descriptionController.clear();
-          keyWordsController.clear();
-          ref1Controller.clear();
-          ref2Controller.clear();
-          fileDateController.clear();
-          issueNoController.clear();
-          arrivalDateController.clear();
-          fileNameController.clear();
-          selectedDep = "";
-          selectedCat = "";
-          followingController.clear();
-          otherRefController.clear();
-          organizationController.clear();
-          arrivalDateController.text =
-              Converters.formatDate2(DateTime.now().toString());
-          fileDateController.text =
-              Converters.formatDate2(DateTime.now().toString());
-          setState(() {});
+          resetForm();
         });
       }
     });
     setState(() {
       saving = false;
     });
-  }
-
-  void saveDocument1() async {
-    DocumentModel documentModel = DocumentModel(
-      txtKey: "",
-      txtDescription: descriptionController.text,
-      txtKeywords: keyWordsController.text,
-      txtReference1: ref1Controller.text,
-      txtReference2: ref2Controller.text,
-      intType: 1,
-      datCreationdate: fileDateController.text,
-      txtLastupdateduser: "",
-      txtMimetype: "",
-      intVouchtype: 1,
-      intVouchnum: 0,
-      txtJcode: "",
-      txtCategory: selectedCat,
-      txtDept: selectedDep,
-      txtIssueno: issueNoController.text,
-      datIssuedate: arrivalDateController.text,
-      txtUsercode: "",
-      txtInsurance: "",
-      txtLicense: "",
-      txtMaintenance: "",
-      txtOtherservices: "",
-      bolHasfile: 1,
-      datArrvialdate: arrivalDateController.text,
-      txtOriginalfilekey: "",
-    );
-
-    // Create the FileUploadModel using the file data
-    FileUploadModel fileUploadModel = FileUploadModel(
-      txtKey: "",
-      txtHdrkey: "",
-      txtFilename: fileNameController.text,
-      imgBlob: imgBlob ?? "",
-      dblFilesize: dblFilesize ?? 0,
-      txtUsercode: "",
-      datDate: "",
-      txtMimetype: "",
-      intLinenum: 1,
-      intType: 1,
-    );
-
-    DocumentFileRequest documentFileRequest = DocumentFileRequest(
-      documentInfo: documentModel,
-      documentFile: fileUploadModel,
-    );
-
-    if (selectedDep.isNotEmpty &&
-        fileNameController.text.isNotEmpty &&
-        descriptionController.text.isNotEmpty &&
-        selectedCat.isNotEmpty) {
-      await documentsController.addDocument(documentFileRequest).then((value) {
-        if (value.statusCode == 200) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialog(
-                  icon: Icons.done_all,
-                  errorDetails: _locale.done,
-                  errorTitle: _locale.addDoneSucess,
-                  color: Colors.green,
-                  statusCode: 200);
-            },
-          ).then((value) {
-            descriptionController.clear();
-            keyWordsController.clear();
-            ref1Controller.clear();
-            ref2Controller.clear();
-            fileDateController.clear();
-            issueNoController.clear();
-            arrivalDateController.clear();
-            fileNameController.clear();
-            selectedDep = "";
-            selectedCat = "";
-            selectedCatDesc = "";
-            selctedDepDesc = "";
-            followingController.clear();
-            otherRefController.clear();
-            organizationController.clear();
-            arrivalDateController.text =
-                Converters.formatDate2(DateTime.now().toString());
-            fileDateController.text =
-                Converters.formatDate2(DateTime.now().toString());
-            setState(() {});
-          });
-        }
-      });
-    } else if (selectedDep.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.pleaseAddAllRequiredFields,
-        text: _locale.fillDepField,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    } else if (selectedCat.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.pleaseAddAllRequiredFields,
-        text: _locale.fillCatField,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    } else if (fileNameController.text.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.pleaseAddAllRequiredFields,
-        text: _locale.fillFileUpload,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    } else if (descriptionController.text.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.pleaseAddAllRequiredFields,
-        text: _locale.fillDescField,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    } else {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.fillRequiredFields,
-        text: _locale.fillRequiredFields,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {
-          // Navigator.pop(context); // Close the alert
-        },
-      );
-    }
   }
 
   void resetForm() {

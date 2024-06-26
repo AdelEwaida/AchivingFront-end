@@ -112,6 +112,15 @@ class _TableFileListSectionState extends State<TableFileListSection> {
             return FileExplorDialog(listOfFiles: value);
           },
         );
+      }).then((value) {
+        print("valuevaluevaluevaluevaluevaluevalue:${value}");
+        if (value != null) {
+          // print("DONE");
+          documentListProvider.setDocumentSearchCriterea(
+              documentListProvider.searchDocumentCriteria);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        }
       });
     }
   }
@@ -124,7 +133,12 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         builder: (context) {
           return AddFileDialog(documentModel: documentModel);
         },
-      );
+      ).then((value) {
+        if (value) {
+          documentListProvider.setDocumentSearchCriterea(
+              documentListProvider.searchDocumentCriteria);
+        }
+      });
     }
   }
 

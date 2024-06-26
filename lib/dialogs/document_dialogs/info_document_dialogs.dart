@@ -47,9 +47,9 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
   DocumentModel? documentModel;
 
   String selectedDep = "";
-  String selectedDepKey = "";
-
   String selectedCat = "";
+  String selectedDepName = "";
+  String selectedCatName = "";
 
   @override
   void didChangeDependencies() {
@@ -67,9 +67,11 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     type.text = documentModel!.intType.toString();
 
     // department.text = documentModel!.txtDept ?? "";
-    selectedDep = documentModel!.txtDept ?? "";
+    selectedDep = documentModel!.deptKey ?? "";
     // selectedDepKey=documentModel!.txtD
-    selectedCat = documentModel!.txtCategory ?? "";
+    selectedCat = documentModel!.catKey ?? "";
+    selectedDepName = documentModel!.txtDept ?? "";
+    selectedCatName = documentModel!.txtCategory ?? "";
 
     issueNoController.text = documentModel!.txtIssueno ?? "";
 
@@ -80,6 +82,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     refrence2Controller.text = documentModel!.txtReference2 ?? "";
     otherReferences.text = documentModel!.txtOtherRef ?? "";
     organization.text = documentModel!.txtOrganization ?? "";
+    print("organizationorganization ${documentModel!.txtOrganization}");
     following.text = documentModel!.txtFollowing ?? "";
     arrivalDate.text = (documentModel!.datArrvialdate!.isEmpty ||
             documentModel!.datArrvialdate == null
@@ -289,10 +292,10 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               onChanged: (value) {
                 selectedDep = value.txtKey;
                 documentModel!.txtDept = value.txtKey;
-
+                selectedDepName = value.txtDescription;
                 // setState(() {});
               },
-              initialValue: selectedDep.isEmpty ? null : selectedDep,
+              initialValue: selectedDepName.isEmpty ? null : selectedDepName,
               bordeText: _locale.department,
               width: width * 0.1,
               height: height * 0.04,
@@ -315,12 +318,13 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
             DropDown(
               key: UniqueKey(),
 
-              initialValue: selectedCat.isEmpty ? null : selectedCat,
+              initialValue: selectedCatName.isEmpty ? null : selectedCatName,
               width: width * 0.1,
               height: height * 0.04,
               onChanged: (value) {
                 selectedCat = value.txtKey;
                 documentModel!.txtCategory = value.txtKey;
+                selectedCatName = value.txtDescription;
               },
               searchBox: true,
               valSelected: true,
@@ -426,9 +430,11 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     // DocumentModel tempDocumentModel = DocumentModel();
     documentModel!.datIssuedate = issueDateController.text;
     documentModel!.datArrvialdate = arrivalDate.text;
+    documentModel!.txtDept = selectedDep;
+    documentModel!.txtCategory = selectedCat;
     // documentModel!.txtDept = value.txtKey;
-//
-    print(documentModel!.toJson());
+    print("documentModeldocumentModeldocumentModel ${documentModel!.toJson()}");
+    // print(documentModel!.toJson());
     var response = await documentsController.updateDocument(documentModel!);
     if (response.statusCode == 200) {
       // ignore: use_build_context_synchronously

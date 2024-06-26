@@ -30,6 +30,8 @@ class DocumentModel {
   String? txtFollowing;
   String? imgBlob;
   String? fileName;
+  String? catKey;
+  String? deptKey;
   DocumentModel(
       {this.txtKey,
       this.txtDescription,
@@ -59,6 +61,8 @@ class DocumentModel {
       this.datArrvialdate,
       this.txtOriginalfilekey,
       this.fileName,
+      this.catKey,
+      this.deptKey,
       this.imgBlob});
 
   factory DocumentModel.fromJson(Map<String, dynamic> json) {
@@ -91,11 +95,14 @@ class DocumentModel {
         datArrvialdate: json['datArrvialdate'] ?? "",
         txtOriginalfilekey: json['txtOriginalfilekey'] ?? "",
         fileName: json['fileName'],
-        imgBlob: json['imgBlob'] ?? "");
+        imgBlob: json['imgBlob'] ?? "",
+        catKey: json['catKey'] ?? "",
+        deptKey: json['deptKey'] ?? "");
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'imgBlob': imgBlob ?? "",
       'txtKey': txtKey ?? "",
       "txtOtherRef": txtOtherRef ?? "",
       'txtOrganization': txtOrganization ?? "",
@@ -123,8 +130,9 @@ class DocumentModel {
       'bolHasfile': bolHasfile ?? 0,
       'datArrvialdate': datArrvialdate ?? "",
       'txtOriginalfilekey': txtOriginalfilekey ?? "",
-      'imgBlob': imgBlob ?? "",
-      'fileName': fileName ?? ""
+      'fileName': fileName ?? "",
+      'catKey': catKey ?? "",
+      "deptKey": deptKey ?? ""
     };
   }
 
@@ -160,7 +168,9 @@ class DocumentModel {
         'datArrvialdate': PlutoCell(value: datArrvialdate),
         'txtOriginalfilekey': PlutoCell(value: txtOriginalfilekey),
         'imgBlob': PlutoCell(value: imgBlob),
-        'fileName': PlutoCell(value: fileName)
+        'fileName': PlutoCell(value: fileName),
+        'deptKey': PlutoCell(value: deptKey),
+        'catKey': PlutoCell(value: catKey)
       },
     );
   }
@@ -195,6 +205,8 @@ class DocumentModel {
         datArrvialdate: row.cells['datArrvialdate']?.value,
         txtOriginalfilekey: row.cells['txtOriginalfilekey']?.value,
         fileName: row.cells['fileName']?.value,
+        deptKey: row.cells['deptKey']?.value,
+        catKey: row.cells['catKey']?.value,
         imgBlob: row.cells['imgBlob']?.value);
   }
 }
