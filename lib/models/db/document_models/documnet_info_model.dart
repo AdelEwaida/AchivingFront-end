@@ -28,7 +28,6 @@ class DocumentModel {
   String? txtOrganization;
   String? txtOtherRef;
   String? txtFollowing;
-  String? imgBlob;
   String? fileName;
   String? catKey;
   String? deptKey;
@@ -63,7 +62,7 @@ class DocumentModel {
       this.fileName,
       this.catKey,
       this.deptKey,
-      this.imgBlob});
+  });
 
   factory DocumentModel.fromJson(Map<String, dynamic> json) {
     return DocumentModel(
@@ -95,14 +94,12 @@ class DocumentModel {
         datArrvialdate: json['datArrvialdate'] ?? "",
         txtOriginalfilekey: json['txtOriginalfilekey'] ?? "",
         fileName: json['fileName'],
-        imgBlob: json['imgBlob'] ?? "",
         catKey: json['catKey'] ?? "",
         deptKey: json['deptKey'] ?? "");
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'imgBlob': imgBlob ?? "",
       'txtKey': txtKey ?? "",
       "txtOtherRef": txtOtherRef ?? "",
       'txtOrganization': txtOrganization ?? "",
@@ -139,9 +136,10 @@ class DocumentModel {
   PlutoRow toPlutoRow(int count) {
     return PlutoRow(
       cells: {
+        'countNumber': PlutoCell(value: count),
+
         'txtOtherRef': PlutoCell(value: txtOtherRef),
         'txtFollowing': PlutoCell(value: txtFollowing),
-        'countNumber': PlutoCell(value: count),
         'txtKey': PlutoCell(value: txtKey),
         'txtOrganization': PlutoCell(value: txtOrganization),
         'txtDescription': PlutoCell(value: txtDescription),
@@ -167,7 +165,6 @@ class DocumentModel {
         'bolHasfile': PlutoCell(value: bolHasfile),
         'datArrvialdate': PlutoCell(value: datArrvialdate),
         'txtOriginalfilekey': PlutoCell(value: txtOriginalfilekey),
-        'imgBlob': PlutoCell(value: imgBlob),
         'fileName': PlutoCell(value: fileName),
         'deptKey': PlutoCell(value: deptKey),
         'catKey': PlutoCell(value: catKey)
@@ -207,6 +204,6 @@ class DocumentModel {
         fileName: row.cells['fileName']?.value,
         deptKey: row.cells['deptKey']?.value,
         catKey: row.cells['catKey']?.value,
-        imgBlob: row.cells['imgBlob']?.value);
+    );
   }
 }
