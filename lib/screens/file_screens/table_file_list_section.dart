@@ -136,6 +136,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         },
       ).then((value) {
         if (value) {
+          documentListProvider.searchDocumentCriteria.page = 0;
           documentListProvider.setDocumentSearchCriterea(
               documentListProvider.searchDocumentCriteria);
         }
@@ -211,6 +212,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
               await documentsController.deleteDocument(documentModel);
           if (response.statusCode == 200) {
             // print("DONE");
+            documentListProvider.searchDocumentCriteria.page = 0;
+
             documentListProvider.setDocumentSearchCriterea(
                 documentListProvider.searchDocumentCriteria);
           }
@@ -225,6 +228,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       var response = await documentsController.copyDocument(documentModel);
       if (response.statusCode == 200) {
         // print("DONE");
+        documentListProvider.searchDocumentCriteria.page = 0;
         documentListProvider.setDocumentSearchCriterea(
             documentListProvider.searchDocumentCriteria);
       }
@@ -244,6 +248,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         },
       ).then((value) {
         if (value) {
+          documentListProvider.searchDocumentCriteria.page = 0;
+
           documentListProvider.setDocumentSearchCriterea(
               documentListProvider.searchDocumentCriteria);
         }
@@ -341,7 +347,6 @@ class _TableFileListSectionState extends State<TableFileListSection> {
     );
   }
 
-
   List<PlutoRow> rowList = [];
   ValueNotifier<int> pageLis = ValueNotifier(1);
 
@@ -360,6 +365,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
 
       // rowList.clear();
       if (documentListProvider.searchDocumentCriteria.page == 0) {
+        stateManager.removeAllRows();
         documentListProvider.searchDocumentCriteria.page = 1;
       } else {
         documentListProvider.searchDocumentCriteria.page = -1;
@@ -371,9 +377,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       print(
           "documentListProvider.searchDocumentCriteria.page ${documentListProvider.searchDocumentCriteria.page}");
       for (int i =
-      documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
-      i < result.length;
-      i++) {
+              documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
+          i < result.length;
+          i++) {
         PlutoRow row = result[i].toPlutoRow(i + 1);
         // rowList.add(row);
         searchList.add(row);
@@ -403,9 +409,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       int currentPage = documentListProvider.page!; //1
 
       for (int i =
-      documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
-      i < result.length;
-      i++) {
+              documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
+          i < result.length;
+          i++) {
         int rowIndex = (currentPage - 1) * result.length + (i + 1);
         PlutoRow row = result[i].toPlutoRow(rowList.length + 1);
         rowList.add(row);
