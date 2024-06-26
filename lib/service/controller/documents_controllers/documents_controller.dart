@@ -83,6 +83,21 @@ class DocumentsController {
     return list;
   }
 
+  Future<FileUploadModel?> getLatestFileMethod(String hdrKey) async {
+    var response =
+        await ApiService().postRequest(getLatestFile, {'hdrKey': hdrKey});
+
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+
+      // Assuming jsonData is a single object
+      return FileUploadModel.fromJson(jsonData);
+    }
+
+    // Return null if the response is not successful or jsonData is not a single object
+    return null;
+  }
+
   Future<List<DocCatParent>> getDocCategoryList() async {
     List<DocCatParent> list = [];
     await ApiService().getRequest(getDocCategory).then((response) {

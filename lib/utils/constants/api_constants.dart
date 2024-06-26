@@ -29,6 +29,7 @@ const searchDocCritereaFile = "docInfo/searchCrit";
 const searchByContentApi = "docInfo/searchByContent";
 
 const getFilesByHdrApi = "docFiles/getByHdr";
+const getLatestFile = "docFiles/getLatestFile";
 const copyFileDocApi = "docFilesTrans/copyDoc";
 const deleteDocApi = "docFilesTrans/delete";
 //users api

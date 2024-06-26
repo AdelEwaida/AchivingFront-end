@@ -19,6 +19,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/db/document_models/upload_file_mode.dart';
 import '../../utils/func/save_excel_file.dart';
 
 class TableFileListSection extends StatefulWidget {
@@ -161,11 +162,17 @@ class _TableFileListSectionState extends State<TableFileListSection> {
   Future<void> download() async {
     if (selectedRow != null) {
       try {
-        Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
+        FileUploadModel? file = await documentsController
+            .getLatestFileMethod(selectedRow!.cells['txtKey']!.value);
 
-        String fileName = selectedRow!.cells['fileName']!.value;
+        // Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
 
-        saveExcelFile(bytes, fileName);
+        // String fileName = selectedRow!.cells['fileName']!.value;
+        Uint8List bytes = base64Decode(file!.imgBlob!);
+
+        // Get fileName from API response
+        String? fileName = file.txtFilename;
+        saveExcelFile(bytes, fileName!);
       } catch (e) {
         print("Error downloading file: $e");
         // Handle error here
@@ -356,7 +363,6 @@ class _TableFileListSectionState extends State<TableFileListSection> {
     int currentPage = pageLis.value; //1
 
     for (int i = 0; i < result.length; i++) {
-    
       int rowIndex = (currentPage - 1) * result.length + (i + 1);
       PlutoRow row = result[i].toPlutoRow(rowIndex);
       rowList.add(row);

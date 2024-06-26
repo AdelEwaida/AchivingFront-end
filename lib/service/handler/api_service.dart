@@ -11,6 +11,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../controller/error_controllers/error_controller.dart';
+
 class ApiService {
   final storage = const FlutterSecureStorage();
   static String urlServer = "";
@@ -38,7 +40,10 @@ class ApiService {
         if (response.body == "Wrong Credentials") {
           return response;
         }
-
+        ErrorController.openErrorDialog(
+          response.statusCode,
+          "there is somthing wrong",
+        );
         checkErrorDec(response);
       }
       return response;
@@ -69,11 +74,19 @@ class ApiService {
 
     if (api == logInApi &&
         (response.statusCode == 400 || response.statusCode == 406)) {
+      ErrorController.openErrorDialog(
+        response.statusCode,
+        "there is somthing wrong",
+      );
       return response;
     } else if (response.statusCode != 200) {
       if (response.body == "Wrong Credentials") {
         return response;
       }
+      ErrorController.openErrorDialog(
+        response.statusCode,
+        "there is somthing wrong",
+      );
 
       checkErrorDec(response);
     }
@@ -139,11 +152,19 @@ class ApiService {
           (response.statusCode == 400 ||
               response.statusCode == 406 ||
               response.statusCode == 402)) {
+        ErrorController.openErrorDialog(
+          response.statusCode,
+          "there is somthing wrong",
+        );
         return response;
       } else if (response.statusCode != 200) {
         if (response.body == "Wrong Credentials") {
           return response;
         }
+        ErrorController.openErrorDialog(
+          response.statusCode,
+          "there is somthing wrong",
+        );
       }
 
       return response;
