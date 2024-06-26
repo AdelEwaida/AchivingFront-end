@@ -70,7 +70,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
 
     return Container(
       width: width * 0.44,
-      height: height * 0.45,
+      height: height * 0.37,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
@@ -151,7 +151,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 ),
               ),
               SizedBox(
-                height: height * 0.01,
+                height: height * 0.0001,
               ),
               Padding(
                 padding: const EdgeInsets.all(3.0),

@@ -94,14 +94,14 @@ class _FileListScreenState extends State<FileListScreen> {
               children: [
                 // Adding some spacing between search field and tree
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(2.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         width: width * 0.35,
-                        height: height * 0.45,
+                        height: height * 0.37,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15),

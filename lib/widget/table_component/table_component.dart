@@ -415,22 +415,19 @@ class _TableComponentState extends State<TableComponent> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Tooltip(
-              //   message: locale.refresh,
-              //   child: IconButton(
-              //       onPressed: () {
-              //         setState(() {
-              //           // screenContentProvider
-              //           //     .setLastPage(screenContentProvider.getPage());
-              //           // screenContentProvider.setPage1(0);
-              //           widget.search!("");
-              //           screenContentProvider
-              //               .setPage1(screenContentProvider.getPage());
-              //         });
-              //       },
-              //       icon: const Icon(Icons.refresh)),
-              // ),
-
+              widget.add != null && widget.viewLocation == null
+                  ? Tooltip(
+                      message: locale.add,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.add!();
+                          },
+                          icon: const Icon(
+                            Icons.add,
+                            size: 20,
+                          )),
+                    )
+                  : const SizedBox.shrink(),
               widget.genranlEdit != null
                   ? Tooltip(
                       message: locale.edit,
@@ -614,19 +611,6 @@ class _TableComponentState extends State<TableComponent> {
                           )),
                     )
                   : SizedBox.shrink(),
-              widget.add != null && widget.viewLocation == null
-                  ? Tooltip(
-                      message: locale.add,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.add!();
-                          },
-                          icon: const Icon(
-                            Icons.add,
-                            size: 20,
-                          )),
-                    )
-                  : const SizedBox.shrink(),
               widget.editPassword != null
                   ? Tooltip(
                       message: locale.editPassword,
