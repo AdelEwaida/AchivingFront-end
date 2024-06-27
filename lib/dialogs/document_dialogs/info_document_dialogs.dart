@@ -133,7 +133,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                             style: customButtonStyle(
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
-                                18,
+                                14,
                                 primary),
                             child: Text(
                               _locale.save,
@@ -148,7 +148,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                             style: customButtonStyle(
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
-                                18,
+                                14,
                                 redColor),
                             child: Text(
                               _locale.cancel,
@@ -165,7 +165,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                           style: customButtonStyle(
                               Size(isDesktop ? width * 0.1 : width * 0.4,
                                   height * 0.045),
-                              18,
+                              14,
                               redColor),
                           child: Text(
                             _locale.cancel,
@@ -184,7 +184,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                             style: customButtonStyle(
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
-                                18,
+                                14,
                                 primary),
                             child: Text(
                               _locale.save,
@@ -199,7 +199,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                             style: customButtonStyle(
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
-                                18,
+                                14,
                                 redColor),
                             child: Text(
                               _locale.cancel,
@@ -236,7 +236,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               },
               initialValue: selectedDepName.isEmpty ? null : selectedDepName,
               bordeText: _locale.department,
-              width: width * 0.13,
+              width: width * 0.135,
               height: height * 0.05,
               onSearch: (p0) async {
                 return await DepartmentController()
@@ -254,7 +254,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               // },
               readOnly: !widget.isEdit,
               height: height * 0.05,
-              dateWidth: width * 0.13,
+              dateWidth: width * 0.135,
               dateControllerToCompareWith: null,
             ),
 
@@ -266,7 +266,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               label: _locale.arrivalDate,
 
               height: height * 0.05,
-              dateWidth: width * 0.13,
+              dateWidth: width * 0.135,
               dateControllerToCompareWith: null,
               isInitiaDate: false,
               timeControllerToCompareWith: null,
@@ -288,7 +288,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               },
               height: height * 0.05,
               readOnly: !widget.isEdit,
-              width: width * 0.13,
+              width: width * 0.135,
             ),
             spaceWidth(0.01),
             CustomTextField2(
@@ -299,7 +299,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               },
               height: height * 0.05,
               readOnly: !widget.isEdit,
-              width: width * 0.13,
+              width: width * 0.135,
             ),
             spaceWidth(0.01),
             CustomTextField2(
@@ -309,7 +309,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                 documentModel!.txtOtherRef = value;
               },
               height: height * 0.05,
-              width: width * 0.13,
+              width: width * 0.135,
               readOnly: !widget.isEdit,
             ),
           ],
@@ -327,7 +327,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                 documentModel!.txtDescription = value;
               },
               readOnly: !widget.isEdit,
-              width: width * 0.13,
+              width: width * 0.135,
             ),
             spaceWidth(0.01),
             CustomTextField2(
@@ -338,7 +338,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               },
               text: Text(_locale.keyword),
               height: height * 0.05,
-              width: width * 0.13,
+              width: width * 0.135,
             ),
             spaceWidth(0.01),
             CustomTextField2(
@@ -348,7 +348,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                 documentModel!.txtOrganization = value;
               },
               height: height * 0.05,
-              width: width * 0.13,
+              width: width * 0.135,
               readOnly: !widget.isEdit,
             ),
           ],
@@ -366,7 +366,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               onChanged: (value) {
                 documentModel!.intType = int.parse(value);
               },
-              width: width * 0.13,
+              width: width * 0.135,
             ),
             spaceWidth(0.01),
             CustomTextField2(
@@ -377,7 +377,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               },
               height: height * 0.05,
               readOnly: !widget.isEdit,
-              width: width * 0.13,
+              width: width * 0.135,
             ),
             spaceWidth(0.01),
             CustomTextField2(
@@ -388,7 +388,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                 documentModel!.txtFollowing = value;
               },
               height: height * 0.05,
-              width: width * 0.13,
+              width: width * 0.135,
             ),
           ],
         ),
@@ -402,7 +402,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
 
               key: UniqueKey(),
               initialValue: selectedCatName.isEmpty ? null : selectedCatName,
-              width: width * 0.41,
+              width: width * 0.42,
               height: height * 0.05,
               onChanged: (value) {
                 selectedCat = value.txtKey;

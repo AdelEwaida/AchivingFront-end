@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
@@ -82,15 +81,14 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.4 : height * 0.5,
-        child: SingleChildScrollView(
-          child: formSection(),
-        ),
+        height: isDesktop ? height * 0.25 : height * 0.5,
+        child: formSection(),
       ),
       actions: [
         isDesktop
             ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: () {
@@ -100,11 +98,14 @@ class _DepartmentDialogState extends State<AddUserDialog> {
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         18,
-                        greenColor),
+                        primary),
                     child: Text(
                       _locale.save,
                       style: const TextStyle(color: whiteColor),
                     ),
+                  ),
+                  SizedBox(
+                    width: width * 0.01,
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -167,6 +168,8 @@ class _DepartmentDialogState extends State<AddUserDialog> {
 
   Widget formSection() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (isDesktop)
           userModel != null

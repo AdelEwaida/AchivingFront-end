@@ -233,7 +233,7 @@ class DealClassificationTreeScreenState
                   ],
                 ),
               ),
-            const Divider(height: 3),
+            // const Divider(height: 3),
           ],
         ),
       ),

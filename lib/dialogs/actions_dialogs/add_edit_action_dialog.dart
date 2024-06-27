@@ -226,7 +226,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
           bordeText: _locale.recurring,
           items: getRecurringName(_locale),
           width: width * 0.2,
-          height: height * 0.04,
+          height: height * 0.045,
         ),
         if (!isDesktop) ...[
           DateTimeComponent(
