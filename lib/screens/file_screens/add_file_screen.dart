@@ -494,9 +494,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
       bolHasfile: 1,
       datArrvialdate: arrivalDateController.text,
       txtOriginalfilekey: "",
-      txtOtherRef: otherRefController.text,
-      txtOrganization: organizationController.text,
-      txtFollowing: followingController.text
+     
     );
 
     // Create FileUploadModel instance
