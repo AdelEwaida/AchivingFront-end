@@ -46,6 +46,8 @@ class _OfficeScreenState extends State<DepartemntScreen> {
     polCols.addAll([
       //countNumber
       PlutoColumn(
+        enableFilterMenuItem: true,
+
         title: "#",
         field: "countNumber",
         type: PlutoColumnType.text(),
@@ -59,6 +61,8 @@ class _OfficeScreenState extends State<DepartemntScreen> {
         // enableFilterMenuItem: true,
       ),
       PlutoColumn(
+        enableFilterMenuItem: true,
+
         title: _locale.txtShortcode,
         field: "txtShortcode",
         type: PlutoColumnType.text(),
@@ -67,6 +71,8 @@ class _OfficeScreenState extends State<DepartemntScreen> {
         // enableFilterMenuItem: true,
       ),
       PlutoColumn(
+        enableFilterMenuItem: true,
+
         // suppressedAutoSize: true,
         title: _locale.txtDescription,
         field: "txtDescription",
@@ -163,6 +169,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
                 stateManager = event.stateManager;
                 pageLis.value = pageLis.value > 1 ? 0 : 1;
                 totalDepCount.value = 0;
+                stateManager.setShowColumnFilter(true);
                 getCount();
               },
               doubleTab: (event) async {

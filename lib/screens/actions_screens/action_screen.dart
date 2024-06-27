@@ -42,6 +42,7 @@ class _OfficeScreenState extends State<ActionScreen> {
     width = MediaQuery.of(context).size.width;
     polCols.addAll([
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: "#",
         field: "countNumber",
         type: PlutoColumnType.text(),
@@ -54,6 +55,7 @@ class _OfficeScreenState extends State<ActionScreen> {
         },
       ),
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.date,
         field: "datDate",
         type: PlutoColumnType.text(),
@@ -61,6 +63,7 @@ class _OfficeScreenState extends State<ActionScreen> {
         backgroundColor: columnColors,
       ),
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.txtDescription,
         field: "txtDescription",
         type: PlutoColumnType.text(),
@@ -68,6 +71,7 @@ class _OfficeScreenState extends State<ActionScreen> {
         backgroundColor: columnColors,
       ),
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.notes,
         field: "txtNotes",
         type: PlutoColumnType.text(),
@@ -164,6 +168,7 @@ class _OfficeScreenState extends State<ActionScreen> {
                 stateManager = event.stateManager;
                 pageLis.value = pageLis.value > 1 ? 0 : 1;
                 totalActionsCount.value = 0;
+                stateManager.setShowColumnFilter(true);
                 getCount();
               },
               doubleTab: (event) async {
