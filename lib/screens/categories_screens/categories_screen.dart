@@ -100,17 +100,17 @@ class DealClassificationTreeScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text(_locale.listOfCategories),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.close_rounded,
-              color: Colors.white,
-            ),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //     icon: const Icon(
+        //       Icons.close_rounded,
+        //       color: Colors.white,
+        //     ),
+        //   ),
+        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
