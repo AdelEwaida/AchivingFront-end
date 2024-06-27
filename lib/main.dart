@@ -126,7 +126,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(249, 255, 255, 255),
           foregroundColor: Colors.black,
         ),
       );

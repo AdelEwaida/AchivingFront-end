@@ -112,7 +112,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
         height: height * 0.07,
       ),
       content: Container(
-         color: Theme.of(context).dialogBackgroundColor,
+        color: Theme.of(context).dialogBackgroundColor,
         width: width * 0.45,
         height: height * 0.45,
         child: formSection(),
@@ -218,83 +218,11 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
 
   Widget formSection() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
-          children: [
-            CustomTextField2(
-              controller: descriptionController,
-              text: Text(_locale.description),
-              height: height * 0.05,
-              onChanged: (value) {
-                documentModel!.txtDescription = value;
-              },
-              readOnly: !widget.isEdit,
-              width: width * 0.13,
-            ),
-            spaceWidth(0.01),
-            CustomTextField2(
-              controller: keyWordController,
-              readOnly: !widget.isEdit,
-              onChanged: (value) {
-                documentModel!.txtKeywords = value;
-              },
-              text: Text(_locale.keyword),
-              height: height * 0.05,
-              width: width * 0.13,
-            ),
-            spaceWidth(0.01),
-            CustomTextField2(
-              controller: organization,
-              text: Text(_locale.organization),
-              onChanged: (value) {
-                documentModel!.txtOrganization = value;
-              },
-              height: height * 0.05,
-              width: width * 0.13,
-              readOnly: !widget.isEdit,
-            ),
-          ],
-        ),
-        SizedBox(height: height * 0.01),
-        Row(
-          children: [
-            CustomTextField2(
-              controller: reference1,
-              text: Text(_locale.ref1),
-              onChanged: (value) {
-                documentModel!.txtReference1 = value;
-              },
-              height: height * 0.05,
-              readOnly: !widget.isEdit,
-              width: width * 0.13,
-            ),
-            spaceWidth(0.01),
-            CustomTextField2(
-              controller: refrence2Controller,
-              text: Text(_locale.ref2),
-              onChanged: (value) {
-                documentModel!.txtReference2 = value;
-              },
-              height: height * 0.05,
-              readOnly: !widget.isEdit,
-              width: width * 0.13,
-            ),
-            spaceWidth(0.01),
-            CustomTextField2(
-              controller: otherReferences,
-              text: Text(_locale.otherRef),
-              onChanged: (value) {
-                documentModel!.txtOtherRef = value;
-              },
-              height: height * 0.05,
-              width: width * 0.13,
-              readOnly: !widget.isEdit,
-            ),
-          ],
-        ),
-        SizedBox(height: height * 0.01),
-        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             DropDown(
@@ -348,6 +276,86 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
         ),
         SizedBox(height: height * 0.01),
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomTextField2(
+              controller: reference1,
+              text: Text(_locale.ref1),
+              onChanged: (value) {
+                documentModel!.txtReference1 = value;
+              },
+              height: height * 0.05,
+              readOnly: !widget.isEdit,
+              width: width * 0.13,
+            ),
+            spaceWidth(0.01),
+            CustomTextField2(
+              controller: refrence2Controller,
+              text: Text(_locale.ref2),
+              onChanged: (value) {
+                documentModel!.txtReference2 = value;
+              },
+              height: height * 0.05,
+              readOnly: !widget.isEdit,
+              width: width * 0.13,
+            ),
+            spaceWidth(0.01),
+            CustomTextField2(
+              controller: otherReferences,
+              text: Text(_locale.otherRef),
+              onChanged: (value) {
+                documentModel!.txtOtherRef = value;
+              },
+              height: height * 0.05,
+              width: width * 0.13,
+              readOnly: !widget.isEdit,
+            ),
+          ],
+        ),
+        SizedBox(height: height * 0.01),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomTextField2(
+              controller: descriptionController,
+              text: Text(_locale.description),
+              height: height * 0.05,
+              onChanged: (value) {
+                documentModel!.txtDescription = value;
+              },
+              readOnly: !widget.isEdit,
+              width: width * 0.13,
+            ),
+            spaceWidth(0.01),
+            CustomTextField2(
+              controller: keyWordController,
+              readOnly: !widget.isEdit,
+              onChanged: (value) {
+                documentModel!.txtKeywords = value;
+              },
+              text: Text(_locale.keyword),
+              height: height * 0.05,
+              width: width * 0.13,
+            ),
+            spaceWidth(0.01),
+            CustomTextField2(
+              controller: organization,
+              text: Text(_locale.organization),
+              onChanged: (value) {
+                documentModel!.txtOrganization = value;
+              },
+              height: height * 0.05,
+              width: width * 0.13,
+              readOnly: !widget.isEdit,
+            ),
+          ],
+        ),
+        SizedBox(height: height * 0.01),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomTextField2(
               controller: type,
@@ -385,6 +393,8 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
         ),
         SizedBox(height: height * 0.01),
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             DropDown(
               key: UniqueKey(),
