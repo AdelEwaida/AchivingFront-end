@@ -109,7 +109,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
                 isDense: true,
                 hintText: widget.label,
                 hintStyle: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: Color.fromARGB(235, 158, 158, 158),
                 ),
                 prefixIcon: IconButton(

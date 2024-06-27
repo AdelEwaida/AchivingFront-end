@@ -7,6 +7,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/styles.dart';
+import '../../../utils/func/responsive.dart';
+import '../../../widget/dialog_widgets/title_dialog_widget.dart';
 import '../../../widget/text_field_widgets/custom_text_field2_.dart';
 
 class EditCategoryDialog extends StatefulWidget {
@@ -24,6 +26,7 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
 
   double width = 0;
   double height = 0;
+  bool isDesktop = false;
   CategoriesController categoriesController = CategoriesController();
   @override
   void didChangeDependencies() {
@@ -48,10 +51,19 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+    isDesktop = Responsive.isDesktop(context);
+
     final double dialogWidth = width * 0.3;
     final double dialogheight = height * 0.13;
     return AlertDialog(
-      backgroundColor: Colors.transparent,
+      titlePadding: EdgeInsets.all(0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      backgroundColor: Theme.of(context).dialogBackgroundColor,
+      title: TitleDialogWidget(
+        title: _locale.editCategory,
+        width: isDesktop ? width * 0.25 : width * 0.8,
+        height: height * 0.07,
+      ),
       contentPadding: EdgeInsets.zero,
       content: Container(
         color: Colors.white,
@@ -60,27 +72,7 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(),
-                Text(_locale.editCategory),
-                Container(
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: Color.fromARGB(255, 237, 34, 20)),
-                  child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.close_rounded,
-                        color: Colors.white,
-                      )),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
             CustomTextField2(
               text: Text(_locale.description),
               width: width * 0.25,
@@ -98,7 +90,7 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
             //   // width: width * 0.21,
             //   heightVal: height * 0.3,
             // ),
-            // const SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

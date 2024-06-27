@@ -330,7 +330,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
             //   height: screenHeight * 0.01,
             // ),
             Padding(
-              padding: const EdgeInsets.only(bottom:30.0),
+              padding: const EdgeInsets.only(bottom: 30.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -351,10 +351,8 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                 ],
               ),
             ),
-            
           ],
         ),
-          
       ),
     );
   }
@@ -572,7 +570,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
 
   Widget nodeDesign(MyNode node) {
     return SizedBox(
-      width: node.isRoot ? 100 : 180,
+      width: node.isRoot ? 200 : 300,
       child: InkWell(
         onTap: () {
           // if (!node.isRoot && node.children.isEmpty) {
@@ -596,7 +594,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
             return Text(
               node.title,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 16,
                 color: getColor(node.extra, value.toString())
                     ? currentColor
                     : Colors.black,
