@@ -143,7 +143,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         // key: UniqueKey\\(),
         scrollBehavior: MyCustomScrollBehavior(),
-        title: 'Scope',
+        title: 'ARCHIVING',
         debugShowCheckedModeBanner: false,
         localizationsDelegates: const [
           AppLocalizations.delegate,
