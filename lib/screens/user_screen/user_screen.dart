@@ -39,7 +39,7 @@ class _UserScreenState extends State<UserScreen> {
   late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
   UserController userController = UserController();
   late DocumentListProvider documentListProvider;
-   PlutoGridStateManager? stateManager;
+  PlutoGridStateManager? stateManager;
   ValueNotifier isSearch = ValueNotifier(false);
   @override
   void didChangeDependencies() {
@@ -108,7 +108,7 @@ class _UserScreenState extends State<UserScreen> {
                 genranlEdit: editUser,
                 onLoaded: (PlutoGridOnLoadedEvent event) {
                   stateManager = event.stateManager;
-                  stateManager.setShowColumnFilter(true);
+                  stateManager!.setShowColumnFilter(true);
                   // pageLis.value = pageLis.value > 1 ? 0 : 1;
                   // totalActionsCount.value = 0;
                   // getCount();

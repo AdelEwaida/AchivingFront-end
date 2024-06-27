@@ -181,7 +181,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
                 stateManager = event.stateManager;
                 pageLis.value = pageLis.value > 1 ? 0 : 1;
                 totalDepCount.value = 0;
-                stateManager.setShowColumnFilter(true);
+                stateManager!.setShowColumnFilter(true);
                 getCount();
               },
               doubleTab: (event) async {
