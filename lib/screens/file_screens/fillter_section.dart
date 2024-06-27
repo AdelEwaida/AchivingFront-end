@@ -70,7 +70,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
 
     return Container(
       width: width * 0.44,
-      height: height * 0.37,
+      height: height * 0.34,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
@@ -83,7 +83,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Column(
             children: [
@@ -242,6 +242,9 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 ),
               ),
             ],
+          ),
+          SizedBox(
+            height: height * 0.01,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
