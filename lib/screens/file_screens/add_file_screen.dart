@@ -76,9 +76,9 @@ class _AddFileScreenState extends State<AddFileScreen> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
     return Scaffold(
-         appBar: AppBar(
-          title: Text(_locale.addDocument),
-        ),
+      appBar: AppBar(
+        title: Text(_locale.addDocument),
+      ),
       body: Stack(
         children: [
           Column(
@@ -89,7 +89,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
               //   style: TextStyle(fontSize: 25),
               // ),
               Container(
-                width: width * 0.6,
+                width: width * 0.73,
                 height: height * 0.6,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -118,11 +118,12 @@ class _AddFileScreenState extends State<AddFileScreen> {
                                   selctedDepDesc = value.txtDescription;
                                   // setState(() {});
                                 },
-                                initialValue:
-                                    selctedDepDesc == "" ? null : selctedDepDesc,
+                                initialValue: selctedDepDesc == ""
+                                    ? null
+                                    : selctedDepDesc,
                                 bordeText: _locale.department,
-                                width: width * 0.18,
-                                height: height * 0.04,
+                                width: width * 0.2,
+                                height: height * 0.05,
                                 onSearch: (p0) async {
                                   return await DepartmentController()
                                       .getDep(SearchModel(page: 1));
@@ -131,35 +132,29 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               SizedBox(
                                 width: width * 0.015,
                               ),
-                              DropDown(
-                                key: UniqueKey(),
-                                isMandatory: true,
-                                initialValue: selectedCatDesc.isEmpty
-                                    ? null
-                                    : selectedCatDesc,
-                                width: width * 0.18,
-                                height: height * 0.04,
-                                onChanged: (value) {
-                                  selectedCat = value.txtKey;
-                                  selectedCatDesc = value.txtDescription;
+                              DateTimeComponent(
+                                height: height * 0.05,
+                                label: _locale.arrivalDate,
+                                dateController: arrivalDateController,
+                                dateWidth: width * 0.2,
+                                dateControllerToCompareWith: null,
+                                readOnly: false,
+                                isInitiaDate: true,
+                                onValue: (isValid, value) {
+                                  if (isValid) {
+                                    arrivalDateController.text = value;
+                                  }
                                 },
-                                searchBox: true,
-                                valSelected: true,
-                                bordeText: _locale.category,
-                                // width: width * 0.21,
-      
-                                onSearch: (p0) async {
-                                  return await DocumentsController()
-                                      .getDocCategoryList();
-                                },
+                                timeControllerToCompareWith: null,
                               ),
                               SizedBox(
                                 width: width * 0.015,
                               ),
                               DateTimeComponent(
+                                height: height * 0.05,
                                 label: _locale.issueDate,
                                 dateController: fileDateController,
-                                dateWidth: width * 0.18,
+                                dateWidth: width * 0.2,
                                 dateControllerToCompareWith: null,
                                 readOnly: false,
                                 isInitiaDate: true,
@@ -181,7 +176,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               _locale.txtDescription,
                               descriptionController,
                               isDesktop,
-                              0.18,
+                              0.2,
                               true,
                             ),
                             SizedBox(
@@ -191,25 +186,33 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               _locale.issueNo,
                               issueNoController,
                               isDesktop,
-                              0.18,
+                              0.2,
                               false,
                             ),
                             SizedBox(
                               width: width * 0.015,
                             ),
-                            DateTimeComponent(
-                              label: _locale.arrivalDate,
-                              dateController: arrivalDateController,
-                              dateWidth: width * 0.18,
-                              dateControllerToCompareWith: null,
-                              readOnly: false,
-                              isInitiaDate: true,
-                              onValue: (isValid, value) {
-                                if (isValid) {
-                                  arrivalDateController.text = value;
-                                }
+                            DropDown(
+                              key: UniqueKey(),
+                              isMandatory: true,
+                              initialValue: selectedCatDesc.isEmpty
+                                  ? null
+                                  : selectedCatDesc,
+                              width: width * 0.2,
+                              height: height * 0.05,
+                              onChanged: (value) {
+                                selectedCat = value.txtKey;
+                                selectedCatDesc = value.txtDescription;
                               },
-                              timeControllerToCompareWith: null,
+                              searchBox: true,
+                              valSelected: true,
+                              bordeText: _locale.category,
+                              // width: width * 0.21,
+
+                              onSearch: (p0) async {
+                                return await DocumentsController()
+                                    .getDocCategoryList();
+                              },
                             ),
                           ],
                         ),
@@ -221,7 +224,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               _locale.keyWords,
                               keyWordsController,
                               isDesktop,
-                              0.18,
+                              0.2,
                               false,
                             ),
                             SizedBox(
@@ -231,7 +234,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               _locale.following,
                               followingController,
                               isDesktop,
-                              0.18,
+                              0.2,
                               false,
                             ),
                             SizedBox(
@@ -241,7 +244,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               _locale.ref1,
                               ref1Controller,
                               isDesktop,
-                              0.18,
+                              0.2,
                               false,
                             ),
                           ],
@@ -254,7 +257,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               _locale.ref2,
                               ref2Controller,
                               isDesktop,
-                              0.18,
+                              0.2,
                               false,
                             ),
                             SizedBox(
@@ -264,7 +267,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               _locale.otherRef,
                               otherRefController,
                               isDesktop,
-                              0.18,
+                              0.2,
                               false,
                             ),
                             SizedBox(
@@ -274,7 +277,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               _locale.organization,
                               organizationController,
                               isDesktop,
-                              0.18,
+                              0.2,
                               false,
                             ),
                           ],
@@ -287,20 +290,20 @@ class _AddFileScreenState extends State<AddFileScreen> {
                         //       _locale.following,
                         //       followingController,
                         //       isDesktop,
-                        //       0.18,
+                        //       0.2,
                         //       false,
                         //     ),
                         //     SizedBox(
                         //       width: width * 0.015,
                         //     ),
                         //     SizedBox(
-                        //       width: width * 0.18,
+                        //       width: width * 0.2,
                         //     ),
                         //     SizedBox(
                         //       width: width * 0.015,
                         //     ),
                         //     SizedBox(
-                        //       width: width * 0.18,
+                        //       width: width * 0.2,
                         //     )
                         //   ],
                         // ),
@@ -320,7 +323,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
                   ElevatedButton(
                     onPressed: saveDocument,
                     style: customButtonStyle(
-                      Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
+                      Size(isDesktop ? width * 0.1 : width * 0.4,
+                          height * 0.055),
                       18,
                       primary,
                     ),
@@ -338,7 +342,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                     },
                     style: customButtonStyle(
                         Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
+                            height * 0.055),
                         18,
                         redColor),
                     child: Text(
@@ -394,7 +398,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
               pickFile();
             },
             style: customButtonStyle(
-                Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
+                Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.055),
                 18,
                 primary3),
             child: Text(
@@ -409,7 +413,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
               _locale.fileName,
               fileNameController,
               isDesktop,
-              0.18,
+              0.2,
               true,
             ),
           ),
@@ -449,7 +453,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
       isReport: true,
       isMandetory: isMandetory,
       width: width * width1,
-      height: height * 0.15,
+      height: height * 0.18,
       text: Text(hint),
       controller: controller,
       onSubmitted: (text) {},
@@ -475,7 +479,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
       txtFollowing: followingController.text,
       txtOrganization: organizationController.text,
       txtOtherRef: otherRefController.text,
-      
       datCreationdate: fileDateController.text,
       txtLastupdateduser: "",
       txtMimetype: "",
@@ -494,7 +497,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
       bolHasfile: 1,
       datArrvialdate: arrivalDateController.text,
       txtOriginalfilekey: "",
-     
     );
 
     // Create FileUploadModel instance
