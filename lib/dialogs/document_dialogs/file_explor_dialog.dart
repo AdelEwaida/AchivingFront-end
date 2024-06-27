@@ -53,109 +53,16 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
       backgroundColor: dBackground,
       title: TitleDialogWidget(
         title: _locale.documents,
-        width: isDesktop ? width * 0.25 : width * 0.8,
+        width: isDesktop ? width * 0.4 : width * 0.8,
         height: height * 0.07,
       ),
       content: Container(
-        width: width * 0.45,
-        height: height * 0.6,
+        width: width * 0.5,
+        height: height * 0.5,
         child: formSection(),
       ),
       actions: [
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     isDesktop
-        //         ? widget.isEdit
-        //             ? Row(
-        //                 mainAxisAlignment: MainAxisAlignment.center,
-        //                 children: [
-        //                   ElevatedButton(
-        //                     onPressed: () {
-        //                       updateDocument();
-        //                     },
-        //                     style: customButtonStyle(
-        //                         Size(isDesktop ? width * 0.1 : width * 0.4,
-        //                             height * 0.045),
-        //                         18,
-        //                         greenColor),
-        //                     child: Text(
-        //                       _locale.save,
-        //                       style: const TextStyle(color: whiteColor),
-        //                     ),
-        //                   ),
-        //                   spaceWidth(0.01),
-        //                   ElevatedButton(
-        //                     onPressed: () {
-        //                       Navigator.pop(context, false);
-        //                     },
-        //                     style: customButtonStyle(
-        //                         Size(isDesktop ? width * 0.1 : width * 0.4,
-        //                             height * 0.045),
-        //                         18,
-        //                         redColor),
-        //                     child: Text(
-        //                       _locale.cancel,
-        //                       style: const TextStyle(color: whiteColor),
-        //                     ),
-        //                   ),
-        //                 ],
-        //               )
-        //             : Center(
-        //                 child: ElevatedButton(
-        //                   onPressed: () {
-        //                     Navigator.pop(context, false);
-        //                   },
-        //                   style: customButtonStyle(
-        //                       Size(isDesktop ? width * 0.1 : width * 0.4,
-        //                           height * 0.045),
-        //                       18,
-        //                       redColor),
-        //                   child: Text(
-        //                     _locale.cancel,
-        //                     style: const TextStyle(color: whiteColor),
-        //                   ),
-        //                 ),
-        //               )
-        //         : Row(
-        //             mainAxisAlignment: MainAxisAlignment.center,
-        //             crossAxisAlignment: CrossAxisAlignment.center,
-        //             children: [
-        //               Column(
-        //                 children: [
-        //                   ElevatedButton(
-        //                     onPressed: () {},
-        //                     style: customButtonStyle(
-        //                         Size(isDesktop ? width * 0.1 : width * 0.4,
-        //                             height * 0.045),
-        //                         18,
-        //                         greenColor),
-        //                     child: Text(
-        //                       _locale.save,
-        //                       style: const TextStyle(color: whiteColor),
-        //                     ),
-        //                   ),
-        //                   SizedBox(height: height * 0.01),
-        //                   ElevatedButton(
-        //                     onPressed: () {
-        //                       Navigator.pop(context, false);
-        //                     },
-        //                     style: customButtonStyle(
-        //                         Size(isDesktop ? width * 0.1 : width * 0.4,
-        //                             height * 0.045),
-        //                         18,
-        //                         redColor),
-        //                     child: Text(
-        //                       _locale.cancel,
-        //                       style: const TextStyle(color: whiteColor),
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ],
-        //           )
-        //   ],
-        // )
+      
       ],
     );
   }
@@ -163,13 +70,14 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
   PlutoRow? selectedRow;
   Widget formSection() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Row(
           children: [
             TableComponent(
-              tableWidth: width * 0.45,
+              tableWidth: width * 0.5,
               tableHeigt: height * 0.4,
+              rowsHeight: 50,
               plCols: polCols,
               download: download,
               polRows: [],
@@ -209,7 +117,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         title: _locale.fileName,
         field: "txtFilename",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.13 : width * 0.4,
+        width: isDesktop ? width * 0.22 : width * 0.4,
         renderer: (rendererContext) {
           return Tooltip(
             message: rendererContext.cell.value,
@@ -229,7 +137,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         title: _locale.dateCreated,
         field: "datDate",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.15 : width * 0.2,
+        width: isDesktop ? width * 0.13 : width * 0.2,
         backgroundColor: columnColors,
       ),
     ]);

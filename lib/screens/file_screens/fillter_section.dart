@@ -254,7 +254,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 style: customButtonStyle(
                     Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
                     18,
-                    textSecondary),
+                    primary),
                 child: Text(
                   _locale.search,
                   style: const TextStyle(color: whiteColor),
@@ -270,7 +270,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 style: customButtonStyle(
                     Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
                     18,
-                    primary),
+                    Colors.red),
                 child: Text(
                   _locale.resetFilter,
                   style: const TextStyle(color: whiteColor),
