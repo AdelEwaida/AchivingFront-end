@@ -240,7 +240,10 @@ class _SideMenuState extends State<SideMenu> {
                       menuList[index].isOpened = true;
                       selectedMenuIndex = index;
                     }
-                    screenProvider.setPage1(menu.pageNumber);
+                    if (!menuList[index].isParent) {
+                      screenProvider.setPage1(menu.pageNumber);
+
+                    }
                   });
                 },
                 child: Padding(

@@ -172,6 +172,7 @@
     "editUser": "Edit User",
     "chooseListOfDepartment": "Choose list of Department",
     "updateUserCat":"Update User Categories",
+    "expiredSessionLoginDialog": "Your session has expired.please log in again",
     "pleaseSelectCat": "Please Select Category",
     "updateUserCat":"Update User Categories",
     "oldPass":"Old Password",

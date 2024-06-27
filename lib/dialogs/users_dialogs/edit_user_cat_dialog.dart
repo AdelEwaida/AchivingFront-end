@@ -213,7 +213,8 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
               },
               onSearch: (text) async {
                 List<UserModel> newList = await userController
-                    .getUsers(SearchModel(page: -1, searchField: text));
+                    .getUsers(
+                    SearchModel(page: -1, searchField: text, status: -1));
                 return newList;
               },
             ),

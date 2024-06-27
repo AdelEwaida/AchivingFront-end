@@ -93,20 +93,13 @@ List<MenuModel> getMenus(AppLocalizations locale, String type) {
                 // route: mainScreenRoute,
                 subMenuList: [],
               ),
-              // MenuModel(
-              //     title: locale.systemSetup,
-              //     icon: Icons.settings_input_antenna_rounded,
-              //     isParent: true,
-              //     pageNumber: 1,
-              //     subMenuList: [
-              //       SubMenuModel(
-              //         title: locale.listOfCategories,
-              //         pageNumber: 2,
-              //       ),
-              //       SubMenuModel(title: locale.listOfDepartment, pageNumber: 3),
-              //       SubMenuModel(title: locale.listOfReminders, pageNumber: 4)
-              //     ],
-              //     isOpened: false),
+              MenuModel(
+                  title: locale.listOfReminders,
+                  icon: Icons.remember_me,
+                  isParent: false,
+                  pageNumber: 1,
+                  subMenuList: [],
+                  isOpened: false),
               MenuModel(
                   title: locale.documents,
                   icon: Icons.document_scanner_rounded,
@@ -158,6 +151,13 @@ List<MenuModel> getMenus(AppLocalizations locale, String type) {
                 // route: mainScreenRoute,
                 subMenuList: [],
               ),
+              MenuModel(
+                  title: locale.listOfReminders,
+                  icon: Icons.remember_me,
+                  isParent: false,
+                  pageNumber: 4,
+                  subMenuList: [],
+                  isOpened: false),
               // MenuModel(
               //     title: locale.systemSetup,
               //     icon: Icons.settings_input_antenna_rounded,
@@ -213,8 +213,6 @@ List<MenuModel> getMenus(AppLocalizations locale, String type) {
                   isOpened: false,
                   subMenuList: []),
             ];
-  
-
 
   return menus;
 }

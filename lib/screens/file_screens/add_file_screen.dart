@@ -472,6 +472,10 @@ class _AddFileScreenState extends State<AddFileScreen> {
       txtReference1: ref1Controller.text,
       txtReference2: ref2Controller.text,
       intType: 1,
+      txtFollowing: followingController.text,
+      txtOrganization: organizationController.text,
+      txtOtherRef: otherRefController.text,
+      
       datCreationdate: fileDateController.text,
       txtLastupdateduser: "",
       txtMimetype: "",
