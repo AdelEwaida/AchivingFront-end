@@ -82,7 +82,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.35 : height * 0.5,
+        height: isDesktop ? height * 0.3 : height * 0.5,
         child: SingleChildScrollView(
           child: formSection(),
         ),
@@ -90,7 +90,8 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       actions: [
         isDesktop
             ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: () {
@@ -100,12 +101,13 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         18,
-                        greenColor),
+                        primary),
                     child: Text(
                       _locale.save,
                       style: const TextStyle(color: whiteColor),
                     ),
                   ),
+                  SizedBox(width: width * 0.01),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context, false);
@@ -168,8 +170,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
   Widget formSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment
-          .start, // Ensure all children are aligned to the start
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (isDesktop)
           DateTimeComponent(
