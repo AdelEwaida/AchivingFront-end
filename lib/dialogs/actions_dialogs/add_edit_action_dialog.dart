@@ -23,7 +23,9 @@ import '../../widget/text_field_widgets/custom_text_field2_.dart';
 class AddEditActionDialog extends StatefulWidget {
   ActionModel? actionModel;
   bool? isFromList;
-  AddEditActionDialog({super.key, this.isFromList, this.actionModel});
+  String? title;
+  AddEditActionDialog(
+      {super.key, this.isFromList, this.actionModel, this.title});
 
   @override
   State<AddEditActionDialog> createState() => _AddEditActionDialogState();
@@ -74,8 +76,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       backgroundColor: dBackground,
       title: TitleDialogWidget(
-        title:
-            widget.actionModel == null ? _locale.addAction : _locale.editAction,
+        title: widget.title!,
         width: isDesktop ? width * 0.25 : width * 0.8,
         height: height * 0.07,
       ),

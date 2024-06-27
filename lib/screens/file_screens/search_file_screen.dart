@@ -172,6 +172,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         context: context,
         builder: (context) {
           return AddEditActionDialog(
+            title: _locale.addReminder,
             actionModel: actionModel,
             isFromList: true,
           );
