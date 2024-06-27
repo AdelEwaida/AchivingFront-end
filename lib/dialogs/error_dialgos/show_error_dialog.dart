@@ -1,5 +1,8 @@
+import 'package:archiving_flutter_project/utils/constants/routes_constant.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class ErrorDialog extends StatefulWidget {
   final IconData icon;
@@ -97,11 +100,25 @@ class _ErrorDialogState extends State<ErrorDialog> {
                 ),
                 MaterialButton(
                   onPressed: () async {
+                    print(
+                        "widget.statusCodewidget.statusCode ${widget.statusCode}");
                     if (widget.isItemStatusScreen == true &&
                         widget.customOnPressed != null) {
                       widget.customOnPressed!();
                     } else {
-                      Navigator.pop(context, true);
+                      if (widget.statusCode == 401 ||
+                          widget.statusCode == 417) {
+                        if (kIsWeb) {
+                          // context.read<TabsProvider>().emptyAll();
+                          GoRouter.of(context).go(loginScreenRoute);
+                        } else {
+                          // context.read<TabsProvider>().emptyAll();
+                          Navigator.pushReplacementNamed(
+                              context, loginScreenRoute);
+                        }
+                      } else {
+                        Navigator.pop(context, true);
+                      }
                     }
                   },
                   child: Text(widget.isItemStatusScreen == true

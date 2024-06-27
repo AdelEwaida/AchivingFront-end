@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:js';
 import 'dart:js_interop';
 import 'dart:ui';
+import 'package:archiving_flutter_project/dialogs/login_dialog.dart';
+import 'package:archiving_flutter_project/service/controller/login_controllers/login_controller.dart';
 import 'package:excel/excel.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -59,6 +61,79 @@ class MyApp extends StatelessWidget {
     final baseTheme = ThemeData.light().copyWith(
       useMaterial3: false,
     );
+    sessionConfig.stream.listen((SessionTimeoutState timeoutEvent) async {
+      const storage = FlutterSecureStorage();
+      final context2 = navigatorKey.currentState!.overlay!.context;
+      sessionStateStream.add(SessionState.stopListening);
+
+      if (timeoutEvent == SessionTimeoutState.userInactivityTimeout &&
+          GoRouter.of(context2)
+                  .routeInformationProvider
+                  .value
+                  .uri
+                  .toString()
+                  .compareTo(loginScreenRoute) !=
+              0) {
+        const storage = FlutterSecureStorage();
+        String userCode = storage.read(key: "userName").toString();
+
+        await storage.delete(key: "jwt").then((value) {
+          // isLoginDialog = true;
+
+          showDialog(
+              context: context2,
+              barrierDismissible: false,
+              builder: (builder) {
+                return const LoginDialog();
+              });
+        });
+
+        // const storage = FlutterSecureStorage();
+        // String userCode = storage.read(key: "userName").toString();
+
+        // String key = "scope@e2024A/key@team.CT";
+        // final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
+        // final byteArray = Uint8List.fromList(
+        //     iv.map((bit) => bit == 1 ? 0x01 : 0x00).toList());
+        // String userCodeEnc =
+        //     Encryption.performAesEncryption(userCode, key, byteArray);
+        // await LoginController()
+        //     .logOutPost(LogoutModel(txtCode: userCodeEnc),
+        //         AppLocalizations.of(context2)!)
+        //     .then((value) {
+        //   if (value.statusCode == 200) {
+        //     if (kIsWeb) {
+        //       storage.deleteAll();
+        //       storage.delete(key: "jwt");
+        //       // GoRouter.of(context).pushReplacementNamed(loginScreenRoute);
+        //       GoRouter.of(context2).go(loginScreenRoute);
+        //     } else {
+        //       Navigator.pushReplacementNamed(context, loginScreenRoute);
+        //     }
+        //   }
+        // });
+      } else if (timeoutEvent == SessionTimeoutState.appFocusTimeout) {
+        // SharedPreferences prefs = await SharedPreferences.getInstance();
+        const storage = FlutterSecureStorage();
+        String userCode = storage.read(key: "userName").toString();
+
+        String key = "scope@e2024A/key@team.CT";
+        final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
+        final byteArray = Uint8List.fromList(
+            iv.map((bit) => bit == 1 ? 0x01 : 0x00).toList());
+        String userCodeEnc =
+            Encryption.performAesEncryption(userCode, key, byteArray);
+
+        if (kIsWeb) {
+          storage.deleteAll();
+          storage.delete(key: "jwt");
+          // GoRouter.of(context).pushReplacementNamed(loginScreenRoute);
+          GoRouter.of(context2).go(loginScreenRoute);
+        } else {
+          Navigator.pushReplacementNamed(context, loginScreenRoute);
+        }
+      }
+    });
 
     // Merge the base theme with the custom theme
     final customTheme = _buildTheme(context, provider.locale);

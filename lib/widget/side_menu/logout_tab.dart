@@ -116,6 +116,7 @@ class _LogoutTabState extends State<LogoutTab> {
     ).then((value) async {
       if (value) {
         await storage.delete(key: "jwt").then((value) {
+          
           GoRouter.of(context).go(loginScreenRoute);
         });
         // LoginController().logOut(locale);

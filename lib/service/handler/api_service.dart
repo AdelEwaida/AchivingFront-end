@@ -3,8 +3,10 @@
 import 'dart:convert';
 
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/login_dialog.dart';
 import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
 import 'package:archiving_flutter_project/utils/constants/key.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // ignore: depend_on_referenced_packages
@@ -142,13 +144,51 @@ class ApiService {
         },
         body: json.encode(toJson),
       );
+
       print("--------------------------------------------");
       print("token $token");
       print("urlll $requestUrl");
       print("urlllbody ${json.encode(toJson)}");
       print("responseCode ${response.statusCode}");
 
-      if (api == logInApi &&
+      if (response.statusCode == 417 || response.statusCode == 401) {
+        final context = navigatorKey.currentState!.overlay!.context;
+        await storage.delete(key: "jwt").then((value) {
+          ErrorController.openErrorDialog(
+            response.statusCode,
+            AppLocalizations.of(context)!.expiredSessionLoginDialog,
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
+      } else if (api == logInApi &&
           (response.statusCode == 400 ||
               response.statusCode == 406 ||
               response.statusCode == 402)) {

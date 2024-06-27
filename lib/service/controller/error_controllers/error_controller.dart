@@ -32,6 +32,7 @@ class ErrorController {
     //         Icons.error, errorDetails, erorrDto.serialNumber!, Colors.red, 407);
     //   }
     // }
+    print("responseStatusresponseStatus ${responseStatus}");
     if (responseStatus == 400) {
       dialogBasedonResponseStatus(Icons.warning, errorDetails, locale.error400,
           const Color.fromARGB(255, 232, 232, 23), 400);
@@ -40,7 +41,7 @@ class ErrorController {
           const Color.fromARGB(255, 81, 237, 4), 200);
     } else if (responseStatus == 401) {
       dialogBasedonResponseStatus(Icons.warning, errorDetails, locale.error401,
-          const Color.fromARGB(255, 81, 237, 4), 200);
+          Color.fromARGB(255, 237, 4, 4), 401);
     } else if (responseStatus == 405) {
       dialogBasedonResponseStatus(Icons.warning, errorDetails, locale.error405,
           const Color.fromARGB(255, 232, 232, 23), 405);
