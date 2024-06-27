@@ -94,8 +94,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5)),
         ),
-        fixedSize: Size(isDesktop ? width * 0.28 : width * 0.8, 50),
-        backgroundColor: Color(0xFFE27F24),
+        fixedSize: Size(isDesktop ? width * 0.28 : width * 0.8, 45),
+        backgroundColor: primary,
         foregroundColor: whiteColor,
         textStyle: const TextStyle(fontSize: 18),
       ),

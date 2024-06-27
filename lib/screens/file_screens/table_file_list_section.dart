@@ -295,7 +295,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         title: _locale.issueDate,
         field: "datIssuedate",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.35 : width * 0.2,
+        width: isDesktop ? width * 0.313 : width * 0.2,
         backgroundColor: columnColors,
       ),
       // PlutoColumn(

@@ -191,6 +191,10 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           },
           items: getUserTypesList(_locale),
         ),
+        userModel != null && widget.isChangePassword
+            ? customTextField(_locale.newPassword, passwordController,
+                isDesktop, 0.2, true, false)
+            : const SizedBox.shrink(),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -209,10 +213,6 @@ class _DepartmentDialogState extends State<AddUserDialog> {
             Text(_locale.active),
           ],
         ),
-        userModel != null && widget.isChangePassword
-            ? customTextField(_locale.newPassword, passwordController,
-                isDesktop, 0.8, true, false)
-            : const SizedBox.shrink(),
         if (!isDesktop) ...[
           customTextField(_locale.userCode, userCodeController, isDesktop, 0.8,
               true, widget.isChangePassword),

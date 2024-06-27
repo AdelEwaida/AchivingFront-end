@@ -81,7 +81,8 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
       actions: [
         isDesktop
             ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: () {
@@ -91,11 +92,14 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         18,
-                        greenColor),
+                        primary),
                     child: Text(
                       _locale.save,
                       style: const TextStyle(color: whiteColor),
                     ),
+                  ),
+                  SizedBox(
+                    width: width * 0.01,
                   ),
                   ElevatedButton(
                     onPressed: () {
