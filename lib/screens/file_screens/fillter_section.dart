@@ -83,153 +83,153 @@ class _FillterFileSectionState extends State<FillterFileSection> {
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        DateTimeComponent(
-                            height: height * 0.04,
-                            dateControllerToCompareWith: null,
-                            isInitiaDate: true,
-                            dateWidth: width * 0.1,
-                            dateController: fromDateController,
-                            label: _locale.fromDate,
-                            timeControllerToCompareWith: null),
-                        space(0.01),
-                        DateTimeComponent(
-                            dateControllerToCompareWith: null,
-                            isInitiaDate: true,
-                            height: height * 0.04,
-                            dateWidth: width * 0.1,
-                            dateController: toDateController,
-                            label: _locale.toDate,
-                            timeControllerToCompareWith: null),
-                      ],
-                    ),
-                    space(0.01),
-                    DropDown(
-                      key: UniqueKey(),
-                      onChanged: (value) {
-                        selectedDep = value.txtKey;
-                        // setState(() {});
-                      },
-                      initialValue: selectedDep.isEmpty ? null : selectedDep,
-                      bordeText: _locale.department,
-                      width: width * 0.1,
-                      height: height * 0.04,
-                      onSearch: (p0) async {
-                        return await DepartmentController()
-                            .getDep(SearchModel(page: 1));
-                      },
-                    ),
-                    space(0.01),
-                    DropDown(
-                      key: UniqueKey(),
-                      onChanged: (value) {
-                        selectedSortedType =
-                            getSortedByTyepsCode(_locale, value);
-                      },
-                      initialValue: selectedSortedType == -1
-                          ? null
-                          : getSortedByTyepsByCode(_locale, selectedSortedType),
-                      bordeText: _locale.sortedBy,
-                      items: getSortedByTyeps(_locale),
-                      width: width * 0.1,
-                      height: height * 0.04,
-                    ),
-                  ],
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      DateTimeComponent(
+                          height: height * 0.04,
+                          dateControllerToCompareWith: null,
+                          isInitiaDate: true,
+                          dateWidth: width * 0.1,
+                          dateController: fromDateController,
+                          label: _locale.fromDate,
+                          timeControllerToCompareWith: null),
+                      space(0.01),
+                      DateTimeComponent(
+                          dateControllerToCompareWith: null,
+                          isInitiaDate: true,
+                          height: height * 0.04,
+                          dateWidth: width * 0.1,
+                          dateController: toDateController,
+                          label: _locale.toDate,
+                          timeControllerToCompareWith: null),
+                    ],
+                  ),
+                  space(0.01),
+                  DropDown(
+                    key: UniqueKey(),
+                    onChanged: (value) {
+                      selectedDep = value.txtKey;
+                      // setState(() {});
+                    },
+                    initialValue: selectedDep.isEmpty ? null : selectedDep,
+                    bordeText: _locale.department,
+                    width: width * 0.1,
+                    height: height * 0.04,
+                    onSearch: (p0) async {
+                      return await DepartmentController()
+                          .getDep(SearchModel(page: 1));
+                    },
+                  ),
+                  space(0.01),
+                  DropDown(
+                    key: UniqueKey(),
+                    onChanged: (value) {
+                      selectedSortedType = getSortedByTyepsCode(_locale, value);
+                    },
+                    initialValue: selectedSortedType == -1
+                        ? null
+                        : getSortedByTyepsByCode(_locale, selectedSortedType),
+                    bordeText: _locale.sortedBy,
+                    items: getSortedByTyeps(_locale),
+                    width: width * 0.1,
+                    height: height * 0.04,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: height * 0.0001,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  CustomTextField2(
+                    width: width * 0.1,
+                    height: height * 0.04,
+                    text: Text(_locale.description),
+                    controller: descreptionController,
+                  ),
+                  space(0.01),
+                  Consumer<CalssificatonNameAndCodeProvider>(
+                    builder: (context, value, child) {
+                      classificationController.text = value.classificatonName;
+
+                      return CustomTextField2(
+                        text: Text(_locale.classification),
+                        controller: classificationController,
+                        width: width * 0.1,
+                        height: height * 0.04,
+                        readOnly: true,
+                      );
+                    },
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.keyword),
+                    controller: keyWordController,
+                    width: width * 0.1,
+                    height: height * 0.04,
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.ref1),
+                    controller: ref1Controller,
+                    width: width * 0.1,
+                    height: height * 0.04,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: height * 0.0001,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  CustomTextField2(
+                    text: Text(_locale.ref2),
+                    controller: ref2Controller,
+                    width: width * 0.1,
+                    height: height * 0.04,
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.otherRef),
+                    controller: otherRefController,
+                    width: width * 0.1,
+                    height: height * 0.04,
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.organization),
+                    controller: organizationController,
+                    width: width * 0.1,
+                    height: height * 0.04,
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.following),
+                    controller: followingController,
+                    width: width * 0.1,
+                    height: height * 0.04,
+                  ),
+                ],
               ),
               SizedBox(
                 height: height * 0.0001,
               ),
               Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: Row(
-                  children: [
-                    CustomTextField2(
-                      width: width * 0.1,
-                      height: height * 0.04,
-                      text: Text(_locale.description),
-                      controller: descreptionController,
-                    ),
-                    space(0.01),
-                    Consumer<CalssificatonNameAndCodeProvider>(
-                      builder: (context, value, child) {
-                        classificationController.text = value.classificatonName;
-
-                        return CustomTextField2(
-                          text: Text(_locale.classification),
-                          controller: classificationController,
-                          width: width * 0.1,
-                          height: height * 0.04,
-                          readOnly: true,
-                        );
-                      },
-                    ),
-                    space(0.01),
-                    CustomTextField2(
-                      text: Text(_locale.keyword),
-                      controller: keyWordController,
-                      width: width * 0.1,
-                      height: height * 0.04,
-                    ),
-                    space(0.01),
-                    CustomTextField2(
-                      text: Text(_locale.ref1),
-                      controller: ref1Controller,
-                      width: width * 0.1,
-                      height: height * 0.04,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: Row(
-                  children: [
-                    CustomTextField2(
-                      text: Text(_locale.ref2),
-                      controller: ref2Controller,
-                      width: width * 0.1,
-                      height: height * 0.04,
-                    ),
-                    space(0.01),
-                    CustomTextField2(
-                      text: Text(_locale.otherRef),
-                      controller: otherRefController,
-                      width: width * 0.1,
-                      height: height * 0.04,
-                    ),
-                    space(0.01),
-                    CustomTextField2(
-                      text: Text(_locale.organization),
-                      controller: organizationController,
-                      width: width * 0.1,
-                      height: height * 0.04,
-                    ),
-                    space(0.01),
-                    CustomTextField2(
-                      text: Text(_locale.following),
-                      controller: followingController,
-                      width: width * 0.1,
-                      height: height * 0.04,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(3.0),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
                   children: [
                     CustomTextField2(
@@ -243,45 +243,40 @@ class _FillterFileSectionState extends State<FillterFileSection> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 9.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    search();
-                  },
-                  style: customButtonStyle(
-                      Size(isDesktop ? width * 0.1 : width * 0.4,
-                          height * 0.045),
-                      18,
-                      textSecondary),
-                  child: Text(
-                    _locale.search,
-                    style: const TextStyle(color: whiteColor),
-                  ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  search();
+                },
+                style: customButtonStyle(
+                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
+                    18,
+                    textSecondary),
+                child: Text(
+                  _locale.search,
+                  style: const TextStyle(color: whiteColor),
                 ),
-                SizedBox(
-                  width: width * 0.01,
+              ),
+              SizedBox(
+                width: width * 0.01,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  resetForm();
+                },
+                style: customButtonStyle(
+                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
+                    18,
+                    primary),
+                child: Text(
+                  _locale.resetFilter,
+                  style: const TextStyle(color: whiteColor),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    resetForm();
-                  },
-                  style: customButtonStyle(
-                      Size(isDesktop ? width * 0.1 : width * 0.4,
-                          height * 0.045),
-                      18,
-                      primary),
-                  child: Text(
-                    _locale.resetFilter,
-                    style: const TextStyle(color: whiteColor),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           )
         ],
       ),

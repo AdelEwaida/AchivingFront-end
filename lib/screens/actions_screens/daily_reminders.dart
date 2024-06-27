@@ -49,23 +49,13 @@ class _DailyRemindersState extends State<DailyReminders> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_locale.dailyReminders),
+        title: Text(
+          _locale.dailyReminders,
+        ),
       ),
       body: Center(
         child: Container(
           width: isDesktop ? width * 0.8 : width * 0.9,
-          // height: height * 0.5,
-          // decoration: BoxDecoration(
-          //   color: Colors.white,
-          //   borderRadius: BorderRadius.circular(30),
-          //   boxShadow: [
-          //     BoxShadow(
-          //       color: Colors.black.withOpacity(0.2),
-          //       spreadRadius: 1,
-          //       blurRadius: 5,
-          //     ),
-          //   ],
-          // ),
           child: TableComponent(
             // key: UniqueKey(),
             isWhiteText: true,

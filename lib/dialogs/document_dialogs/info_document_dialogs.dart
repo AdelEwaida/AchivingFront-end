@@ -94,13 +94,16 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        'Dialog background color: ${Theme.of(context).dialogBackgroundColor}');
+
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
     return AlertDialog(
       titlePadding: EdgeInsets.all(0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: Color(0xFFFFFFFF),
+      backgroundColor: Theme.of(context).dialogBackgroundColor,
       title: TitleDialogWidget(
         title: widget.isEdit
             ? _locale.editDocumentDetails
@@ -109,7 +112,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
         height: height * 0.07,
       ),
       content: Container(
-        // color: dBackground,
+         color: Theme.of(context).dialogBackgroundColor,
         width: width * 0.45,
         height: height * 0.45,
         child: formSection(),
