@@ -75,305 +75,310 @@ class _AddFileScreenState extends State<AddFileScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
-    return Stack(
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text(
-              _locale.addDocument,
-              style: TextStyle(fontSize: 25),
-            ),
-            Container(
-              width: width * 0.45,
-              height: height * 0.6,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  color: Colors.black,
-                  width: 0.5,
+    return Scaffold(
+         appBar: AppBar(
+          title: Text(_locale.addDocument),
+        ),
+      body: Stack(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Text(
+              //   _locale.addDocument,
+              //   style: TextStyle(fontSize: 25),
+              // ),
+              Container(
+                width: width * 0.6,
+                height: height * 0.6,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 0.5,
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Row(
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              DropDown(
+                                key: UniqueKey(),
+                                isMandatory: true,
+                                onChanged: (value) {
+                                  selectedDep = value.txtKey;
+                                  selctedDepDesc = value.txtDescription;
+                                  // setState(() {});
+                                },
+                                initialValue:
+                                    selctedDepDesc == "" ? null : selctedDepDesc,
+                                bordeText: _locale.department,
+                                width: width * 0.18,
+                                height: height * 0.04,
+                                onSearch: (p0) async {
+                                  return await DepartmentController()
+                                      .getDep(SearchModel(page: 1));
+                                },
+                              ),
+                              SizedBox(
+                                width: width * 0.015,
+                              ),
+                              DropDown(
+                                key: UniqueKey(),
+                                isMandatory: true,
+                                initialValue: selectedCatDesc.isEmpty
+                                    ? null
+                                    : selectedCatDesc,
+                                width: width * 0.18,
+                                height: height * 0.04,
+                                onChanged: (value) {
+                                  selectedCat = value.txtKey;
+                                  selectedCatDesc = value.txtDescription;
+                                },
+                                searchBox: true,
+                                valSelected: true,
+                                bordeText: _locale.category,
+                                // width: width * 0.21,
+      
+                                onSearch: (p0) async {
+                                  return await DocumentsController()
+                                      .getDocCategoryList();
+                                },
+                              ),
+                              SizedBox(
+                                width: width * 0.015,
+                              ),
+                              DateTimeComponent(
+                                label: _locale.issueDate,
+                                dateController: fileDateController,
+                                dateWidth: width * 0.18,
+                                dateControllerToCompareWith: null,
+                                readOnly: false,
+                                isInitiaDate: true,
+                                onValue: (isValid, value) {
+                                  if (isValid) {
+                                    fileDateController.text = value;
+                                  }
+                                },
+                                timeControllerToCompareWith: null,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          // mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            DropDown(
-                              key: UniqueKey(),
-                              isMandatory: true,
-                              onChanged: (value) {
-                                selectedDep = value.txtKey;
-                                selctedDepDesc = value.txtDescription;
-                                // setState(() {});
-                              },
-                              initialValue:
-                                  selctedDepDesc == "" ? null : selctedDepDesc,
-                              bordeText: _locale.department,
-                              width: width * 0.13,
-                              height: height * 0.04,
-                              onSearch: (p0) async {
-                                return await DepartmentController()
-                                    .getDep(SearchModel(page: 1));
-                              },
+                            customTextField(
+                              _locale.txtDescription,
+                              descriptionController,
+                              isDesktop,
+                              0.18,
+                              true,
                             ),
                             SizedBox(
                               width: width * 0.015,
                             ),
-                            DropDown(
-                              key: UniqueKey(),
-                              isMandatory: true,
-                              initialValue: selectedCatDesc.isEmpty
-                                  ? null
-                                  : selectedCatDesc,
-                              width: width * 0.13,
-                              height: height * 0.04,
-                              onChanged: (value) {
-                                selectedCat = value.txtKey;
-                                selectedCatDesc = value.txtDescription;
-                              },
-                              searchBox: true,
-                              valSelected: true,
-                              bordeText: _locale.category,
-                              // width: width * 0.21,
-
-                              onSearch: (p0) async {
-                                return await DocumentsController()
-                                    .getDocCategoryList();
-                              },
+                            customTextField(
+                              _locale.issueNo,
+                              issueNoController,
+                              isDesktop,
+                              0.18,
+                              false,
                             ),
                             SizedBox(
                               width: width * 0.015,
                             ),
                             DateTimeComponent(
-                              label: _locale.issueDate,
-                              dateController: fileDateController,
-                              dateWidth: width * 0.13,
+                              label: _locale.arrivalDate,
+                              dateController: arrivalDateController,
+                              dateWidth: width * 0.18,
                               dateControllerToCompareWith: null,
                               readOnly: false,
                               isInitiaDate: true,
                               onValue: (isValid, value) {
                                 if (isValid) {
-                                  fileDateController.text = value;
+                                  arrivalDateController.text = value;
                                 }
                               },
                               timeControllerToCompareWith: null,
                             ),
                           ],
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.txtDescription,
-                            descriptionController,
-                            isDesktop,
-                            0.13,
-                            true,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.issueNo,
-                            issueNoController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          DateTimeComponent(
-                            label: _locale.arrivalDate,
-                            dateController: arrivalDateController,
-                            dateWidth: width * 0.13,
-                            dateControllerToCompareWith: null,
-                            readOnly: false,
-                            isInitiaDate: true,
-                            onValue: (isValid, value) {
-                              if (isValid) {
-                                arrivalDateController.text = value;
-                              }
-                            },
-                            timeControllerToCompareWith: null,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.keyWords,
-                            keyWordsController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.following,
-                            followingController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.ref1,
-                            ref1Controller,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.ref2,
-                            ref2Controller,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.otherRef,
-                            otherRefController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.organization,
-                            organizationController,
-                            isDesktop,
-                            0.13,
-                            false,
-                          ),
-                        ],
-                      ),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   children: [
-                      //     customTextField(
-                      //       _locale.following,
-                      //       followingController,
-                      //       isDesktop,
-                      //       0.13,
-                      //       false,
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.015,
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.13,
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.015,
-                      //     ),
-                      //     SizedBox(
-                      //       width: width * 0.13,
-                      //     )
-                      //   ],
-                      // ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          buildFileUpload(),
-                        ],
-                      ),
-                    ]),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            customTextField(
+                              _locale.keyWords,
+                              keyWordsController,
+                              isDesktop,
+                              0.18,
+                              false,
+                            ),
+                            SizedBox(
+                              width: width * 0.015,
+                            ),
+                            customTextField(
+                              _locale.following,
+                              followingController,
+                              isDesktop,
+                              0.18,
+                              false,
+                            ),
+                            SizedBox(
+                              width: width * 0.015,
+                            ),
+                            customTextField(
+                              _locale.ref1,
+                              ref1Controller,
+                              isDesktop,
+                              0.18,
+                              false,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            customTextField(
+                              _locale.ref2,
+                              ref2Controller,
+                              isDesktop,
+                              0.18,
+                              false,
+                            ),
+                            SizedBox(
+                              width: width * 0.015,
+                            ),
+                            customTextField(
+                              _locale.otherRef,
+                              otherRefController,
+                              isDesktop,
+                              0.18,
+                              false,
+                            ),
+                            SizedBox(
+                              width: width * 0.015,
+                            ),
+                            customTextField(
+                              _locale.organization,
+                              organizationController,
+                              isDesktop,
+                              0.18,
+                              false,
+                            ),
+                          ],
+                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   crossAxisAlignment: CrossAxisAlignment.center,
+                        //   children: [
+                        //     customTextField(
+                        //       _locale.following,
+                        //       followingController,
+                        //       isDesktop,
+                        //       0.18,
+                        //       false,
+                        //     ),
+                        //     SizedBox(
+                        //       width: width * 0.015,
+                        //     ),
+                        //     SizedBox(
+                        //       width: width * 0.18,
+                        //     ),
+                        //     SizedBox(
+                        //       width: width * 0.015,
+                        //     ),
+                        //     SizedBox(
+                        //       width: width * 0.18,
+                        //     )
+                        //   ],
+                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            buildFileUpload(),
+                          ],
+                        ),
+                      ]),
+                ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: saveDocument,
-                  style: customButtonStyle(
-                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
-                    18,
-                    primary3,
-                  ),
-                  child: Text(
-                    _locale.save,
-                    style: const TextStyle(color: whiteColor),
-                  ),
-                ),
-                SizedBox(
-                  width: width * 0.01,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    resetForm();
-                  },
-                  style: customButtonStyle(
-                      Size(isDesktop ? width * 0.1 : width * 0.4,
-                          height * 0.045),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: saveDocument,
+                    style: customButtonStyle(
+                      Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
                       18,
-                      primary),
-                  child: Text(
-                    _locale.resetFilter,
-                    style: const TextStyle(color: whiteColor),
+                      primary,
+                    ),
+                    child: Text(
+                      _locale.save,
+                      style: const TextStyle(color: whiteColor),
+                    ),
                   ),
-                ),
-              ],
-            )
-          ],
-        ),
-        if (saving)
-          Center(
-            child: CircularProgressIndicator(),
+                  SizedBox(
+                    width: width * 0.01,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      resetForm();
+                    },
+                    style: customButtonStyle(
+                        Size(isDesktop ? width * 0.1 : width * 0.4,
+                            height * 0.045),
+                        18,
+                        redColor),
+                    child: Text(
+                      _locale.resetFilter,
+                      style: const TextStyle(color: whiteColor),
+                    ),
+                  ),
+                ],
+              )
+            ],
           ),
-        Center(
-          child: Visibility(
-            visible: isFileLoading,
-            child: Container(
-              // color: Colors.black.withOpacity(
-              //     0.08), // Semi-transparent black background for the blur effect
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                    sigmaX: 2.0,
-                    sigmaY: 2.0), // Adjust the blur amount as needed
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                    ],
+          if (saving)
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+          Center(
+            child: Visibility(
+              visible: isFileLoading,
+              child: Container(
+                // color: Colors.black.withOpacity(
+                //     0.08), // Semi-transparent black background for the blur effect
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                      sigmaX: 2.0,
+                      sigmaY: 2.0), // Adjust the blur amount as needed
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -404,7 +409,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
               _locale.fileName,
               fileNameController,
               isDesktop,
-              0.13,
+              0.18,
               true,
             ),
           ),
@@ -489,6 +494,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
       bolHasfile: 1,
       datArrvialdate: arrivalDateController.text,
       txtOriginalfilekey: "",
+     
     );
 
     // Create FileUploadModel instance

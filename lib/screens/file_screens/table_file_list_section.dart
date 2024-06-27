@@ -152,6 +152,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         context: context,
         builder: (context) {
           return AddEditActionDialog(
+            title: _locale.addReminder,
             actionModel: actionModel,
             isFromList: true,
           );

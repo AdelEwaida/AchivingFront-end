@@ -227,6 +227,7 @@ class _OfficeScreenState extends State<ActionScreen> {
       context: context,
       builder: (context) {
         return AddEditActionDialog(
+          title: _locale.addReminder,
           isFromList: false,
         );
       },
@@ -319,6 +320,7 @@ class _OfficeScreenState extends State<ActionScreen> {
         context: context,
         builder: (context) {
           return AddEditActionDialog(
+            title: _locale.editAction,
             isFromList: false,
             actionModel: actionModel,
           );
