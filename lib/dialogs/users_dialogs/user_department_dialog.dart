@@ -172,6 +172,7 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
           tableHeigt: isDesktop ? height * 0.4 : height * 0.5,
           onLoaded: (event) {
             stateManager = event.stateManager;
+            stateManager.setShowColumnFilter(true);
             loadData();
           },
         ),
@@ -194,6 +195,7 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
     polCol.addAll([
       //txtCode
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.description,
         field: "txtDeptName",
         type: PlutoColumnType.text(),
@@ -201,6 +203,7 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
         backgroundColor: columnColors,
       ),
       PlutoColumn(
+        enableFilterMenuItem: false,
         title: _locale.status,
         field: "bolSelected",
         type: PlutoColumnType.text(),

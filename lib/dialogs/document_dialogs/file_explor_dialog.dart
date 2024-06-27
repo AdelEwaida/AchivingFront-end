@@ -86,6 +86,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
               onLoaded: (event) {
                 stateManager = event.stateManager;
                 stateManager.setShowLoading(true);
+                stateManager.setShowColumnFilter(true);
                 if (widget.listOfFiles.isNotEmpty) {
                   for (int i = 0; i < widget.listOfFiles.length; i++) {
                     stateManager
@@ -94,7 +95,6 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
                 }
                 if (stateManager.rows.isNotEmpty) {
                   selectedRow = stateManager.rows[0];
-
                 }
                 stateManager.setShowLoading(false);
               },

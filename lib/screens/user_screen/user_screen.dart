@@ -84,6 +84,7 @@ class _UserScreenState extends State<UserScreen> {
                 genranlEdit: editUser,
                 onLoaded: (PlutoGridOnLoadedEvent event) {
                   stateManager = event.stateManager;
+                  stateManager.setShowColumnFilter(true);
                   // pageLis.value = pageLis.value > 1 ? 0 : 1;
                   // totalActionsCount.value = 0;
                   // getCount();
@@ -201,6 +202,7 @@ class _UserScreenState extends State<UserScreen> {
   void fillColumnTable() {
     polCols.addAll([
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: "#",
         field: "count",
         type: PlutoColumnType.text(),
@@ -214,6 +216,7 @@ class _UserScreenState extends State<UserScreen> {
       ),
       //txtCode
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.userCode,
         field: "txtCode",
         type: PlutoColumnType.text(),
@@ -221,6 +224,7 @@ class _UserScreenState extends State<UserScreen> {
         backgroundColor: columnColors,
       ),
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.userName,
         field: "txtNamee",
         type: PlutoColumnType.text(),
@@ -228,6 +232,7 @@ class _UserScreenState extends State<UserScreen> {
         backgroundColor: columnColors,
       ),
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.type,
         field: "intType",
         type: PlutoColumnType.text(),
@@ -235,6 +240,7 @@ class _UserScreenState extends State<UserScreen> {
         backgroundColor: columnColors,
       ),
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.userStatus,
         field: "bolActive",
         type: PlutoColumnType.text(),
@@ -242,6 +248,7 @@ class _UserScreenState extends State<UserScreen> {
         backgroundColor: columnColors,
       ),
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.email,
         field: "email",
         type: PlutoColumnType.text(),

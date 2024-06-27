@@ -82,6 +82,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           genranlEdit: editDocumentInfo,
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
+            stateManager.setShowColumnFilter(true);
             // pageLis.value = pageLis.value > 1 ? 0 : 1;
             // totalActionsCount.value = 0;
             // getCount();
@@ -263,6 +264,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       PlutoColumn(
         title: "#",
         field: "countNumber",
+        enableFilterMenuItem: true,
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.05 : width * 0.15,
         backgroundColor: columnColors,
@@ -277,6 +279,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.16 : width * 0.4,
         backgroundColor: columnColors,
+        enableFilterMenuItem: true,
       ),
       // PlutoColumn(
       //   title: _locale.dateCreated,
@@ -291,6 +294,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.28 : width * 0.2,
         backgroundColor: columnColors,
+        enableFilterMenuItem: true,
       ),
       PlutoColumn(
         title: _locale.issueDate,
@@ -298,6 +302,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.313 : width * 0.2,
         backgroundColor: columnColors,
+        enableFilterMenuItem: true,
       ),
       // PlutoColumn(
       //   title: _locale.userCode,
@@ -375,7 +380,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
 
       result = await documentsController
           .searchDocCriterea(documentListProvider.searchDocumentCriteria);
-      
+
       for (int i =
               documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
           i < result.length;
