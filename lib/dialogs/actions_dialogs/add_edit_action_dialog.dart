@@ -100,7 +100,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
                     style: customButtonStyle(
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        14,
                         primary),
                     child: Text(
                       _locale.save,
@@ -115,7 +115,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
                     style: customButtonStyle(
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        14,
                         redColor),
                     child: Text(
                       _locale.cancel,

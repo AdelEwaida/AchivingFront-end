@@ -39,8 +39,10 @@ class _TitleDialogWidgetState extends State<TitleDialogWidget> {
                        Navigator.pop(context);
                      },
                      icon: const Icon(
+                      
                        Icons.close_rounded,
                        color: Colors.white,
+                       size: 14,
                      )),
                ),
              ),
