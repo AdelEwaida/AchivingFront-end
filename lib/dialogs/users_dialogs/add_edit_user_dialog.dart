@@ -260,7 +260,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   void addUser() async {
     if (userCodeController.text.trim().isEmpty ||
         userNameController.text.trim().isEmpty ||
-        userActive == null ||
+
         selectedUserType == null) {
       showDialog(
         context: context,
@@ -281,7 +281,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       UserModel userModel = UserModel(
           txtCode: userCodeController.text,
           txtNamee: userNameController.text,
-          bolActive: userActive,
+          bolActive: userActive ?? 0,
           intType: selectedUserType);
       await userController.addUser(userModel).then((value) {
         print("statusCode ${value.statusCode}");
@@ -338,7 +338,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
     UserModel userModel = UserModel(
         txtCode: userCodeController.text,
         txtNamee: userNameController.text,
-        bolActive: userActive,
+        bolActive: userActive ?? 0,
         intType: selectedUserType);
     await userController.updateUser(userModel).then((value) {
       if (value.statusCode == 200) {
