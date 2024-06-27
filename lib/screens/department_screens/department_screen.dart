@@ -51,6 +51,11 @@ class _OfficeScreenState extends State<DepartemntScreen> {
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.05 : width * 0.15,
         backgroundColor: columnColors,
+        renderer: (rendererContext) {
+          return Center(
+            child: Text((rendererContext.rowIdx + 1).toString()),
+          );
+        },
         // enableFilterMenuItem: true,
       ),
       PlutoColumn(
@@ -303,23 +308,28 @@ class _OfficeScreenState extends State<DepartemntScreen> {
     List<DepartmentModel> result = [];
     List<PlutoRow> topList = [];
     if (!isSearch.value) {
-      await departmentController
-          .getDep(SearchModel(page: pageLis.value))
-          .then((value) {
-        result = value;
-      });
-      for (int i = 0; i < result.length; i++) {
-        topList.add(result[i].toPlutoRow(i + 1));
-        rowList.add(result[i].toPlutoRow(i + 1));
-      }
-      count += result.length;
-      if (pageLis.value == 1) {
-        pageLis.value = pageLis.value + 1;
-      }
-      isLast = pageLis.value == 0 ? true : false;
+      if (pageLis.value != -1) {
+        if (pageLis.value > 1) {
+          pageLis.value = -1;
+        }
+        await departmentController
+            .getDep(SearchModel(page: pageLis.value))
+            .then((value) {
+          result = value;
+        });
+        for (int i = pageLis.value == -1 ? 50 : 0; i < result.length; i++) {
+          topList.add(result[i].toPlutoRow(i + 1));
+          rowList.add(result[i].toPlutoRow(i + 1));
+        }
+        count += result.length;
+        if (pageLis.value == 1) {
+          pageLis.value = pageLis.value + 1;
+        }
+        isLast = pageLis.value == 0 ? true : false;
 
-      return Future.value(
-          PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
+        return Future.value(
+            PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
+      }
     }
     return Future.value(
         PlutoInfinityScrollRowsResponse(isLast: isLast, rows: []));

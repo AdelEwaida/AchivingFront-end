@@ -440,7 +440,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
       bool isDesktop, double width1, bool isMandetory) {
     double height = MediaQuery.of(context).size.height * 0.3;
     return CustomTextField2(
-      readOnly: hint == _locale.uploadFile ? true : false,
+      readOnly: hint == _locale.fileName ? true : false,
       isReport: true,
       isMandetory: isMandetory,
       width: width * width1,
