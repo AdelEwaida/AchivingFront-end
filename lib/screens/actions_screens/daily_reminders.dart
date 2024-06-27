@@ -69,6 +69,7 @@ class _DailyRemindersState extends State<DailyReminders> {
             },
             onLoaded: (PlutoGridOnLoadedEvent event) {
               stateManager = event.stateManager;
+              stateManager.setShowColumnFilter(true);
             },
             doubleTab: (event) async {
               PlutoRow? tappedRow = event.row;
@@ -109,13 +110,19 @@ class _DailyRemindersState extends State<DailyReminders> {
 
   void fillColumnTable() {
     polCols.addAll([
-      // PlutoColumn(
-      //   title: "#",
-      //   field: "txtKey",
-      //   type: PlutoColumnType.text(),
-      //   width: isDesktop ? width * 0.05 : width * 0.15,
-      //   backgroundColor: columnColors,
-      // ),
+      PlutoColumn(
+        enableFilterMenuItem: true,
+        title: "#",
+        field: "countNumber",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.05 : width * 0.15,
+        backgroundColor: columnColors,
+        renderer: (rendererContext) {
+          return Center(
+            child: Text((rendererContext.rowIdx + 1).toString()),
+          );
+        },
+      ),
       //txtCode
       // PlutoColumn(
       //   title: _locale.userCode,
@@ -125,6 +132,7 @@ class _DailyRemindersState extends State<DailyReminders> {
       //   backgroundColor: columnColors,
       // ),
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.description,
         field: "txtDescription",
         type: PlutoColumnType.text(),
@@ -139,6 +147,7 @@ class _DailyRemindersState extends State<DailyReminders> {
       //   backgroundColor: columnColors,
       // ),
       PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.notes,
         field: "txtNotes",
         type: PlutoColumnType.text(),

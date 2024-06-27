@@ -86,7 +86,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(_locale.listOfReminders),
+          title: Text(_locale.viewUserCategories),
         ),
         body: buildMainContent());
   }
@@ -139,7 +139,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
             width: isDesktop ? width * 0.8 : width * 0.9,
             child: TableComponent(
               key: UniqueKey(),
-              tableHeigt: height * 0.8,
+              tableHeigt: height * 0.76,
               tableWidth: width,
               delete: deleteDep,
               // add: addDep,
