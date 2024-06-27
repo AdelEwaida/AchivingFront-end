@@ -6,6 +6,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/styles.dart';
+import '../../../utils/func/responsive.dart';
+import '../../../widget/dialog_widgets/title_dialog_widget.dart';
 import '../../../widget/text_field_widgets/custom_text_field2_.dart';
 
 class AddCategoryDialog extends StatefulWidget {
@@ -23,6 +25,8 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
 
   double width = 0;
   double height = 0;
+  bool isDesktop = false;
+
   CategoriesController categoriesController = CategoriesController();
   @override
   void didChangeDependencies() {
@@ -47,10 +51,19 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+    isDesktop = Responsive.isDesktop(context);
+
     final double dialogWidth = width * 0.3;
     final double dialogheight = height * 0.13;
     return AlertDialog(
-      backgroundColor: Colors.transparent,
+      titlePadding: EdgeInsets.all(0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      backgroundColor: Theme.of(context).dialogBackgroundColor,
+      title: TitleDialogWidget(
+        title: _locale.addCategory,
+        width: isDesktop ? width * 0.25 : width * 0.8,
+        height: height * 0.07,
+      ),
       contentPadding: EdgeInsets.zero,
       content: Container(
         color: Colors.white,
@@ -59,27 +72,27 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(),
-                Text(_locale.addCategory),
-                Container(
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: Color.fromARGB(255, 237, 34, 20)),
-                  child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.close_rounded,
-                        color: Colors.white,
-                      )),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     const SizedBox(),
+            //     Text(_locale.addCategory),
+            //     Container(
+            //       decoration: const BoxDecoration(
+            //           shape: BoxShape.rectangle,
+            //           color: Color.fromARGB(255, 237, 34, 20)),
+            //       child: IconButton(
+            //           onPressed: () {
+            //             Navigator.pop(context);
+            //           },
+            //           icon: const Icon(
+            //             Icons.close_rounded,
+            //             color: Colors.white,
+            //           )),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 20),
             CustomTextField2(
               isMandetory: true,
               text: Text(_locale.description),
@@ -132,7 +145,7 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
         description: descriptionController.text,
         id: widget.category!.docCatParent!.txtShortcode,
         shortCode: "");
-   
+
     var response = await categoriesController.addCategory(insertCategoryModel);
     if (response.statusCode == 200) {
       // ignore: use_build_context_synchronously

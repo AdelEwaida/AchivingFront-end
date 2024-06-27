@@ -125,14 +125,6 @@ class DealClassificationTreeScreenState
                   width: screenWidth * 0.45,
                   padding: 8,
                   controller: searchController,
-                  // decoration: InputDecoration(
-                  //   labelText: 'Search',
-                  //   hintText: 'Search categories',
-                  //   prefixIcon: Icon(Icons.search),
-                  //   border: OutlineInputBorder(
-                  //     borderRadius: BorderRadius.circular(8),
-                  //   ),
-                  // ),
                   onChanged: (value) {
                     searchTree(value);
                     // Add search functionality if needed
@@ -422,7 +414,7 @@ class DealClassificationTreeScreenState
 
   Widget nodeDesign(MyNode node) {
     return SizedBox(
-      width: node.isRoot ? 100 : 180,
+      width: node.isRoot ? 200 : 300,
       child: InkWell(
         onTap: () {
           // if (!node.isRoot && node.children.isEmpty) {
@@ -445,7 +437,7 @@ class DealClassificationTreeScreenState
             return Text(
               node.title,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 16,
                 color: getColor(node.extra, value.toString())
                     ? currentColor
                     : Colors.black,

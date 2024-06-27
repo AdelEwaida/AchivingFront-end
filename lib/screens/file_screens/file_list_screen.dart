@@ -255,7 +255,7 @@ class _FileListScreenState extends State<FileListScreen> {
 
   Widget nodeDesign(MyNode node) {
     return SizedBox(
-      width: node.isRoot ? 100 : 180,
+      width: node.isRoot ? 200 : 300,
       child: InkWell(
         onTap: () {
           selectedCategory = node.extra;
@@ -282,7 +282,7 @@ class _FileListScreenState extends State<FileListScreen> {
             return Text(
               node.title,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 16,
                 color: getColor(node.extra, value.toString())
                     ? currentColor
                     : Colors.black,
