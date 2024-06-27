@@ -147,7 +147,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 ],
               ),
               SizedBox(
-                height: height * 0.0001,
+                height: height * 0.00001,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -190,7 +190,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 ],
               ),
               SizedBox(
-                height: height * 0.0001,
+                height: height * 0.00001,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -226,7 +226,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 ],
               ),
               SizedBox(
-                height: height * 0.0001,
+                height: height * 0.00001,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -244,7 +244,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
             ],
           ),
           SizedBox(
-            height: height * 0.01,
+            height: height * 0.00001,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -255,8 +255,8 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                   search();
                 },
                 style: customButtonStyle(
-                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
-                    18,
+                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.043),
+                    14,
                     primary),
                 child: Text(
                   _locale.search,
@@ -271,8 +271,8 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                   resetForm();
                 },
                 style: customButtonStyle(
-                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
-                    18,
+                    Size(isDesktop ? width * 0.12 : width * 0.4, height * 0.043),
+                    14,
                     Colors.red),
                 child: Text(
                   _locale.resetFilter,

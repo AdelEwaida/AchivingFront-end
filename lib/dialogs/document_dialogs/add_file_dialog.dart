@@ -111,15 +111,12 @@ class _AddFileDialogState extends State<AddFileDialog> {
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         18,
-                        primary3,
+                        primary,
                       ),
                       child: Text(
                         _locale.save,
                         style: const TextStyle(color: whiteColor),
                       ),
-                    ),
-                    SizedBox(
-                      width: width * 0.01,
                     ),
                   ],
                 )
@@ -235,7 +232,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
       bool isDesktop, double width1, bool isMandetory) {
     double height = MediaQuery.of(context).size.height * 0.3;
     return CustomTextField2(
-      readOnly: hint == _locale.uploadFile ? true : false,
+      readOnly: hint == _locale.fileName ? true : false,
       isReport: true,
       isMandetory: isMandetory,
       width: width * width1,
