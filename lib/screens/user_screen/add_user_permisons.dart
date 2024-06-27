@@ -264,7 +264,8 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                 children: [
                   Text(
                     "${_locale.pleaseSelectCat} " + "*",
-                    style: TextStyle(color: textSecondary),
+                    
+                    style: TextStyle(color: textSecondary,fontSize: 16,fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -342,7 +343,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                         Size(isDesktop ? screenWidth * 0.1 : screenWidth * 0.4,
                             screenHeight * 0.045),
                         18,
-                        primary3),
+                        primary),
                     child: Text(
                       _locale.save,
                       style: const TextStyle(color: whiteColor),

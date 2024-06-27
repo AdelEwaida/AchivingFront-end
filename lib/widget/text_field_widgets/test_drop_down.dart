@@ -105,7 +105,7 @@ class _TestDropdownState extends State<TestDropdown> {
                       ),
                       labelText: widget.borderText,
                       labelStyle: const TextStyle(
-                        fontSize: 12.0,
+                        fontSize: 14.0,
                         color: Color.fromARGB(235, 158, 158, 158),
                       ),
                       alignLabelWithHint: true,
@@ -244,7 +244,7 @@ class _TestDropdownState extends State<TestDropdown> {
                               .replaceAll("]", ""),
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontSize: height * .018, color: Colors.black)),
+                          fontSize: height * .02, color: Colors.black)),
                 ),
               )
             : Padding(

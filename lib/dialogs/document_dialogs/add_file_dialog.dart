@@ -21,6 +21,7 @@ import '../../utils/func/responsive.dart';
 import '../../widget/custom_drop_down.dart';
 import '../../widget/custom_drop_down2.dart';
 import '../../widget/date_time_component.dart';
+import '../../widget/dialog_widgets/title_dialog_widget.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
 class AddFileDialog extends StatefulWidget {
@@ -58,97 +59,87 @@ class _AddFileDialogState extends State<AddFileDialog> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
-    return Dialog(
-        child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        width: width * 0.4,
-        height: height * 0.45,
-        child: Stack(
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  _locale.addDocument,
-                  style: const TextStyle(fontSize: 25),
-                ),
-                Container(
-                  width: width * 0.35,
-                  height: height * 0.3,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                buildFileUpload(),
-                              ],
-                            ),
-                          )
-                        ]),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: saveDocument,
-                      style: customButtonStyle(
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
-                        18,
-                        primary,
-                      ),
-                      child: Text(
-                        _locale.save,
-                        style: const TextStyle(color: whiteColor),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            if (saving)
-              const Center(
-                child: CircularProgressIndicator(),
-              ),
-            Center(
-              child: Visibility(
-                visible: isFileLoading,
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                      sigmaX: 2.0,
-                      sigmaY: 2.0), // Adjust the blur amount as needed
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 16),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+    return AlertDialog(
+        titlePadding: EdgeInsets.all(0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+        backgroundColor: dBackground,
+        title: TitleDialogWidget(
+          title: _locale.addDocument,
+          width: isDesktop ? width * 0.4 : width * 0.8,
+          height: height * 0.07,
         ),
-      ),
-    ));
+        content: SizedBox(
+          width: width * 0.25,
+          height: height * 0.3,
+          child: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              buildFileUpload(),
+                            ],
+                          ),
+                        )
+                      ]),
+                  SizedBox(
+                    height: height * 0.05,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: saveDocument,
+                        style: customButtonStyle(
+                          Size(isDesktop ? width * 0.1 : width * 0.4,
+                              height * 0.045),
+                          14,
+                          primary,
+                        ),
+                        child: Text(
+                          _locale.save,
+                          style: const TextStyle(color: whiteColor),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              if (saving)
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              Center(
+                child: Visibility(
+                  visible: isFileLoading,
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                        sigmaX: 2.0,
+                        sigmaY: 2.0), // Adjust the blur amount as needed
+                    child: const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 
   Widget buildFileUpload() {
@@ -163,8 +154,8 @@ class _AddFileDialogState extends State<AddFileDialog> {
               pickFile();
             },
             style: customButtonStyle(
-                Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
-                18,
+                Size(isDesktop ? width * 0.13 : width * 0.4, height * 0.045),
+                14,
                 primary3),
             child: Text(
               _locale.uploadFile,

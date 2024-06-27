@@ -100,7 +100,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
                     style: customButtonStyle(
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        14,
                         primary),
                     child: Text(
                       _locale.save,
@@ -115,7 +115,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
                     style: customButtonStyle(
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        14,
                         redColor),
                     child: Text(
                       _locale.cancel,
@@ -226,7 +226,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
           bordeText: _locale.recurring,
           items: getRecurringName(_locale),
           width: width * 0.2,
-          height: height * 0.04,
+          height: height * 0.045,
         ),
         if (!isDesktop) ...[
           DateTimeComponent(

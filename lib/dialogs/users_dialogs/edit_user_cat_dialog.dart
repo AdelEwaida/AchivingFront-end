@@ -86,14 +86,13 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
         height: isDesktop ? height * 0.2 : height * 0.5,
-        child: SingleChildScrollView(
-          child: formSection(),
-        ),
+        child: formSection(),
       ),
       actions: [
         isDesktop
             ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: () {
@@ -103,12 +102,13 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         18,
-                        greenColor),
+                        primary),
                     child: Text(
                       _locale.save,
                       style: const TextStyle(color: whiteColor),
                     ),
                   ),
+                  SizedBox(width: width*0.01,),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context, false);
@@ -170,6 +170,8 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
 
   Widget formSection() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (isDesktop)
           Tooltip(

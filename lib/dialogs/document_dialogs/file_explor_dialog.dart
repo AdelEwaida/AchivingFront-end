@@ -119,7 +119,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         title: _locale.fileName,
         field: "txtFilename",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.22 : width * 0.4,
+        width: isDesktop ? width * 0.2 : width * 0.4,
         renderer: (rendererContext) {
           return Tooltip(
             message: rendererContext.cell.value,
@@ -132,7 +132,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         title: _locale.userName,
         field: "txtUsercode",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.1 : width * 0.2,
+        width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
