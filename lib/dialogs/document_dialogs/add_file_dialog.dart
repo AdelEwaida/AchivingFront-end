@@ -60,10 +60,10 @@ class _AddFileDialogState extends State<AddFileDialog> {
     isDesktop = Responsive.isDesktop(context);
     return Dialog(
         child: Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(0.0),
       child: SizedBox(
         width: width * 0.4,
-        height: height * 0.45,
+        height: height * 0.4,
         child: Stack(
           children: [
             Column(
@@ -75,15 +75,15 @@ class _AddFileDialogState extends State<AddFileDialog> {
                 ),
                 Container(
                   width: width * 0.35,
-                  height: height * 0.3,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 0.5,
-                    ),
-                  ),
+                  height: height * 0.23,
+                  // decoration: BoxDecoration(
+                  //   color: Colors.white,
+                  //   borderRadius: BorderRadius.circular(20),
+                  //   border: Border.all(
+                  //     color: Colors.black,
+                  //     width: 0.5,
+                  //   ),
+                  // ),
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Column(
@@ -110,7 +110,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
                       style: customButtonStyle(
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        14,
                         primary,
                       ),
                       child: Text(
@@ -163,8 +163,8 @@ class _AddFileDialogState extends State<AddFileDialog> {
               pickFile();
             },
             style: customButtonStyle(
-                Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
-                18,
+                Size(isDesktop ? width * 0.13 : width * 0.4, height * 0.045),
+                14,
                 primary3),
             child: Text(
               _locale.uploadFile,
