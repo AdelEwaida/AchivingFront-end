@@ -38,6 +38,8 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
 
   String hintUsers = "";
   List<String>? usersList = [];
+  List<String>? usersCodes = [];
+
   List<UserCategory> usersListCode = [];
   List<UserCategory>? usersListModel = [];
 
@@ -58,7 +60,8 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
       usersListModel = userList;
       hintUsers = usersListModel!.map((e) => e.userName!).join(', ');
       for (int i = 0; i < usersListModel!.length; i++) {
-        usersList!.add(usersListModel![i].userId!);
+        usersList!.add(usersListModel![i].userName!);
+        usersCodes!.add(usersListModel![i].userId!);
       }
 
       if (hintUsers.endsWith(', ')) {
@@ -108,7 +111,9 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                       style: const TextStyle(color: whiteColor),
                     ),
                   ),
-                  SizedBox(width: width*0.01,),
+                  SizedBox(
+                    width: width * 0.01,
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context, false);
@@ -192,15 +197,16 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                 });
               },
               onChanged: (val) {
-                usersListCode.clear();
+                usersCodes!.clear();
                 // usersList!.clear();
                 for (int i = 0; i < val.length; i++) {
                   // usersListCode.add(val[i]);
-                  usersList!.add(val[i].txtCode!);
+                  usersList!.add(val[i].txtNamee!);
+                  usersCodes!.add(val[i].txtCode!);
                   print("val[i].txtCode!val[i].txtCode!:${val[i].txtCode!}");
                 }
                 // usersListModel!.addAll(usersListCode);
-                if (usersListModel!.isEmpty) {
+                if (usersCodes!.isEmpty) {
                   hintUsers = "";
                 } else {
                   hintUsers = usersList!.toList().toString();
@@ -212,8 +218,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                 setState(() {});
               },
               onSearch: (text) async {
-                List<UserModel> newList = await userController
-                    .getUsers(
+                List<UserModel> newList = await userController.getUsers(
                     SearchModel(page: -1, searchField: text, status: -1));
                 return newList;
               },
@@ -271,7 +276,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
     if (widget.userCategoryModel != null) {
       UserUpdateReq userUpdateReq = UserUpdateReq(
         categoryId: widget.userCategoryModel!.categoryId,
-        users: usersList,
+        users: usersCodes,
       );
 
       await userController.updateUserCatgeory(userUpdateReq).then((value) {
