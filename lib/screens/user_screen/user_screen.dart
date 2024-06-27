@@ -206,6 +206,11 @@ class _UserScreenState extends State<UserScreen> {
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.05 : width * 0.15,
         backgroundColor: columnColors,
+        renderer: (rendererContext) {
+          return Center(
+            child: Text((rendererContext.rowIdx + 1).toString()),
+          );
+        },
       ),
       //txtCode
       PlutoColumn(
@@ -286,20 +291,27 @@ class _UserScreenState extends State<UserScreen> {
     bool isLast = false;
 
     if (!isSearch.value) {
-      List<UserModel> result = [];
-      List<PlutoRow> topList = [];
-      result = await userController.getUsers(
-          SearchModel(page: pageLis.value, searchField: "", status: -1));
+      if (pageLis.value != -1) {
+        if (pageLis.value > 1) {
+          pageLis.value = -1;
+        }
+        List<UserModel> result = [];
+        List<PlutoRow> topList = [];
+        result = await userController.getUsers(
+            SearchModel(page: pageLis.value, searchField: "", status: -1));
 
-      for (int i = 0; i < result.length; i++) {
-        rowList.add(result[i].toPlutoRow(i + 1, _locale));
-        topList.add(result[i].toPlutoRow(rowList.length, _locale));
+        for (int i = pageLis.value == -1 ? 50 : 0; i < result.length; i++) {
+          rowList.add(result[i].toPlutoRow(i + 1, _locale));
+          topList.add(result[i].toPlutoRow(rowList.length, _locale));
+        }
+
+        isLast = topList.isEmpty;
+        if (pageLis.value == 1) {
+          pageLis.value++; // Increment the page number for next fetch
+        }
+        return Future.value(
+            PlutoInfinityScrollRowsResponse(isLast: false, rows: topList));
       }
-
-      isLast = topList.isEmpty;
-      pageLis.value++; // Increment the page number for next fetch
-      return Future.value(
-          PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
     }
     return Future.value(
         PlutoInfinityScrollRowsResponse(isLast: isLast, rows: []));

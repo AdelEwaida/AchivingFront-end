@@ -226,6 +226,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             DropDown(
+              isEnabled: widget.isEdit,
               key: UniqueKey(),
               onChanged: (value) {
                 selectedDep = value.txtKey;
@@ -397,6 +398,8 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             DropDown(
+              isEnabled: widget.isEdit,
+
               key: UniqueKey(),
               initialValue: selectedCatName.isEmpty ? null : selectedCatName,
               width: width * 0.41,
