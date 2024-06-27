@@ -80,7 +80,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
             // ),
             child: TableComponent(
               key: UniqueKey(),
-              tableHeigt: height * 0.8,
+              tableHeigt: height * 0.81,
               tableWidth: width * 0.85,
 
               download: download,
