@@ -61,9 +61,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         height: height * 0.5,
         child: formSection(),
       ),
-      actions: [
-      
-      ],
+      actions: [],
     );
   }
 
@@ -93,6 +91,10 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
                     stateManager
                         .appendRows([widget.listOfFiles[i].toPlutoRow(i + 1)]);
                   }
+                }
+                if (stateManager.rows.isNotEmpty) {
+                  selectedRow = stateManager.rows[0];
+
                 }
                 stateManager.setShowLoading(false);
               },
