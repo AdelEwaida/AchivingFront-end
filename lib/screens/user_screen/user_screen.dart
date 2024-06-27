@@ -68,7 +68,7 @@ class _UserScreenState extends State<UserScreen> {
               width: isDesktop ? width * 0.8 : width * 0.9,
               child: TableComponent(
                 key: UniqueKey(),
-                tableHeigt: height * 0.85,
+                tableHeigt: height * 0.81,
                 tableWidth: width * 0.85,
                 editPassword: chagnePassword,
                 delete: deleteUser,
