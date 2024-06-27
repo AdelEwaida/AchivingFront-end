@@ -81,7 +81,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.25 : height * 0.5,
+        height: isDesktop ? height * 0.28 : height * 0.5,
         child: formSection(),
       ),
       actions: [
