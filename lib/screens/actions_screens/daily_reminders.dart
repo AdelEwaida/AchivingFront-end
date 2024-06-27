@@ -27,7 +27,7 @@ class _DailyRemindersState extends State<DailyReminders> {
   double height = 0;
   bool isDesktop = false;
   ActionController actionController = ActionController();
-  late PlutoGridStateManager stateManager;
+  PlutoGridStateManager? stateManager;
   ValueNotifier isSearch = ValueNotifier(false);
   String todayDate = DatesController().formatDateReverse(
       DatesController().formatDate(DatesController().todayDate()));
@@ -40,6 +40,30 @@ class _DailyRemindersState extends State<DailyReminders> {
     isDesktop = Responsive.isDesktop(context);
 
     fillColumnTable();
+    if (stateManager != null) {
+      for (int i = 0; i < polCols.length; i++) {
+        String title = polCols[i].title;
+        polCols[i].titleSpan = TextSpan(
+          children: [
+            WidgetSpan(
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+        polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
+        polCols[i].textAlign = PlutoColumnTextAlign.center;
+
+        stateManager!.columns[i].title = polCols[i].title;
+        stateManager!.columns[i].width = polCols[i].width;
+        stateManager!.columns[i].titleTextAlign = polCols[i].titleTextAlign;
+        stateManager!.columns[i].textAlign = polCols[i].textAlign;
+        stateManager!.columns[i].titleSpan = polCols[i].titleSpan;
+      }
+    }
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
@@ -69,7 +93,7 @@ class _DailyRemindersState extends State<DailyReminders> {
             },
             onLoaded: (PlutoGridOnLoadedEvent event) {
               stateManager = event.stateManager;
-              stateManager.setShowColumnFilter(true);
+              stateManager!.setShowColumnFilter(true);
             },
             doubleTab: (event) async {
               PlutoRow? tappedRow = event.row;

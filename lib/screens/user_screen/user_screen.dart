@@ -39,7 +39,7 @@ class _UserScreenState extends State<UserScreen> {
   late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
   UserController userController = UserController();
   late DocumentListProvider documentListProvider;
-  late PlutoGridStateManager stateManager;
+   PlutoGridStateManager? stateManager;
   ValueNotifier isSearch = ValueNotifier(false);
   @override
   void didChangeDependencies() {
@@ -52,6 +52,30 @@ class _UserScreenState extends State<UserScreen> {
     calssificatonNameAndCodeProvider =
         context.read<CalssificatonNameAndCodeProvider>();
     fillColumnTable();
+    if (stateManager != null) {
+      for (int i = 0; i < polCols.length; i++) {
+        String title = polCols[i].title;
+        polCols[i].titleSpan = TextSpan(
+          children: [
+            WidgetSpan(
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+        polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
+        polCols[i].textAlign = PlutoColumnTextAlign.center;
+
+        stateManager!.columns[i].title = polCols[i].title;
+        stateManager!.columns[i].width = polCols[i].width;
+        stateManager!.columns[i].titleTextAlign = polCols[i].titleTextAlign;
+        stateManager!.columns[i].textAlign = polCols[i].textAlign;
+        stateManager!.columns[i].titleSpan = polCols[i].titleSpan;
+      }
+    }
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
@@ -67,7 +91,7 @@ class _UserScreenState extends State<UserScreen> {
           child: Container(
               width: isDesktop ? width * 0.8 : width * 0.9,
               child: TableComponent(
-                key: UniqueKey(),
+                // key: UniqueKey(),
                 tableHeigt: height * 0.81,
                 tableWidth: width * 0.85,
                 editPassword: chagnePassword,
@@ -186,16 +210,16 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void refreshTable() async {
-    stateManager.setShowLoading(true);
-    stateManager.removeAllRows();
-    stateManager.notifyListeners(true);
+    stateManager!.setShowLoading(true);
+    stateManager!.removeAllRows();
+    stateManager!.notifyListeners(true);
     rowList.clear();
     pageLis.value = 1;
     var response = await fetch(PlutoInfinityScrollRowsRequest());
-    stateManager.appendRows(response.rows);
-    stateManager.notifyListeners(true);
-    stateManager.resetCurrentState();
-    stateManager.setShowLoading(false);
+    stateManager!.appendRows(response.rows);
+    stateManager!.notifyListeners(true);
+    stateManager!.resetCurrentState();
+    stateManager!.setShowLoading(false);
   }
 
   void fillColumnTable() {
@@ -224,7 +248,7 @@ class _UserScreenState extends State<UserScreen> {
         title: _locale.userName,
         field: "txtNamee",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.25 : width * 0.4,
+        width: isDesktop ? width * 0.2 : width * 0.4,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
@@ -238,14 +262,14 @@ class _UserScreenState extends State<UserScreen> {
         title: _locale.userStatus,
         field: "bolActive",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.09 : width * 0.2,
+        width: isDesktop ? width * 0.13 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
         title: _locale.email,
         field: "email",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.1 : width * 0.2,
+        width: isDesktop ? width * 0.116 : width * 0.2,
         backgroundColor: columnColors,
       ),
     ]);
@@ -266,8 +290,8 @@ class _UserScreenState extends State<UserScreen> {
     isSearch.value = true;
     if (text.trim().isEmpty) {
       isSearch.value = false;
-      stateManager.removeAllRows();
-      stateManager.appendRows(rowList);
+      stateManager!.removeAllRows();
+      stateManager!.appendRows(rowList);
     } else if (isSearch.value) {
       List<UserModel> result = [];
       List<PlutoRow> topList = [];
@@ -279,8 +303,8 @@ class _UserScreenState extends State<UserScreen> {
         // rowList.add(result[i].toPlutoRow(i + 1));
         topList.add(result[i].toPlutoRow(rowList.length, _locale));
       }
-      stateManager.removeAllRows();
-      stateManager.appendRows(topList);
+      stateManager!.removeAllRows();
+      stateManager!.appendRows(topList);
     }
   }
 

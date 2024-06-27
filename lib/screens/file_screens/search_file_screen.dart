@@ -38,7 +38,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
   late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
   DocumentsController documentsController = DocumentsController();
   late DocumentListProvider documentListProvider;
-  late PlutoGridStateManager stateManager;
+   PlutoGridStateManager? stateManager;
   ValueNotifier isSearch = ValueNotifier(false);
   ValueNotifier pageLis = ValueNotifier(1);
   @override
@@ -52,6 +52,30 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
     calssificatonNameAndCodeProvider =
         context.read<CalssificatonNameAndCodeProvider>();
     fillColumnTable();
+    if (stateManager != null) {
+      for (int i = 0; i < polCols.length; i++) {
+        String title = polCols[i].title;
+        polCols[i].titleSpan = TextSpan(
+          children: [
+            WidgetSpan(
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+        polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
+        polCols[i].textAlign = PlutoColumnTextAlign.center;
+
+        stateManager!.columns[i].title = polCols[i].title;
+        stateManager!.columns[i].width = polCols[i].width;
+        stateManager!.columns[i].titleTextAlign = polCols[i].titleTextAlign;
+        stateManager!.columns[i].textAlign = polCols[i].textAlign;
+        stateManager!.columns[i].titleSpan = polCols[i].titleSpan;
+      }
+    }
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
@@ -79,7 +103,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
             //   ],
             // ),
             child: TableComponent(
-              key: UniqueKey(),
+              // key: UniqueKey(),
               tableHeigt: height * 0.81,
               tableWidth: width * 0.85,
 
@@ -96,7 +120,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
               // genranlEdit: editDocumentInfo,
               onLoaded: (PlutoGridOnLoadedEvent event) {
                 stateManager = event.stateManager;
-                stateManager.setShowColumnFilter(true);
+                stateManager!.setShowColumnFilter(true);
                 // pageLis.value = pageLis.value > 1 ? 0 : 1;
                 // totalActionsCount.value = 0;
                 // getCount();
@@ -279,8 +303,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
     print(text);
     if (text.trim().isEmpty) {
       isSearch.value = false;
-      stateManager.removeAllRows();
-      stateManager.appendRows(rowList);
+      stateManager!.removeAllRows();
+      stateManager!.appendRows(rowList);
     } else if (isSearch.value) {
       List<DocumentModel> result = [];
       List<PlutoRow> topList = [];
@@ -290,7 +314,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         documentListProvider.searchDocumentCriteria.page =
             documentListProvider.searchDocumentCriteria.page! + 1;
       } else {
-        stateManager.removeAllRows();
+        stateManager!.removeAllRows();
         // rowList.clear();
         // rowList = [];
       }
@@ -298,8 +322,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         // rowList.add(result[i].toPlutoRow(i + 1));
         topList.add(result[i].toPlutoRow(rowList.length));
       }
-      stateManager.removeAllRows();
-      stateManager.appendRows(topList);
+      stateManager!.removeAllRows();
+      stateManager!.appendRows(topList);
     }
   }
 

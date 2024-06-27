@@ -27,7 +27,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
   double width = 0;
   double height = 0;
   bool isDesktop = false;
-  late PlutoGridStateManager stateManager;
+  PlutoGridStateManager? stateManager;
   List<PlutoColumn> polCols = [];
   late AppLocalizations _locale;
   ValueNotifier pageLis = ValueNotifier(1);
@@ -83,6 +83,30 @@ class _OfficeScreenState extends State<DepartemntScreen> {
       ),
     ]);
     getCount();
+    if (stateManager != null) {
+      for (int i = 0; i < polCols.length; i++) {
+        String title = polCols[i].title;
+        polCols[i].titleSpan = TextSpan(
+          children: [
+            WidgetSpan(
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+        polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
+        polCols[i].textAlign = PlutoColumnTextAlign.center;
+
+        stateManager!.columns[i].title = polCols[i].title;
+        stateManager!.columns[i].width = polCols[i].width;
+        stateManager!.columns[i].titleTextAlign = polCols[i].titleTextAlign;
+        stateManager!.columns[i].textAlign = polCols[i].textAlign;
+        stateManager!.columns[i].titleSpan = polCols[i].titleSpan;
+      }
+    }
     super.didChangeDependencies();
   }
 
@@ -153,7 +177,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
           child: Container(
             width: isDesktop ? width * 0.8 : width * 0.9,
             child: TableComponent(
-              key: UniqueKey(),
+              // key: UniqueKey(),
               tableHeigt: height * 0.75,
               tableWidth: width,
               delete: deleteDep,
@@ -169,7 +193,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
                 stateManager = event.stateManager;
                 pageLis.value = pageLis.value > 1 ? 0 : 1;
                 totalDepCount.value = 0;
-                stateManager.setShowColumnFilter(true);
+                stateManager!.setShowColumnFilter(true);
                 getCount();
               },
               doubleTab: (event) async {
@@ -298,11 +322,11 @@ class _OfficeScreenState extends State<DepartemntScreen> {
     count = 0; // Reset the count
     rowList.clear(); // Clear the existing rows
     getCount();
-    stateManager.removeAllRows();
-    stateManager.setShowLoading(true); // Show loading indicator
+    stateManager!.removeAllRows();
+    stateManager!.setShowLoading(true); // Show loading indicator
     fetch(PlutoInfinityScrollRowsRequest()).then((response) {
-      stateManager.appendRows(response.rows);
-      stateManager.setShowLoading(false); // Hide loading indicator
+      stateManager!.appendRows(response.rows);
+      stateManager!.setShowLoading(false); // Hide loading indicator
     });
   }
 
