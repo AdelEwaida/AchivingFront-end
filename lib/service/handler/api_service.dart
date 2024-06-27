@@ -37,8 +37,54 @@ class ApiService {
       print("token $token");
       print("urlll $requestUrl");
       print("responseCode ${response.statusCode}");
-
-      if (response.statusCode != 200) {
+      if (response.statusCode == 417 || response.statusCode == 401) {
+        final context = navigatorKey.currentState!.overlay!.context;
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
+      } else if (response.statusCode != 200) {
         if (response.body == "Wrong Credentials") {
           return response;
         }
@@ -73,8 +119,54 @@ class ApiService {
     print("urlll $requestUrl");
     print("urlllbody ${json.encode(toJson)}");
     print("responseCode ${response.statusCode}");
-
-    if (api == logInApi &&
+    if (response.statusCode == 417 || response.statusCode == 401) {
+      final context = navigatorKey.currentState!.overlay!.context;
+      await storage.delete(key: "jwt").then((value) {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (builder) {
+            return ErrorDialog(
+              icon: Icons.error_outline,
+              errorDetails:
+                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
+              errorTitle: AppLocalizations.of(context)!.error,
+              color: Colors.red,
+              statusCode: 401,
+            );
+          },
+        );
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return const LoginDialog();
+        //   },
+        // ).then((value) async {
+        //   if (value) {
+        //     var response = await http.post(
+        //       Uri.parse(requestUrl),
+        //       headers: {
+        //         "Accept": "application/json",
+        //         "Content-type": "application/json",
+        //         "Authorization": "Bearer $token"
+        //       },
+        //       body: json.encode(toJson),
+        //     );
+        //     return response;
+        //   }
+        //   print("object  ${value}");
+        // });
+        // if (kIsWeb) {
+        //   GoRouter.of(context).go(loginScreenRoute);
+        // } else {
+        //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+        // }
+      });
+      // ErrorController.openErrorDialog(
+      //   response.statusCode,
+      //   response.body,
+      // );
+    } else if (api == logInApi &&
         (response.statusCode == 400 || response.statusCode == 406)) {
       ErrorController.openErrorDialog(
         response.statusCode,
@@ -114,8 +206,54 @@ class ApiService {
     print("urlll $requestUrl");
     print("urlllbody ${json.encode(toJson)}");
     print("responseCode ${response.statusCode}");
-
-    if (api == logInApi &&
+    if (response.statusCode == 417 || response.statusCode == 401) {
+      final context = navigatorKey.currentState!.overlay!.context;
+      await storage.delete(key: "jwt").then((value) {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (builder) {
+            return ErrorDialog(
+              icon: Icons.error_outline,
+              errorDetails:
+                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
+              errorTitle: AppLocalizations.of(context)!.error,
+              color: Colors.red,
+              statusCode: 401,
+            );
+          },
+        );
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return const LoginDialog();
+        //   },
+        // ).then((value) async {
+        //   if (value) {
+        //     var response = await http.post(
+        //       Uri.parse(requestUrl),
+        //       headers: {
+        //         "Accept": "application/json",
+        //         "Content-type": "application/json",
+        //         "Authorization": "Bearer $token"
+        //       },
+        //       body: json.encode(toJson),
+        //     );
+        //     return response;
+        //   }
+        //   print("object  ${value}");
+        // });
+        // if (kIsWeb) {
+        //   GoRouter.of(context).go(loginScreenRoute);
+        // } else {
+        //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+        // }
+      });
+      // ErrorController.openErrorDialog(
+      //   response.statusCode,
+      //   response.body,
+      // );
+    } else if (api == logInApi &&
         (response.statusCode == 400 || response.statusCode == 406)) {
       return response;
     } else if (response.statusCode != 200) {
@@ -150,13 +288,69 @@ class ApiService {
       print("urlll $requestUrl");
       print("urlllbody ${json.encode(toJson)}");
       print("responseCode ${response.statusCode}");
-
       if (response.statusCode == 417 || response.statusCode == 401) {
         final context = navigatorKey.currentState!.overlay!.context;
         await storage.delete(key: "jwt").then((value) {
-          ErrorController.openErrorDialog(
-            response.statusCode,
-            AppLocalizations.of(context)!.expiredSessionLoginDialog,
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
+      } else if (response.statusCode == 417 || response.statusCode == 401) {
+        final context = navigatorKey.currentState!.overlay!.context;
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
           );
           // showDialog(
           //   context: context,
