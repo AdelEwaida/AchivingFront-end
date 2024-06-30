@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:html' as html; // Web specific
 
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
@@ -152,10 +153,22 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
       // Convert Blob to Uint8List
       // Uint8List uint8List = await blobToUint8List(blob);
       Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
+      if (selectedRow!.cells['txtFilename']!.value.contains(".pdf")) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return PdfPreview(
+                pdfFile: bytes,
+                fileName: selectedRow!.cells['txtFilename']!.value);
+          },
+        );
+      } else {
+      // Uint8List uint8List = Uint8List.fromList(stringBytes);
+        saveExcelFile(bytes, selectedRow!.cells['txtFilename']!.value);
+
+      }
 
       // Step 2: Convert the List<int> to Uint8List
-      // Uint8List uint8List = Uint8List.fromList(stringBytes);
-      saveExcelFile(bytes, selectedRow!.cells['txtFilename']!.value);
     }
   }
 

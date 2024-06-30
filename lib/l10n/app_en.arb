@@ -183,7 +183,8 @@
     "fillCatField":"Please fill category field",
     "fillFileUpload":"Please add a file",
     "fillDescField":"Please fill description field",
-    "fillRequiredFields":"Please fill all required fields"
+    "fillRequiredFields":"Please fill all required fields",
+  "previewFile": "Preview File"
 
   
 

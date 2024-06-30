@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:archiving_flutter_project/models/db/categories_models/doc_cat_parent.dart';
+import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:file_picker/file_picker.dart';
@@ -58,15 +60,21 @@ class _AddFileScreenState extends State<AddFileScreen> {
   String selectedCat = "";
   String selectedCatDesc = "";
   bool saving = false;
+List<DocCatParent> catList = [];
 
+  List<DepartmentModel> departmetList = [];  
+                                 
   @override
-  void didChangeDependencies() {
+  Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
     fileDateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
     arrivalDateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-
+catList = await DocumentsController().getDocCategoryList();
+    departmetList = await DepartmentController()
+        .getDep(SearchModel(page: -1, searchField: "", status: -1));
+    setState(() {});
     super.didChangeDependencies();
   }
 
@@ -123,11 +131,16 @@ class _AddFileScreenState extends State<AddFileScreen> {
                                     : selctedDepDesc,
                                 bordeText: _locale.department,
                                 width: width * 0.2,
+                                items: departmetList,
                                 height: height * 0.05,
-                                onSearch: (p0) async {
-                                  return await DepartmentController()
-                                      .getDep(SearchModel(page: 1));
-                                },
+                                // onSearch: (p0) async {
+                                //   return await DepartmentController()
+                                //       .getDep(
+                                //       SearchModel(
+                                //           page: -1,
+                                //           searchField: p0.trim(),
+                                //           status: -1));
+                                // },
                               ),
                               SizedBox(
                                 width: width * 0.015,
@@ -204,15 +217,16 @@ class _AddFileScreenState extends State<AddFileScreen> {
                                 selectedCat = value.txtKey;
                                 selectedCatDesc = value.txtDescription;
                               },
+                              items: catList,
                               searchBox: true,
                               valSelected: true,
                               bordeText: _locale.category,
                               // width: width * 0.21,
 
-                              onSearch: (p0) async {
-                                return await DocumentsController()
-                                    .getDocCategoryList();
-                              },
+                              // onSearch: (p0) async {
+                              //   return await DocumentsController()
+                              //       .getDocCategoryList();
+                              // },
                             ),
                           ],
                         ),

@@ -140,12 +140,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         oldPasswordController.clear();
         newPasswordController.clear();
       });
-    } else if (response.statusCode == 400 || response.statusCode == 406) {
-      // Navigator.pop(context);
+    } 
+    // else if (response.statusCode == 400 || response.statusCode == 406) {
+    //   // Navigator.pop(context);
 
-      ErrorController.dialogBasedonResponseStatus(
-          Icons.warning, _locale.wrongPass, _locale.wrongPass, Colors.red, 400);
-    }
+    //   ErrorController.dialogBasedonResponseStatus(
+    //       Icons.warning, _locale.wrongPass, _locale.wrongPass, Colors.red, 400);
+    // }
   }
 
   Widget customTextField(String hint, TextEditingController controller,

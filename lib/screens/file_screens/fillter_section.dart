@@ -1,3 +1,4 @@
+import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
 import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
@@ -51,9 +52,9 @@ class _FillterFileSectionState extends State<FillterFileSection> {
   DocumentsController documentsController = DocumentsController();
   late DocumentListProvider documentListProvider;
   late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
-
+  List<DepartmentModel> listOfDep = [];
   @override
-  void didChangeDependencies() {
+  Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
@@ -61,6 +62,8 @@ class _FillterFileSectionState extends State<FillterFileSection> {
     documentListProvider = context.read<DocumentListProvider>();
     calssificatonNameAndCodeProvider =
         context.read<CalssificatonNameAndCodeProvider>();
+    listOfDep = await DepartmentController().getDep(SearchModel(page: 1));
+    setState(() {});
     super.didChangeDependencies();
   }
 
@@ -125,10 +128,11 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                     bordeText: _locale.department,
                     width: width * 0.1,
                     height: height * 0.04,
-                    onSearch: (p0) async {
-                      return await DepartmentController()
-                          .getDep(SearchModel(page: 1));
-                    },
+                    items: listOfDep,
+                    // onSearch: (p0) async {
+                    //   return await DepartmentController()
+                    //       .getDep(SearchModel(page: 1));
+                    // },
                   ),
                   space(0.01),
                   DropDown(
@@ -271,7 +275,8 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                   resetForm();
                 },
                 style: customButtonStyle(
-                    Size(isDesktop ? width * 0.12 : width * 0.4, height * 0.043),
+                    Size(
+                        isDesktop ? width * 0.12 : width * 0.4, height * 0.043),
                     14,
                     Colors.red),
                 child: Text(
