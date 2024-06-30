@@ -44,7 +44,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
   ActionController actionController = ActionController();
   String isRecurring = "";
 
-  int selectedStatus = -1;
+  int selectedRecurring = -1;
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -57,8 +57,9 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       descController.text = widget.actionModel!.txtDescription!;
       notesController.text = widget.actionModel!.txtNotes!;
       isRecurring = widget.actionModel!.intRecurring == 1
-          ? _locale.monthly
-          : _locale.weekly;
+          ? _locale.yearly
+          : _locale.monthly;
+      selectedRecurring = widget.actionModel!.intRecurring!;
     }
     super.didChangeDependencies();
   }
@@ -221,7 +222,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
         DropDown(
           key: UniqueKey(),
           onChanged: (value) {
-            selectedStatus = getRecurringCode(_locale, value);
+            selectedRecurring = getRecurringCode(_locale, value);
           },
           initialValue: isRecurring == "" ? null : isRecurring,
           bordeText: _locale.recurring,
@@ -261,11 +262,9 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
           DropDown(
             key: UniqueKey(),
             onChanged: (value) {
-              selectedStatus = getRecurringCode(_locale, value);
+              selectedRecurring = getRecurringCode(_locale, value);
             },
-            initialValue: selectedStatus == -1
-                ? null
-                : getRecurringByCode(_locale, selectedStatus),
+            initialValue: isRecurring == "" ? null : isRecurring,
             bordeText: _locale.recurring,
             items: getRecurringName(_locale),
             width: width * 0.2,
@@ -325,7 +324,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
         txtDescription: descController.text,
         txtNotes: notesController.text,
         datDate: dateController.text,
-        intRecurring: isRecurring == false ? 0 : 1,
+        intRecurring: selectedRecurring,
       );
       await actionController.addAction(actionModel).then((value) {
         if (value.statusCode == 200) {
@@ -350,7 +349,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
         txtDescription: descController.text,
         txtNotes: notesController.text,
         datDate: dateController.text,
-        intRecurring: isRecurring == false ? 0 : 1,
+        intRecurring: selectedRecurring,
       );
       await actionController.addAction(actionModel).then((value) {
         if (value.statusCode == 200) {
@@ -377,7 +376,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
         txtKey: widget.actionModel!.txtKey!,
         txtDescription: descController.text,
         datDate: dateController.text,
-        intRecurring: isRecurring == false ? 0 : 1,
+        intRecurring: selectedRecurring,
         txtNotes: notesController.text);
     await actionController.updateAction(actionModel).then((value) {
       if (value.statusCode == 200) {
