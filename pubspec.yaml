@@ -73,6 +73,8 @@ dependencies:
   tabbed_view: ^1.18.0
   flutter_fancy_tree_view: ^1.4.1
   flutter_spinkit: ^5.2.1
+  pdf: ^3.8.4
+  printing: ^5.9.3
   # flutter_inappwebview: ^6.0.0
   # flutter_web_plugins:
   #   sdk: flutter

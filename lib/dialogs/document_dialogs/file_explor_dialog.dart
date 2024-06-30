@@ -17,7 +17,9 @@ import 'package:archiving_flutter_project/widget/table_component/table_component
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:pdf/pdf.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:printing/printing.dart';
 
 class FileExplorDialog extends StatefulWidget {
   List<FileUploadModel> listOfFiles;
@@ -154,10 +156,12 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
       // Uint8List uint8List = await blobToUint8List(blob);
       Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
       if (selectedRow!.cells['txtFilename']!.value.contains(".pdf")) {
+        // await Printing.layoutPdf(
+        //     onLayout: (PdfPageFormat format) async => bytes);
         showDialog(
           context: context,
           builder: (context) {
-            return PdfPreview(
+            return PdfPreview1(
                 pdfFile: bytes,
                 fileName: selectedRow!.cells['txtFilename']!.value);
           },

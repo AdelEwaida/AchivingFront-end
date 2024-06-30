@@ -16,22 +16,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-
+import 'package:pdf/pdf.dart';
+import 'package:printing/printing.dart';
 import '../../models/db/user_models/user_category.dart';
 import '../../models/db/user_models/user_update_req.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
 
-class PdfPreview extends StatefulWidget {
+class PdfPreview1 extends StatefulWidget {
   Uint8List pdfFile;
   String fileName;
-  PdfPreview({super.key, required this.fileName, required this.pdfFile});
+  PdfPreview1({super.key, required this.fileName, required this.pdfFile});
 
   @override
-  State<PdfPreview> createState() => _PdfPreviewDialogState();
+  State<PdfPreview1> createState() => _PdfPreviewDialogState();
 }
 
-class _PdfPreviewDialogState extends State<PdfPreview> {
+class _PdfPreviewDialogState extends State<PdfPreview1> {
   late AppLocalizations _locale;
   double width = 0;
   double height = 0;
@@ -68,7 +69,9 @@ class _PdfPreviewDialogState extends State<PdfPreview> {
           children: [
             // const SizedBox(),
             IconButton(
-                onPressed: () {
+                onPressed: () async {
+                  // await Printing.layoutPdf(
+                  //     onLayout: (PdfPageFormat format) async => widget.pdfFile);
                   saveExcelFile(widget.pdfFile, widget.fileName);
                 },
                 icon: const Icon(
@@ -153,6 +156,7 @@ class _PdfPreviewDialogState extends State<PdfPreview> {
             width: width * 0.46,
             height: height * 0.65,
             child: SfPdfViewer.memory(
+              
               widget.pdfFile,
               initialZoomLevel: 1,
               controller: _pdfViewerController,
