@@ -184,7 +184,9 @@
     "fillFileUpload":"Please add a file",
     "fillDescField":"Please fill description field",
     "fillRequiredFields":"Please fill all required fields",
-  "previewFile": "Preview File"
+  "previewFile": "Preview File",
+  "previewNotAvilable": "Preview Not Avilable",
+  "print": "Print"
 
   
 

@@ -68,17 +68,37 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             // const SizedBox(),
-            IconButton(
-                onPressed: () async {
-                  // await Printing.layoutPdf(
-                  //     onLayout: (PdfPageFormat format) async => widget.pdfFile);
-                  saveExcelFile(widget.pdfFile, widget.fileName);
-                },
-                icon: const Icon(
-                  Icons.download,
-                  color: Colors.black,
-                  size: 14,
-                )),
+            Row(
+              children: [
+                IconButton(
+                    onPressed: () async {
+                      // await Printing.layoutPdf(
+                      //     onLayout: (PdfPageFormat format) async => widget.pdfFile);
+                      saveExcelFile(widget.pdfFile, widget.fileName);
+                    },
+                    icon: const Icon(
+                      Icons.download,
+                      color: Colors.black,
+                      size: 14,
+                    )),
+                Tooltip(
+                  message: _locale.print,
+                  child: IconButton(
+                      onPressed: () async {
+                        await Printing.layoutPdf(
+                            onLayout: (PdfPageFormat format) async =>
+                                widget.pdfFile);
+                        // saveExcelFile(widget.pdfFile, widget.fileName);
+                      },
+                      icon: const Icon(
+                        Icons.print,
+                        color: Colors.black,
+                        size: 14,
+                      )),
+                ),
+              ],
+            ),
+
             Text(
               _locale.previewFile,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -156,7 +176,7 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
             width: width * 0.46,
             height: height * 0.65,
             child: SfPdfViewer.memory(
-              
+
               widget.pdfFile,
               initialZoomLevel: 1,
               controller: _pdfViewerController,

@@ -81,6 +81,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
               rowsHeight: 50,
               plCols: polCols,
               download: download,
+              view: view,
               polRows: [],
               mode: PlutoGridMode.selectWithOneTap,
               onSelected: (event) {
@@ -155,9 +156,18 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
       // Convert Blob to Uint8List
       // Uint8List uint8List = await blobToUint8List(blob);
       Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
+
+      // Uint8List uint8List = Uint8List.fromList(stringBytes);
+      saveExcelFile(bytes, selectedRow!.cells['txtFilename']!.value);
+
+      // Step 2: Convert the List<int> to Uint8List
+    }
+  }
+
+  view() {
+    if (selectedRow != null) {
+      Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
       if (selectedRow!.cells['txtFilename']!.value.contains(".pdf")) {
-        // await Printing.layoutPdf(
-        //     onLayout: (PdfPageFormat format) async => bytes);
         showDialog(
           context: context,
           builder: (context) {
@@ -167,12 +177,18 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
           },
         );
       } else {
-      // Uint8List uint8List = Uint8List.fromList(stringBytes);
-        saveExcelFile(bytes, selectedRow!.cells['txtFilename']!.value);
-
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.error_outlined,
+                errorDetails: _locale.previewNotAvilable,
+                errorTitle: _locale.error,
+                color: Colors.red,
+                statusCode: 500);
+          },
+        );
       }
-
-      // Step 2: Convert the List<int> to Uint8List
     }
   }
 

@@ -170,5 +170,7 @@
   "fillFileUpload": "يرجى تحميل ملف",
   "fillDescField": "يرجى إضافة وصف",
   "fillRequiredFields": "يرجى إضافة جميع الحقول المطلوبة",
-  "previewFile":"معاينة الملف"
+  "previewFile":"معاينة الملف",
+  "previewNotAvilable":"المعاينة غير متوفرة",
+  "print":"طباعة"
 }
