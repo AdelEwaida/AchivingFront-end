@@ -4,6 +4,18 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 class DocumentListProvider with ChangeNotifier {
   List<PlutoRow> _documentListCritereaRows = [];
+  String? _issueNumber;
+  String? _desc;
+  void setDescription(String s) {
+    _desc = s;
+  }
+
+  String? get description => _desc;
+  void setIssueNumber(String s) {
+    _issueNumber = s;
+  }
+
+  String? get issueNumber => _issueNumber;
   int? _page = 1;
   void setPage(int page) {
     _page = page;

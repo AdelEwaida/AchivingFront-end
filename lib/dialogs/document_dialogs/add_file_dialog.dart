@@ -165,12 +165,15 @@ class _AddFileDialogState extends State<AddFileDialog> {
           const SizedBox(height: 10),
           SizedBox(
             width: width * 0.3,
-            child: customTextField(
-              _locale.fileName,
-              fileNameController,
-              isDesktop,
-              0.13,
-              true,
+            child: Tooltip(
+              message: fileNameController.text,
+              child: customTextField(
+                _locale.fileName,
+                fileNameController,
+                isDesktop,
+                0.13,
+                true,
+              ),
             ),
           ),
         ],
@@ -178,32 +181,41 @@ class _AddFileDialogState extends State<AddFileDialog> {
     );
   }
 
+  List<String> filesBlobs = [];
+  List<String> filesName = [];
+  List<int> sizes = [];
   Future<void> pickFile() async {
     setState(() {
       isFileLoading = true;
     });
 
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
 
     if (result != null && result.files.isNotEmpty) {
-      PlatformFile selectedFile = result.files.first;
+      List<PlatformFile> files1 = result.files;
+      for (int i = 0; i < files1.length; i++) {
+        filesName.add(files1[i].name);
+        filesBlobs.add(base64Encode(files1[i].bytes!));
+        sizes.add(files1[i].size);
+      }
 
       try {
-        List<int> fileBytes = selectedFile.bytes!;
+        // List<int> fileBytes = selectedFile.bytes!;
 
         // Check if bytes are null or empty
-        if (fileBytes.isEmpty) {
-          throw Exception("File bytes are empty or null");
-        }
+        // if (fileBytes.isEmpty) {
+        //   throw Exception("File bytes are empty or null");
+        // }
 
         // Encode file bytes to base64
-        String encodedFile = base64Encode(fileBytes);
+        // String encodedFile = base64Encode(fileBytes);
 
         setState(() {
-          fileNameController.text = selectedFile.name;
-          txtFilename = selectedFile.name;
-          imgBlob = encodedFile; // Assign the encoded base64 string
-          dblFilesize = selectedFile.size;
+          fileNameController.text = filesName.toString();
+          txtFilename = filesName.toString();
+          // imgBlob = encodedFile; // Assign the encoded base64 string
+          // dblFilesize = selectedFile.size;
           isFileLoading = false;
         });
       } catch (e) {
@@ -244,22 +256,25 @@ class _AddFileDialogState extends State<AddFileDialog> {
     DocumentModel documentModel = widget.documentModel;
     print("documentModeldocumentModel:${documentModel.txtKey}");
     // Create the FileUploadModel using the file data
-    FileUploadModel fileUploadModel = FileUploadModel(
-      txtKey: "",
-      txtHdrkey: "",
-      txtFilename: fileNameController.text,
-      imgBlob: imgBlob ?? "",
-      dblFilesize: dblFilesize ?? 0,
-      txtUsercode: "",
-      datDate: "",
-      txtMimetype: "",
-      intLinenum: 1,
-      intType: 1,
-    );
+    List<FileUploadModel> filesUploadList = [];
+    for (int i = 0; i < filesBlobs.length; i++) {
+      filesUploadList.add(FileUploadModel(
+        txtKey: "",
+        txtHdrkey: "",
+        txtFilename: filesName[i],
+        imgBlob: filesBlobs[i],
+        dblFilesize: sizes[i],
+        txtUsercode: "",
+        datDate: "",
+        txtMimetype: "",
+        intLinenum: 1,
+        intType: 1,
+      ));
+    }
 
     DocumentFileRequest documentFileRequest = DocumentFileRequest(
       documentInfo: documentModel,
-      documentFile: fileUploadModel,
+      documentFile: filesUploadList,
     );
 
     await documentsController

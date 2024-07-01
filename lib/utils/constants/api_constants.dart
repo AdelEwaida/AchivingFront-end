@@ -1,5 +1,6 @@
 const logInApi = "users/login";
 const logOutApi = "users/logout";
+const logInWitoutPassApi = "users/loginByRefUser";
 ////categoris api's
 const categoriesTreeApi = "docCat/getTree";
 const inseartCategoryApi = "docCat/insert";

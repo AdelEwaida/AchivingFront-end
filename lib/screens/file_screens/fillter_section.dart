@@ -62,6 +62,11 @@ class _FillterFileSectionState extends State<FillterFileSection> {
     documentListProvider = context.read<DocumentListProvider>();
     calssificatonNameAndCodeProvider =
         context.read<CalssificatonNameAndCodeProvider>();
+    if (documentListProvider.issueNumber != null) {
+      issueNoController.text = documentListProvider.issueNumber ?? "";
+      documentListProvider.setDocumentSearchCriterea(
+          SearchDocumentCriteria(issueNo: issueNoController.text));
+    }
     listOfDep = await DepartmentController().getDep(SearchModel(page: 1));
     setState(() {});
     super.didChangeDependencies();

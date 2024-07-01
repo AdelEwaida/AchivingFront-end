@@ -3,12 +3,14 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:archiving_flutter_project/models/db/categories_models/doc_cat_parent.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
+import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../../dialogs/error_dialgos/show_error_dialog.dart';
 import '../../models/db/document_models/document_request.dart';
 import '../../models/db/document_models/documnet_info_model.dart';
@@ -60,21 +62,29 @@ class _AddFileScreenState extends State<AddFileScreen> {
   String selectedCat = "";
   String selectedCatDesc = "";
   bool saving = false;
-List<DocCatParent> catList = [];
+  List<DocCatParent> catList = [];
 
-  List<DepartmentModel> departmetList = [];  
-                                 
+  List<DepartmentModel> departmetList = [];
+  late DocumentListProvider documentListProvider;
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
+    documentListProvider = context.read<DocumentListProvider>();
     fileDateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
     arrivalDateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-catList = await DocumentsController().getDocCategoryList();
+    catList = await DocumentsController().getDocCategoryList();
     departmetList = await DepartmentController()
         .getDep(SearchModel(page: -1, searchField: "", status: -1));
+
     setState(() {});
+    if (documentListProvider.description != null) {
+      descriptionController.text = documentListProvider.description ?? "";
+    }
+    if (documentListProvider.issueNumber != null) {
+      issueNoController.text = documentListProvider.issueNumber ?? "";
+    }
     super.didChangeDependencies();
   }
 
@@ -423,12 +433,15 @@ catList = await DocumentsController().getDocCategoryList();
           const SizedBox(height: 10),
           SizedBox(
             width: width * 0.3,
-            child: customTextField(
-              _locale.fileName,
-              fileNameController,
-              isDesktop,
-              0.2,
-              true,
+            child: Tooltip(
+              message: fileNameController.text,
+              child: customTextField(
+                _locale.fileName,
+                fileNameController,
+                isDesktop,
+                0.2,
+                true,
+              ),
             ),
           ),
         ],
@@ -436,20 +449,30 @@ catList = await DocumentsController().getDocCategoryList();
     );
   }
 
+  List<String> filesName = [];
+  List<String> filesBlobs = [];
   Future pickFile() async {
     setState(() {
       isFileLoading = true;
     });
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
 
     if (result != null && result.files.isNotEmpty) {
-      PlatformFile selectedFile = result.files.first;
+      List<PlatformFile> files = result.files;
+
+      for (int i = 0; i < files.length; i++) {
+        filesName.add(files[i].name);
+        filesBlobs.add(base64Encode(files[i].bytes!));
+      }
+      // PlatformFile selectedFile = result.files.first;
 
       setState(() {
-        fileNameController.text = selectedFile.name;
-        txtFilename = selectedFile.name;
-        imgBlob = base64Encode(selectedFile.bytes!);
-        dblFilesize = selectedFile.size;
+        fileNameController.text = filesName.toString();
+        // fileNameController.text = selectedFile.name;
+        // txtFilename = selectedFile.name;
+        // imgBlob = base64Encode(selectedFile.bytes!);
+        // dblFilesize = selectedFile.size;
         isFileLoading = false;
       });
     } else {
@@ -512,25 +535,28 @@ catList = await DocumentsController().getDocCategoryList();
       datArrvialdate: arrivalDateController.text,
       txtOriginalfilekey: "",
     );
-
+    List<FileUploadModel> filesUploadList = [];
+    for (int i = 0; i < filesBlobs.length; i++) {
+      filesUploadList.add(FileUploadModel(
+        txtKey: "",
+        txtHdrkey: "",
+        txtFilename: filesName[i],
+        imgBlob: filesBlobs[i],
+        dblFilesize: dblFilesize ?? 0,
+        txtUsercode: "",
+        datDate: "",
+        txtMimetype: "",
+        intLinenum: 1,
+        intType: 1,
+      ));
+    }
     // Create FileUploadModel instance
-    FileUploadModel fileUploadModel = FileUploadModel(
-      txtKey: "",
-      txtHdrkey: "",
-      txtFilename: fileNameController.text,
-      imgBlob: imgBlob ?? "",
-      dblFilesize: dblFilesize ?? 0,
-      txtUsercode: "",
-      datDate: "",
-      txtMimetype: "",
-      intLinenum: 1,
-      intType: 1,
-    );
+    
 
     // Create DocumentFileRequest instance
     DocumentFileRequest documentFileRequest = DocumentFileRequest(
       documentInfo: documentModel,
-      documentFile: fileUploadModel,
+      documentFile: filesUploadList,
     );
 
     // Check if all required fields are empty

@@ -148,7 +148,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         // String fileName = selectedRow!.cells['fileName']!.value;
         Uint8List bytes = base64Decode(file!.imgBlob!);
 
-        String? fileName = file.txtFilename;
+        String? fileName = file.txtFilename!;
         saveExcelFile(bytes, fileName!);
       } catch (e) {
         print("Error downloading file: $e");

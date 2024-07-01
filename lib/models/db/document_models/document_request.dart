@@ -1,9 +1,11 @@
-import 'documnet_info_model.dart';
-import 'upload_file_mode.dart';
+import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
+import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
+
+
 
 class DocumentFileRequest {
   DocumentModel documentInfo;
-  FileUploadModel documentFile;
+  List<FileUploadModel> documentFile;
 
   DocumentFileRequest({
     required this.documentInfo,
@@ -14,15 +16,17 @@ class DocumentFileRequest {
   factory DocumentFileRequest.fromJson(Map<String, dynamic> json) {
     return DocumentFileRequest(
       documentInfo: DocumentModel.fromJson(json['documentInfo']),
-      documentFile: FileUploadModel.fromJson(json['documentFile']),
+      documentFile: (json['documentFile'] as List)
+          .map((e) => FileUploadModel.fromJson(e))
+          .toList(),
     );
   }
 
   // Method to convert DocumentFileRequest instance to a Map
   Map<String, dynamic> toJson() {
     return {
-      'documentInfo': documentInfo,
-      'documentFile': documentFile,
+      'documentInfo': documentInfo.toJson(),
+      'documentFile': documentFile.map((e) => e.toJson()).toList(),
     };
   }
 }

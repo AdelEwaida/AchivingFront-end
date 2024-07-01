@@ -3,7 +3,9 @@ import 'dart:ui';
 
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/dto/login_model.dart';
+import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/providers/local_provider.dart';
+import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
 import 'package:archiving_flutter_project/service/controller/login_controllers/login_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/routes_constant.dart';
@@ -16,6 +18,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:html' as html;
 
 import '../widget/curve_clipper.dart';
 
@@ -69,6 +72,7 @@ class _LogInScreenState extends State<LoginScreen>
 
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+    // checkUrlParameters();
 
     return Scaffold(
       body: Responsive(
@@ -122,6 +126,7 @@ class _LogInScreenState extends State<LoginScreen>
       ),
     );
   }
+
 
   Widget formSection(double widthFactor, double heightFactor) {
     return Container(
@@ -329,7 +334,7 @@ class _LogInScreenState extends State<LoginScreen>
     const storage = FlutterSecureStorage();
 
     storage.write(key: "userName", value: _userNameController.text);
-    
+
     await LoginController()
         .logInPost(userModel, AppLocalizations.of(context)!)
         .then((value) async {
