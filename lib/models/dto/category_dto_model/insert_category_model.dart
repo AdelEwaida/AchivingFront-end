@@ -3,12 +3,13 @@ class InsertCategoryModel {
   String? shortCode;
   String? description;
   String? deptCode;
-
+  String? txtReference;
   InsertCategoryModel({
     this.id,
     this.shortCode,
     this.description,
     this.deptCode,
+      this.txtReference
   });
 
   // Factory constructor to create an instance from a JSON map
@@ -18,6 +19,7 @@ class InsertCategoryModel {
       shortCode: json['shortCode'],
       description: json['description'],
       deptCode: json['deptCode'],
+        txtReference: json['txtReference']
     );
   }
 
@@ -28,6 +30,7 @@ class InsertCategoryModel {
       'shortCode': shortCode,
       'description': description,
       'deptCode': deptCode,
+      'txtReference': txtReference
     };
   }
 

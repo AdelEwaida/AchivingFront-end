@@ -6,7 +6,7 @@ class DocCatParent {
   final String? txtShortcode;
   final String? txtDeptcode;
   final String? txtMainparent;
-
+  final String? txtReference;
   DocCatParent({
     this.txtKey,
     this.txtDescription,
@@ -15,6 +15,7 @@ class DocCatParent {
     this.txtShortcode,
     this.txtDeptcode,
     this.txtMainparent,
+      this.txtReference
   });
 
   factory DocCatParent.fromJson(Map<String, dynamic> json) {
@@ -26,6 +27,7 @@ class DocCatParent {
       txtShortcode: json['txtShortcode'],
       txtDeptcode: json['txtDeptcode'],
       txtMainparent: json['txtMainparent'],
+        txtReference: json['txtReference']
     );
   }
 
@@ -36,6 +38,7 @@ class DocCatParent {
       'intLevel': intLevel,
       'txtParentcode': txtParentcode,
       'txtShortcode': txtShortcode,
+      'txtReference': txtReference,
       'txtDeptcode': txtDeptcode,
       'txtMainparent': txtMainparent,
     };

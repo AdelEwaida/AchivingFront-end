@@ -11,7 +11,7 @@ class UserModel {
   String? txtDeptkey;
   String? email;
   String? activeToken;
-
+  String? txtReferenceUsername;
   UserModel({
     this.txtCode,
     this.txtNamee,
@@ -21,12 +21,14 @@ class UserModel {
     this.txtDeptkey,
     this.email,
     this.activeToken,
+      this.txtReferenceUsername
   });
 
   // fromJson method
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       txtCode: json['txtCode'],
+      txtReferenceUsername: json['txtReferenceUsername'],
       txtNamee: json['txtNamee'],
       txtPwd: json['txtPwd'],
       intType: json['intType'],
@@ -40,6 +42,7 @@ class UserModel {
   // toJson method
   Map<String, dynamic> toJson() {
     return {
+      'txtReferenceUsername': txtReferenceUsername,
       'txtCode': txtCode,
       'txtNamee': txtNamee,
       'txtPwd': txtPwd,
@@ -59,6 +62,8 @@ class UserModel {
         'txtCode': PlutoCell(value: txtCode),
         'txtNamee': PlutoCell(value: txtNamee),
         'txtPwd': PlutoCell(value: txtPwd),
+        'txtReferenceUsername': PlutoCell(value: txtReferenceUsername),
+
         'intType': PlutoCell(value: getNameOfUserType(localizations, intType!)),
         'bolActive': PlutoCell(
             value: bolActive == 1
@@ -73,6 +78,7 @@ class UserModel {
 
   factory UserModel.fromPlutoRow(PlutoRow row, AppLocalizations localizations) {
     return UserModel(
+      txtReferenceUsername: row.cells['txtReferenceUsername']?.value,
       txtCode: row.cells['txtCode']?.value,
       txtNamee: row.cells['txtNamee']?.value,
       txtPwd: row.cells['txtPwd']?.value,

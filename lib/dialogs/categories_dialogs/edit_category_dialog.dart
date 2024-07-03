@@ -1,37 +1,40 @@
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
 import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
+import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../../utils/constants/colors.dart';
-import '../../../utils/constants/styles.dart';
-import '../../../utils/func/responsive.dart';
-import '../../../widget/dialog_widgets/title_dialog_widget.dart';
-import '../../../widget/text_field_widgets/custom_text_field2_.dart';
+import '../../utils/constants/colors.dart';
+import '../../utils/constants/styles.dart';
+import '../../utils/func/responsive.dart';
+import '../../widget/dialog_widgets/title_dialog_widget.dart';
+import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
-class AddCategoryDialog extends StatefulWidget {
+class EditCategoryDialog extends StatefulWidget {
   DocumentCategory? category;
-  AddCategoryDialog({super.key, this.category});
+  EditCategoryDialog({super.key, this.category});
   @override
-  State<AddCategoryDialog> createState() => _AdvanceSearchLogsDialogState();
+  State<EditCategoryDialog> createState() => _AdvanceSearchLogsDialogState();
 }
 
-class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
+class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late AppLocalizations _locale;
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController refNumberController = TextEditingController();
 
   double width = 0;
   double height = 0;
   bool isDesktop = false;
-
   CategoriesController categoriesController = CategoriesController();
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
-
+    descriptionController.text = widget.category!.docCatParent!.txtDescription!;
+    refNumberController.text =
+        widget.category!.docCatParent!.txtReference ?? "";
     super.didChangeDependencies();
   }
 
@@ -60,7 +63,7 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       backgroundColor: Theme.of(context).dialogBackgroundColor,
       title: TitleDialogWidget(
-        title: _locale.addCategory,
+        title: _locale.editCategory,
         width: isDesktop ? width * 0.25 : width * 0.8,
         height: height * 0.07,
       ),
@@ -72,29 +75,8 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     const SizedBox(),
-            //     Text(_locale.addCategory),
-            //     Container(
-            //       decoration: const BoxDecoration(
-            //           shape: BoxShape.rectangle,
-            //           color: Color.fromARGB(255, 237, 34, 20)),
-            //       child: IconButton(
-            //           onPressed: () {
-            //             Navigator.pop(context);
-            //           },
-            //           icon: const Icon(
-            //             Icons.close_rounded,
-            //             color: Colors.white,
-            //           )),
-            //     ),
-            //   ],
-            // ),
             // const SizedBox(height: 20),
             CustomTextField2(
-              isMandetory: true,
               text: Text(_locale.description),
               width: width * 0.25,
               height: height * 0.045,
@@ -102,18 +84,35 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
               onSubmitted: (text) {},
               onChanged: (value) {},
             ),
+            CustomTextField2(
+              text: Text(_locale.refNumber),
+              width: width * 0.25,
+              height: height * 0.045,
+              controller: refNumberController,
+              onSubmitted: (text) {},
+              onChanged: (value) {},
+            ),
+            // CustomDropDown(
+            //   width: width * 0.25,
+            //   onChanged: (value) {},
+            //   searchBox: true,
+            //   valSelected: true,
+            //   bordeText: _locale.department,
+            //   // width: width * 0.21,
+            //   heightVal: height * 0.3,
+            // ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    addCategory();
+                    save();
                   },
                   style: customButtonStyle1(Size(width * 0.08, height * 0.045),
                       16, const Color(0xff1F6E8C)),
                   child: Text(
-                    _locale.add,
+                    _locale.save,
                     style: const TextStyle(color: whiteColor),
                   ),
                 ),
@@ -121,9 +120,7 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
                   width: width * 0.01,
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: () {},
                   style: customButtonStyle1(
                       Size(width * 0.1, height * 0.045), 16, redColor),
                   child: Text(
@@ -139,17 +136,16 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
     );
   }
 
-  void addCategory() async {
-    InsertCategoryModel insertCategoryModel = InsertCategoryModel(
+  void save() {
+    InsertCategoryModel updateModel = InsertCategoryModel(
         deptCode: widget.category!.docCatParent!.txtDeptcode!,
         description: descriptionController.text,
-        id: widget.category!.docCatParent!.txtShortcode,
-        shortCode: "");
-
-    var response = await categoriesController.addCategory(insertCategoryModel);
-    if (response.statusCode == 200) {
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context, true);
-    }
+        shortCode: widget.category!.docCatParent!.txtShortcode,
+        txtReference: refNumberController.text);
+    categoriesController.updateCategory(updateModel).then((value) {
+      if (value.statusCode == 200) {
+        Navigator.pop(context, true);
+      }
+    });
   }
 }

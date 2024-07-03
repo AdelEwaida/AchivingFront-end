@@ -20,8 +20,8 @@ import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import '../../dialogs/error_dialgos/categories_dialogs/add_category_dialog.dart';
-import '../../dialogs/error_dialgos/categories_dialogs/edit_category_dialog.dart';
+import '../../dialogs/categories_dialogs/add_category_dialog.dart';
+import '../../dialogs/categories_dialogs/edit_category_dialog.dart';
 import '../../dialogs/error_dialgos/confirm_dialog.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';

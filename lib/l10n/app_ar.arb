@@ -172,5 +172,7 @@
   "fillRequiredFields": "يرجى إضافة جميع الحقول المطلوبة",
   "previewFile":"معاينة الملف",
   "previewNotAvilable":"المعاينة غير متوفرة",
-  "print":"طباعة"
+  "print":"طباعة",
+  "refNumber":"رقم المرجع",
+  "userRefName":"الاسم المرجعي للمستخدم"
 }

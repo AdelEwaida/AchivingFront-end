@@ -35,7 +35,10 @@ class _DepartmentDialogState extends State<AddUserDialog> {
 
   TextEditingController userCodeController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
+  TextEditingController txtReferenceUsernameController =
+      TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   int? selectedUserType;
   int? userActive;
   UserController userController = UserController();
@@ -50,6 +53,8 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       userCodeController.text = userModel!.txtCode ?? "";
       userNameController.text = userModel!.txtNamee ?? "";
       selectedUserType = userModel!.intType;
+      txtReferenceUsernameController.text =
+          widget.userModel!.txtReferenceUsername ?? "";
       isActive = userModel!.bolActive == 1 ? true : false;
       userActive = isActive ? 1 : 0;
     }
@@ -81,7 +86,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.28 : height * 0.5,
+        height: isDesktop ? height * 0.37 : height * 0.5,
         child: formSection(),
       ),
       actions: [
@@ -178,6 +183,8 @@ class _DepartmentDialogState extends State<AddUserDialog> {
                   0.2, true, widget.isChangePassword),
         customTextField(_locale.userName, userNameController, isDesktop, 0.2,
             true, widget.isChangePassword),
+        customTextField(_locale.userRefName, txtReferenceUsernameController,
+            isDesktop, 0.2, true, widget.isChangePassword),
         DropDown(
           isEnabled: !widget.isChangePassword,
           width: width * 0.2,
@@ -260,7 +267,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   void addUser() async {
     if (userCodeController.text.trim().isEmpty ||
         userNameController.text.trim().isEmpty ||
-
+        txtReferenceUsernameController.text.isEmpty ||
         selectedUserType == null) {
       showDialog(
         context: context,
@@ -282,6 +289,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           txtCode: userCodeController.text,
           txtNamee: userNameController.text,
           bolActive: userActive ?? 0,
+          txtReferenceUsername: txtReferenceUsernameController.text,
           intType: selectedUserType);
       await userController.addUser(userModel).then((value) {
         print("statusCode ${value.statusCode}");
@@ -339,6 +347,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         txtCode: userCodeController.text,
         txtNamee: userNameController.text,
         bolActive: userActive ?? 0,
+        txtReferenceUsername: txtReferenceUsernameController.text,
         intType: selectedUserType);
     await userController.updateUser(userModel).then((value) {
       if (value.statusCode == 200) {
