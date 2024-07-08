@@ -52,9 +52,13 @@ class AppRoutes {
 
   static Future<String?> _redirect(BuildContext context, String path) async {
     final checkResult = await checkUrlParameters(context);
-    if (checkResult != null) {
-      return checkResult;
-    }
+    // if (checkResult != null) {
+    //   const storage = FlutterSecureStorage();
+
+    //   String? tok = await storage.read(key: "jwt");
+    //   print("toooooooooookkkk ${tok}");
+    //   return checkResult;
+    // }
 
     const storage = FlutterSecureStorage();
     String? token = await storage.read(key: 'jwt');
@@ -78,9 +82,11 @@ class AppRoutes {
       int? type = int.parse(uri.queryParameters['op'] ?? "0");
       // if (fld1Param != null && fld1Param.isNotEmpty) {
       if (type == 1) {
-        viewMethod(context, queryParams);
+        await viewMethod(context, queryParams);
+        // String? tok = await storage.read(key: "jwt");
+        // print("toooooooooookkkk ${tok}");
       } else if (type == 0) {
-        scanMethod(context, queryParams);
+        await scanMethod(context, queryParams);
       }
       // print('L Parameter: $lParam');
       // print('FLD_1 Parameter: $fld1Param');
@@ -119,7 +125,7 @@ class AppRoutes {
       screenContentProvider.setPage1(7);
       // ignore: use_build_context_synchronously
       // Navigator.pop(context);
-      GoRouter.of(context).go(mainScreenRoute);
+      // GoRouter.of(context).go(mainScreenRoute);
       return mainScreenRoute;
     }
   }
@@ -147,9 +153,14 @@ class AppRoutes {
 
     var response = await LoginController().logInWithOutPass(
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
+
     if (response) {
+
       fileListProvider.setIssueNumber(fld1Param!);
       screenContentProvider.setPage1(6);
+
+      // GoRouter.of(context).go(mainScreenRoute);
+     
       return mainScreenRoute;
     }
   }
