@@ -38,6 +38,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   TextEditingController txtReferenceUsernameController =
       TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController urlController = TextEditingController();
 
   int? selectedUserType;
   int? userActive;
@@ -57,6 +58,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           widget.userModel!.txtReferenceUsername ?? "";
       isActive = userModel!.bolActive == 1 ? true : false;
       userActive = isActive ? 1 : 0;
+      urlController.text = userModel!.url ?? "";
     }
 
     super.didChangeDependencies();
@@ -86,7 +88,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.37 : height * 0.5,
+        height: isDesktop ? height * 0.43 : height * 0.5,
         child: formSection(),
       ),
       actions: [
@@ -202,6 +204,8 @@ class _DepartmentDialogState extends State<AddUserDialog> {
             ? customTextField(_locale.newPassword, passwordController,
                 isDesktop, 0.2, true, false)
             : const SizedBox.shrink(),
+        customTextField(_locale.url, urlController, isDesktop, 0.2, true,
+            widget.isChangePassword),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -288,6 +292,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       UserModel userModel = UserModel(
           txtCode: userCodeController.text,
           txtNamee: userNameController.text,
+          url: urlController.text,
           bolActive: userActive ?? 0,
           txtReferenceUsername: txtReferenceUsernameController.text,
           intType: selectedUserType);
@@ -345,6 +350,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
     //     "widget.departmentModel!.txtKey!widget.departmentModel!.txtKey!:${widget.departmentModel!.txtKey!}");
     UserModel userModel = UserModel(
         txtCode: userCodeController.text,
+        url: urlController.text,
         txtNamee: userNameController.text,
         bolActive: userActive ?? 0,
         txtReferenceUsername: txtReferenceUsernameController.text,
