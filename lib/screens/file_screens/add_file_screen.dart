@@ -94,11 +94,14 @@ class _AddFileScreenState extends State<AddFileScreen> {
     if (documentListProvider.issueNumber != null) {
       issueNoController.text = documentListProvider.issueNumber ?? "";
     }
+
     userController
         .getUsers(SearchModel(page: -1, status: -1, searchField: userName))
         .then((value) async {
       url = "http://${value[0].url!}";
+      print("urlurlurl ${url}");
       scanners = await DocumentsController().getAllScannersMethod(url);
+      setState(() {});
     });
 
     super.didChangeDependencies();

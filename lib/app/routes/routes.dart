@@ -108,6 +108,7 @@ class AppRoutes {
     final byteArray =
         Uint8List.fromList(iv.map((bit) => bit == 1 ? 0x01 : 0x00).toList());
     String url = html.window.location.href;
+    const storage = FlutterSecureStorage();
 
     Uri uri = Uri.parse(url);
     String? desc = uri.queryParameters['DOCN_NAME_EN'];
@@ -116,7 +117,7 @@ class AppRoutes {
     String? userName = uri.queryParameters['DUN'];
     String emailEncrypted =
         Encryption.performAesEncryption(userName ?? '', key, byteArray);
-
+    storage.write(key: "userName", value: userName);
     var response = await LoginController().logInWithOutPass(
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
     if (response) {
@@ -152,6 +153,9 @@ class AppRoutes {
     String? userName = uri.queryParameters['DUN'];
     String emailEncrypted =
         Encryption.performAesEncryption(userName ?? '', key, byteArray);
+    const storage = FlutterSecureStorage();
+
+    storage.write(key: "userName", value: userName);
 
     var response = await LoginController().logInWithOutPass(
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
