@@ -22,6 +22,7 @@ import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
 
 import '../../models/db/document_models/upload_file_mode.dart';
+import '../../models/dto/searchs_model/search_document_criterea.dart';
 import '../../utils/func/save_excel_file.dart';
 
 class ViewTable extends StatefulWidget {
@@ -51,9 +52,21 @@ class _ViewTableState extends State<ViewTable> {
     documentListProvider = context.read<DocumentListProvider>();
     calssificatonNameAndCodeProvider =
         context.read<CalssificatonNameAndCodeProvider>();
+
     fillColumnTable();
+    if (documentListProvider.issueNumber != null) {
+      documentListProvider.setDocumentSearchCriterea(
+          SearchDocumentCriteria(issueNo: documentListProvider.issueNumber));
+    }
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    documentListProvider.setIssueNumber(null);
+
+    super.dispose();
   }
 
   PlutoRow? selectedRow;
