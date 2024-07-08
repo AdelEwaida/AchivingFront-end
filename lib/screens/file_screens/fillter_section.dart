@@ -73,6 +73,13 @@ class _FillterFileSectionState extends State<FillterFileSection> {
   }
 
   @override
+  void dispose() {
+    documentListProvider.setIssueNumber(null);
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     isDesktop = Responsive.isDesktop(context);
 

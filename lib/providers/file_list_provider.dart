@@ -6,12 +6,12 @@ class DocumentListProvider with ChangeNotifier {
   List<PlutoRow> _documentListCritereaRows = [];
   String? _issueNumber;
   String? _desc;
-  void setDescription(String s) {
+  void setDescription(String? s) {
     _desc = s;
   }
 
   String? get description => _desc;
-  void setIssueNumber(String s) {
+  void setIssueNumber(String? s) {
     _issueNumber = s;
   }
 

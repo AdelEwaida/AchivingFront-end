@@ -89,6 +89,15 @@ class _AddFileScreenState extends State<AddFileScreen> {
   }
 
   @override
+  void dispose() {
+    documentListProvider.setDescription(null);
+    documentListProvider.setIssueNumber(null);
+
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
@@ -551,7 +560,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
       ));
     }
     // Create FileUploadModel instance
-    
 
     // Create DocumentFileRequest instance
     DocumentFileRequest documentFileRequest = DocumentFileRequest(
