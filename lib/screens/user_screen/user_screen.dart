@@ -113,9 +113,25 @@ class _UserScreenState extends State<UserScreen> {
                   // totalActionsCount.value = 0;
                   // getCount();
                 },
-                doubleTab: (event) async {
-                  PlutoRow? tappedRow = event.row;
-                },
+                // doubleTab: (event) async {
+                //   PlutoRow? tappedRow = event.row;
+                //   UserModel userModel =
+                //       UserModel.fromPlutoRow(tappedRow!, _locale);
+                //   showDialog(
+                //     barrierDismissible: false,
+                //     context: context,
+                //     builder: (context) {
+                //       return AddUserDialog(
+                //         isChangePassword: false,
+                //         userModel: userModel,
+                //       );
+                //     },
+                //   ).then((value) {
+                //     if (value == true) {
+                //       refreshTable();
+                //     }
+                //   });
+                // },
                 onSelected: (event) async {
                   PlutoRow? tappedRow = event.row;
                   selectedRow = tappedRow;

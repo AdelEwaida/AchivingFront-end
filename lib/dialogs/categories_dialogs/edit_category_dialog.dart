@@ -120,7 +120,9 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
                   width: width * 0.01,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   style: customButtonStyle1(
                       Size(width * 0.1, height * 0.045), 16, redColor),
                   child: Text(
