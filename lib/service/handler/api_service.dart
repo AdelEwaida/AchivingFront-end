@@ -20,10 +20,10 @@ class ApiService {
   static String urlServer = "";
   static String scannerURL = "http://localhost:5000";
 
-  Future getScannersRequest(String api) async {
+  Future getScannersRequest(String ip, String api) async {
     String? token = await storage.read(key: 'jwt');
 
-    var requestUrl = "$scannerURL/$api";
+    var requestUrl = "$ip/$api";
     print("requestUrlrequestUrl ${requestUrl}");
     try {
       var response = await http.get(

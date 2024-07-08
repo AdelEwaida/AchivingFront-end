@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:archiving_flutter_project/models/db/scaners_model.dart';
+import 'package:archiving_flutter_project/models/db/scanned_image.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 
 import '../../../models/db/categories_models/doc_cat_parent.dart';
@@ -111,7 +113,24 @@ class DocumentsController {
     return list;
   }
 
-  Future getAllScannersMethod() async {
-    return await ApiService().getScannersRequest(getAllScanners);
+  Future<List<String>> getAllScannersMethod(String ip) async {
+    List<String> list = [];
+    var response = await ApiService().getScannersRequest(ip, getAllScanners);
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+      for (var scanner in jsonData['scanners']) {
+        list.add(scanner);
+      }
+    }
+    return list;
+  }
+
+  Future<ScannedImage> getSccanedImageMethod(String ip, int index) async {
+    var response =
+        await ApiService().getScannersRequest(ip, "$getScanedImageApi$index");
+    var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+    // print(jsonData);
+    ScannedImage scannedImage = ScannedImage.fromJson(jsonData);
+    return scannedImage;
   }
 }

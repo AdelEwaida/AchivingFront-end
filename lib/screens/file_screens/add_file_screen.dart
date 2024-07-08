@@ -5,10 +5,13 @@ import 'package:archiving_flutter_project/models/db/categories_models/doc_cat_pa
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
+import 'package:archiving_flutter_project/service/controller/users_controller/user_controller.dart';
+import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../dialogs/error_dialgos/show_error_dialog.dart';
@@ -50,6 +53,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
   TextEditingController followingController = TextEditingController();
   TextEditingController fileNameController = TextEditingController();
   bool isDesktop = false;
+  UserController userController = UserController();
   DocumentsController documentsController = DocumentsController();
   // ValueNotifier isFileLoading = ValueNotifier(false);
   bool isFileLoading = false;
@@ -64,12 +68,16 @@ class _AddFileScreenState extends State<AddFileScreen> {
   bool saving = false;
   List<DocCatParent> catList = [];
   bool _isUploadFileSelected = true;
-
+  String url = "";
   List<DepartmentModel> departmetList = [];
   late DocumentListProvider documentListProvider;
+  var storage = FlutterSecureStorage();
+  String? userName = "";
+  List<String> scanners = [];
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
+
     documentListProvider = context.read<DocumentListProvider>();
     fileDateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
@@ -78,7 +86,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     catList = await DocumentsController().getDocCategoryList();
     departmetList = await DepartmentController()
         .getDep(SearchModel(page: -1, searchField: "", status: -1));
-
+    userName = await storage.read(key: "userName");
     setState(() {});
     if (documentListProvider.description != null) {
       descriptionController.text = documentListProvider.description ?? "";
@@ -86,6 +94,13 @@ class _AddFileScreenState extends State<AddFileScreen> {
     if (documentListProvider.issueNumber != null) {
       issueNoController.text = documentListProvider.issueNumber ?? "";
     }
+    userController
+        .getUsers(SearchModel(page: -1, status: -1, searchField: userName))
+        .then((value) async {
+      url = "http://${value[0].url!}";
+      scanners = await DocumentsController().getAllScannersMethod(url);
+    });
+
     super.didChangeDependencies();
   }
 
@@ -539,6 +554,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
       txtOriginalfilekey: "",
     );
     List<FileUploadModel> filesUploadList = [];
+    print("filesBlobs.length ${filesBlobs.length}");
     for (int i = 0; i < filesBlobs.length; i++) {
       filesUploadList.add(FileUploadModel(
         txtKey: "",
@@ -564,7 +580,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     // Check if all required fields are empty
     if (selectedDep.isEmpty ||
         selectedCat.isEmpty ||
-        fileNameController.text.isEmpty ||
+        (fileNameController.text.isEmpty && _isUploadFileSelected) ||
         descriptionController.text.isEmpty) {
       CoolAlert.show(
         width: width * 0.4,
@@ -626,6 +642,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     setState(() {});
   }
 
+  int scannerIndex = -1;
   Widget buildScanDropdown() {
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 10),
@@ -640,19 +657,26 @@ class _AddFileScreenState extends State<AddFileScreen> {
               // selectedDep = value.txtKey;
               // selctedDepDesc = value.txtDescription;
               // setState(() {});
+              for (int i = 0; i < scanners.length; i++) {
+                if (scanners[i] == value) {
+                  scannerIndex = i;
+                }
+              }
             },
             initialValue: "",
+            items: scanners,
             bordeText: _locale.scanners,
             width: width * 0.2,
-            items: departmetList,
             height: height * 0.05,
-            onSearch: (p0) async {
-              return await DocumentsController().getAllScannersMethod();
-            },
+            // onSearch: (p0) async {
+            //   return await DocumentsController().getAllScannersMethod(url);
+            // },
           ),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              scan();
+            },
             style: customButtonStyle(
                 Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.055),
                 14,
@@ -665,5 +689,14 @@ class _AddFileScreenState extends State<AddFileScreen> {
         ],
       ),
     );
+  }
+
+  scan() async {
+    openLoadinDialog(context);
+    var response =
+        await documentsController.getSccanedImageMethod(url, scannerIndex);
+    filesName.add("${issueNoController.text}.jpeg");
+    filesBlobs.add(response.scannedImage!);
+    Navigator.pop(context);
   }
 }
