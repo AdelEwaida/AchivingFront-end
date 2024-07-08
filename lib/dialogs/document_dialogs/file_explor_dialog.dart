@@ -160,14 +160,16 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
       // Uint8List uint8List = Uint8List.fromList(stringBytes);
       saveExcelFile(bytes, selectedRow!.cells['txtFilename']!.value);
 
-      // Step 2: Convert the List<int> to Uint8List
     }
   }
 
   view() {
     if (selectedRow != null) {
       Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
-      if (selectedRow!.cells['txtFilename']!.value.contains(".pdf")) {
+      if (selectedRow!.cells['txtFilename']!.value.contains(".pdf") ||
+          selectedRow!.cells['txtFilename']!.value.contains(".jpeg") ||
+          selectedRow!.cells['txtFilename']!.value.contains(".png") ||
+          selectedRow!.cells['txtFilename']!.value.contains(".jpg")) {
         showDialog(
           context: context,
           builder: (context) {

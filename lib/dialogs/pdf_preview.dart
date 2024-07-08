@@ -81,7 +81,8 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                       color: Colors.black,
                       size: 14,
                     )),
-                Tooltip(
+                widget.fileName.contains('.pdf')
+                    ? Tooltip(
                   message: _locale.print,
                   child: IconButton(
                       onPressed: () async {
@@ -95,7 +96,8 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                         color: Colors.black,
                         size: 14,
                       )),
-                ),
+                      )
+                    : SizedBox.shrink(),
               ],
             ),
 
@@ -175,14 +177,20 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
           SizedBox(
             width: width * 0.46,
             height: height * 0.65,
-            child: SfPdfViewer.memory(
+            child: widget.fileName.contains('.pdf')
+                ? SfPdfViewer.memory(
 
               widget.pdfFile,
               initialZoomLevel: 1,
               controller: _pdfViewerController,
-            ),
+                  )
+                : Image.memory(
+                    widget.pdfFile,
+                    fit: BoxFit.fill,
+                  ),
           ),
-          SizedBox(
+          widget.fileName.contains('.pdf')
+              ? SizedBox(
             height: height * 0.1,
             width: width * 0.1,
             child: Row(
@@ -210,7 +218,8 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                 ),
               ],
             ),
-          )
+                )
+              : SizedBox.shrink()
         ],
       ),
     );
