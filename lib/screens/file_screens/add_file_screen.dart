@@ -98,7 +98,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     userController
         .getUsers(SearchModel(page: -1, status: -1, searchField: userName))
         .then((value) async {
-      url = "http://${value[0].url!}";
+      url = "https://${value[0].url!}";
       print("urlurlurl ${url}");
       scanners = await DocumentsController().getAllScannersMethod(url);
       setState(() {});
