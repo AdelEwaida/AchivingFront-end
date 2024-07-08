@@ -6,6 +6,13 @@ class DocumentListProvider with ChangeNotifier {
   List<PlutoRow> _documentListCritereaRows = [];
   String? _issueNumber;
   String? _desc;
+  bool? isViewFile;
+  void setIsViewFile(bool isView) {
+    isViewFile = isView;
+    notifyListeners();
+  }
+
+
   void setDescription(String? s) {
     _desc = s;
   }

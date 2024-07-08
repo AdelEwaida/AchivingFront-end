@@ -137,6 +137,8 @@ class AppRoutes {
     late DocumentListProvider fileListProvider;
     screenContentProvider = context.read<ScreenContentProvider>();
     fileListProvider = context.read<DocumentListProvider>();
+    fileListProvider.setIsViewFile(true);
+
     String key = "archiveProj@s2024ASD/Key@team.CT";
     final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
     final byteArray =

@@ -1,11 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:pluto_grid/pluto_grid.dart';
-import 'package:provider/provider.dart';
-
 import 'package:archiving_flutter_project/dialogs/actions_dialogs/add_edit_action_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/add_file_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
@@ -13,6 +7,7 @@ import 'package:archiving_flutter_project/dialogs/document_dialogs/info_document
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
+import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
 import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
@@ -20,9 +15,12 @@ import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
+import 'package:flutter/material.dart';
+import 'package:pluto_grid/pluto_grid.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/db/document_models/upload_file_mode.dart';
-import '../../models/dto/searchs_model/search_document_criterea.dart';
 import '../../utils/func/save_excel_file.dart';
 
 class ViewTable extends StatefulWidget {
@@ -52,7 +50,6 @@ class _ViewTableState extends State<ViewTable> {
     documentListProvider = context.read<DocumentListProvider>();
     calssificatonNameAndCodeProvider =
         context.read<CalssificatonNameAndCodeProvider>();
-
     fillColumnTable();
     if (documentListProvider.issueNumber != null) {
       documentListProvider.setDocumentSearchCriterea(
@@ -78,7 +75,12 @@ class _ViewTableState extends State<ViewTable> {
           key: UniqueKey(),
           tableHeigt: height * 0.8,
           tableWidth: width * 0.81,
+          // addReminder: addRemider,
+          // upload: uploadFile,
 
+          // copy: copyFile,
+          // delete: deleteFile,
+          download: download,
           // add: addAction,
           // genranlEdit: editAction,
           plCols: polCols,
@@ -87,7 +89,9 @@ class _ViewTableState extends State<ViewTable> {
           footerBuilder: (stateManager) {
             return lazyLoadingfooter(stateManager);
           },
-
+          explor: explorFiels,
+          view: viewDocumentInfo,
+          // genranlEdit: editDocumentInfo,
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
             stateManager.setShowColumnFilter(true);
