@@ -174,5 +174,7 @@
   "previewNotAvilable":"المعاينة غير متوفرة",
   "print":"طباعة",
   "refNumber":"رقم المرجع",
-  "userRefName":"الاسم المرجعي للمستخدم"
+  "userRefName":"الاسم المرجعي للمستخدم",
+  "url":"رابط"
+
 }

@@ -12,6 +12,7 @@ class UserModel {
   String? email;
   String? activeToken;
   String? txtReferenceUsername;
+  String? url;
   UserModel({
     this.txtCode,
     this.txtNamee,
@@ -21,22 +22,23 @@ class UserModel {
     this.txtDeptkey,
     this.email,
     this.activeToken,
-      this.txtReferenceUsername
+    this.txtReferenceUsername,
+    this.url,
   });
 
   // fromJson method
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      txtCode: json['txtCode'],
-      txtReferenceUsername: json['txtReferenceUsername'],
-      txtNamee: json['txtNamee'],
-      txtPwd: json['txtPwd'],
-      intType: json['intType'],
-      bolActive: json['bolActive'],
-      txtDeptkey: json['txtDeptkey'],
-      email: json['email'],
-      activeToken: json['activeToken'],
-    );
+        txtCode: json['txtCode'],
+        txtReferenceUsername: json['txtReferenceUsername'],
+        txtNamee: json['txtNamee'],
+        txtPwd: json['txtPwd'],
+        intType: json['intType'],
+        bolActive: json['bolActive'],
+        txtDeptkey: json['txtDeptkey'],
+        email: json['email'],
+        activeToken: json['activeToken'],
+        url: json['url']);
   }
 
   // toJson method
@@ -51,6 +53,7 @@ class UserModel {
       'txtDeptkey': txtDeptkey,
       'email': email,
       'activeToken': activeToken,
+      'url': url
     };
   }
 
@@ -63,7 +66,6 @@ class UserModel {
         'txtNamee': PlutoCell(value: txtNamee),
         'txtPwd': PlutoCell(value: txtPwd),
         'txtReferenceUsername': PlutoCell(value: txtReferenceUsername),
-
         'intType': PlutoCell(value: getNameOfUserType(localizations, intType!)),
         'bolActive': PlutoCell(
             value: bolActive == 1
@@ -72,6 +74,7 @@ class UserModel {
         'txtDeptkey': PlutoCell(value: txtDeptkey),
         'email': PlutoCell(value: email ?? ""),
         'activeToken': PlutoCell(value: activeToken),
+        'url': PlutoCell(value: url)
       },
     );
   }
@@ -87,6 +90,7 @@ class UserModel {
       txtDeptkey: row.cells['txtDeptkey']?.value,
       email: row.cells['email']?.value,
       activeToken: row.cells['activeToken']?.value,
+      url: row.cells['url']?.value,
     );
   }
   @override
