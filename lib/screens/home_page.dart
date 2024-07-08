@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../providers/file_list_provider.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -48,11 +50,13 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  isDesktop
-                      ? const SideMenu()
-                      : Container(
-                          color: Colors.white,
-                        ),
+                  context.read<DocumentListProvider>().isViewFile == true
+                      ? Container()
+                      : isDesktop
+                          ? const SideMenu()
+                          : Container(
+                              color: Colors.white,
+                            ),
                   Expanded(
                     child: Container(
                       color: Colors.white,
