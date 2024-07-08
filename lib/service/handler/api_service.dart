@@ -18,6 +18,90 @@ import '../controller/error_controllers/error_controller.dart';
 class ApiService {
   final storage = const FlutterSecureStorage();
   static String urlServer = "";
+  static String scannerURL = "http://localhost:5000";
+
+  Future getScannersRequest(String api) async {
+    String? token = await storage.read(key: 'jwt');
+
+    var requestUrl = "$scannerURL/$api";
+    print("requestUrlrequestUrl ${requestUrl}");
+    try {
+      var response = await http.get(
+        Uri.parse(requestUrl),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+      print("--------------------------------------------");
+      print("token $token");
+      print("urlll $requestUrl");
+      print("responseCode ${response.statusCode}");
+      if (response.statusCode == 417 || response.statusCode == 401) {
+        final context = navigatorKey.currentState!.overlay!.context;
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
+      } else if (response.statusCode != 200) {
+        if (response.body == "Wrong Credentials") {
+          return response;
+        }
+        ErrorController.openErrorDialog(
+          response.statusCode,
+          "there is somthing wrong",
+        );
+        checkErrorDec(response);
+      }
+      return response;
+    } catch (e) {
+      print("exceptions $e");
+      // Handle network-related exceptions (e.g., no internet connection)
+      // You can show an error message to the user or log the error.
+    }
+  }
 
   Future getRequest(String api) async {
     String? token = await storage.read(key: 'jwt');

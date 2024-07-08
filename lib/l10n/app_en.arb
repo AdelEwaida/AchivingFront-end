@@ -189,7 +189,9 @@
   "print": "Print",
   "refNumber": "Reference Number",
   "userRefName": "User Reference Name",
-  "url":"Url"
+  "url":"Url",
+  "scanFile":"Scan File",
+  "scanners":"Scanners"
 
   
 

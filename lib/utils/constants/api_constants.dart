@@ -51,3 +51,5 @@ const getUserCatCountApi = "userCategory/count";
 const updateUserCatApi = "userCategory/update";
 const getUsersByCat = "userCategory/getUsersByCat";
 const deleteUserCatApi = "userCategory/delete";
+
+const getAllScanners = "getAllScanners";

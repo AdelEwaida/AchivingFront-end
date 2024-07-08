@@ -110,4 +110,8 @@ class DocumentsController {
     });
     return list;
   }
+
+  Future getAllScannersMethod() async {
+    return await ApiService().getScannersRequest(getAllScanners);
+  }
 }
