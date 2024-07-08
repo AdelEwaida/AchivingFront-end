@@ -24,14 +24,16 @@ import 'package:http/http.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 
-class FileListScreen extends StatefulWidget {
-  const FileListScreen({super.key});
+import 'view_table.dart';
+
+class FilesViewScreen extends StatefulWidget {
+  const FilesViewScreen({super.key});
 
   @override
-  State<FileListScreen> createState() => _FileListScreenState();
+  State<FilesViewScreen> createState() => _FilesViewScreenState();
 }
 
-class _FileListScreenState extends State<FileListScreen> {
+class _FilesViewScreenState extends State<FilesViewScreen> {
   late AppLocalizations _locale;
   double width = 0;
   double height = 0;
@@ -85,67 +87,11 @@ class _FileListScreenState extends State<FileListScreen> {
         appBar: AppBar(
           title: Text(_locale.documentExplorer),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Adding some spacing between search field and tree
-                Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: width * 0.35,
-                        height: height * 0.34,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 3,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomSearchField(
-                              label: _locale.search,
-                              width: width * 0.3,
-                              padding: 8,
-                              controller: searchController,
-                              onChanged: (value) {
-                                searchTree(value);
-                                // Add search functionality if needed
-                              },
-                            ),
-                            Expanded(child: treeSection()),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: width * 0.02,
-                      ),
-                      const FillterFileSection()
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    TableFileListSection(),
-                  ],
-                )
-              ],
-            ),
-          ),
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ViewTable(),
+          ],
         ));
   }
 
