@@ -115,7 +115,7 @@ class DocumentsController {
 
   Future<List<String>> getAllScannersMethod(String ip) async {
     List<String> list = [];
-    var response = await ApiService().getScannersRequest(ip, getAllScanners);
+    var response = await ApiService().getRequest(getAllScanners);
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
       for (var scanner in jsonData['scanners']) {
@@ -127,7 +127,7 @@ class DocumentsController {
 
   Future<ScannedImage> getSccanedImageMethod(String ip, int index) async {
     var response =
-        await ApiService().getScannersRequest(ip, "$getScanedImageApi$index");
+        await ApiService().getRequest("$getScanedImageApi/$index");
     var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
     // print(jsonData);
     ScannedImage scannedImage = ScannedImage.fromJson(jsonData);

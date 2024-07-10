@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/login_dialog.dart';
@@ -29,9 +30,9 @@ class ApiService {
       var response = await http.get(
         Uri.parse(requestUrl),
         headers: {
-          "Accept": "application/json",
-          "content-type": "application/json",
-          "Authorization": "Bearer $token",
+          "Accept": "*/*",
+          "content-type": "*/*",
+          // "Authorization": "Bearer $token",
         },
       );
       print("--------------------------------------------");

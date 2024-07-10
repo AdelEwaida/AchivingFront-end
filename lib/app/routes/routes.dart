@@ -121,6 +121,8 @@ class AppRoutes {
     var response = await LoginController().logInWithOutPass(
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
     if (response) {
+      fileListProvider.setIsViewFile(true);
+
       fileListProvider.setDescription(desc!);
       fileListProvider.setIssueNumber(fld1Param!);
       screenContentProvider.setPage1(7);
@@ -138,7 +140,6 @@ class AppRoutes {
     late DocumentListProvider fileListProvider;
     screenContentProvider = context.read<ScreenContentProvider>();
     fileListProvider = context.read<DocumentListProvider>();
-    fileListProvider.setIsViewFile(true);
 
     String key = "archiveProj@s2024ASD/Key@team.CT";
     final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
@@ -161,6 +162,8 @@ class AppRoutes {
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
 
     if (response) {
+      fileListProvider.setIsViewFile(true);
+
       fileListProvider.setIssueNumber(fld1Param!);
       screenContentProvider.setPage1(16);
 

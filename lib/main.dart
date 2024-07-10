@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:js';
 import 'dart:js_interop';
 import 'dart:ui';
+import 'package:archiving_flutter_project/app/config/client.dart';
 import 'package:archiving_flutter_project/dialogs/login_dialog.dart';
 import 'package:archiving_flutter_project/service/controller/login_controllers/login_controller.dart';
 import 'package:excel/excel.dart';
@@ -35,6 +37,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:js' as js;
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
+
   runApp(
     MultiProvider(providers: [
       ChangeNotifierProvider(create: (create) => LocaleProvider()),

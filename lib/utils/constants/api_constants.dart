@@ -52,5 +52,5 @@ const updateUserCatApi = "userCategory/update";
 const getUsersByCat = "userCategory/getUsersByCat";
 const deleteUserCatApi = "userCategory/delete";
 
-const getAllScanners = "getAllScanners";
-const getScanedImageApi = "api/scannermanager/scan/";
+const getAllScanners = "users/getScanners";
+const getScanedImageApi = "users/scanProcess";

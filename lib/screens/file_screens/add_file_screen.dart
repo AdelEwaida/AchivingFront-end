@@ -94,15 +94,17 @@ class _AddFileScreenState extends State<AddFileScreen> {
     if (documentListProvider.issueNumber != null) {
       issueNoController.text = documentListProvider.issueNumber ?? "";
     }
+    scanners = await DocumentsController().getAllScannersMethod(url);
+    setState(() {});
+    // userController
+    //     .getUsers(SearchModel(page: -1, status: -1, searchField: userName))
+    //     .then((value) async {
+    //   url = "https://${value[0].url!}";
+    //   print("urlurlurl ${url}");
+    //   print("urlurlurl 2 ${url}");
 
-    userController
-        .getUsers(SearchModel(page: -1, status: -1, searchField: userName))
-        .then((value) async {
-      url = "https://${value[0].url!}";
-      print("urlurlurl ${url}");
-      scanners = await DocumentsController().getAllScannersMethod(url);
-      setState(() {});
-    });
+    //   setState(() {});
+    // });
 
     super.didChangeDependencies();
   }
@@ -645,7 +647,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     setState(() {});
   }
 
-  int scannerIndex = -1;
+  int scannerIndex = 0;
   Widget buildScanDropdown() {
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 10),
@@ -698,7 +700,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     openLoadinDialog(context);
     var response =
         await documentsController.getSccanedImageMethod(url, scannerIndex);
-    filesName.add("${issueNoController.text}.jpeg");
+    filesName.add("${issueNoController.text}.pdf");
     filesBlobs.add(response.scannedImage!);
     Navigator.pop(context);
   }
