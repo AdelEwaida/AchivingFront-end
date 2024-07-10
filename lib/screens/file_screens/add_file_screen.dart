@@ -3,9 +3,12 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:archiving_flutter_project/models/db/categories_models/doc_cat_parent.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
+import 'package:archiving_flutter_project/models/db/user_models/department_user_model.dart';
 import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/service/controller/users_controller/user_controller.dart';
+import 'package:archiving_flutter_project/service/handler/api_service.dart';
+import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:file_picker/file_picker.dart';
@@ -87,24 +90,32 @@ class _AddFileScreenState extends State<AddFileScreen> {
     departmetList = await DepartmentController()
         .getDep(SearchModel(page: -1, searchField: "", status: -1));
     userName = await storage.read(key: "userName");
+    
     setState(() {});
     if (documentListProvider.description != null) {
       descriptionController.text = documentListProvider.description ?? "";
     }
     if (documentListProvider.issueNumber != null) {
       issueNoController.text = documentListProvider.issueNumber ?? "";
+      DepartmentUserModel? departmentUserModel;
+      var departmentUserModelResonse =
+          await UserController().getDepartmentUser(userName!);
+      for (int i = 0; i < departmentUserModelResonse.length; i++) {
+        if (departmentUserModelResonse[i].bolSelected == 1) {
+          selectedDep = departmentUserModelResonse[i].txtDeptkey!;
+          selctedDepDesc = departmentUserModelResonse[i].txtDeptName!;
+          if (catList.isNotEmpty) {
+            selectedCat = catList[0].txtKey!;
+            selectedCatDesc = catList[0].txtDescription!;
+            setState(() {});
+          }
+          // setState(() {});
+        }
+      }
     }
     scanners = await DocumentsController().getAllScannersMethod(url);
-    setState(() {});
-    // userController
-    //     .getUsers(SearchModel(page: -1, status: -1, searchField: userName))
-    //     .then((value) async {
-    //   url = "https://${value[0].url!}";
-    //   print("urlurlurl ${url}");
-    //   print("urlurlurl 2 ${url}");
-
-    //   setState(() {});
-    // });
+  
+ 
 
     super.didChangeDependencies();
   }

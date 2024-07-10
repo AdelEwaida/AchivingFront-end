@@ -1,3 +1,4 @@
+import 'package:archiving_flutter_project/models/db/user_models/department_user_model.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -7,11 +8,17 @@ class DocumentListProvider with ChangeNotifier {
   String? _issueNumber;
   String? _desc;
   bool? isViewFile;
+  DepartmentUserModel? _departmentUserModel;
+  void setDepartmentUserModel(DepartmentUserModel dept) {
+    _departmentUserModel = dept;
+    notifyListeners();
+  }
+
+  DepartmentUserModel? get departmentUserModel => _departmentUserModel;
   void setIsViewFile(bool isView) {
     isViewFile = isView;
     notifyListeners();
   }
-
 
   void setDescription(String? s) {
     _desc = s;

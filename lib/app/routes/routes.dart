@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:archiving_flutter_project/models/db/user_models/department_user_model.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
 import 'package:archiving_flutter_project/models/dto/login_model.dart';
 import 'package:archiving_flutter_project/providers/file_list_provider.dart';
@@ -6,6 +9,7 @@ import 'package:archiving_flutter_project/screens/home_page.dart';
 import 'package:archiving_flutter_project/screens/log_in.dart';
 import 'package:archiving_flutter_project/service/controller/login_controllers/login_controller.dart';
 import 'package:archiving_flutter_project/service/handler/api_service.dart';
+import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
 import 'package:archiving_flutter_project/utils/constants/assets_path_constants.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:archiving_flutter_project/utils/encrypt/encryption.dart';
@@ -118,6 +122,9 @@ class AppRoutes {
     String emailEncrypted =
         Encryption.performAesEncryption(userName ?? '', key, byteArray);
     storage.write(key: "userName", value: userName);
+
+ 
+
     var response = await LoginController().logInWithOutPass(
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
     if (response) {
@@ -154,6 +161,8 @@ class AppRoutes {
     String? userName = uri.queryParameters['DUN'];
     String emailEncrypted =
         Encryption.performAesEncryption(userName ?? '', key, byteArray);
+
+  
     const storage = FlutterSecureStorage();
 
     storage.write(key: "userName", value: userName);
