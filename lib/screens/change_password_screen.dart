@@ -4,6 +4,7 @@ import 'package:archiving_flutter_project/models/db/user_models/update_user_pass
 import 'package:archiving_flutter_project/service/controller/users_controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/services.dart'; // Import this for TextInputFormatter
 
 import '../dialogs/error_dialgos/show_error_dialog.dart';
 import '../service/controller/error_controllers/error_controller.dart';
@@ -31,6 +32,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   FocusNode passwordFocus = FocusNode();
   bool obscureOldPassword = true;
   bool obscureNewPassword = true;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -112,14 +114,30 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   void save() async {
+    if (newPasswordController.text.contains(' ') ||
+        oldPasswordController.text.contains(' ')) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return ErrorDialog(
+              icon: Icons.error,
+              errorDetails: _locale.noSpacesAllowed,
+              errorTitle: _locale.error,
+              color: Colors.red,
+              statusCode: 400);
+        },
+      );
+      return;
+    }
+
     String key = "archiveProj@s2024ASD/Key@team.CT";
     final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
     final byteArray =
         Uint8List.fromList(iv.map((bit) => bit == 1 ? 0x01 : 0x00).toList());
     String passEncrypted = Encryption.performAesEncryption(
-        oldPasswordController.text, key, byteArray);
+        oldPasswordController.text.trim(), key, byteArray);
     String passEncryptedNew = Encryption.performAesEncryption(
-        newPasswordController.text, key, byteArray);
+        newPasswordController.text.trim(), key, byteArray);
     UpdateUserPassword updateUserPassword = UpdateUserPassword(
         oldPassword: passEncrypted, password: passEncryptedNew);
     var response =
@@ -140,7 +158,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         oldPasswordController.clear();
         newPasswordController.clear();
       });
-    } 
+    }
     // else if (response.statusCode == 400 || response.statusCode == 406) {
     //   // Navigator.pop(context);
 
@@ -180,6 +198,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             fontSize: 18,
           ),
           obscureText: isPassword ? obscureText : false,
+          inputFormatters: [
+            FilteringTextInputFormatter.deny(RegExp(r'\s')),
+          ],
           decoration: InputDecoration(
             suffixIcon: isPassword
                 ? obscureText
