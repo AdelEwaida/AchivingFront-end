@@ -103,7 +103,6 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_locale.addUserCategories),
-       
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -179,6 +178,8 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                                     searchField: text.trim(),
                                     page: -1,
                                     status: -1));
+                            newList.removeWhere((user) =>
+                                listOfUsersCode!.contains(user.txtCode));
                             return newList;
                           },
                         ),
@@ -254,8 +255,10 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                 children: [
                   Text(
                     "${_locale.pleaseSelectCat} " + "*",
-                    
-                    style: TextStyle(color: textSecondary,fontSize: 16,fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        color: textSecondary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
