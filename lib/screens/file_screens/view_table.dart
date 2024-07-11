@@ -69,52 +69,51 @@ class _ViewTableState extends State<ViewTable> {
   PlutoRow? selectedRow;
   @override
   Widget build(BuildContext context) {
-    return Consumer<DocumentListProvider>(
-      builder: (context, value, child) {
-        return TableComponent(
-          key: UniqueKey(),
-          tableHeigt: height * 0.8,
-          tableWidth: width * 0.81,
-          // addReminder: addRemider,
-          // upload: uploadFile,
+    return TableComponent(
+      // key: UniqueKey(),
+      tableHeigt: height * 0.8,
+      tableWidth: width * 0.81,
+      // addReminder: addRemider,
+      // upload: uploadFile,
 
-          // copy: copyFile,
-          // delete: deleteFile,
-          download: download,
-          // add: addAction,
-          // genranlEdit: editAction,
-          plCols: polCols,
-          mode: PlutoGridMode.selectWithOneTap,
-          polRows: [],
-          footerBuilder: (stateManager) {
-            return lazyLoadingfooter(stateManager);
-          },
-          explor: explorFiels,
-          view: viewDocumentInfo,
-          // genranlEdit: editDocumentInfo,
-          onLoaded: (PlutoGridOnLoadedEvent event) {
-            stateManager = event.stateManager;
-            stateManager.setShowColumnFilter(true);
-            // pageLis.value = pageLis.value > 1 ? 0 : 1;
-            // totalActionsCount.value = 0;
-            // getCount();
-          },
-          doubleTab: (event) async {
-            PlutoRow? tappedRow = event.row;
-          },
-          onSelected: (event) async {
-            PlutoRow? tappedRow = event.row;
-            selectedRow = tappedRow;
-          },
-        );
+      // copy: copyFile,
+      // delete: deleteFile,
+      download: download,
+      // add: addAction,
+      // genranlEdit: editAction,
+      plCols: polCols,
+      mode: PlutoGridMode.selectWithOneTap,
+      polRows: [],
+      footerBuilder: (stateManager) {
+        return lazyLoadingfooter(stateManager);
+      },
+      explor: explorFiels,
+      view: viewDocumentInfo,
+      // genranlEdit: editDocumentInfo,
+      onLoaded: (PlutoGridOnLoadedEvent event) async {
+        stateManager = event.stateManager;
+        // stateManager.setShowLoading(true);
+        stateManager.setShowColumnFilter(true);
+     
+      },
+      rowColor: (p0) {
+        if (p0.rowIdx == 0 && selectedRow!.sortIdx == p0.rowIdx) {
+          return const Color.fromARGB(255, 37, 171, 233).withOpacity(0.5);
+        } else {
+          return Colors.white;
+        }
+      },
+      doubleTab: (event) async {
+        PlutoRow? tappedRow = event.row;
+      },
+      onSelected: (event) async {
+        selectedRow = event.row;
       },
     );
   }
 
   void explorFiels() {
     if (selectedRow != null) {
-      print(
-          "selectedRow!.cells['txtKey']!.value ${selectedRow!.cells['txtDescription']!.value} ${selectedRow!.cells['txtKey']!.value}");
       openLoadinDialog(context);
       documentsController
           .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
@@ -399,7 +398,8 @@ class _ViewTableState extends State<ViewTable> {
           i++) {
         PlutoRow row = result[i].toPlutoRow(i + 1);
         // rowList.add(row);
-        searchList.add(row);
+        // searchList.add(row);
+        stateManager.appendRows([row]);
       }
 
       await Future.delayed(const Duration(milliseconds: 500));
@@ -416,25 +416,28 @@ class _ViewTableState extends State<ViewTable> {
       } else {
         documentListProvider.searchDocumentCriteria.page = 1;
       }
-
+      print(1);
       List<DocumentModel> result = [];
       List<PlutoRow> topList = [];
+      print(2);
 
       result = await documentsController
           .searchDocCriterea(documentListProvider.searchDocumentCriteria);
+      print(3);
 
       int currentPage = documentListProvider.page!; //1
-
+      print(4);
       for (int i =
               documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
           i < result.length;
           i++) {
         int rowIndex = (currentPage - 1) * result.length + (i + 1);
         PlutoRow row = result[i].toPlutoRow(rowList.length + 1);
+        // stateManager.appendRows([row]);
         rowList.add(row);
         topList.add(row);
       }
-
+      selectedRow = rowList[0];
       isLast = topList.isEmpty;
 
       await Future.delayed(const Duration(milliseconds: 500));
@@ -449,6 +452,15 @@ class _ViewTableState extends State<ViewTable> {
     }
   }
 
+  fetchData() async {
+    List<DocumentModel> result = [];
+    List<PlutoRow> topList = [];
+    result = await documentsController
+        .searchDocCriterea(documentListProvider.searchDocumentCriteria);
+    for (int i = 0; i < result.length; i++) {
+      stateManager.appendRows([result[i].toPlutoRow(i)]);
+    }
+  }
   // Future<PlutoInfinityScrollRowsResponse> fetch1(
   //     PlutoInfinityScrollRowsRequest request) async {
   //   bool isLast = false;
