@@ -192,6 +192,7 @@
   "url":"Url",
   "scanFile":"Scan File",
   "scanners":"Scanners",
+  "noSpacesAllowed": "Passwords cannot contain spaces",
   "newPassConfirm": "Confirm New Password",
   "passwordNotEquals": "New Password Not Identical"
 
