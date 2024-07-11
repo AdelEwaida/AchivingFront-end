@@ -352,6 +352,53 @@ class _SideMenuState extends State<SideMenu> {
     return InkWell(
       onTap: () {
         setState(() {
+          menuList[parentIndex].selectedSubMenuIndex = subMenuIndex;
+          screenProvider.setPage1(subMenu.pageNumber);
+        });
+      },
+      child: MouseRegion(
+        onEnter: (event) {
+          setState(() {
+            selectedSubMenuHover = subMenuIndex;
+          });
+        },
+        onExit: (event) {
+          setState(() {
+            selectedSubMenuHover = -1;
+          });
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: isDesktop ? width * 0.018 : width * 0.1,
+              vertical: 15),
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 10,
+              ),
+              SizedBox(
+                width: isDesktop ? width * 0.09 : width * 0.3,
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: getActiveSubColor(parentIndex, subMenuIndex),
+                    fontSize: isDesktop ? fontSize : width * 0.03,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget createSubMenu1(
+      SubMenuModel subMenu, int parentIndex, int subMenuIndex) {
+    String title = subMenu.title;
+    return InkWell(
+      onTap: () {
+        setState(() {
           selectedSubMenuIndex = subMenuIndex;
           screenProvider.setPage1(subMenu.pageNumber);
         });
@@ -404,7 +451,7 @@ class _SideMenuState extends State<SideMenu> {
 
   Color getActiveSubColor(int parentIndex, int subMenuIndex) {
     if (selectedMenuIndex == parentIndex &&
-        selectedSubMenuIndex == subMenuIndex) {
+        menuList[parentIndex].selectedSubMenuIndex == subMenuIndex) {
       return textSecondary; // Active color for the selected submenu
     }
     if (selectedSubMenuHover == subMenuIndex) {

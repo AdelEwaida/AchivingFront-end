@@ -31,6 +31,13 @@ class _DailyRemindersState extends State<DailyReminders> {
   ValueNotifier isSearch = ValueNotifier(false);
   String todayDate = DatesController().formatDateReverse(
       DatesController().formatDate(DatesController().todayDate()));
+  ValueNotifier totalDailySales = ValueNotifier(0);
+  getCount() {
+    actionController.getActionCount().then((value) {
+      totalDailySales.value = value;
+    });
+  }
+
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -64,6 +71,8 @@ class _DailyRemindersState extends State<DailyReminders> {
         stateManager!.columns[i].titleSpan = polCols[i].titleSpan;
       }
     }
+    getCount();
+
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
@@ -80,28 +89,57 @@ class _DailyRemindersState extends State<DailyReminders> {
       body: Center(
         child: Container(
           width: isDesktop ? width * 0.8 : width * 0.9,
-          child: TableComponent(
-            // key: UniqueKey(),
-            isWhiteText: true,
-            tableHeigt: height * 0.81,
-            tableWidth: width * 0.85,
-            plCols: polCols,
-            mode: PlutoGridMode.selectWithOneTap,
-            polRows: [],
-            footerBuilder: (stateManager) {
-              return lazyLoadingfooter(stateManager);
-            },
-            onLoaded: (PlutoGridOnLoadedEvent event) {
-              stateManager = event.stateManager;
-              stateManager!.setShowColumnFilter(true);
-            },
-            doubleTab: (event) async {
-              PlutoRow? tappedRow = event.row;
-            },
-            onSelected: (event) async {
-              PlutoRow? tappedRow = event.row;
-              selectedRow = tappedRow;
-            },
+          child: Column(
+            children: [
+              TableComponent(
+                // key: UniqueKey(),
+                isWhiteText: true,
+                tableHeigt: height * 0.81,
+                tableWidth: width * 0.85,
+                plCols: polCols,
+                mode: PlutoGridMode.selectWithOneTap,
+                polRows: [],
+                footerBuilder: (stateManager) {
+                  return lazyLoadingfooter(stateManager);
+                },
+                onLoaded: (PlutoGridOnLoadedEvent event) {
+                  stateManager = event.stateManager;
+                  stateManager!.setShowColumnFilter(true);
+                  getCount();
+                },
+                doubleTab: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                },
+                onSelected: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                  selectedRow = tappedRow;
+                },
+              ),
+              Container(
+                width: isDesktop ? width * 0.8 : width * 0.9,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "${_locale.totalCount}: ",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      ValueListenableBuilder(
+                        valueListenable: totalDailySales,
+                        builder: ((context, value, child) {
+                          return Text(
+                            "${totalDailySales.value}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
