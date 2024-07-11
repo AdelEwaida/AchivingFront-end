@@ -90,7 +90,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     departmetList = await DepartmentController()
         .getDep(SearchModel(page: -1, searchField: "", status: -1));
     userName = await storage.read(key: "userName");
-    
+
     setState(() {});
     if (documentListProvider.description != null) {
       descriptionController.text = documentListProvider.description ?? "";
@@ -114,8 +114,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
       }
     }
     scanners = await DocumentsController().getAllScannersMethod(url);
-  
- 
 
     super.didChangeDependencies();
   }
@@ -655,6 +653,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
     arrivalDateController.text =
         Converters.formatDate2(DateTime.now().toString());
     fileDateController.text = Converters.formatDate2(DateTime.now().toString());
+    filesName = [];
+    filesBlobs = [];
     setState(() {});
   }
 
