@@ -15,7 +15,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/dto/side_menu/sub_menu_model.dart';
 
 class SideMenu extends StatefulWidget {
-  const SideMenu({super.key});
+  String? name;
+  SideMenu({super.key, this.name});
 
   @override
   State<SideMenu> createState() => _SideMenuState();
@@ -91,7 +92,7 @@ class _SideMenuState extends State<SideMenu> {
             child: titleSection(),
           ),
           SizedBox(
-            height: height * 0.76,
+            height: height * 0.74,
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -101,9 +102,47 @@ class _SideMenuState extends State<SideMenu> {
               ),
             ),
           ),
+          accountSection(),
+
           // const Divider(), // Add a line before the logout button
           // const Padding(padding: EdgeInsets.all(5)),
           LogoutTab(isCollapse: false), // Pass the isCollapsed state
+        ],
+      ),
+    );
+  }
+
+  accountSection() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+              height: 50,
+              decoration: const BoxDecoration(
+                color: secondary,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.account_circle_rounded,
+                    color: Colors.white,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        widget.name!,
+                        overflow: TextOverflow.fade,
+                        softWrap: false,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
         ],
       ),
     );
@@ -242,7 +281,6 @@ class _SideMenuState extends State<SideMenu> {
                     }
                     if (!menuList[index].isParent) {
                       screenProvider.setPage1(menu.pageNumber);
-
                     }
                   });
                 },

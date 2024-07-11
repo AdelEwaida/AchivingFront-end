@@ -4,6 +4,7 @@ import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/side_menu/side_menu.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -22,11 +23,14 @@ class _HomePageState extends State<HomePage> {
   bool isDesktop = false;
   late ScreenContentProvider screenContentProvider;
   late AppLocalizations _locale;
+  ValueNotifier name = ValueNotifier("");
+  FlutterSecureStorage storage = FlutterSecureStorage();
 
   @override
-  void didChangeDependencies() {
+  Future<void> didChangeDependencies() async {
     screenContentProvider = context.read<ScreenContentProvider>();
     _locale = AppLocalizations.of(context)!;
+    name.value = await storage.read(key: "userName");
 
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
@@ -39,7 +43,14 @@ class _HomePageState extends State<HomePage> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     return Scaffold(
-        drawer: !isDesktop ? const SideMenu() : null,
+        drawer: ValueListenableBuilder(
+          valueListenable: name,
+          builder: (context, value, child) {
+            return SideMenu(
+              name: name.value,
+            );
+          },
+        ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -53,7 +64,14 @@ class _HomePageState extends State<HomePage> {
                   context.read<DocumentListProvider>().isViewFile == true
                       ? Container()
                       : isDesktop
-                          ? const SideMenu()
+                          ? ValueListenableBuilder(
+                              valueListenable: name,
+                              builder: (context, value, child) {
+                                return SideMenu(
+                                  name: name.value,
+                                );
+                              },
+                            )
                           : Container(
                               color: Colors.white,
                             ),
