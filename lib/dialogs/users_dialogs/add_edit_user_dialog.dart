@@ -272,6 +272,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
     if (userCodeController.text.trim().isEmpty ||
         userNameController.text.trim().isEmpty ||
         txtReferenceUsernameController.text.isEmpty ||
+        urlController.text.trim().isEmpty ||
         selectedUserType == null) {
       showDialog(
         context: context,

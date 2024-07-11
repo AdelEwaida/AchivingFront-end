@@ -150,7 +150,7 @@ class _LogInScreenState extends State<LoginScreen>
           children: [
             logo(),
             space(),
-            customTextField(_locale.userName, _userNameController,
+            customTextField(_locale.userCode, _userNameController,
                 userNameFocus, false, isDesktop),
             space(),
             customTextField(_locale.password, _passwordController,

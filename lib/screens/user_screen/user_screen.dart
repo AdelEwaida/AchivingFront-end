@@ -150,7 +150,9 @@ class _UserScreenState extends State<UserScreen> {
             userModel: userModel,
           );
         },
-      );
+      ).then((value) {
+        selectedRow = null;
+      });
     }
   }
 
@@ -185,7 +187,9 @@ class _UserScreenState extends State<UserScreen> {
             userModel: userModel,
           );
         },
-      );
+      ).then((value) {});
+      selectedRow = null;
+
     }
   }
 
@@ -230,6 +234,7 @@ class _UserScreenState extends State<UserScreen> {
     stateManager!.setShowLoading(true);
     stateManager!.removeAllRows();
     stateManager!.notifyListeners(true);
+    selectedRow = null;
     rowList.clear();
     pageLis.value = 1;
     var response = await fetch(PlutoInfinityScrollRowsRequest());
@@ -246,7 +251,7 @@ class _UserScreenState extends State<UserScreen> {
         title: "#",
         field: "count",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.05 : width * 0.15,
+        width: isDesktop ? width * 0.07 : width * 0.15,
         backgroundColor: columnColors,
         renderer: (rendererContext) {
           return Center(
@@ -260,7 +265,7 @@ class _UserScreenState extends State<UserScreen> {
         title: _locale.userCode,
         field: "txtCode",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.19 : width * 0.4,
+        width: isDesktop ? width * 0.21 : width * 0.4,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
@@ -268,7 +273,7 @@ class _UserScreenState extends State<UserScreen> {
         title: _locale.userName,
         field: "txtNamee",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.2 : width * 0.4,
+        width: isDesktop ? width * 0.21 : width * 0.4,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
@@ -276,7 +281,7 @@ class _UserScreenState extends State<UserScreen> {
         title: _locale.type,
         field: "intType",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.11 : width * 0.2,
+        width: isDesktop ? width * 0.13 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
@@ -284,17 +289,17 @@ class _UserScreenState extends State<UserScreen> {
         title: _locale.userStatus,
         field: "bolActive",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.13 : width * 0.2,
+        width: isDesktop ? width * 0.15 : width * 0.2,
         backgroundColor: columnColors,
       ),
-      PlutoColumn(
-        enableFilterMenuItem: true,
-        title: _locale.email,
-        field: "email",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.116 : width * 0.2,
-        backgroundColor: columnColors,
-      ),
+      // PlutoColumn(
+      //   enableFilterMenuItem: true,
+      //   title: _locale.email,
+      //   field: "email",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.116 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
     ]);
   }
 

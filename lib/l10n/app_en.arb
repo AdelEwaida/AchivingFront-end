@@ -4,7 +4,7 @@
     "password": "Password",
     "signIn": "Sign In",
     "close": "Close",
-    "emailReq": "Please Enter Email",
+    "emailReq": "Please Enter User Name",
     "passReqField": "Please Enter Password",
     "cancel": "Cancel",
     "ok": "Ok",
@@ -191,7 +191,9 @@
   "userRefName": "User Reference Name",
   "url":"Url",
   "scanFile":"Scan File",
-  "scanners":"Scanners"
+  "scanners":"Scanners",
+  "newPassConfirm": "Confirm New Password",
+  "passwordNotEquals": "New Password Not Identical"
 
   
 

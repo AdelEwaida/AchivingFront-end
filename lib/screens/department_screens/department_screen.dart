@@ -322,6 +322,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
     count = 0; // Reset the count
     rowList.clear(); // Clear the existing rows
     getCount();
+    selectedRow = null;
     stateManager!.removeAllRows();
     stateManager!.setShowLoading(true); // Show loading indicator
     fetch(PlutoInfinityScrollRowsRequest()).then((response) {

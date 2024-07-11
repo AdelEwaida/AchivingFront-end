@@ -33,7 +33,6 @@ class LoginController {
       },
       body: json.encode(userModel.toJson()),
     );
-    print("response.statusCoderesponse.statusCode ${response.statusCode}");
     bool responseStatus = false;
     if (response.statusCode == 200) {
       String token = response.body.substring(8, response.body.length - 2);
