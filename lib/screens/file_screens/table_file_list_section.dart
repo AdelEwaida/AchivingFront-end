@@ -193,7 +193,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
             documentModel: documentModel,
           );
         },
-      );
+      ).then((value) {
+        selectedRow = null;
+      });
     }
   }
 
@@ -251,7 +253,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       ).then((value) {
         if (value) {
           documentListProvider.searchDocumentCriteria.page = 0;
-
+          selectedRow = null;
           documentListProvider.setDocumentSearchCriterea(
               documentListProvider.searchDocumentCriteria);
         }

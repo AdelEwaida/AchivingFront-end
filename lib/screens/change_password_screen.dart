@@ -25,6 +25,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   bool isDesktop = false;
   late AppLocalizations _locale;
   final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController confirmNewPasswordController =
+      TextEditingController();
   final TextEditingController oldPasswordController = TextEditingController();
 
   double radius = 7;
@@ -32,6 +34,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   FocusNode passwordFocus = FocusNode();
   bool obscureOldPassword = true;
   bool obscureNewPassword = true;
+  bool obscureConfirmNewPassword = true;
 
   @override
   void didChangeDependencies() {
@@ -51,7 +54,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       body: Center(
         child: Container(
           width: isDesktop ? width * 0.5 : width * 0.9,
-          height: height * 0.5,
+          height: height * 0.6,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(30),
@@ -74,6 +77,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 SizedBox(height: height * 0.032),
                 customTextField(_locale.newPass, newPasswordController,
                     passwordFocus, true, isDesktop, obscureNewPassword),
+                SizedBox(height: height * 0.032),
+                customTextField(
+                    _locale.newPassConfirm,
+                    confirmNewPasswordController,
+                    passwordFocus,
+                    true,
+                    isDesktop,
+                    obscureConfirmNewPassword),
                 SizedBox(height: height * 0.032),
                 customSubmitButton(),
               ],
@@ -102,7 +113,36 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         textStyle: const TextStyle(fontSize: 18),
       ),
       onPressed: () {
-        save();
+        if (oldPasswordController.text.isEmpty ||
+            newPasswordController.text.isEmpty ||
+            confirmNewPasswordController.text.isEmpty) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return ErrorDialog(
+                  icon: Icons.error,
+                  errorDetails: _locale.pleaseAddAllRequiredFields,
+                  errorTitle: _locale.error,
+                  color: Colors.red,
+                  statusCode: 200);
+            },
+          );
+        } else if (newPasswordController.text !=
+            confirmNewPasswordController.text) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return ErrorDialog(
+                  icon: Icons.error,
+                  errorDetails: _locale.passwordNotEquals,
+                  errorTitle: _locale.error,
+                  color: Colors.red,
+                  statusCode: 200);
+            },
+          );
+        } else {
+          save();
+        }
       },
       child: Center(
         child: Text(
@@ -212,6 +252,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               obscureOldPassword = !obscureOldPassword;
                             } else if (controller == newPasswordController) {
                               obscureNewPassword = !obscureNewPassword;
+                            } else {
+                              obscureConfirmNewPassword =
+                                  !obscureConfirmNewPassword;
                             }
                           });
                         },
@@ -228,6 +271,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               obscureOldPassword = !obscureOldPassword;
                             } else if (controller == newPasswordController) {
                               obscureNewPassword = !obscureNewPassword;
+                            } else {
+                              obscureConfirmNewPassword =
+                                  !obscureConfirmNewPassword;
                             }
                           });
                         },

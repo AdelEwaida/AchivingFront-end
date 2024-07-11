@@ -24,7 +24,7 @@ class _OfficeScreenState extends State<ActionScreen> {
   double width = 0;
   double height = 0;
   bool isDesktop = false;
-   PlutoGridStateManager? stateManager;
+  PlutoGridStateManager? stateManager;
   List<PlutoColumn> polCols = [];
   late AppLocalizations _locale;
   ValueNotifier pageLis = ValueNotifier(1);
@@ -325,7 +325,8 @@ class _OfficeScreenState extends State<ActionScreen> {
   void reloadData() {
     pageLis.value = 1; // Reset the page to the first one
     count = 0; // Reset the count
-    rowList.clear(); // Clear the existing rows
+    rowList.clear();
+    selectedRow = null; // Clear the existing rows
     getCount();
     stateManager!.removeAllRows();
     stateManager!.setShowLoading(true); // Show loading indicator

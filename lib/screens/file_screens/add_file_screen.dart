@@ -113,7 +113,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
         }
       }
     }
-    scanners = await DocumentsController().getAllScannersMethod(url);
 
     super.didChangeDependencies();
   }
@@ -637,6 +636,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
   void resetForm() {
     descriptionController.clear();
     keyWordsController.clear();
+    filesBlobs.clear();
+    filesName.clear();
     ref1Controller.clear();
     ref2Controller.clear();
     fileDateController.clear();
@@ -653,8 +654,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
     arrivalDateController.text =
         Converters.formatDate2(DateTime.now().toString());
     fileDateController.text = Converters.formatDate2(DateTime.now().toString());
-    filesName = [];
-    filesBlobs = [];
     setState(() {});
   }
 
@@ -670,9 +669,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
             key: UniqueKey(),
             isMandatory: true,
             onChanged: (value) {
-              // selectedDep = value.txtKey;
-              // selctedDepDesc = value.txtDescription;
-              // setState(() {});
               for (int i = 0; i < scanners.length; i++) {
                 if (scanners[i] == value) {
                   scannerIndex = i;
@@ -680,13 +676,14 @@ class _AddFileScreenState extends State<AddFileScreen> {
               }
             },
             initialValue: "",
-            items: scanners,
+            // items: scanners,
             bordeText: _locale.scanners,
             width: width * 0.2,
             height: height * 0.05,
-            // onSearch: (p0) async {
-            //   return await DocumentsController().getAllScannersMethod(url);
-            // },
+            onSearch: (p0) async {
+              scanners = await DocumentsController().getAllScannersMethod(url);
+              return scanners;
+            },
           ),
           const SizedBox(height: 10),
           ElevatedButton(
