@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:js';
 
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/payload_model.dart';
 import 'package:archiving_flutter_project/models/dto/login_model.dart';
+import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/service/controller/error_controllers/error_controller.dart';
 import 'package:archiving_flutter_project/service/handler/api_service.dart';
 import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
@@ -42,12 +44,17 @@ class LoginController {
       final encodedPayload = token.split('.')[1];
       final payloadData =
           utf8.fuse(base64).decode(base64.normalize(encodedPayload));
+      // final context2 = navigatorKey.currentState!.overlay!.context;
 
       final payLoad = PayloadModel.fromJson(jsonDecode(payloadData));
+
       storage.write(key: 'roles', value: payLoad.roles![0]);
+      if (payLoad.roles![1] == "refUser") {
+        // ignore: use_build_context_synchronously
+        storage.write(key: 'isView', value: "true");
+      }
       // SideMenuDate.userType = int.parse(payLoad.roles!.first);
       // storage.write(key: 'roles', value: SideMenuDate.userType.toString());
-      print(payLoad.toJson());
       responseStatus = true;
       return responseStatus;
     } else if (response.statusCode == 402) {
