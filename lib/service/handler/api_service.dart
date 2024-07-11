@@ -92,7 +92,7 @@ class ApiService {
         }
         ErrorController.openErrorDialog(
           response.statusCode,
-          "there is somthing wrong",
+          response.body,
         );
         checkErrorDec(response);
       }
@@ -175,7 +175,7 @@ class ApiService {
         }
         ErrorController.openErrorDialog(
           response.statusCode,
-          "there is somthing wrong",
+          response.body,
         );
         checkErrorDec(response);
       }
@@ -255,7 +255,7 @@ class ApiService {
         (response.statusCode == 400 || response.statusCode == 406)) {
       ErrorController.openErrorDialog(
         response.statusCode,
-        "there is somthing wrong",
+        response.body,
       );
       return response;
     } else if (response.statusCode != 200) {
@@ -264,7 +264,7 @@ class ApiService {
       }
       ErrorController.openErrorDialog(
         response.statusCode,
-        "there is somthing wrong",
+        response.body,
       );
 
       checkErrorDec(response);
@@ -473,7 +473,7 @@ class ApiService {
               response.statusCode == 402)) {
         // ErrorController.openErrorDialog(
         //   response.statusCode,
-        //   "there is somthing wrong",
+        //   response.body,
         // );
         return response;
       } else if (response.statusCode != 200) {
@@ -482,7 +482,7 @@ class ApiService {
         }
         ErrorController.openErrorDialog(
           response.statusCode,
-          "there is somthing wrong",
+          response.body,
         );
       }
 
