@@ -38,6 +38,7 @@ class _SideMenuState extends State<SideMenu> {
   int selectedSubMenuHover = -1;
   int selectedMenuIndex = -1;
   int selectedSubMenuIndex = -1;
+  int selectedSubMenuParentIndex = -1;
 
   bool isCollapsed = false;
 
@@ -390,6 +391,59 @@ class _SideMenuState extends State<SideMenu> {
     return InkWell(
       onTap: () {
         setState(() {
+          selectedSubMenuParentIndex = parentIndex;
+          selectedSubMenuIndex = subMenuIndex;
+          screenProvider.setPage1(subMenu.pageNumber);
+        });
+      },
+      child: MouseRegion(
+        onEnter: (event) {
+          setState(() {
+            selectedSubMenuHover = subMenuIndex;
+          });
+        },
+        onExit: (event) {
+          setState(() {
+            selectedSubMenuHover = -1;
+          });
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: isDesktop ? width * 0.018 : width * 0.1,
+              vertical: 15),
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 10,
+              ),
+              SizedBox(
+                width: isDesktop ? width * 0.09 : width * 0.3,
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: getActiveSubColor(
+                      subMenuIndex,
+                      parentIndex,
+                    ),
+                    fontSize: isDesktop ? fontSize : width * 0.03,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget createSubMenu1(
+      SubMenuModel subMenu, int parentIndex, int subMenuIndex) {
+    String title = subMenu.title;
+    return InkWell(
+      onTap: () {
+        setState(() {
+          selectedSubMenuParentIndex = parentIndex;
+
           selectedSubMenuIndex = subMenuIndex;
           screenProvider.setPage1(subMenu.pageNumber);
         });
@@ -440,13 +494,21 @@ class _SideMenuState extends State<SideMenu> {
         : Colors.transparent;
   }
 
-  Color getActiveSubColor(int parentIndex, int subMenuIndex) {
-    if (selectedMenuIndex == parentIndex &&
-        selectedSubMenuIndex == subMenuIndex) {
-      return textSecondary; // Active color for the selected submenu
-    }
-    if (selectedSubMenuHover == subMenuIndex) {
-      return Colors.grey; // Hover color for the submenu
+  // Color getActiveSubColor(int parentIndex, int subMenuIndex) {
+  //   if (selectedMenuIndex == parentIndex &&
+  //       selectedSubMenuIndex == subMenuIndex) {
+  //     return textSecondary; // Active color for the selected submenu
+  //   }
+  //   if (selectedSubMenuHover == subMenuIndex) {
+  //     return Colors.grey; // Hover color for the submenu
+  //   }
+  //   return Colors.white;
+  // }
+  Color? getActiveSubColor(int subMenuIndex, int parentIndex) {
+    if ((selectedSubMenuIndex == subMenuIndex &&
+            selectedSubMenuParentIndex == parentIndex) ||
+        selectedSubMenuHover == subMenuIndex) {
+      return textSecondary;
     }
     return Colors.white;
   }
