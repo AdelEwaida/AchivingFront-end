@@ -94,7 +94,7 @@ class _DailyRemindersState extends State<DailyReminders> {
               TableComponent(
                 // key: UniqueKey(),
                 isWhiteText: true,
-                tableHeigt: height * 0.81,
+                tableHeigt: height * 0.75,
                 tableWidth: width * 0.85,
                 plCols: polCols,
                 mode: PlutoGridMode.selectWithOneTap,

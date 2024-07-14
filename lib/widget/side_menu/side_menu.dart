@@ -92,7 +92,7 @@ class _SideMenuState extends State<SideMenu> {
             child: titleSection(),
           ),
           SizedBox(
-            height: height * 0.74,
+            height: height * 0.71,
             child: SingleChildScrollView(
               child: Column(
                 children: [
