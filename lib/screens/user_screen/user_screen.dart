@@ -41,6 +41,13 @@ class _UserScreenState extends State<UserScreen> {
   late DocumentListProvider documentListProvider;
   PlutoGridStateManager? stateManager;
   ValueNotifier isSearch = ValueNotifier(false);
+  ValueNotifier totalUsersCount = ValueNotifier(0);
+  getCount() {
+    userController.getUserCount().then((value) {
+      totalUsersCount.value = value;
+    });
+  }
+
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -88,55 +95,83 @@ class _UserScreenState extends State<UserScreen> {
           title: Text(_locale.users),
         ),
         body: Center(
-          child: Container(
-              width: isDesktop ? width * 0.8 : width * 0.9,
-              child: TableComponent(
-                // key: UniqueKey(),
-                tableHeigt: height * 0.81,
-                tableWidth: width * 0.85,
-                editPassword: chagnePassword,
-                delete: deleteUser,
-                add: addUser,
-                chooseDep: addDepartmentUser,
-                search: search,
-                plCols: polCols,
-                mode: PlutoGridMode.selectWithOneTap,
-                polRows: [],
-                footerBuilder: (stateManager) {
-                  return lazyLoadingfooter(stateManager);
-                },
-                genranlEdit: editUser,
-                onLoaded: (PlutoGridOnLoadedEvent event) {
-                  stateManager = event.stateManager;
-                  stateManager!.setShowColumnFilter(true);
-                  // pageLis.value = pageLis.value > 1 ? 0 : 1;
-                  // totalActionsCount.value = 0;
-                  // getCount();
-                },
-                // doubleTab: (event) async {
-                //   PlutoRow? tappedRow = event.row;
-                //   UserModel userModel =
-                //       UserModel.fromPlutoRow(tappedRow!, _locale);
-                //   showDialog(
-                //     barrierDismissible: false,
-                //     context: context,
-                //     builder: (context) {
-                //       return AddUserDialog(
-                //         isChangePassword: false,
-                //         userModel: userModel,
-                //       );
-                //     },
-                //   ).then((value) {
-                //     if (value == true) {
-                //       refreshTable();
-                //     }
-                //   });
-                // },
-                onSelected: (event) async {
-                  PlutoRow? tappedRow = event.row;
-                  selectedRow = tappedRow;
-                },
-              )),
+          child: Column(
+            children: [
+              Container(
+                  width: isDesktop ? width * 0.8 : width * 0.9,
+                  child: TableComponent(
+                    // key: UniqueKey(),
+                    tableHeigt: height * 0.81,
+                    tableWidth: width * 0.85,
+                    editPassword: chagnePassword,
+                    delete: deleteUser,
+                    add: addUser,
+                    chooseDep: addDepartmentUser,
+                    search: search,
+                    plCols: polCols,
+                    mode: PlutoGridMode.selectWithOneTap,
+                    polRows: [],
+                    footerBuilder: (stateManager) {
+                      return lazyLoadingfooter(stateManager);
+                    },
+                    genranlEdit: editUser,
+                    onLoaded: (PlutoGridOnLoadedEvent event) {
+                      stateManager = event.stateManager;
+                      stateManager!.setShowColumnFilter(true);
+                      // pageLis.value = pageLis.value > 1 ? 0 : 1;
+                      // totalActionsCount.value = 0;
+                      // getCount();
+                    },
+                    // doubleTab: (event) async {
+                    //   PlutoRow? tappedRow = event.row;
+                    //   UserModel userModel =
+                    //       UserModel.fromPlutoRow(tappedRow!, _locale);
+                    //   showDialog(
+                    //     barrierDismissible: false,
+                    //     context: context,
+                    //     builder: (context) {
+                    //       return AddUserDialog(
+                    //         isChangePassword: false,
+                    //         userModel: userModel,
+                    //       );
+                    //     },
+                    //   ).then((value) {
+                    //     if (value == true) {
+                    //       refreshTable();
+                    //     }
+                    //   });
+                    // },
+                    onSelected: (event) async {
+                      PlutoRow? tappedRow = event.row;
+                      selectedRow = tappedRow;
+                    },
+                  )),
+              Container(
+                width: isDesktop ? width * 0.8 : width * 0.9,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "${_locale.totalCount}: ",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      ValueListenableBuilder(
+                        valueListenable: totalUsersCount,
+                        builder: ((context, value, child) {
+                          return Text(
+                            "${totalUsersCount.value}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ));
   }
 
@@ -189,7 +224,6 @@ class _UserScreenState extends State<UserScreen> {
         },
       ).then((value) {});
       selectedRow = null;
-
     }
   }
 

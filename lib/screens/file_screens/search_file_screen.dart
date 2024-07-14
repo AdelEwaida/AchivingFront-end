@@ -38,9 +38,16 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
   late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
   DocumentsController documentsController = DocumentsController();
   late DocumentListProvider documentListProvider;
-   PlutoGridStateManager? stateManager;
+  PlutoGridStateManager? stateManager;
   ValueNotifier isSearch = ValueNotifier(false);
   ValueNotifier pageLis = ValueNotifier(1);
+  ValueNotifier totalDocCount = ValueNotifier(0);
+  getCount() {
+    documentsController.getDocInfoCount().then((value) {
+      totalDocCount.value = value;
+    });
+  }
+
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -88,51 +95,79 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         title: Text(_locale.searchByContnet),
       ),
       body: Center(
-        child: Container(
-            width: isDesktop ? width * 0.8 : width * 0.9,
-            // height: height * 0.5,
-            // decoration: BoxDecoration(
-            //   color: Colors.white,
-            //   borderRadius: BorderRadius.circular(30),
-            //   boxShadow: [
-            //     BoxShadow(
-            //       color: Colors.black.withOpacity(0.2),
-            //       spreadRadius: 1,
-            //       blurRadius: 5,
-            //     ),
-            //   ],
-            // ),
-            child: TableComponent(
-              // key: UniqueKey(),
-              tableHeigt: height * 0.81,
-              tableWidth: width * 0.85,
+        child: Column(
+          children: [
+            Container(
+                width: isDesktop ? width * 0.8 : width * 0.9,
+                // height: height * 0.5,
+                // decoration: BoxDecoration(
+                //   color: Colors.white,
+                //   borderRadius: BorderRadius.circular(30),
+                //   boxShadow: [
+                //     BoxShadow(
+                //       color: Colors.black.withOpacity(0.2),
+                //       spreadRadius: 1,
+                //       blurRadius: 5,
+                //     ),
+                //   ],
+                // ),
+                child: TableComponent(
+                  // key: UniqueKey(),
+                  tableHeigt: height * 0.75,
+                  tableWidth: width * 0.85,
 
-              download: download,
-              plCols: polCols,
-              mode: PlutoGridMode.selectWithOneTap,
-              polRows: [],
-              footerBuilder: (stateManager) {
-                return lazyLoadingfooter(stateManager);
-              },
-              search: search,
-              // explor: explorFiels,
-              view: viewDocumentInfo,
-              // genranlEdit: editDocumentInfo,
-              onLoaded: (PlutoGridOnLoadedEvent event) {
-                stateManager = event.stateManager;
-                stateManager!.setShowColumnFilter(true);
-                // pageLis.value = pageLis.value > 1 ? 0 : 1;
-                // totalActionsCount.value = 0;
-                // getCount();
-              },
-              doubleTab: (event) async {
-                PlutoRow? tappedRow = event.row;
-              },
-              onSelected: (event) async {
-                PlutoRow? tappedRow = event.row;
-                selectedRow = tappedRow;
-              },
-            )),
+                  download: download,
+                  plCols: polCols,
+                  mode: PlutoGridMode.selectWithOneTap,
+                  polRows: [],
+                  footerBuilder: (stateManager) {
+                    return lazyLoadingfooter(stateManager);
+                  },
+                  search: search,
+                  // explor: explorFiels,
+                  view: viewDocumentInfo,
+                  // genranlEdit: editDocumentInfo,
+                  onLoaded: (PlutoGridOnLoadedEvent event) {
+                    stateManager = event.stateManager;
+                    stateManager!.setShowColumnFilter(true);
+                    // pageLis.value = pageLis.value > 1 ? 0 : 1;
+                    // totalActionsCount.value = 0;
+                    // getCount();
+                  },
+                  doubleTab: (event) async {
+                    PlutoRow? tappedRow = event.row;
+                  },
+                  onSelected: (event) async {
+                    PlutoRow? tappedRow = event.row;
+                    selectedRow = tappedRow;
+                  },
+                )),
+            Container(
+              width: isDesktop ? width * 0.8 : width * 0.9,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "${_locale.totalCount}: ",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: totalDocCount,
+                      builder: ((context, value, child) {
+                        return Text(
+                          "${totalDocCount.value}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

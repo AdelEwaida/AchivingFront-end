@@ -28,6 +28,7 @@ const uplodeFileInDocApi = "docFilesTrans/uploadFile";
 const updateDoc = "docInfo/update";
 const searchDocCritereaFile = "docInfo/searchCrit";
 const searchByContentApi = "docInfo/searchByContent";
+const getInfoCount = "docInfo/count";
 
 const getFilesByHdrApi = "docFiles/getByHdr";
 const getLatestFile = "docFiles/getLatestFile";
@@ -42,6 +43,7 @@ const updateUserPasswordApi = "users/changePass";
 const updateOtherUserApi = "users/updateUserPass";
 const getUserDepartmentApi = "userDepts/getByUser";
 const setUserDepartmentApi = "userDepts/setDepts";
+const getUsersCount = "users/count";
 //docCat APIs
 const getDocCategory = "docCat/getAll";
 

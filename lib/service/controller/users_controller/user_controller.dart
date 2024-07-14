@@ -54,9 +54,11 @@ class UserController {
   Future updateUserPassword(UserModel userModel) async {
     return await ApiService().postRequest(updateUserPasswordApi, userModel);
   }
-Future updateOtherUserPassword(UserModel userModel) async {
+
+  Future updateOtherUserPassword(UserModel userModel) async {
     return await ApiService().postRequest(updateOtherUserApi, userModel);
   }
+
   Future deleteUser(UserModel userModel) async {
     return await ApiService().postRequest(deleteUserApi, userModel);
   }
@@ -115,5 +117,18 @@ Future updateOtherUserPassword(UserModel userModel) async {
 
   Future deleteUserCategory(UserCategory userModel) async {
     return await ApiService().postRequest(deleteUserCatApi, userModel);
+  }
+
+  Future<int> getUserCount() async {
+    var api = getUsersCount;
+
+    int itemCount = 0;
+    await ApiService().getRequest(api).then((value) {
+      if (value.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
+        itemCount = CountModel.fromJson(jsonData).count!;
+      }
+    });
+    return itemCount;
   }
 }

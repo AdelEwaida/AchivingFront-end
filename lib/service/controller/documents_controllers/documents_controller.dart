@@ -5,6 +5,7 @@ import 'package:archiving_flutter_project/models/db/scanned_image.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 
 import '../../../models/db/categories_models/doc_cat_parent.dart';
+import '../../../models/db/count_model.dart';
 import '../../../models/db/department_models/department_model.dart';
 import '../../../models/db/document_models/document_request.dart';
 import '../../../models/db/document_models/documnet_info_model.dart';
@@ -126,11 +127,23 @@ class DocumentsController {
   }
 
   Future<ScannedImage> getSccanedImageMethod(String ip, int index) async {
-    var response =
-        await ApiService().getRequest("$getScanedImageApi/$index");
+    var response = await ApiService().getRequest("$getScanedImageApi/$index");
     var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
     // print(jsonData);
     ScannedImage scannedImage = ScannedImage.fromJson(jsonData);
     return scannedImage;
+  }
+
+  Future<int> getDocInfoCount() async {
+    var api = getInfoCount;
+
+    int itemCount = 0;
+    await ApiService().getRequest(api).then((value) {
+      if (value.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
+        itemCount = CountModel.fromJson(jsonData).count!;
+      }
+    });
+    return itemCount;
   }
 }
