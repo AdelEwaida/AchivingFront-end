@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/user_models/department_user_model.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
 import 'package:archiving_flutter_project/models/dto/login_model.dart';
@@ -123,8 +124,6 @@ class AppRoutes {
         Encryption.performAesEncryption(userName ?? '', key, byteArray);
     storage.write(key: "userName", value: userName);
 
- 
-
     var response = await LoginController().logInWithOutPass(
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
     if (response) {
@@ -137,6 +136,10 @@ class AppRoutes {
       // Navigator.pop(context);
       // GoRouter.of(context).go(mainScreenRoute);
       return mainScreenRoute;
+    } else {
+      fileListProvider.setIsViewFile(true);
+
+      screenContentProvider.setPage1(20);
     }
   }
 
@@ -162,14 +165,13 @@ class AppRoutes {
     String emailEncrypted =
         Encryption.performAesEncryption(userName ?? '', key, byteArray);
 
-  
     const storage = FlutterSecureStorage();
 
     storage.write(key: "userName", value: userName);
 
     var response = await LoginController().logInWithOutPass(
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
-
+    print("responseresponse ${response}");
     if (response) {
       fileListProvider.setIsViewFile(true);
 
@@ -179,6 +181,12 @@ class AppRoutes {
       // GoRouter.of(context).go(mainScreenRoute);
 
       return mainScreenRoute;
+    } else {
+      fileListProvider.setIsViewFile(true);
+
+      screenContentProvider.setPage1(20);
+
+      return;
     }
   }
 
