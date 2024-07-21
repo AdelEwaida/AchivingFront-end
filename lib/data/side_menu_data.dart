@@ -2,6 +2,7 @@ import 'package:archiving_flutter_project/models/dto/side_menu/menu_model.dart';
 import 'package:archiving_flutter_project/models/dto/side_menu/sub_menu_model.dart';
 import 'package:archiving_flutter_project/screens/categories_screens/categories_screen.dart';
 import 'package:archiving_flutter_project/screens/department_screens/department_screen.dart';
+import 'package:archiving_flutter_project/screens/error_page.dart';
 import 'package:archiving_flutter_project/screens/file_screens/file_list_screen.dart';
 import 'package:archiving_flutter_project/screens/file_screens/files_view_screen.dart';
 import 'package:archiving_flutter_project/screens/file_screens/search_file_screen.dart';
@@ -245,6 +246,8 @@ Widget getScreenContent(int index) {
       return const ChangePasswordScreen();
     case 16:
       return const FilesViewScreen();
+    case 20:
+      return const ErrorPage();
     // case 2:
     //   return UsersScreen();
   }

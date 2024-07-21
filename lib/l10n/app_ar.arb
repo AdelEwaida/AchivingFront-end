@@ -180,6 +180,7 @@
   "scanners":"الماسح الضوئي",
   "noSpacesAllowed": "لا يمكن أن تحتوي كلمات المرور على مسافات",
   "newPassConfirm":"تأكيد كلمة المرور الجديدة",
-  "passwordNotEquals":"كلمة المرور الجديدة غير متطابقة"
+  "passwordNotEquals":"كلمة المرور الجديدة غير متطابقة",
+  "userNotFound":"المستخدم غير موجود"
 
 }

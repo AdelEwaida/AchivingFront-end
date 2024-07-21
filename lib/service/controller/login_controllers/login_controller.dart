@@ -57,7 +57,7 @@ class LoginController {
       // storage.write(key: 'roles', value: SideMenuDate.userType.toString());
       responseStatus = true;
       return responseStatus;
-    } else if (response.statusCode == 402) {
+    } else if (response.statusCode == 406) {
       // final context = navigatorKey.currentState!.overlay!.context;
       // // ignore: use_build_context_synchronously
       // // ignore: use_build_context_synchronously
