@@ -34,6 +34,7 @@ class TableComponent extends StatefulWidget {
   final Function()? explor;
   final Function()? copy;
   final Function()? generalDownload;
+  final Function()? filesList;
 
   final Function(PlutoGridOnLoadedEvent event)? onLoaded;
   final Function(PlutoGridOnRowDoubleTapEvent event)? doubleTab;
@@ -89,7 +90,8 @@ class TableComponent extends StatefulWidget {
       this.rowsHeight,
       this.moveAfterEditng,
       this.rowColor,
-      this.generalDownload
+      this.generalDownload,
+      this.filesList
       // required this.stateManger
       });
   @override
@@ -462,6 +464,20 @@ class _TableComponentState extends State<TableComponent> {
                           },
                           icon: const Icon(
                             Icons.download,
+                            size: 20,
+                          )),
+                    )
+                  : SizedBox.shrink(),
+              widget.filesList != null
+                  ? Tooltip(
+                      message: locale.previewFile,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.filesList!();
+                          },
+                          icon: const Icon(
+                            Icons.file_copy,
+                            color: Colors.green,
                             size: 20,
                           )),
                     )

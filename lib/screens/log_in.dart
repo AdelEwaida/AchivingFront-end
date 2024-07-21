@@ -127,7 +127,6 @@ class _LogInScreenState extends State<LoginScreen>
     );
   }
 
-
   Widget formSection(double widthFactor, double heightFactor) {
     return Container(
       width: width * widthFactor,
@@ -252,9 +251,9 @@ class _LogInScreenState extends State<LoginScreen>
     return Container(
       alignment: Alignment.topCenter,
       child: Image.asset(
-        'assets/images/asd.png',
-        width: width * 0.12,
-        height: height * 0.1,
+        'assets/images/logo.png',
+        width: width * 0.15,
+        height: height * 0.13,
       ),
     );
   }
