@@ -102,6 +102,9 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
                 }
                 stateManager.setShowLoading(false);
               },
+              doubleTab: (event) {
+                view();
+              },
             )
           ],
         ),
@@ -159,7 +162,6 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
       // Uint8List uint8List = Uint8List.fromList(stringBytes);
       saveExcelFile(bytes, selectedRow!.cells['txtFilename']!.value);
-
     }
   }
 

@@ -167,7 +167,7 @@ class _SideMenuState extends State<SideMenu> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8.0, vertical: 15),
                           child: Image.asset(
-                            "assets/images/logo.png",
+                            "assets/images/logo-white.png",
                             width: isDesktop ? width * 0.075 : width * 0.5,
                           ),
                         ),

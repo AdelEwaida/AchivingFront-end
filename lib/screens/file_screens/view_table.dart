@@ -3,8 +3,11 @@ import 'dart:typed_data';
 import 'package:archiving_flutter_project/dialogs/actions_dialogs/add_edit_action_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/add_file_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/document_dialogs/files_view_dilaog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/info_document_dialogs.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
 import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
@@ -18,6 +21,7 @@ import 'package:archiving_flutter_project/widget/table_component/table_component
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/db/document_models/upload_file_mode.dart';
@@ -81,6 +85,7 @@ class _ViewTableState extends State<ViewTable> {
       download: download,
       // add: addAction,
       // genranlEdit: editAction,
+      filesList: fileViewScreen,
       plCols: polCols,
       mode: PlutoGridMode.selectWithOneTap,
       polRows: [],
@@ -94,7 +99,6 @@ class _ViewTableState extends State<ViewTable> {
         stateManager = event.stateManager;
         // stateManager.setShowLoading(true);
         stateManager.setShowColumnFilter(true);
-     
       },
       rowColor: (p0) {
         if (p0.rowIdx == 0 && selectedRow!.sortIdx == p0.rowIdx) {
@@ -105,6 +109,27 @@ class _ViewTableState extends State<ViewTable> {
       },
       doubleTab: (event) async {
         PlutoRow? tappedRow = event.row;
+        openLoadinDialog(context);
+        documentsController
+            .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
+            .then((value) {
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            builder: (context) {
+              return FileExplorDialog(listOfFiles: value);
+            },
+          );
+        }).then((value) {
+          // print("valuevaluevaluevaluevaluevaluevalue:${value}");
+          // if (value != null) {
+          //   // print("DONE");
+          //   documentListProvider.setDocumentSearchCriterea(
+          //       documentListProvider.searchDocumentCriteria);
+          //   Navigator.pop(context);
+          //   Navigator.pop(context);
+          // }
+        });
       },
       onSelected: (event) async {
         selectedRow = event.row;
@@ -206,6 +231,44 @@ class _ViewTableState extends State<ViewTable> {
         },
       );
     }
+  }
+
+  fileViewScreen() {
+    openLoadinDialog(context);
+    documentsController
+        .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
+        .then((value) {
+      var encoded = base64Decode(value[0].imgBlob!);
+      var bytes = Uint8List.fromList(encoded);
+
+      Navigator.pop(context);
+      if (value[0].txtFilename!.contains(".pdf") ||
+          value[0].txtFilename!.contains(".jpeg") ||
+          value[0].txtFilename!.contains(".png") ||
+          value[0].txtFilename!.contains(".jpg")) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return PdfPreview1(
+              pdfFile: bytes,
+              fileName: value[0].txtFilename!,
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.error_outlined,
+                errorDetails: _locale.previewNotAvilable,
+                errorTitle: _locale.error,
+                color: Colors.red,
+                statusCode: 500);
+          },
+        );
+      }
+    });
   }
 
   Future<void> deleteFile() async {

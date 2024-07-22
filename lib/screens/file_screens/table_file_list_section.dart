@@ -9,6 +9,7 @@ import 'package:archiving_flutter_project/models/db/actions_models/action_model.
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
 import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
 import 'package:archiving_flutter_project/providers/file_list_provider.dart';
+import 'package:archiving_flutter_project/screens/file_screens/files_view_screen.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
@@ -19,6 +20,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../../dialogs/document_dialogs/files_view_dilaog.dart';
 import '../../models/db/document_models/upload_file_mode.dart';
 import '../../utils/func/save_excel_file.dart';
 
@@ -471,4 +473,6 @@ class _TableFileListSectionState extends State<TableFileListSection> {
   //   return Future.value(
   //       PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
   // }
+
+
 }
