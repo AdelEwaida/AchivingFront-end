@@ -238,14 +238,14 @@ class _ViewTableState extends State<ViewTable> {
     documentsController
         .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
         .then((value) {
-      print("test test stest :${value[0]}");
       var encoded = base64Decode(value[0].imgBlob!);
       var bytes = Uint8List.fromList(encoded);
+
       Navigator.pop(context);
-      if (selectedRow!.cells['txtFilename']!.value.contains(".pdf") ||
-          selectedRow!.cells['txtFilename']!.value.contains(".jpeg") ||
-          selectedRow!.cells['txtFilename']!.value.contains(".png") ||
-          selectedRow!.cells['txtFilename']!.value.contains(".jpg")) {
+      if (value[0].txtFilename!.contains(".pdf") ||
+          value[0].txtFilename!.contains(".jpeg") ||
+          value[0].txtFilename!.contains(".png") ||
+          value[0].txtFilename!.contains(".jpg")) {
         showDialog(
           context: context,
           builder: (context) {
