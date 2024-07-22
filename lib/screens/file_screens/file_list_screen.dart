@@ -258,6 +258,9 @@ class _FileListScreenState extends State<FileListScreen> {
       width: node.isRoot ? 200 : 200,
       child: InkWell(
         onTap: () {
+          // documentListProvider
+          //     .setDocumentSearchCriterea(SearchDocumentCriteria());
+
           selectedCategory = node.extra;
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
@@ -266,7 +269,10 @@ class _FileListScreenState extends State<FileListScreen> {
           calssificatonNameAndCodeProvider.setSelectedClassificatonKey(
               selectedCategory!.docCatParent!.txtKey!);
           treeController.notifyListeners();
+          documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria(
+              page: -1, cat: selectedCategory!.docCatParent!.txtKey!));
 
+          treeController.toggleExpansion(node);
           // setState(() {});
         },
         onDoubleTap: () {

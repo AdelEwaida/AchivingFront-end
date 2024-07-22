@@ -421,6 +421,8 @@ class DealClassificationTreeScreenState
           selectedCategory = node.extra;
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+          treeController.toggleExpansion(node);
+
           setState(() {});
           // }
         },
