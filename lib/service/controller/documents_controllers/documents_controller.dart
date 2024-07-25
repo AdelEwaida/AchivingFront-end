@@ -24,6 +24,10 @@ class DocumentsController {
         .postRequest(uplodeFileInDocApi, documentFileRequest.toJson());
   }
 
+  Future deleteFile(String txtKey) async {
+    return await ApiService().postRequest(deleteFileApi, {"txtKey": txtKey});
+  }
+
   Future addDocument(DocumentFileRequest documentFileRequest) async {
     return await ApiService()
         .postRequest(inserttDocFile, documentFileRequest.toJson());

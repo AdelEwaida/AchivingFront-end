@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:html' as html; // Web specific
 
+import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
@@ -79,6 +80,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
               tableWidth: width * 0.5,
               tableHeigt: height * 0.4,
               rowsHeight: 50,
+              delete: deleteFile,
               plCols: polCols,
               download: download,
               view: view,
@@ -110,6 +112,26 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         ),
       ],
     );
+  }
+
+  void deleteFile() {
+    if (selectedRow != null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return CustomConfirmDialog(
+              confirmMessage: _locale.areYouSureToDelete(
+                  selectedRow!.cells['txtFilename']!.value));
+        },
+      ).then((value) async {
+        var response = await DocumentsController()
+            .deleteFile(selectedRow!.cells['txtKey']!.value);
+        if (response.statusCode == 200) {
+          widget.listOfFiles.removeAt(selectedRow!.sortIdx);
+          setState(() {});
+        }
+      });
+    }
   }
 
   List<PlutoColumn> polCols = [];
