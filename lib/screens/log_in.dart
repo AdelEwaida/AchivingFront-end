@@ -90,7 +90,7 @@ class _LogInScreenState extends State<LoginScreen>
           decoration: const BoxDecoration(
             // shape: BoxShape.circle,
             image: DecorationImage(
-              image: AssetImage('assets/images/splash.jpg'),
+              image: AssetImage('assets/images/folders.jpg'),
               fit: BoxFit.cover,
             ),
           ),
