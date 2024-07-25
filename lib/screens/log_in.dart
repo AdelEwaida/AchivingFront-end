@@ -149,6 +149,11 @@ class _LogInScreenState extends State<LoginScreen>
           children: [
             logo(),
             space(),
+            Text(
+              _locale.archivingSystem,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            space(),
             customTextField(_locale.userCode, _userNameController,
                 userNameFocus, false, isDesktop),
             space(),
@@ -265,7 +270,7 @@ class _LogInScreenState extends State<LoginScreen>
           borderRadius: BorderRadius.all(Radius.circular(5)),
         ),
         fixedSize: Size(isDesktop ? width * 0.28 : width * 0.8, 50),
-        backgroundColor: Color(0xFFE27F24),
+        backgroundColor: primary3,
         foregroundColor: whiteColor,
         textStyle: const TextStyle(fontSize: 18),
       ),
