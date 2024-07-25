@@ -46,7 +46,7 @@ const setUserDepartmentApi = "userDepts/setDepts";
 const getUsersCount = "users/count";
 //docCat APIs
 const getDocCategory = "docCat/getAll";
-const deleteFileApi = "docFile/delete";
+const deleteFileApi = "docFiles/delete";
 
 //user category
 const getUserCatPageAPI = "userCategory/page";

@@ -124,11 +124,20 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
                   selectedRow!.cells['txtFilename']!.value));
         },
       ).then((value) async {
-        var response = await DocumentsController()
-            .deleteFile(selectedRow!.cells['txtKey']!.value);
-        if (response.statusCode == 200) {
-          widget.listOfFiles.removeAt(selectedRow!.sortIdx);
-          setState(() {});
+        if (value == true) {
+          var response = await DocumentsController()
+              .deleteFile(selectedRow!.cells['txtKey']!.value);
+          if (response.statusCode == 200) {
+            setState(() {
+              widget.listOfFiles.removeAt(selectedRow!.sortIdx!);
+              stateManager.removeRows([selectedRow!]);
+              if (stateManager.rows.isNotEmpty) {
+                selectedRow = stateManager.rows[0];
+              } else {
+                selectedRow = null;
+              }
+            });
+          }
         }
       });
     }
