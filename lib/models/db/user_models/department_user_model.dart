@@ -49,4 +49,9 @@ class DepartmentUserModel {
       bolSelected: row.cells['bolSelected']?.value,
     );
   }
+@override
+  String toString() {
+    // TODO: implement toString
+    return txtDeptName!;
+  }
 }

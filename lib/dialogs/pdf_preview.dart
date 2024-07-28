@@ -83,19 +83,19 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                     )),
                 widget.fileName.contains('.pdf')
                     ? Tooltip(
-                  message: _locale.print,
-                  child: IconButton(
-                      onPressed: () async {
-                        await Printing.layoutPdf(
-                            onLayout: (PdfPageFormat format) async =>
-                                widget.pdfFile);
-                        // saveExcelFile(widget.pdfFile, widget.fileName);
-                      },
-                      icon: const Icon(
-                        Icons.print,
-                        color: Colors.black,
-                        size: 14,
-                      )),
+                        message: _locale.print,
+                        child: IconButton(
+                            onPressed: () async {
+                              await Printing.layoutPdf(
+                                  onLayout: (PdfPageFormat format) async =>
+                                      widget.pdfFile);
+                              // saveExcelFile(widget.pdfFile, widget.fileName);
+                            },
+                            icon: const Icon(
+                              Icons.print,
+                              color: Colors.black,
+                              size: 14,
+                            )),
                       )
                     : SizedBox.shrink(),
               ],
@@ -179,10 +179,9 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
             height: height * 0.65,
             child: widget.fileName.contains('.pdf')
                 ? SfPdfViewer.memory(
-
-              widget.pdfFile,
-              initialZoomLevel: 1,
-              controller: _pdfViewerController,
+                    widget.pdfFile,
+                    initialZoomLevel: 1,
+                    controller: _pdfViewerController,
                   )
                 : Image.memory(
                     widget.pdfFile,
@@ -191,33 +190,33 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
           ),
           widget.fileName.contains('.pdf')
               ? SizedBox(
-            height: height * 0.1,
-            width: width * 0.1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  iconSize: height * 0.03,
-                  icon: const Icon(
-                    Icons.zoom_in,
-                    color: Color.fromARGB(255, 0, 0, 0),
+                  height: height * 0.1,
+                  width: width * 0.1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        iconSize: height * 0.03,
+                        icon: const Icon(
+                          Icons.zoom_in,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                        onPressed: () {
+                          _pdfViewerController.zoomLevel += 0.25;
+                        },
+                      ),
+                      IconButton(
+                        iconSize: height * 0.03,
+                        icon: const Icon(
+                          Icons.zoom_out,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                        onPressed: () {
+                          _pdfViewerController.zoomLevel -= 0.25;
+                        },
+                      ),
+                    ],
                   ),
-                  onPressed: () {
-                    _pdfViewerController.zoomLevel += 0.25;
-                  },
-                ),
-                IconButton(
-                  iconSize: height * 0.03,
-                  icon: const Icon(
-                    Icons.zoom_out,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                  onPressed: () {
-                    _pdfViewerController.zoomLevel -= 0.25;
-                  },
-                ),
-              ],
-            ),
                 )
               : SizedBox.shrink()
         ],

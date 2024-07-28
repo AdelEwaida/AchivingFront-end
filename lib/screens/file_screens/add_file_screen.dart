@@ -72,7 +72,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
   List<DocCatParent> catList = [];
   bool _isUploadFileSelected = true;
   String url = "";
-  List<DepartmentModel> departmetList = [];
+  List<DepartmentUserModel> departmetList = [];
   late DocumentListProvider documentListProvider;
   var storage = FlutterSecureStorage();
   String? userName = "";
@@ -87,9 +87,9 @@ class _AddFileScreenState extends State<AddFileScreen> {
     arrivalDateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
     catList = await DocumentsController().getDocCategoryList();
-    departmetList = await DepartmentController()
-        .getDep(SearchModel(page: -1, searchField: "", status: -1));
     userName = await storage.read(key: "userName");
+
+    departmetList = await UserController().getDepartmentUser(userName!);
 
     setState(() {});
     if (documentListProvider.description != null) {
@@ -169,8 +169,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
                               key: UniqueKey(),
                               isMandatory: true,
                               onChanged: (value) {
-                                selectedDep = value.txtKey;
-                                selctedDepDesc = value.txtDescription;
+                                selectedDep = value.txtDeptkey;
+                                selctedDepDesc = value.txtDeptName;
                                 // setState(() {});
                               },
                               initialValue:
