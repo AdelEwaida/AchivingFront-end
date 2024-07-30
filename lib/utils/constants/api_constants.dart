@@ -42,6 +42,8 @@ const updateUserApi = "users/update";
 const updateUserPasswordApi = "users/changePass";
 const updateOtherUserApi = "users/updateUserPass";
 const getUserDepartmentApi = "userDepts/getByUser";
+const getUserSelectedDepartmentApi = "userDepts/getByUserSelected";
+
 const setUserDepartmentApi = "userDepts/setDepts";
 const getUsersCount = "users/count";
 //docCat APIs
