@@ -89,7 +89,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     catList = await DocumentsController().getDocCategoryList();
     userName = await storage.read(key: "userName");
 
-    departmetList = await UserController().getDepartmentUser(userName!);
+    departmetList = await UserController().getDepartmentSelectedUser(userName!);
 
     setState(() {});
     if (documentListProvider.description != null) {
@@ -99,7 +99,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
       issueNoController.text = documentListProvider.issueNumber ?? "";
       DepartmentUserModel? departmentUserModel;
       var departmentUserModelResonse =
-          await UserController().getDepartmentUser(userName!);
+          await UserController().getDepartmentSelectedUser(userName!);
       for (int i = 0; i < departmentUserModelResonse.length; i++) {
         if (departmentUserModelResonse[i].bolSelected == 1) {
           selectedDep = departmentUserModelResonse[i].txtDeptkey!;

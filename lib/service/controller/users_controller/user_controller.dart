@@ -38,7 +38,18 @@ class UserController {
     }
     return list;
   }
-
+  Future<List<DepartmentUserModel>> getDepartmentSelectedUser(String userCode) async {
+    List<DepartmentUserModel> list = [];
+    var response = await ApiService()
+        .postRequest(getUserSelectedDepartmentApi, {"user": userCode});
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+      for (var dept in jsonData) {
+        list.add(DepartmentUserModel.fromJson(dept));
+      }
+    }
+    return list;
+  }
   Future updateCurrentUserPassword(UpdateUserPassword userModel) async {
     return await ApiService().postRequest(updateUserPasswordApi, userModel);
   }
