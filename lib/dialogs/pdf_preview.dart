@@ -89,6 +89,9 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                               await Printing.layoutPdf(
                                   onLayout: (PdfPageFormat format) async =>
                                       widget.pdfFile);
+                              // await Printing.layoutPdf(
+                              //     onLayout: (PdfPageFormat format) async =>
+                              //         widget.pdfFile);
                               // saveExcelFile(widget.pdfFile, widget.fileName);
                             },
                             icon: const Icon(
