@@ -143,11 +143,23 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                                   .join(', '),
                           borderText: _locale.users,
                           onClearIconPressed: () {
-                            setState(() {
-                              listOfUsersCode!.clear();
-                              hintUsers = "";
-                              usersListModel!.clear();
-                              usersListModel!.clear();
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return CustomConfirmDialog(
+                                    confirmMessage: _locale
+                                        .areYouSureToDelete(_locale.users));
+                              },
+                            ).then((value) {
+                              if (value == true) {
+
+                                setState(() {
+                                  listOfUsersCode!.clear();
+                                  hintUsers = "";
+                                  usersListModel!.clear();
+                                  usersListModel!.clear();
+                                });
+                              }
                             });
                           },
                           onChanged: (val) {

@@ -271,9 +271,9 @@ class _TestDropdownState extends State<TestDropdown> {
                       if (widget.onClearIconPressed != null) {
                         items = [];
 
-                        if (widget.stringValue != null) {
-                          widget.stringValue = "";
-                        }
+                        // if (widget.stringValue != null) {
+                        //   widget.stringValue = "";
+                        // }
 
                         widget.onClearIconPressed!();
                       }

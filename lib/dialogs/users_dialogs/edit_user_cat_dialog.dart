@@ -19,6 +19,7 @@ import '../../models/db/user_models/user_category.dart';
 import '../../models/db/user_models/user_update_req.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
+import '../error_dialgos/confirm_dialog.dart';
 
 class EditUserCategoryDialog extends StatefulWidget {
   UserCategory? userCategoryModel;
@@ -188,11 +189,22 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                   : usersListNames!.toList().toString(),
               borderText: _locale.users,
               onClearIconPressed: () {
-                setState(() {
-                  usersListNames!.clear();
-                  hintUsers = "";
-                  usersList!.clear();
-                  usersListModel!.clear();
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return CustomConfirmDialog(
+                        confirmMessage:
+                            _locale.areYouSureToDelete(_locale.users));
+                  },
+                ).then((value) {
+                  if (value == true) {
+                    setState(() {
+                      usersListNames!.clear();
+                      hintUsers = "";
+                      usersList!.clear();
+                      usersListModel!.clear();
+                    });
+                  }
                 });
               },
               onChanged: (val) {
@@ -210,15 +222,15 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                 } else {
                   hintUsers = usersListNames!.toList().toString();
                   if (hintUsers.endsWith(', ')) {
-                    hintUsers = hintUsers.substring(0, usersListNames!.length - 2);
+                    hintUsers =
+                        hintUsers.substring(0, usersListNames!.length - 2);
                   }
                 }
 
                 setState(() {});
               },
               onSearch: (text) async {
-                List<UserModel> newList = await userController
-                    .getUsers(
+                List<UserModel> newList = await userController.getUsers(
                     SearchModel(page: -1, searchField: text, status: -1));
                 return newList;
               },
