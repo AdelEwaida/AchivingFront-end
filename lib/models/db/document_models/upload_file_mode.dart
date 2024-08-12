@@ -11,34 +11,35 @@ class FileUploadModel {
   String? txtMimetype;
   int? intLinenum;
   int? intType;
+  String? categoryName;
 
-  FileUploadModel({
-    this.txtKey,
-    this.txtHdrkey,
-    this.txtFilename,
-    this.imgBlob,
-    this.dblFilesize,
-    this.txtUsercode,
-    this.datDate,
-    this.txtMimetype,
-    this.intLinenum,
-    this.intType,
-  });
+  FileUploadModel(
+      {this.txtKey,
+      this.txtHdrkey,
+      this.txtFilename,
+      this.imgBlob,
+      this.dblFilesize,
+      this.txtUsercode,
+      this.datDate,
+      this.txtMimetype,
+      this.intLinenum,
+      this.intType,
+      this.categoryName});
 
   // Factory method to create an instance of FileUploadModel from a Map
   factory FileUploadModel.fromJson(Map<String, dynamic> json) {
     return FileUploadModel(
-      txtKey: json['txtKey'] ?? "",
-      txtHdrkey: json['txtHdrkey'] ?? "",
-      txtFilename: json['txtFilename'] ?? "",
-      imgBlob: json['imgBlob'] ?? "",
-      dblFilesize: json['dblFilesize'] ?? 0,
-      txtUsercode: json['txtUsercode'] ?? "",
-      datDate: json['datDate'] ?? "",
-      txtMimetype: json['txtMimetype'] ?? "",
-      intLinenum: json['intLinenum'] ?? 0,
-      intType: json['intType'] ?? 0,
-    );
+        txtKey: json['txtKey'] ?? "",
+        txtHdrkey: json['txtHdrkey'] ?? "",
+        txtFilename: json['txtFilename'] ?? "",
+        imgBlob: json['imgBlob'] ?? "",
+        dblFilesize: json['dblFilesize'] ?? 0,
+        txtUsercode: json['txtUsercode'] ?? "",
+        datDate: json['datDate'] ?? "",
+        txtMimetype: json['txtMimetype'] ?? "",
+        intLinenum: json['intLinenum'] ?? 0,
+        intType: json['intType'] ?? 0,
+        categoryName: json['categoryName'] ?? "");
   }
 
   // Method to convert FileUploadModel instance to a Map
@@ -54,8 +55,10 @@ class FileUploadModel {
       'txtMimetype': txtMimetype ?? "",
       'intLinenum': intLinenum ?? 0,
       'intType': intType ?? 0,
+      'categoryName': categoryName ?? ""
     };
   }
+
   PlutoRow toPlutoRow(int countNumber) {
     return PlutoRow(
       cells: {
@@ -70,6 +73,7 @@ class FileUploadModel {
         'txtMimetype': PlutoCell(value: txtMimetype),
         'intLinenum': PlutoCell(value: intLinenum),
         'intType': PlutoCell(value: intType),
+        'categoryName': PlutoCell(value: categoryName)
       },
     );
   }
