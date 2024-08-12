@@ -36,6 +36,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:js' as js;
 
+import 'providers/user_provider.dart';
+
 void main() {
   HttpOverrides.global = MyHttpOverrides();
 
@@ -46,7 +48,8 @@ void main() {
       ChangeNotifierProvider(create: (create) => DatesProvider()),
       ChangeNotifierProvider(create: (create) => DocumentListProvider()),
       ChangeNotifierProvider(
-          create: (create) => CalssificatonNameAndCodeProvider())
+          create: (create) => CalssificatonNameAndCodeProvider()),
+      ChangeNotifierProvider(create: (create) => UserProvider())
     ], child: MyApp()),
   );
 }
@@ -165,11 +168,11 @@ class MyApp extends StatelessWidget {
         ],
         locale: provider.locale,
         supportedLocales: lang,
-        theme: baseTheme.copyWith(
-          textTheme: customTheme.textTheme,
-          dialogBackgroundColor: customTheme.dialogBackgroundColor,
-          appBarTheme: customTheme.appBarTheme,
-        ),
+        // theme: baseTheme.copyWith(
+        //   textTheme: customTheme.textTheme,
+        //   dialogBackgroundColor: customTheme.dialogBackgroundColor,
+        // appBarTheme: customTheme.appBarTheme,
+        // ),
         routerConfig: AppRoutes.routes,
 
         // home: const LoginScreen(),

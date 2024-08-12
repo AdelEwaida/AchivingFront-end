@@ -19,10 +19,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 
 import '../../dialogs/categories_dialogs/add_category_dialog.dart';
 import '../../dialogs/categories_dialogs/edit_category_dialog.dart';
 import '../../dialogs/error_dialgos/confirm_dialog.dart';
+import '../../dialogs/users_dialogs/selected_users_dialog.dart';
+import '../../providers/user_provider.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
@@ -59,6 +62,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   TextEditingController searchController = TextEditingController();
   List<UserModel>? usersListModel = [];
   List<String>? listOfUsersCode = [];
+  late UserProvider userProvider;
 
   @override
   void initState() {
@@ -68,6 +72,8 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   @override
   void didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
+    userProvider = context.read<UserProvider>();
+
     if (widget.selectedModel != null) {
       selectedCategory = widget.selectedModel;
       selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
@@ -122,142 +128,83 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                     // Add search functionality if needed
                   },
                 ),
-                Tooltip(
-                  message: hintUsers,
-                  child: Column(
-                    children: [
-                      Container(
-                        width: screenWidth * 0.2,
-                        height: screenHeight * 0.05,
-                        child: TestDropdown(
-                          cleanPrevSelectedItem: true,
-                          icon: const Icon(Icons.search),
-                          isEnabled: true,
-                          stringValue: usersListModel!
-                                  .map((e) => e.txtNamee!)
-                                  .join(', ')
-                                  .isEmpty
-                              ? null
-                              : usersListModel!
-                                  .map((e) => e.txtNamee!)
-                                  .join(', '),
-                          borderText: _locale.users,
-                          onClearIconPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return CustomConfirmDialog(
-                                    confirmMessage: _locale
-                                        .areYouSureToDelete(_locale.users));
-                              },
-                            ).then((value) {
-                              if (value == true) {
+                dropDownUsers()
+                // Tooltip(
+                //   message: hintUsers,
+                //   child: Column(
+                //     children: [
+                //       Container(
+                //         width: screenWidth * 0.2,
+                //         height: screenHeight * 0.05,
+                //         child: TestDropdown(
+                //           cleanPrevSelectedItem: true,
+                //           icon: const Icon(Icons.search),
+                //           isEnabled: true,
+                //           stringValue: usersListModel!
+                //                   .map((e) => e.txtNamee!)
+                //                   .join(', ')
+                //                   .isEmpty
+                //               ? null
+                //               : usersListModel!
+                //                   .map((e) => e.txtNamee!)
+                //                   .join(', '),
+                //           borderText: _locale.users,
+                //           onClearIconPressed: () {
+                //             showDialog(
+                //               context: context,
+                //               builder: (context) {
+                //                 return CustomConfirmDialog(
+                //                     confirmMessage: _locale
+                //                         .areYouSureToDelete(_locale.users));
+                //               },
+                //             ).then((value) {
+                //               if (value == true) {
+                //                 setState(() {
+                //                   listOfUsersCode!.clear();
+                //                   hintUsers = "";
+                //                   usersListModel!.clear();
+                //                   usersListModel!.clear();
+                //                 });
+                //               }
+                //             });
+                //           },
+                //           onChanged: (val) {
+                //             listOfUsersCode!.clear();
+                //             for (int i = 0; i < val.length; i++) {
+                //               listOfUsersCode!.add(val[i].txtCode);
+                //               usersListModel!.add(val[i]);
+                //               // usersList!.add(val[i].userId!);
+                //             }
+                //             // usersListModel!.addAll(usersListCode);
+                //             if (usersListModel!.isEmpty) {
+                //               hintUsers = "";
+                //             } else {
+                //               hintUsers = usersListModel!
+                //                   .map((e) => e.txtCode!)
+                //                   .join(', ');
+                //               if (hintUsers.endsWith(', ')) {
+                //                 hintUsers = hintUsers.substring(
+                //                     0, hintUsers.length - 2);
+                //               }
+                //             }
 
-                                setState(() {
-                                  listOfUsersCode!.clear();
-                                  hintUsers = "";
-                                  usersListModel!.clear();
-                                  usersListModel!.clear();
-                                });
-                              }
-                            });
-                          },
-                          onChanged: (val) {
-                            listOfUsersCode!.clear();
-                            for (int i = 0; i < val.length; i++) {
-                              listOfUsersCode!.add(val[i].txtCode);
-                              usersListModel!.add(val[i]);
-                              // usersList!.add(val[i].userId!);
-                            }
-                            // usersListModel!.addAll(usersListCode);
-                            if (usersListModel!.isEmpty) {
-                              hintUsers = "";
-                            } else {
-                              hintUsers = usersListModel!
-                                  .map((e) => e.txtCode!)
-                                  .join(', ');
-                              if (hintUsers.endsWith(', ')) {
-                                hintUsers = hintUsers.substring(
-                                    0, hintUsers.length - 2);
-                              }
-                            }
-
-                            setState(() {});
-                          },
-                          onSearch: (text) async {
-                            List<UserModel> newList =
-                                await userController.getUsers(SearchModel(
-                                    searchField: text.trim(),
-                                    page: -1,
-                                    status: -1));
-                            newList.removeWhere((user) =>
-                                listOfUsersCode!.contains(user.txtCode));
-                            return newList;
-                          },
-                        ),
-                        // child: TestDropdown(
-                        //   key: UniqueKey(),
-                        //   cleanPrevSelectedItem: true,
-                        //   // icon: const Icon(Icons.close),
-                        //   isEnabled: true,
-                        //   stringValue: usersListModel!
-                        //           .map((e) => e.txtNamee!)
-                        //           .join(', ')
-                        //           .isEmpty
-                        //       ? null
-                        //       : usersListModel!.map((e) => e.txtNamee!).join(', '),
-                        //   borderText: _locale.users,
-                        //   onPressed: () {
-                        //     setState(() {
-                        //       usersListModel!.clear();
-                        //       listOfUsersCode!.clear();
-                        //       hintUsers = "";
-                        //       usersListModel = [];
-                        //     });
-                        //   },
-                        //   onClearIconPressed: () {
-                        //     setState(() {
-                        //       usersListModel!.clear();
-                        //       listOfUsersCode!.clear();
-                        //       hintUsers = "";
-                        //       usersListModel = [];
-                        //     });
-                        //   },
-                        //   onChanged: (val) {
-                        //     listOfUsersCode!.clear();
-                        //     // usersListCode.clear();
-                        //     for (int i = 0; i < val.length; i++) {
-                        //       listOfUsersCode!.add(val[i].txtCode);
-                        //     }
-                        //     // usersListModel!.addAll(usersListCode);
-                        //     // if (usersListModel!.isEmpty) {
-                        //     //   hintUsers = "";
-                        //     // } else {
-                        //     //   hintUsers = "";
-
-                        //     //   hintUsers =
-                        //     //       usersListModel!.map((e) => e.userId!).join(', ');
-                        //     //   // Removing the last comma and space if exists
-                        //     //   if (hintUsers.endsWith(', ')) {
-                        //     //     hintUsers = hintUsers.substring(0, hintUsers.length - 2);
-                        //     //   }
-                        //     // }
-
-                        //     // setState(() {});
-                        //   },
-                        //   onSearch: (text) async {
-                        //     List<UserModel> newList = await userController.getUsers(
-                        //         SearchModel(
-                        //             searchField: text.trim(),
-                        //             page: -1,
-                        //             status: -1));
-                        //     return newList;
-                        //   },
-                        // ),
-                      ),
-                    ],
-                  ),
-                ),
+                //             setState(() {});
+                //           },
+                //           onSearch: (text) async {
+                //             List<UserModel> newList =
+                //                 await userController.getUsers(SearchModel(
+                //                     searchField: text.trim(),
+                //                     page: -1,
+                //                     status: -1));
+                //             newList.removeWhere((user) =>
+                //                 listOfUsersCode!.contains(user.txtCode));
+                //             return newList;
+                //           },
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
             Padding(
@@ -384,8 +331,13 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   }
 
   save() async {
+    List<String> userCodes = context
+        .read<UserProvider>()
+        .selectedUsers
+        .map((user) => user.txtCode!)
+        .toList();
     UserUpdateReq userUpdateReq =
-        UserUpdateReq(categoryId: selectedKey.value, users: listOfUsersCode);
+        UserUpdateReq(categoryId: selectedKey.value, users: userCodes);
     var response = await userController.updateUserCatgeory(userUpdateReq);
     if (response.statusCode == 200) {
       // ignore: use_build_context_synchronously
@@ -405,6 +357,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
           hintUsers = "";
           usersListModel!.clear();
           usersListModel!.clear();
+          userProvider.clearUsers();
         });
         // setState(() {});
         // resetPage(); // reloadData();
@@ -689,5 +642,104 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
       }
     }
     return discountList;
+  }
+
+  Widget dropDownUsers() {
+    return SizedBox(
+      width: screenWidth * 0.18,
+      height: screenHeight * 0.045,
+      child: Consumer<UserProvider>(
+        builder: (context, value, child) {
+          return Tooltip(
+            message: hintUsers,
+            child: TestDropdown(
+              cleanPrevSelectedItem: true,
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const UserSelectionDialog();
+                    }).then((value) {
+                  if (userProvider.selectedUsers.isEmpty) {
+                    hintUsers = "";
+                  } else {
+                    hintUsers = "";
+                    for (int i = 0;
+                        i < userProvider.selectedUsers.length;
+                        i++) {
+                      if (i == 0) {
+                        hintUsers = userProvider.selectedUsers[i].toString();
+                      } else {
+                        hintUsers =
+                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+                      }
+                    }
+                  }
+
+                  setState(() {});
+                });
+              },
+              isEnabled: true,
+              icon: const Icon(Icons.search),
+              onClearIconPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return CustomConfirmDialog(
+                        confirmMessage:
+                            _locale.areYouSureToDelete(_locale.users));
+                  },
+                ).then((value) {
+                  if (value == true) {
+                    setState(() {
+                      listOfUsersCode!.clear();
+                      hintUsers = "";
+                      usersListModel!.clear();
+                      context.read<UserProvider>().clearUsers();
+                    });
+                  }
+                });
+              },
+              onChanged: (value) {
+                setState(() {
+                  List<UserModel> selectedUsers = [];
+
+                  for (int i = 0; i < value.length; i++) {
+                    selectedUsers.add(value[i]);
+                  }
+                  userProvider.addUsers(selectedUsers);
+
+                  if (userProvider.selectedUsers.isEmpty) {
+                    hintUsers = "";
+                  } else {
+                    hintUsers = "";
+                    for (int i = 0;
+                        i < userProvider.selectedUsers.length;
+                        i++) {
+                      if (i == 0) {
+                        hintUsers = userProvider.selectedUsers[i].toString();
+                      } else {
+                        hintUsers =
+                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+                      }
+                    }
+                  }
+                });
+              },
+              stringValue: hintUsers ?? "",
+              borderText: _locale.users,
+              onSearch: (text) async {
+                List<UserModel> newList = await userController.getUsers(
+                    SearchModel(
+                        searchField: text.trim(), page: -1, status: -1));
+                newList.removeWhere(
+                    (user) => listOfUsersCode!.contains(user.txtCode));
+                return newList;
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 }

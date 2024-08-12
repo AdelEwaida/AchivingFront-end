@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/users_dialogs/selected_users_dialog.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
@@ -14,9 +15,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/db/user_models/user_category.dart';
 import '../../models/db/user_models/user_update_req.dart';
+import '../../providers/user_provider.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
 import '../error_dialgos/confirm_dialog.dart';
@@ -36,7 +39,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
   double radius1 = 7;
   TextEditingController userListController = TextEditingController();
   UserController userController = UserController();
-
+  late UserProvider userProvider;
   String hintUsers = "";
   List<String>? usersList = [];
   List<String>? usersListNames = [];
@@ -48,7 +51,14 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
     if (widget.userCategoryModel != null) {
       getUsersForCategory(widget.userCategoryModel!.categoryId!);
     }
+    userProvider = context.read<UserProvider>();
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    userProvider.clearUsers();
+    super.dispose();
   }
 
   bool isDesktop = false;
@@ -58,7 +68,21 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
     setState(() {
       usersListModel = userList;
       hintUsers = usersListModel!.map((e) => e.userName!).join(', ');
+      userProvider.clearUsers();
       for (int i = 0; i < usersListModel!.length; i++) {
+        // print("userrrrrrrrrr ${usersListModel![i].toJson()}");
+        UserModel userModel = UserModel(
+            txtCode: usersListModel![i].userId!,
+            txtNamee: usersListModel![i].userName!,
+            txtDeptkey: "",
+            txtPwd: "",
+            txtReferenceUsername: "",
+            bolActive: 0,
+            intType: 0,
+            activeToken: "",
+            email: "",
+            url: "");
+        userProvider.addUser(userModel);
         usersList!.add(usersListModel![i].userId!);
         usersListNames!.add(usersListModel![i].userName!);
       }
@@ -177,65 +201,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (isDesktop)
-          Tooltip(
-            message: hintUsers,
-            child: TestDropdown(
-              cleanPrevSelectedItem: true,
-              icon: const Icon(Icons.search),
-              isEnabled: true,
-              stringValue: usersListNames!.isEmpty
-                  ? null
-                  : usersListNames!.toList().toString(),
-              borderText: _locale.users,
-              onClearIconPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return CustomConfirmDialog(
-                        confirmMessage:
-                            _locale.areYouSureToDelete(_locale.users));
-                  },
-                ).then((value) {
-                  if (value == true) {
-                    setState(() {
-                      usersListNames!.clear();
-                      hintUsers = "";
-                      usersList!.clear();
-                      usersListModel!.clear();
-                    });
-                  }
-                });
-              },
-              onChanged: (val) {
-                // usersListNames!.clear();
-                // usersList!.clear();
-                for (int i = 0; i < val.length; i++) {
-                  // usersListCode.add(val[i]);
-                  usersList!.add(val[i].txtCode!);
-                  usersListNames!.add(val[i].txtNamee);
-                  print("val[i].txtCode!val[i].txtCode!:${val[i].txtCode!}");
-                }
-                // usersListModel!.addAll(usersListCode);
-                if (usersListModel!.isEmpty) {
-                  hintUsers = "";
-                } else {
-                  hintUsers = usersListNames!.toList().toString();
-                  if (hintUsers.endsWith(', ')) {
-                    hintUsers =
-                        hintUsers.substring(0, usersListNames!.length - 2);
-                  }
-                }
-
-                setState(() {});
-              },
-              onSearch: (text) async {
-                List<UserModel> newList = await userController.getUsers(
-                    SearchModel(page: -1, searchField: text, status: -1));
-                return newList;
-              },
-            ),
-          ),
+        if (isDesktop) dropDownUsers(),
         if (!isDesktop) ...[
           customTextField(
               _locale.txtShortcode, userListController, isDesktop, 0.8, true),
@@ -286,9 +252,15 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
 
   void editMethod() async {
     if (widget.userCategoryModel != null) {
+      List<String> userCodes = context
+          .read<UserProvider>()
+          .selectedUsers
+          .map((user) => user.txtCode!)
+          .toList();
+
       UserUpdateReq userUpdateReq = UserUpdateReq(
         categoryId: widget.userCategoryModel!.categoryId,
-        users: usersList,
+        users: userCodes,
       );
 
       await userController.updateUserCatgeory(userUpdateReq).then((value) {
@@ -309,5 +281,100 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
         }
       });
     }
+  }
+
+  Widget dropDownUsers() {
+    return SizedBox(
+      width: width * 0.18,
+      height: height * 0.045,
+      child: Consumer<UserProvider>(
+        builder: (context, value, child) {
+          return Tooltip(
+            message: hintUsers,
+            child: TestDropdown(
+              cleanPrevSelectedItem: true,
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const UserSelectionDialog();
+                    }).then((value) {
+                  if (userProvider.selectedUsers.isEmpty) {
+                    hintUsers = "";
+                  } else {
+                    hintUsers = "";
+                    for (int i = 0;
+                        i < userProvider.selectedUsers.length;
+                        i++) {
+                      if (i == 0) {
+                        hintUsers = userProvider.selectedUsers[i].toString();
+                      } else {
+                        hintUsers =
+                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+                      }
+                    }
+                  }
+
+                  setState(() {});
+                });
+              },
+              isEnabled: true,
+              icon: const Icon(Icons.search),
+              onClearIconPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return CustomConfirmDialog(
+                        confirmMessage:
+                            _locale.areYouSureToDelete(_locale.users));
+                  },
+                ).then((value) {
+                  if (value == true) {
+                    setState(() {
+                      usersListNames!.clear();
+                      hintUsers = "";
+                      context.read<UserProvider>().clearUsers();
+                    });
+                  }
+                });
+              },
+              onChanged: (value) {
+                setState(() {
+                  List<UserModel> selectedUsers = [];
+
+                  for (int i = 0; i < value.length; i++) {
+                    selectedUsers.add(value[i]);
+                  }
+                  userProvider.addUsers(selectedUsers);
+
+                  if (userProvider.selectedUsers.isEmpty) {
+                    hintUsers = "";
+                  } else {
+                    hintUsers = "";
+                    for (int i = 0;
+                        i < userProvider.selectedUsers.length;
+                        i++) {
+                      if (i == 0) {
+                        hintUsers = userProvider.selectedUsers[i].toString();
+                      } else {
+                        hintUsers =
+                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+                      }
+                    }
+                  }
+                });
+              },
+              stringValue: hintUsers ?? "",
+              borderText: _locale.user,
+              onSearch: (text) async {
+                List<UserModel> newList = await userController.getUsers(
+                    SearchModel(page: -1, searchField: text, status: -1));
+                return newList;
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 }
