@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter/foundation.dart';
 
+import '../../providers/screen_content_provider.dart';
+
 // ignore: must_be_immutable
 class LogoutTab extends StatefulWidget {
   bool isCollapse;
@@ -116,8 +118,8 @@ class _LogoutTabState extends State<LogoutTab> {
     ).then((value) async {
       if (value) {
         await storage.delete(key: "jwt").then((value) {
-          
           GoRouter.of(context).go(loginScreenRoute);
+          // context.read<ScreenContentProvider>().setPage1(0);
         });
         // LoginController().logOut(locale);
       }

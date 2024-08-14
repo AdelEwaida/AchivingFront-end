@@ -344,6 +344,8 @@ class _LogInScreenState extends State<LoginScreen>
         .then((value) async {
       if (value) {
         Navigator.pop(context);
+        context.read<ScreenContentProvider>().setPage1(0);
+
         GoRouter.of(context).go(mainScreenRoute);
       } else {
         Navigator.pop(context);

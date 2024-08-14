@@ -338,6 +338,7 @@ class _LoginDialogState extends State<LoginDialog> {
         //     .read<ScreenContentProvider>()
         //     .setPage1(context.read<ScreenContentProvider>().getPage());
         // storage.setString("userName", _userNameController.text);
+
         GoRouter.of(context).go(mainScreenRoute);
       } else {
         Navigator.pop(context);
