@@ -117,6 +117,13 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                           dateWidth: width * 0.1,
                           dateController: fromDateController,
                           label: _locale.fromDate,
+                          onValue: (isValid, value) {
+                            if (isValid) {
+                              // setState(() {
+                              fromDateController.text = value;
+                              // });
+                            }
+                          },
                           timeControllerToCompareWith: null),
                       space(0.01),
                       DateTimeComponent(
@@ -126,6 +133,13 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                           dateWidth: width * 0.1,
                           dateController: toDateController,
                           label: _locale.toDate,
+                          onValue: (isValid, value) {
+                            if (isValid) {
+                              // setState(() {
+                              toDateController.text = value;
+                              // });
+                            }
+                          },
                           timeControllerToCompareWith: null),
                     ],
                   ),

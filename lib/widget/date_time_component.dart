@@ -10,7 +10,6 @@ import '../service/controller/error_controllers/error_controller.dart';
 import '../utils/constants/colors.dart';
 import '../utils/func/responsive.dart';
 
-
 // ignore: must_be_immutable
 class DateTimeComponent extends StatefulWidget {
   final String? label;
