@@ -249,6 +249,11 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               timeControllerToCompareWith: null,
               dateController: issueDateController,
               label: _locale.issueDate,
+              onValue: (isValid, value) {
+                if (isValid) {
+                  issueDateController.text = value;
+                }
+              },
               // onChanged: (value) {
               //   documentModel!.datIssuedate = value;
               // },
@@ -264,7 +269,11 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               // controller: ,
               readOnly: !widget.isEdit,
               label: _locale.arrivalDate,
-
+              onValue: (isValid, value) {
+                if (isValid) {
+                  arrivalDate.text = value;
+                }
+              },
               height: height * 0.05,
               dateWidth: width * 0.135,
               dateControllerToCompareWith: null,
