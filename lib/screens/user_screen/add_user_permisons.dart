@@ -25,6 +25,7 @@ import '../../dialogs/categories_dialogs/add_category_dialog.dart';
 import '../../dialogs/categories_dialogs/edit_category_dialog.dart';
 import '../../dialogs/error_dialgos/confirm_dialog.dart';
 import '../../dialogs/users_dialogs/selected_users_dialog.dart';
+import '../../models/db/user_models/user_category.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
@@ -63,6 +64,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   List<UserModel>? usersListModel = [];
   List<String>? listOfUsersCode = [];
   late UserProvider userProvider;
+  List<UserCategory>? usersListModelCategory = [];
 
   @override
   void initState() {
@@ -265,6 +267,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                                   selectedCategory!.docCatParent!.txtShortcode;
                               // }
                             }
+                            getUsersForCategory(selectedKey.value);
                           },
                           textWidget: nodeDesign(entry.node),
                         );
@@ -326,6 +329,34 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
             reloadData();
           }
         });
+      }
+    });
+  }
+
+  void getUsersForCategory(String categoryId) async {
+    List<UserCategory> userList =
+        await userController.getUsersByCatMethod(categoryId);
+    setState(() {
+      usersListModelCategory = userList;
+      hintUsers = usersListModelCategory!.map((e) => e.userName!).join(', ');
+      userProvider.clearUsers();
+      for (int i = 0; i < usersListModelCategory!.length; i++) {
+        UserModel userModel = UserModel(
+            txtCode: usersListModelCategory![i].userId!,
+            txtNamee: usersListModelCategory![i].userName!,
+            txtDeptkey: "",
+            txtPwd: "",
+            txtReferenceUsername: "",
+            bolActive: 0,
+            intType: 0,
+            activeToken: "",
+            email: "",
+            url: "");
+        userProvider.addUser(userModel);
+      }
+
+      if (hintUsers.endsWith(', ')) {
+        hintUsers = hintUsers.substring(0, hintUsers.length - 2);
       }
     });
   }
@@ -537,6 +568,8 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
           selectedKey.value = selectedCategory!.docCatParent!.txtKey;
+          getUsersForCategory(selectedKey.value);
+
           setState(() {});
           // }
         },

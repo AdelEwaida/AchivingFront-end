@@ -83,6 +83,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
             email: "",
             url: "");
         userProvider.addUser(userModel);
+
         usersList!.add(usersListModel![i].userId!);
         usersListNames!.add(usersListModel![i].userName!);
       }
