@@ -101,8 +101,12 @@ class _UserScreenState extends State<UserScreen> {
                   width: isDesktop ? width * 0.8 : width * 0.9,
                   child: TableComponent(
                     // key: UniqueKey(),
-                    tableHeigt: height * 0.75,
+                    tableHeigt: height * 0.81,
                     tableWidth: width * 0.85,
+                    editPassword: chagnePassword,
+                    delete: deleteUser,
+                    add: addUser,
+                    chooseDep: addDepartmentUser,
                     search: search,
                     plCols: polCols,
                     mode: PlutoGridMode.selectWithOneTap,
@@ -110,6 +114,7 @@ class _UserScreenState extends State<UserScreen> {
                     footerBuilder: (stateManager) {
                       return lazyLoadingfooter(stateManager);
                     },
+                    genranlEdit: editUser,
                     onLoaded: (PlutoGridOnLoadedEvent event) {
                       stateManager = event.stateManager;
                       stateManager!.setShowColumnFilter(true);
@@ -168,6 +173,109 @@ class _UserScreenState extends State<UserScreen> {
             ],
           ),
         ));
+  }
+
+  void addDepartmentUser() {
+    if (selectedRow != null) {
+      UserModel userModel = UserModel.fromPlutoRow(selectedRow!, _locale);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return UserDepartmentDialog(
+            userModel: userModel,
+          );
+        },
+      ).then((value) {
+        selectedRow = null;
+      });
+    }
+  }
+
+  void editUser() {
+    if (selectedRow != null) {
+      UserModel userModel = UserModel.fromPlutoRow(selectedRow!, _locale);
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AddUserDialog(
+            isChangePassword: false,
+            userModel: userModel,
+          );
+        },
+      ).then((value) {
+        if (value == true) {
+          refreshTable();
+        }
+      });
+    }
+  }
+
+  void chagnePassword() {
+    if (selectedRow != null) {
+      UserModel userModel = UserModel.fromPlutoRow(selectedRow!, _locale);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AddUserDialog(
+            isChangePassword: true,
+            userModel: userModel,
+          );
+        },
+      ).then((value) {});
+      selectedRow = null;
+    }
+  }
+
+  void addUser() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return AddUserDialog(
+          isChangePassword: false,
+        );
+      },
+    ).then((value) {
+      if (value == true) {
+        refreshTable();
+      }
+    });
+  }
+
+  void deleteUser() async {
+    if (selectedRow != null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return CustomConfirmDialog(
+              confirmMessage: _locale
+                  .areYouSureToDelete(selectedRow!.cells['txtNamee']!.value));
+        },
+      ).then((value) async {
+        if (value == true) {
+          UserModel userModel = UserModel.fromPlutoRow(selectedRow!, _locale);
+          var response = await userController.deleteUser(userModel);
+          if (response.statusCode == 200) {
+            refreshTable();
+          }
+        }
+      });
+    }
+  }
+
+  void refreshTable() async {
+    stateManager!.setShowLoading(true);
+    stateManager!.removeAllRows();
+    stateManager!.notifyListeners(true);
+    selectedRow = null;
+    rowList.clear();
+    pageLis.value = 1;
+    var response = await fetch(PlutoInfinityScrollRowsRequest());
+    stateManager!.appendRows(response.rows);
+    stateManager!.notifyListeners(true);
+    stateManager!.resetCurrentState();
+    stateManager!.setShowLoading(false);
   }
 
   void fillColumnTable() {
