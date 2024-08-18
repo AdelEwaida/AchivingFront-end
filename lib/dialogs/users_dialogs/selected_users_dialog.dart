@@ -104,7 +104,15 @@ class _UserSelectionDialogState extends State<UserSelectionDialog> {
         field: "txtCode",
         enableRowChecked: true,
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.21 : width * 0.4,
+        width: isDesktop ? width * 0.15 : width * 0.4,
+        backgroundColor: columnColors,
+      ),
+      PlutoColumn(
+        enableFilterMenuItem: true,
+        title: _local.refNumber,
+        field: "txtReferenceUsername",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.12 : width * 0.4,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
@@ -112,7 +120,7 @@ class _UserSelectionDialogState extends State<UserSelectionDialog> {
         title: _local.userName,
         field: "txtNamee",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.23 : width * 0.4,
+        width: isDesktop ? width * 0.16 : width * 0.4,
         backgroundColor: columnColors,
       ),
     ]);
