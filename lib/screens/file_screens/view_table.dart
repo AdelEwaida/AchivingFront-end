@@ -73,67 +73,68 @@ class _ViewTableState extends State<ViewTable> {
   PlutoRow? selectedRow;
   @override
   Widget build(BuildContext context) {
-    return TableComponent(
-      // key: UniqueKey(),
-      tableHeigt: height * 0.8,
-      tableWidth: width * 0.81,
-      // addReminder: addRemider,
-      // upload: uploadFile,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Consumer<DocumentListProvider>(builder: (context, value, child) {
+        print("object");
+        return TableComponent(
+          // key: UniqueKey(),
+          tableHeigt: height * 0.4,
+          tableWidth: width,
 
-      // copy: copyFile,
-      // delete: deleteFile,
-      download: download,
-      // add: addAction,
-      // genranlEdit: editAction,
-      filesList: fileViewScreen,
-      plCols: polCols,
-      mode: PlutoGridMode.selectWithOneTap,
-      polRows: [],
-      footerBuilder: (stateManager) {
-        return lazyLoadingfooter(stateManager);
-      },
-      explor: explorFiels,
-      view: viewDocumentInfo,
-      // genranlEdit: editDocumentInfo,
-      onLoaded: (PlutoGridOnLoadedEvent event) async {
-        stateManager = event.stateManager;
-        // stateManager.setShowLoading(true);
-        stateManager.setShowColumnFilter(true);
-      },
-      rowColor: (p0) {
-        if (p0.rowIdx == 0 && selectedRow!.sortIdx == p0.rowIdx) {
-          return const Color.fromARGB(255, 37, 171, 233).withOpacity(0.5);
-        } else {
-          return Colors.white;
-        }
-      },
-      doubleTab: (event) async {
-        PlutoRow? tappedRow = event.row;
-        openLoadinDialog(context);
-        documentsController
-            .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
-            .then((value) {
-          Navigator.pop(context);
-          showDialog(
-            context: context,
-            builder: (context) {
-              return FileExplorDialog(listOfFiles: value);
-            },
-          );
-        }).then((value) {
-          // print("valuevaluevaluevaluevaluevaluevalue:${value}");
-          // if (value != null) {
-          //   // print("DONE");
-          //   documentListProvider.setDocumentSearchCriterea(
-          //       documentListProvider.searchDocumentCriteria);
-          //   Navigator.pop(context);
-          //   Navigator.pop(context);
-          // }
-        });
-      },
-      onSelected: (event) async {
-        selectedRow = event.row;
-      },
+          download: download,
+
+          filesList: fileViewScreen,
+          plCols: polCols,
+          mode: PlutoGridMode.selectWithOneTap,
+          polRows: [],
+          footerBuilder: (stateManager) {
+            return lazyLoadingfooter(stateManager);
+          },
+          explor: explorFiels,
+          view: viewDocumentInfo,
+          // genranlEdit: editDocumentInfo,
+          onLoaded: (PlutoGridOnLoadedEvent event) async {
+            stateManager = event.stateManager;
+            // stateManager.setShowLoading(true);
+            stateManager.setShowColumnFilter(true);
+          },
+          rowColor: (p0) {
+            if (p0.rowIdx == 0 && selectedRow!.sortIdx == p0.rowIdx) {
+              return const Color.fromARGB(255, 37, 171, 233).withOpacity(0.5);
+            } else {
+              return Colors.white;
+            }
+          },
+          doubleTab: (event) async {
+            PlutoRow? tappedRow = event.row;
+            openLoadinDialog(context);
+            documentsController
+                .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
+                .then((value) {
+              Navigator.pop(context);
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return FileExplorDialog(listOfFiles: value);
+                },
+              );
+            }).then((value) {
+              // print("valuevaluevaluevaluevaluevaluevalue:${value}");
+              // if (value != null) {
+              //   // print("DONE");
+              //   documentListProvider.setDocumentSearchCriterea(
+              //       documentListProvider.searchDocumentCriteria);
+              //   Navigator.pop(context);
+              //   Navigator.pop(context);
+              // }
+            });
+          },
+          onSelected: (event) async {
+            selectedRow = event.row;
+          },
+        );
+      }),
     );
   }
 
@@ -433,7 +434,7 @@ class _ViewTableState extends State<ViewTable> {
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
     bool isLast = false;
-
+    print("in fethhh");
     // if (documentListProvider.searchDocumentCriteria.fromIssueDate != null &&
     //     documentListProvider.searchDocumentCriteria.page! <= 1) {
     //   stateManager.removeAllRows();

@@ -84,7 +84,9 @@ class _FillterFileSectionState extends State<FillterFileSection> {
     isDesktop = Responsive.isDesktop(context);
 
     return Container(
-      width: width * 0.44,
+      width: context.read<DocumentListProvider>().isViewFile == true
+          ? width * 0.81
+          : width * 0.44,
       height: height * 0.34,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -114,7 +116,11 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                           height: height * 0.04,
                           dateControllerToCompareWith: null,
                           isInitiaDate: true,
-                          dateWidth: width * 0.1,
+                          dateWidth:
+                              context.read<DocumentListProvider>().isViewFile ==
+                                      true
+                                  ? width * 0.19
+                                  : width * 0.1,
                           dateController: fromDateController,
                           label: _locale.fromDate,
                           onValue: (isValid, value) {
@@ -130,7 +136,11 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                           dateControllerToCompareWith: null,
                           isInitiaDate: true,
                           height: height * 0.04,
-                          dateWidth: width * 0.1,
+                          dateWidth:
+                              context.read<DocumentListProvider>().isViewFile ==
+                                      true
+                                  ? width * 0.19
+                                  : width * 0.1,
                           dateController: toDateController,
                           label: _locale.toDate,
                           onValue: (isValid, value) {
@@ -152,7 +162,10 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                     },
                     initialValue: selectedDep.isEmpty ? null : selectedDep,
                     bordeText: _locale.department,
-                    width: width * 0.1,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
                     height: height * 0.04,
                     items: listOfDep,
                     // onSearch: (p0) async {
@@ -171,7 +184,10 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                         : getSortedByTyepsByCode(_locale, selectedSortedType),
                     bordeText: _locale.sortedBy,
                     items: getSortedByTyeps(_locale),
-                    width: width * 0.1,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
                     height: height * 0.04,
                   ),
                 ],
@@ -184,7 +200,10 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   CustomTextField2(
-                    width: width * 0.1,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
                     height: height * 0.04,
                     text: Text(_locale.description),
                     controller: descreptionController,
@@ -197,7 +216,11 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                       return CustomTextField2(
                         text: Text(_locale.classification),
                         controller: classificationController,
-                        width: width * 0.1,
+                        width:
+                            context.read<DocumentListProvider>().isViewFile ==
+                                    true
+                                ? width * 0.19
+                                : width * 0.1,
                         height: height * 0.04,
                         readOnly: true,
                       );
@@ -207,14 +230,20 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                   CustomTextField2(
                     text: Text(_locale.keyword),
                     controller: keyWordController,
-                    width: width * 0.1,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
                     height: height * 0.04,
                   ),
                   space(0.01),
                   CustomTextField2(
                     text: Text(_locale.ref1),
                     controller: ref1Controller,
-                    width: width * 0.1,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
                     height: height * 0.04,
                   ),
                 ],
@@ -229,28 +258,40 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                   CustomTextField2(
                     text: Text(_locale.ref2),
                     controller: ref2Controller,
-                    width: width * 0.1,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
                     height: height * 0.04,
                   ),
                   space(0.01),
                   CustomTextField2(
                     text: Text(_locale.otherRef),
                     controller: otherRefController,
-                    width: width * 0.1,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
                     height: height * 0.04,
                   ),
                   space(0.01),
                   CustomTextField2(
                     text: Text(_locale.organization),
                     controller: organizationController,
-                    width: width * 0.1,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
                     height: height * 0.04,
                   ),
                   space(0.01),
                   CustomTextField2(
                     text: Text(_locale.following),
                     controller: followingController,
-                    width: width * 0.1,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
                     height: height * 0.04,
                   ),
                 ],
@@ -259,11 +300,15 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 height: height * 0.00001,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
                   children: [
+                    // space(0.02),
                     CustomTextField2(
-                      width: width * 0.1,
+                      width: context.read<DocumentListProvider>().isViewFile ==
+                              true
+                          ? width * 0.19
+                          : width * 0.1,
                       height: height * 0.04,
                       text: Text(_locale.issueNo),
                       controller: issueNoController,
@@ -285,7 +330,14 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                   search();
                 },
                 style: customButtonStyle(
-                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.043),
+                    Size(
+                        isDesktop
+                            ? context.read<DocumentListProvider>().isViewFile ==
+                                    true
+                                ? width * 0.14
+                                : width * 0.1
+                            : width * 0.19,
+                        height * 0.043),
                     14,
                     primary),
                 child: Text(
@@ -302,7 +354,13 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 },
                 style: customButtonStyle(
                     Size(
-                        isDesktop ? width * 0.12 : width * 0.4, height * 0.043),
+                        isDesktop
+                            ? context.read<DocumentListProvider>().isViewFile ==
+                                    true
+                                ? width * 0.14
+                                : width * 0.12
+                            : width * 0.19,
+                        height * 0.043),
                     14,
                     Colors.red),
                 child: Text(

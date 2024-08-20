@@ -96,41 +96,49 @@ class _FileListScreenState extends State<FileListScreen> {
                 Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.start,
+                    crossAxisAlignment:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? CrossAxisAlignment.center
+                            : CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: width * 0.35,
-                        height: height * 0.34,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 3,
+                      context.read<DocumentListProvider>().isViewFile == true
+                          ? SizedBox.shrink()
+                          : Container(
+                              width: width * 0.35,
+                              height: height * 0.34,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    spreadRadius: 1,
+                                    blurRadius: 3,
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomSearchField(
+                                    label: _locale.search,
+                                    width: width * 0.3,
+                                    padding: 8,
+                                    controller: searchController,
+                                    onChanged: (value) {
+                                      searchTree(value);
+                                      // Add search functionality if needed
+                                    },
+                                  ),
+                                  Expanded(child: treeSection()),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomSearchField(
-                              label: _locale.search,
-                              width: width * 0.3,
-                              padding: 8,
-                              controller: searchController,
-                              onChanged: (value) {
-                                searchTree(value);
-                                // Add search functionality if needed
-                              },
-                            ),
-                            Expanded(child: treeSection()),
-                          ],
-                        ),
-                      ),
                       SizedBox(
                         width: width * 0.02,
                       ),
@@ -139,6 +147,8 @@ class _FileListScreenState extends State<FileListScreen> {
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     TableFileListSection(),
                   ],

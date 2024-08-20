@@ -21,6 +21,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../../dialogs/document_dialogs/files_view_dilaog.dart';
+import '../../dialogs/error_dialgos/show_error_dialog.dart';
+import '../../dialogs/pdf_preview.dart';
 import '../../models/db/document_models/upload_file_mode.dart';
 import '../../utils/func/save_excel_file.dart';
 
@@ -65,12 +67,23 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           key: UniqueKey(),
           tableHeigt: height * 0.45,
           tableWidth: width * 0.81,
-          addReminder: addRemider,
-          upload: uploadFile,
+          addReminder: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : addRemider,
+          upload: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : uploadFile,
 
-          copy: copyFile,
-          delete: deleteFile,
-          download: download,
+          copy: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : copyFile,
+          delete: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : deleteFile,
+          genranlEdit: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : editDocumentInfo,
+
           // add: addAction,
           // genranlEdit: editAction,
           plCols: polCols,
@@ -81,7 +94,10 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           },
           explor: explorFiels,
           view: viewDocumentInfo,
-          genranlEdit: editDocumentInfo,
+          download: download,
+          filesList: context.read<DocumentListProvider>().isViewFile == true
+              ? fileViewScreen
+              : null,
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
             stateManager.setShowColumnFilter(true);
@@ -145,6 +161,44 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         }
       });
     }
+  }
+
+  fileViewScreen() {
+    openLoadinDialog(context);
+    documentsController
+        .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
+        .then((value) {
+      var encoded = base64Decode(value[0].imgBlob!);
+      var bytes = Uint8List.fromList(encoded);
+
+      Navigator.pop(context);
+      if (value[0].txtFilename!.contains(".pdf") ||
+          value[0].txtFilename!.contains(".jpeg") ||
+          value[0].txtFilename!.contains(".png") ||
+          value[0].txtFilename!.contains(".jpg")) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return PdfPreview1(
+              pdfFile: bytes,
+              fileName: value[0].txtFilename!,
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.error_outlined,
+                errorDetails: _locale.previewNotAvilable,
+                errorTitle: _locale.error,
+                color: Colors.red,
+                statusCode: 500);
+          },
+        );
+      }
+    });
   }
 
   void addRemider() {
@@ -473,6 +527,4 @@ class _TableFileListSectionState extends State<TableFileListSection> {
   //   return Future.value(
   //       PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
   // }
-
-
 }

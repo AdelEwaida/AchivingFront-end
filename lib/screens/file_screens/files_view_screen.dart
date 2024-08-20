@@ -24,6 +24,7 @@ import 'package:http/http.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 
+import 'filter_section_search.dart';
 import 'view_table.dart';
 
 class FilesViewScreen extends StatefulWidget {
@@ -41,7 +42,7 @@ class _FilesViewScreenState extends State<FilesViewScreen> {
   // bool isLoading = false;
   ValueNotifier selectedCamp = ValueNotifier("");
   ValueNotifier selectedValue = ValueNotifier("");
-  Color currentColor = Color.fromARGB(255, 225, 65, 65);
+  Color currentColor = const Color.fromARGB(255, 225, 65, 65);
   Color selectedColor = Colors.grey;
   bool isDesktop = false;
   DocumentCategory? selectedCategory;
@@ -87,10 +88,12 @@ class _FilesViewScreenState extends State<FilesViewScreen> {
         appBar: AppBar(
           title: Text(_locale.documentExplorer),
         ),
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        body: Column(
           children: [
-            ViewTable(),
+            FillterFileSectionSearch(),
+            Consumer<DocumentListProvider>(builder: (context, value, child) {
+              return const ViewTable();
+            }),
           ],
         ));
   }

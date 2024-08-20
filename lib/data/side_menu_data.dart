@@ -245,7 +245,7 @@ Widget getScreenContent(int index) {
     case 15:
       return const ChangePasswordScreen();
     case 16:
-      return const FilesViewScreen();
+      return const FileListScreen();
     case 20:
       return const ErrorPage();
     // case 2:
