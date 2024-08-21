@@ -164,7 +164,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
   }
 
   fileViewScreen() {
-    openLoadinDialog(context);
+    // openLoadinDialog(context);
     documentsController
         .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
         .then((value) {
