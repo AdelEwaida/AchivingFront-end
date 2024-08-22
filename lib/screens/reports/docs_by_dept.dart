@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:archiving_flutter_project/dialogs/fromDate_toDate_dialog.dart';
+import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -77,7 +79,9 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
   }
 
   bool dataLoaded = false;
-
+  ReportsCriteria? searchCriteria = ReportsCriteria(
+      fromDate: Converters.getDateBeforeMonth(),
+      toDate: Converters.formatDate2(DateTime.now().toString()));
   @override
   void initState() {
     docByCat();
@@ -134,7 +138,26 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
                             height: isDesktop ? height * .01 : height * .039,
                             fontSize: isDesktop ? height * .018 : height * .017,
                             width: isDesktop ? width * 0.08 : width * 0.27,
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return FromDateToDateDialog(
+                                    searchCriteria: searchCriteria,
+                                  );
+                                },
+                              ).then((value) {
+                                if (value != null) {
+                                  searchCriteria = value;
+                                  listOfBalances.clear();
+                                  listOfPeriods.clear();
+                                  barData.clear();
+                                  barDataDailySales.clear();
+                                  // userDocList.clear();
+                                  docByCat();
+                                }
+                              });
+                            },
                           )),
                     ],
                   ),
@@ -153,12 +176,12 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
   }
 
   Future<void> docByCat() async {
-    ReportsCriteria searchCriteria =
-        ReportsCriteria(fromDate: "2024-07-02", toDate: "2024-08-22");
+    // ReportsCriteria searchCriteria =
+    //     ReportsCriteria(fromDate: "2024-07-02", toDate: "2024-08-22");
 
     barData = [];
 
-    await reportsController.getDocByDept(searchCriteria).then((response) {
+    await reportsController.getDocByDept(searchCriteria!).then((response) {
       for (var element in response) {
         String temp = element.dept ?? "NO DATE";
         double countFiles = double.parse(element.countFiles.toString());

@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:archiving_flutter_project/dialogs/fromDate_toDate_dialog.dart';
+import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -68,9 +70,14 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
   int counter = 0;
   bool isLoading = true;
   List<String> branches = [];
+  ReportsCriteria? searchCriteria = ReportsCriteria(
+      fromDate: Converters.getDateBeforeMonth(),
+      toDate: Converters.formatDate2(DateTime.now().toString()));
 
   @override
   void didChangeDependencies() {
+    getUserDocs();
+
     _locale = AppLocalizations.of(context)!;
     // getUserDocs();
 
@@ -81,7 +88,6 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
 
   @override
   void initState() {
-    getUserDocs();
     super.initState();
   }
 
@@ -135,7 +141,24 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
                             height: isDesktop ? height * .01 : height * .039,
                             fontSize: isDesktop ? height * .018 : height * .017,
                             width: isDesktop ? width * 0.08 : width * 0.27,
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) {
+                                  return FromDateToDateDialog(
+                                      searchCriteria: searchCriteria);
+                                },
+                              ).then((value) {
+                                if (value != null) {
+                                  searchCriteria = value;
+                                  listOfBalances.clear();
+                                  listOfPeriods.clear();
+                                  userDocList.clear();
+                                  getUserDocs();
+                                }
+                              });
+                            },
                           )),
                     ],
                   ),
@@ -156,31 +179,31 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
   }
 
   Future<void> getUserDocs() async {
-    ReportsCriteria searchCriteria =
-        ReportsCriteria(fromDate: "2024-07-02", toDate: "2024-08-22");
-
     userDocList = [];
 
-    await reportsController.getUserDocuments(searchCriteria).then((response) {
-      for (var element in response) {
-        String temp = element.username ?? "NO DATE";
-        double countFiles = double.parse(element.countFiles.toString());
-        listOfBalances.add(countFiles);
-        listOfPeriods.add(
-          element.username!.isNotEmpty ? element.username! : _locale.userName,
-        );
-        userDocList.add(PieChartModel(
-            title: temp,
-            value: countFiles,
-            color: getRandomColor(colorNewList)));
-      }
-      print("Pie chart data length: ${userDocList.length}");
-      for (var data in userDocList) {
-        print("Title: ${data.title}, Value: ${data.value}");
-      }
+    await reportsController.getUserDocuments(searchCriteria!).then((response) {
+      if (response.isNotEmpty) {
+        for (var element in response) {
+          String temp = element.username ?? "NO DATE";
+          double countFiles = double.parse(element.countFiles.toString());
+          listOfBalances.add(countFiles);
+          listOfPeriods.add(
+            element.username!.isNotEmpty ? element.username! : _locale.userName,
+          );
+          userDocList.add(PieChartModel(
+              title: temp,
+              value: countFiles,
+              color: getRandomColor(colorNewList)));
+        }
+        print("Pie chart data length: ${userDocList.length}");
+        for (var data in userDocList) {
+          print("Title: ${data.title}, Value: ${data.value}");
+        }
+      } else {}
+   
     });
-
     setState(() {});
+
   }
 
   Color getRandomColor(List<Color> colorList) {

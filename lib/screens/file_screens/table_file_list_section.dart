@@ -214,7 +214,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
             isFromList: true,
           );
         },
-      );
+      ).then((value) {
+        selectedRow = null;
+      });
     }
   }
 
@@ -250,7 +252,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           );
         },
       ).then((value) {
-        selectedRow = null;
+        // selectedRow = null;
       });
     }
   }

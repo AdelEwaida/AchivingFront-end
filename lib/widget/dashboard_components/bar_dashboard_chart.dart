@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +27,16 @@ class _BarDashboardChartState extends State<BarDashboardChart> {
   final ScrollController _scrollController = ScrollController();
   bool isLoading = false;
   Widget buildWidget = const Row();
+
+  @override
+  void didChangeDependencies() {
+    setState(() {
+      isLoading = true;
+    });
+    getBuildWidget();
+    super.didChangeDependencies();
+  }
+
   void convertBarDataToDashboardBarData() {
     dataList = [];
     List<BarData> barDat = widget.barChartData;
@@ -49,25 +58,16 @@ class _BarDashboardChartState extends State<BarDashboardChart> {
         BarChartRodData(
           toY: value,
           color: color,
-          width: 6,
+          width: 10, // Increase width for better visibility
+          borderRadius: BorderRadius.circular(4),
         ),
       ],
       showingTooltipIndicators: touchedGroupIndex == x ? [0] : [],
     );
   }
 
-  @override
-  void didChangeDependencies() {
-    getBuildWidget();
-    super.didChangeDependencies();
-  }
-
   getBuildWidget() {
-    setState(() {
-      isLoading = true;
-    });
     convertBarDataToDashboardBarData();
-    print("isLoading $isLoading dataListLength ${dataList.length}");
 
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
@@ -88,13 +88,7 @@ class _BarDashboardChartState extends State<BarDashboardChart> {
             padding:
                 const EdgeInsets.only(right: 50, bottom: 15, top: 15, left: 0),
             child: SizedBox(
-              width: isMobile
-                  ? (widget.isMax && dataList.length < 6) || dataList.length < 6
-                      ? width * 0.8
-                      : width * (dataList.length / 4)
-                  : (widget.isMax && dataList.length < 6) || dataList.length < 6
-                      ? width * .6
-                      : width * (dataList.length / 15),
+              width: max(width * 0.6, dataList.length * 60.0),
               height: height * 0.35,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,7 +99,7 @@ class _BarDashboardChartState extends State<BarDashboardChart> {
                   Expanded(
                     child: BarChart(
                       BarChartData(
-                        alignment: BarChartAlignment.spaceBetween,
+                        alignment: BarChartAlignment.spaceEvenly,
                         borderData: FlBorderData(
                           show: true,
                           border: Border.symmetric(
@@ -120,7 +114,7 @@ class _BarDashboardChartState extends State<BarDashboardChart> {
                             drawBelowEverything: true,
                             sideTitles: SideTitles(
                               showTitles: true,
-                              reservedSize: 100,
+                              reservedSize: 40,
                               getTitlesWidget: (value, meta) {
                                 return Text(
                                   value.toInt().toString(),
@@ -138,8 +132,12 @@ class _BarDashboardChartState extends State<BarDashboardChart> {
                                 return SideTitleWidget(
                                   axisSide: meta.axisSide,
                                   child: Text(
-                                    widget.barChartData[value.toInt()].name!,
-                                    style: const TextStyle(fontSize: 14),
+                                    widget.barChartData.length > value.toInt()
+                                        ? widget.barChartData[value.toInt()]
+                                                .name ??
+                                            ""
+                                        : "",
+                                    style: const TextStyle(fontSize: 12),
                                   ),
                                 );
                               },
