@@ -196,7 +196,15 @@
   "newPassConfirm": "Confirm New Password",
   "passwordNotEquals": "New Password Not Identical",
 "userNotFound": "User Not Found",
-"archivingSystem":"Electronic archiving system"
+"archivingSystem":"Electronic archiving system",
+"dashboard":"Dashboard",
+"userDocs":"User Documents",
+"docByCat":"Documents By Category",
+"docByDep":"Documents By Department",
+"totalDocs":"Total Documents",
+"totalDepts":"Total Departments",
+"totalCat":"Total User Categories"
+
 
   
 

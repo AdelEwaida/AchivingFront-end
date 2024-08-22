@@ -17,15 +17,25 @@ import '../screens/actions_screens/action_screen.dart';
 import '../screens/actions_screens/daily_reminders.dart';
 import '../screens/change_password_screen.dart';
 import '../screens/file_screens/add_file_screen.dart';
+import '../screens/reports/dashboard_screen.dart';
 import '../screens/user_screen/user_category_screen.dart';
 
 List<MenuModel> getMenus(AppLocalizations locale, String type) {
   List<MenuModel> menus = type == USERTYPEADMIN
       ? [
           MenuModel(
-            title: locale.dailyReminders,
+            title: locale.dashboard,
             icon: Icons.dashboard,
             pageNumber: 0,
+            isOpened: true,
+            isParent: false,
+            // route: mainScreenRoute,
+            subMenuList: [],
+          ),
+          MenuModel(
+            title: locale.dailyReminders,
+            icon: Icons.dashboard,
+            pageNumber: 1,
             isOpened: true,
             isParent: false,
             // route: mainScreenRoute,
@@ -87,9 +97,18 @@ List<MenuModel> getMenus(AppLocalizations locale, String type) {
       : type == USERTYPEMANEGER
           ? [
               MenuModel(
-                title: locale.dailyReminders,
+                title: locale.dashboard,
                 icon: Icons.dashboard,
                 pageNumber: 0,
+                isOpened: true,
+                isParent: false,
+                // route: mainScreenRoute,
+                subMenuList: [],
+              ),
+              MenuModel(
+                title: locale.dailyReminders,
+                icon: Icons.dashboard,
+                pageNumber: 1,
                 isOpened: true,
                 isParent: false,
                 // route: mainScreenRoute,
@@ -145,9 +164,18 @@ List<MenuModel> getMenus(AppLocalizations locale, String type) {
             ]
           : [
               MenuModel(
-                title: locale.dailyReminders,
+                title: locale.dashboard,
                 icon: Icons.dashboard,
                 pageNumber: 0,
+                isOpened: true,
+                isParent: false,
+                // route: mainScreenRoute,
+                subMenuList: [],
+              ),
+              MenuModel(
+                title: locale.dailyReminders,
+                icon: Icons.dashboard,
+                pageNumber: 1,
                 isOpened: true,
                 isParent: false,
                 // route: mainScreenRoute,
@@ -220,9 +248,10 @@ List<MenuModel> getMenus(AppLocalizations locale, String type) {
 }
 
 Widget getScreenContent(int index) {
-  // print("index")
   switch (index) {
     case 0:
+      return const DashboardScreen();
+    case 1:
       return const DailyReminders();
     case 2:
       return const DealClassificationTreeScreen();
@@ -244,10 +273,11 @@ Widget getScreenContent(int index) {
       return const AddUserPermisonsScreen();
     case 15:
       return const ChangePasswordScreen();
-    case 16:
+    case 17:
       return const FileListScreen();
     case 20:
       return const ErrorPage();
+
     // case 2:
     //   return UsersScreen();
   }

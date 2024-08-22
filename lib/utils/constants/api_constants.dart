@@ -49,6 +49,7 @@ const getUsersCount = "users/count";
 //docCat APIs
 const getDocCategory = "docCat/getAll";
 const deleteFileApi = "docFiles/delete";
+const getDocCategoryCount = "docCat/count";
 
 //user category
 const getUserCatPageAPI = "userCategory/page";
@@ -59,3 +60,8 @@ const deleteUserCatApi = "userCategory/delete";
 
 const getAllScanners = "users/getScanners";
 const getScanedImageApi = "users/scanProcess";
+
+//report apis
+const getUserDocsAPI = "report/userDocs";
+const getDocsByCat = "report/docsByCat";
+const getDocsByDept = "report/docsByDept";
