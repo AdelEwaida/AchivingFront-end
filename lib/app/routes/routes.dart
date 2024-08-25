@@ -176,7 +176,7 @@ class AppRoutes {
       fileListProvider.setIsViewFile(true);
 
       fileListProvider.setIssueNumber(fld1Param!);
-      screenContentProvider.setPage1(16);
+      screenContentProvider.setPage1(6);
 
       // GoRouter.of(context).go(mainScreenRoute);
 
