@@ -13,7 +13,7 @@ const getDepCountApi = "docDept/count";
 const insertDepApi = "docDept/insert";
 const updateDepApi = "docDept/update";
 const deleteDepApi = "docDept/delete";
-
+const totalDepApi = "docDept/count";
 //Action APIs
 const getActionApi = "actions/page";
 const getActionCountApi = "actions/count";
@@ -50,10 +50,11 @@ const getUsersCount = "users/count";
 const getDocCategory = "docCat/getAll";
 const deleteFileApi = "docFiles/delete";
 const getDocCategoryCount = "docCat/count";
-
+const totlaFilesApi = "docFiles/count";
 //user category
 const getUserCatPageAPI = "userCategory/page";
 const getUserCatCountApi = "userCategory/count";
+const getTotalUserCatCount = "docCat/count";
 const updateUserCatApi = "userCategory/update";
 const getUsersByCat = "userCategory/getUsersByCat";
 const deleteUserCatApi = "userCategory/delete";

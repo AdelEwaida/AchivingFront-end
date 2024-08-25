@@ -188,7 +188,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     DocumentsController().getDocCatCount().then((value) {
       totalDocumnetsCount.value = value;
     });
-    DepartmentController().getOfficeCount().then((value) {
+    DepartmentController().getTotalDep().then((value) {
       totalDepartmentsCount.value = value;
     });
   }
