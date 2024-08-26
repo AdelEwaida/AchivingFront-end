@@ -405,10 +405,18 @@ class _FillterFileSectionState extends State<FillterFileSection> {
 
   Future<void> search() async {
     SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
+    print("ONNPRESSSEED");
     searchDocumentCriteria.fromIssueDate = fromDateController.text;
+    print(1);
     searchDocumentCriteria.toIssueDate = toDateController.text;
+    print(2);
+
     searchDocumentCriteria.desc = descreptionController.text;
+    print(3);
+
     searchDocumentCriteria.issueNo = issueNoController.text;
+    print(4);
+
     searchDocumentCriteria.dept = selectedDep;
     searchDocumentCriteria.keywords = keyWordController.text;
     searchDocumentCriteria.ref1 = ref1Controller.text;
@@ -416,11 +424,18 @@ class _FillterFileSectionState extends State<FillterFileSection> {
     searchDocumentCriteria.otherRef = otherRefController.text;
     searchDocumentCriteria.cat =
         calssificatonNameAndCodeProvider.classificatonKey;
+    print(5);
+
     searchDocumentCriteria.organization = organizationController.text;
     searchDocumentCriteria.following = followingController.text;
     searchDocumentCriteria.sortedBy = selectedSortedType;
+    print(6);
+
     searchDocumentCriteria.page = 0;
     documentListProvider.setIsSearch(true);
+    print(7);
+
     documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
+    print(8);
   }
 }

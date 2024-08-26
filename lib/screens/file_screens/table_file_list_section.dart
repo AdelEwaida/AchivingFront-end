@@ -164,13 +164,12 @@ class _TableFileListSectionState extends State<TableFileListSection> {
   }
 
   fileViewScreen() {
-    // openLoadinDialog(context);
+    openLoadinDialog(context);
     documentsController
         .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
         .then((value) {
       var encoded = base64Decode(value[0].imgBlob!);
       var bytes = Uint8List.fromList(encoded);
-
       Navigator.pop(context);
       if (value[0].txtFilename!.contains(".pdf") ||
           value[0].txtFilename!.contains(".jpeg") ||
@@ -425,7 +424,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
     //   stateManager.removeAllRows();
     //   rowList.clear();
     // }
-
+    print("documentListProvider.isSearch ${documentListProvider.isSearch}");
+    print(
+        "documentListProvider.searchDocumentCriteria.page ${documentListProvider.searchDocumentCriteria.page}");
     if (documentListProvider.isSearch) {
       List<PlutoRow> searchList = [];
 

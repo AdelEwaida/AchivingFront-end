@@ -146,7 +146,7 @@ class _FileListScreenState extends State<FileListScreen> {
                     ],
                   ),
                 ),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
