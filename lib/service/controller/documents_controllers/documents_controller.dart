@@ -150,9 +150,22 @@ class DocumentsController {
     });
     return itemCount;
   }
+//getTotalUserCatCount
+  Future<int> getUserCatCount() async {
+    var api = getTotalUserCatCount;
 
+    int itemCount = 0;
+    await ApiService().getRequest(api).then((value) {
+      if (value.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
+        itemCount = CountModel.fromJson(jsonData).count!;
+      }
+    });
+
+    return itemCount;
+  }
   Future<int> getDocCatCount() async {
-    var api = getDocCategoryCount;
+    var api = totlaFilesApi;
 
     int itemCount = 0;
     await ApiService().getRequest(api).then((value) {

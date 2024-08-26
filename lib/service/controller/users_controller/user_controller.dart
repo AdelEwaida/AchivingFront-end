@@ -94,7 +94,7 @@ class UserController {
   }
 
   Future<int> getUserCatCount() async {
-    var api = getUserCatCountApi;
+    var api = getTotalUserCatCount;
 
     int itemCount = 0;
     await ApiService().getRequest(api).then((value) {

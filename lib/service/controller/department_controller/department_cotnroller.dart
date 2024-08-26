@@ -34,7 +34,26 @@ class DepartmentController {
     return await ApiService()
         .postRequest(deleteDepApi, departmentModel.toJsonDelete());
   }
+Future<int> getTotalDep() async {
+    var api = totalDepApi;
 
+    int itemCount = 0;
+    await ApiService().getRequest(api).then((value) {
+      if (value.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
+        itemCount = CountModel.fromJson(jsonData).count!;
+      }
+    });
+    // await ApiService()
+    //     .postRequest(api, searchCriteria.toJson())
+    //     .then((response) {
+    //   if (response.statusCode == 200) {
+    //     var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+    //     itemCount = CountModel.fromJson(jsonData).count!;
+    //   }
+    // });
+    return itemCount;
+  }
   Future<int> getOfficeCount() async {
     var api = getDepCountApi;
 
