@@ -498,36 +498,5 @@ class _TableFileListSectionState extends State<TableFileListSection> {
     }
   }
 
-  // Future<PlutoInfinityScrollRowsResponse> fetch1(
-  //     PlutoInfinityScrollRowsRequest request) async {
-  //   bool isLast = false;
-  //   if (documentListProvider.searchDocumentCriteria.fromIssueDate != null &&
-  //       documentListProvider.searchDocumentCriteria.page! <= 1) {
-  //     stateManager.removeAllRows();
-  //     rowList.clear();
-  //   }
-  //   List<DocumentModel> result = [];
-  //   List<PlutoRow> topList = [];
-  //   result = await documentsController
-  //       .searchDocCriterea(documentListProvider.searchDocumentCriteria);
-  //   if (documentListProvider.searchDocumentCriteria.page! >= 1) {
-  //     documentListProvider.searchDocumentCriteria.page =
-  //         documentListProvider.searchDocumentCriteria.page! + 1;
-  //   } else {
-  //     rowList.clear();
-  //     rowList = [];
-  //   }
-  //   for (int i = 0; i < result.length; i++) {
-  //     rowList.add(result[i].toPlutoRow(i + 1));
-  //     topList.add(result[i].toPlutoRow(rowList.length));
-  //   }
 
-  //   isLast = documentListProvider.searchDocumentCriteria.page == -1
-  //       ? true
-  //       : topList.isEmpty
-  //           ? true
-  //           : false;
-  //   return Future.value(
-  //       PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList));
-  // }
 }

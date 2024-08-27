@@ -1,5 +1,18 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:archiving_flutter_project/dialogs/actions_dialogs/add_edit_action_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/document_dialogs/add_file_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/document_dialogs/info_document_dialogs.dart';
+import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
+import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
+import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
+import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 import 'package:archiving_flutter_project/models/tree_model/my_node.dart';
 import 'package:archiving_flutter_project/models/tree_model/tree_tile.dart';
@@ -10,8 +23,13 @@ import 'package:archiving_flutter_project/screens/file_screens/table_file_list_s
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
+import 'package:archiving_flutter_project/utils/constants/loading.dart';
+import 'package:archiving_flutter_project/utils/constants/sorted_by_constant.dart';
+import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
+import 'package:archiving_flutter_project/utils/func/save_excel_file.dart';
+import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
 import 'package:archiving_flutter_project/widget/date_time_component.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
@@ -36,6 +54,8 @@ class _FileListScreenState extends State<FileListScreen> {
   double width = 0;
   double height = 0;
   List<MyNode> treeNodes = [];
+  List<PlutoColumn> polCols = [];
+
   // bool isLoading = false;
   ValueNotifier selectedCamp = ValueNotifier("");
   ValueNotifier selectedValue = ValueNotifier("");
@@ -54,6 +74,20 @@ class _FileListScreenState extends State<FileListScreen> {
   late DocumentListProvider documentListProvider;
   late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
   DocumentsController documentsController = DocumentsController();
+  PlutoRow? selectedRow;
+  TextEditingController descreptionController = TextEditingController();
+  TextEditingController issueNoController = TextEditingController();
+  TextEditingController classificationController = TextEditingController();
+  TextEditingController keyWordController = TextEditingController();
+  TextEditingController ref1Controller = TextEditingController();
+  TextEditingController ref2Controller = TextEditingController();
+  TextEditingController otherRefController = TextEditingController();
+  TextEditingController organizationController = TextEditingController();
+  TextEditingController followingController = TextEditingController();
+  TextEditingController sortedByController = TextEditingController();
+  String selectedDep = "";
+  int selectedSortedType = -1;
+  List<DepartmentModel> listOfDep = [];
   late PlutoGridStateManager stateManager;
   @override
   Future<void> didChangeDependencies() async {
@@ -61,6 +95,7 @@ class _FileListScreenState extends State<FileListScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
+    fillColumnTable();
     documentListProvider = context.read<DocumentListProvider>();
     calssificatonNameAndCodeProvider =
         context.read<CalssificatonNameAndCodeProvider>();
@@ -73,6 +108,13 @@ class _FileListScreenState extends State<FileListScreen> {
         childrenProvider: (MyNode node) => node.children,
       );
       await fetchData();
+    }
+    if (documentListProvider.issueNumber != null) {
+      issueNoController.text = documentListProvider.issueNumber ?? "";
+      search();
+
+      // documentListProvider.setDocumentSearchCriterea(
+      //     SearchDocumentCriteria(issueNo: issueNoController.text));
     }
     super.didChangeDependencies();
   }
@@ -142,21 +184,832 @@ class _FileListScreenState extends State<FileListScreen> {
                       SizedBox(
                         width: width * 0.02,
                       ),
-                      const FillterFileSection()
+                      fillterSection()
                     ],
                   ),
                 ),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    TableFileListSection(),
-                  ],
+                  children: [tableSection()],
                 )
               ],
             ),
           ),
         ));
+  }
+
+  Widget tableSection() {
+    return TableComponent(
+      key: UniqueKey(),
+      tableHeigt: height * 0.45,
+      tableWidth: width * 0.81,
+      addReminder: context.read<DocumentListProvider>().isViewFile == true
+          ? null
+          : addRemider,
+      upload: context.read<DocumentListProvider>().isViewFile == true
+          ? null
+          : uploadFile,
+
+      copy: context.read<DocumentListProvider>().isViewFile == true
+          ? null
+          : copyFile,
+      delete: context.read<DocumentListProvider>().isViewFile == true
+          ? null
+          : deleteFile,
+      genranlEdit: context.read<DocumentListProvider>().isViewFile == true
+          ? null
+          : editDocumentInfo,
+
+      // add: addAction,
+      // genranlEdit: editAction,
+      plCols: polCols,
+      mode: PlutoGridMode.selectWithOneTap,
+      polRows: [],
+      footerBuilder: (stateManager) {
+        return lazyLoadingfooter(stateManager);
+      },
+      explor: explorFiels,
+      view: viewDocumentInfo,
+      download: download,
+      filesList: context.read<DocumentListProvider>().isViewFile == true
+          ? fileViewScreen
+          : null,
+      onLoaded: (PlutoGridOnLoadedEvent event) {
+        stateManager = event.stateManager;
+
+        stateManager.setShowColumnFilter(true);
+        // pageLis.value = pageLis.value > 1 ? 0 : 1;
+        // totalActionsCount.value = 0;
+        // getCount();
+      },
+      doubleTab: (event) async {
+        PlutoRow? tappedRow = event.row;
+      },
+      onSelected: (event) async {
+        PlutoRow? tappedRow = event.row;
+        selectedRow = tappedRow;
+      },
+    );
+  }
+
+  Widget fillterSection() {
+    return Container(
+      width: context.read<DocumentListProvider>().isViewFile == true
+          ? width * 0.81
+          : width * 0.44,
+      height: height * 0.34,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 3,
+          ),
+        ],
+      ),
+      child: Column(
+        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      DateTimeComponent(
+                          height: height * 0.04,
+                          dateControllerToCompareWith: null,
+                          isInitiaDate: true,
+                          dateWidth:
+                              context.read<DocumentListProvider>().isViewFile ==
+                                      true
+                                  ? width * 0.19
+                                  : width * 0.1,
+                          dateController: fromDateController,
+                          label: _locale.fromDate,
+                          onValue: (isValid, value) {
+                            if (isValid) {
+                              // setState(() {
+                              fromDateController.text = value;
+                              // });
+                            }
+                          },
+                          timeControllerToCompareWith: null),
+                      space(0.01),
+                      DateTimeComponent(
+                          dateControllerToCompareWith: null,
+                          isInitiaDate: true,
+                          height: height * 0.04,
+                          dateWidth:
+                              context.read<DocumentListProvider>().isViewFile ==
+                                      true
+                                  ? width * 0.19
+                                  : width * 0.1,
+                          dateController: toDateController,
+                          label: _locale.toDate,
+                          onValue: (isValid, value) {
+                            if (isValid) {
+                              // setState(() {
+                              toDateController.text = value;
+                              // });
+                            }
+                          },
+                          timeControllerToCompareWith: null),
+                    ],
+                  ),
+                  space(0.01),
+                  DropDown(
+                    key: UniqueKey(),
+                    onChanged: (value) {
+                      selectedDep = value.txtKey;
+                      // setState(() {});
+                    },
+                    initialValue: selectedDep.isEmpty ? null : selectedDep,
+                    bordeText: _locale.department,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
+                    height: height * 0.04,
+                    items: listOfDep,
+                    // onSearch: (p0) async {
+                    //   return await DepartmentController()
+                    //       .getDep(SearchModel(page: 1));
+                    // },
+                  ),
+                  space(0.01),
+                  DropDown(
+                    key: UniqueKey(),
+                    onChanged: (value) {
+                      selectedSortedType = getSortedByTyepsCode(_locale, value);
+                    },
+                    initialValue: selectedSortedType == -1
+                        ? null
+                        : getSortedByTyepsByCode(_locale, selectedSortedType),
+                    bordeText: _locale.sortedBy,
+                    items: getSortedByTyeps(_locale),
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
+                    height: height * 0.04,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: height * 0.00001,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  CustomTextField2(
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
+                    height: height * 0.04,
+                    text: Text(_locale.description),
+                    controller: descreptionController,
+                  ),
+                  space(0.01),
+                  Consumer<CalssificatonNameAndCodeProvider>(
+                    builder: (context, value, child) {
+                      classificationController.text = value.classificatonName;
+
+                      return CustomTextField2(
+                        text: Text(_locale.classification),
+                        controller: classificationController,
+                        width:
+                            context.read<DocumentListProvider>().isViewFile ==
+                                    true
+                                ? width * 0.19
+                                : width * 0.1,
+                        height: height * 0.04,
+                        readOnly: true,
+                      );
+                    },
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.keyword),
+                    controller: keyWordController,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
+                    height: height * 0.04,
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.ref1),
+                    controller: ref1Controller,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
+                    height: height * 0.04,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: height * 0.00001,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  CustomTextField2(
+                    text: Text(_locale.ref2),
+                    controller: ref2Controller,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
+                    height: height * 0.04,
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.otherRef),
+                    controller: otherRefController,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
+                    height: height * 0.04,
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.organization),
+                    controller: organizationController,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
+                    height: height * 0.04,
+                  ),
+                  space(0.01),
+                  CustomTextField2(
+                    text: Text(_locale.following),
+                    controller: followingController,
+                    width:
+                        context.read<DocumentListProvider>().isViewFile == true
+                            ? width * 0.19
+                            : width * 0.1,
+                    height: height * 0.04,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: height * 0.00001,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  children: [
+                    // space(0.02),
+                    CustomTextField2(
+                      width: context.read<DocumentListProvider>().isViewFile ==
+                              true
+                          ? width * 0.19
+                          : width * 0.1,
+                      height: height * 0.04,
+                      text: Text(_locale.issueNo),
+                      controller: issueNoController,
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: height * 0.00001,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  search();
+                },
+                style: customButtonStyle(
+                    Size(
+                        isDesktop
+                            ? context.read<DocumentListProvider>().isViewFile ==
+                                    true
+                                ? width * 0.14
+                                : width * 0.1
+                            : width * 0.19,
+                        height * 0.043),
+                    14,
+                    primary),
+                child: Text(
+                  _locale.search,
+                  style: const TextStyle(color: whiteColor),
+                ),
+              ),
+              SizedBox(
+                width: width * 0.01,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  resetForm();
+                },
+                style: customButtonStyle(
+                    Size(
+                        isDesktop
+                            ? context.read<DocumentListProvider>().isViewFile ==
+                                    true
+                                ? width * 0.14
+                                : width * 0.12
+                            : width * 0.19,
+                        height * 0.043),
+                    14,
+                    Colors.red),
+                child: Text(
+                  _locale.resetFilter,
+                  style: const TextStyle(color: whiteColor),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  void resetForm() {
+    fromDateController.text = Converters.getDateBeforeMonth();
+    toDateController.text = Converters.formatDate2(DateTime.now().toString());
+    descreptionController.clear();
+    issueNoController.clear();
+    classificationController.clear();
+    keyWordController.clear();
+    ref1Controller.clear();
+    ref2Controller.clear();
+    otherRefController.clear();
+    organizationController.clear();
+    followingController.clear();
+    selectedDep = "";
+    documentListProvider.setIssueNumber(null);
+    selectedSortedType = -1;
+    calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
+    calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
+    documentListProvider.setIsSearch(false);
+    documentListProvider.setPage(1);
+    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
+    setState(() {});
+  }
+
+  Future<void> search() async {
+    SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
+    print("ONNPRESSSEED");
+    searchDocumentCriteria.fromIssueDate =
+        documentListProvider.issueNumber != null
+            ? null
+            : fromDateController.text;
+    print(1);
+    searchDocumentCriteria.toIssueDate =
+        documentListProvider.issueNumber != null ? null : toDateController.text;
+    print(2);
+
+    searchDocumentCriteria.desc = descreptionController.text;
+    print(3);
+
+    searchDocumentCriteria.issueNo = issueNoController.text;
+    print(4);
+
+    searchDocumentCriteria.dept = selectedDep;
+    searchDocumentCriteria.keywords = keyWordController.text;
+    searchDocumentCriteria.ref1 = ref1Controller.text;
+    searchDocumentCriteria.ref2 = ref2Controller.text;
+    searchDocumentCriteria.otherRef = otherRefController.text;
+    searchDocumentCriteria.cat =
+        calssificatonNameAndCodeProvider.classificatonKey;
+    print(5);
+
+    searchDocumentCriteria.organization = organizationController.text;
+    searchDocumentCriteria.following = followingController.text;
+    searchDocumentCriteria.sortedBy = selectedSortedType;
+    print(6);
+
+    searchDocumentCriteria.page = 0;
+    documentListProvider.setIsSearch(true);
+    print(7);
+
+    // documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
+    List<DocumentModel> result =
+        await documentsController.searchDocCriterea(searchDocumentCriteria);
+    stateManager.setShowLoading(true);
+    stateManager.removeAllRows();
+    for (int i = 0; i < result.length; i++) {
+      stateManager.appendRows([result[i].toPlutoRow(i + 1)]);
+    }
+    stateManager.setShowLoading(false);
+    stateManager.notifyListeners();
+    print(8);
+  }
+
+  Widget space(double width1) {
+    return SizedBox(
+      width: width * width1,
+    );
+  }
+
+  void explorFiels() {
+    if (selectedRow != null) {
+      print(
+          "selectedRow!.cells['txtKey']!.value ${selectedRow!.cells['txtDescription']!.value} ${selectedRow!.cells['txtKey']!.value}");
+      openLoadinDialog(context);
+      documentsController
+          .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
+          .then((value) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return FileExplorDialog(listOfFiles: value);
+          },
+        );
+      }).then((value) {
+        // print("valuevaluevaluevaluevaluevaluevalue:${value}");
+        // if (value != null) {
+        //   // print("DONE");
+        //   documentListProvider.setDocumentSearchCriterea(
+        //       documentListProvider.searchDocumentCriteria);
+        //   Navigator.pop(context);
+        //   Navigator.pop(context);
+        // }
+      });
+    }
+  }
+
+  void uploadFile() {
+    if (selectedRow != null) {
+      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AddFileDialog(documentModel: documentModel);
+        },
+      ).then((value) {
+        if (value) {
+          documentListProvider.searchDocumentCriteria.page = 0;
+          documentListProvider.setDocumentSearchCriterea(
+              documentListProvider.searchDocumentCriteria);
+        }
+      });
+    }
+  }
+
+  fileViewScreen() {
+    openLoadinDialog(context);
+    documentsController
+        .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
+        .then((value) {
+      var encoded = base64Decode(value[0].imgBlob!);
+      var bytes = Uint8List.fromList(encoded);
+      Navigator.pop(context);
+      if (value[0].txtFilename!.contains(".pdf") ||
+          value[0].txtFilename!.contains(".jpeg") ||
+          value[0].txtFilename!.contains(".png") ||
+          value[0].txtFilename!.contains(".jpg")) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return PdfPreview1(
+              pdfFile: bytes,
+              fileName: value[0].txtFilename!,
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.error_outlined,
+                errorDetails: _locale.previewNotAvilable,
+                errorTitle: _locale.error,
+                color: Colors.red,
+                statusCode: 500);
+          },
+        );
+      }
+    });
+  }
+
+  void addRemider() {
+    if (selectedRow != null) {
+      ActionModel actionModel = ActionModel();
+      actionModel.txtDescription = selectedRow!.cells['txtDescription']!.value;
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AddEditActionDialog(
+            title: _locale.addReminder,
+            actionModel: actionModel,
+            isFromList: true,
+          );
+        },
+      ).then((value) {
+        selectedRow = null;
+      });
+    }
+  }
+
+  Future<void> download() async {
+    if (selectedRow != null) {
+      try {
+        FileUploadModel? file = await documentsController
+            .getLatestFileMethod(selectedRow!.cells['txtKey']!.value);
+
+        // Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
+
+        // String fileName = selectedRow!.cells['fileName']!.value;
+        Uint8List bytes = base64Decode(file!.imgBlob!);
+
+        String? fileName = file.txtFilename;
+        saveExcelFile(bytes, fileName!);
+      } catch (e) {
+        print("Error downloading file: $e");
+        // Handle error here
+      }
+    }
+  }
+
+  viewDocumentInfo() {
+    if (selectedRow != null) {
+      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return InfoDocumentDialog(
+            isEdit: false,
+            documentModel: documentModel,
+          );
+        },
+      ).then((value) {
+        // selectedRow = null;
+      });
+    }
+  }
+
+  Future<void> deleteFile() async {
+    if (selectedRow != null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return CustomConfirmDialog(
+              confirmMessage: _locale.areYouSureToDelete(
+                  selectedRow!.cells['txtDescription']!.value));
+        },
+      ).then((value) async {
+        if (value) {
+          DocumentModel documentModel =
+              DocumentModel.fromPlutoRow(selectedRow!);
+          var response =
+              await documentsController.deleteDocument(documentModel);
+          if (response.statusCode == 200) {
+            // print("DONE");
+            documentListProvider.searchDocumentCriteria.page = 0;
+
+            documentListProvider.setDocumentSearchCriterea(
+                documentListProvider.searchDocumentCriteria);
+          }
+        }
+      });
+    }
+  }
+
+  void copyFile() async {
+    if (selectedRow != null) {
+      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      var response = await documentsController.copyDocument(documentModel);
+      if (response.statusCode == 200) {
+        // print("DONE");
+        documentListProvider.searchDocumentCriteria.page = 0;
+        documentListProvider.setDocumentSearchCriterea(
+            documentListProvider.searchDocumentCriteria);
+      }
+    }
+  }
+
+  editDocumentInfo() {
+    if (selectedRow != null) {
+      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return InfoDocumentDialog(
+            isEdit: true,
+            documentModel: documentModel,
+          );
+        },
+      ).then((value) {
+        if (value) {
+          documentListProvider.searchDocumentCriteria.page = 0;
+          selectedRow = null;
+          documentListProvider.setDocumentSearchCriterea(
+              documentListProvider.searchDocumentCriteria);
+        }
+      });
+    }
+  }
+
+  void fillColumnTable() {
+    polCols.addAll([
+      PlutoColumn(
+        title: "#",
+        field: "countNumber",
+        enableFilterMenuItem: true,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.05 : width * 0.15,
+        backgroundColor: columnColors,
+        readOnly: true,
+        renderer: (rendererContext) {
+          return Center(child: Text((rendererContext.rowIdx + 1).toString()));
+        },
+      ),
+      PlutoColumn(
+        title: _locale.description,
+        field: "txtDescription",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.16 : width * 0.4,
+        backgroundColor: columnColors,
+        enableFilterMenuItem: true,
+      ),
+      // PlutoColumn(
+      //   title: _locale.dateCreated,
+      //   field: "datCreationdate",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      PlutoColumn(
+        title: _locale.issueNo,
+        field: "txtIssueno",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.28 : width * 0.2,
+        backgroundColor: columnColors,
+        enableFilterMenuItem: true,
+      ),
+      PlutoColumn(
+        title: _locale.issueDate,
+        field: "datIssuedate",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.313 : width * 0.2,
+        backgroundColor: columnColors,
+        enableFilterMenuItem: true,
+      ),
+      // PlutoColumn(
+      //   title: _locale.userCode,
+      //   field: "txtUsercode",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.arrivalDate,
+      //   field: "datArrvialdate",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.ref1,
+      //   field: "ref1",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.ref2,
+      //   field: "ref2",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+      // PlutoColumn(
+      //   title: _locale.active,
+      //   field: "imgBlob",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.35 : width * 0.2,
+      //   backgroundColor: columnColors,
+      // ),
+    ]);
+  }
+
+  PlutoInfinityScrollRows lazyLoadingfooter(
+      PlutoGridStateManager stateManager) {
+    return PlutoInfinityScrollRows(
+      initialFetch: true,
+      fetchWithSorting: false,
+      fetchWithFiltering: false,
+      fetch: fetch,
+      stateManager: stateManager,
+    );
+  }
+
+  List<PlutoRow> rowList = [];
+  ValueNotifier<int> pageLis = ValueNotifier(1);
+
+  Future<PlutoInfinityScrollRowsResponse> fetch(
+      PlutoInfinityScrollRowsRequest request) async {
+    bool isLast = false;
+
+    // if (documentListProvider.searchDocumentCriteria.fromIssueDate != null &&
+    //     documentListProvider.searchDocumentCriteria.page! <= 1) {
+    //   stateManager.removeAllRows();
+    //   rowList.clear();
+    // }
+    print("documentListProvider.isSearch ${documentListProvider.isSearch}");
+    print(
+        "documentListProvider.searchDocumentCriteria.page ${documentListProvider.searchDocumentCriteria.page}");
+    if (documentListProvider.issueNumber == null) {
+      if (documentListProvider.isSearch) {
+        List<PlutoRow> searchList = [];
+
+        // rowList.clear();
+        if (documentListProvider.searchDocumentCriteria.page == 0) {
+          stateManager.removeAllRows();
+          documentListProvider.searchDocumentCriteria.page = 1;
+        } else {
+          documentListProvider.searchDocumentCriteria.page = -1;
+        }
+        List<DocumentModel> result = [];
+
+        result = await documentsController
+            .searchDocCriterea(documentListProvider.searchDocumentCriteria);
+
+        for (int i =
+                documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
+            i < result.length;
+            i++) {
+          PlutoRow row = result[i].toPlutoRow(i + 1);
+          // rowList.add(row);
+          searchList.add(row);
+        }
+
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        return Future.value(PlutoInfinityScrollRowsResponse(
+          isLast: documentListProvider.searchDocumentCriteria.page == -1
+              ? true
+              : false,
+          rows: searchList.toList(),
+        ));
+      } else {
+        if (documentListProvider.searchDocumentCriteria.page == 1) {
+          documentListProvider.searchDocumentCriteria.page = -1;
+        } else {
+          documentListProvider.searchDocumentCriteria.page = 1;
+        }
+
+        List<DocumentModel> result = [];
+        List<PlutoRow> topList = [];
+
+        result = await documentsController
+            .searchDocCriterea(documentListProvider.searchDocumentCriteria);
+
+        int currentPage = documentListProvider.page!; //1
+
+        for (int i =
+                documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
+            i < result.length;
+            i++) {
+          int rowIndex = (currentPage - 1) * result.length + (i + 1);
+          PlutoRow row = result[i].toPlutoRow(rowList.length + 1);
+          rowList.add(row);
+          topList.add(row);
+        }
+
+        isLast = topList.isEmpty;
+
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        return Future.value(PlutoInfinityScrollRowsResponse(
+          isLast: documentListProvider.searchDocumentCriteria.page == -1
+              ? true
+              : false,
+          rows: topList.toList(),
+        ));
+        // }
+      }
+    }
+    return Future.value(PlutoInfinityScrollRowsResponse(
+        isLast: documentListProvider.searchDocumentCriteria.page == -1
+            ? true
+            : false,
+        rows: []));
   }
 
   Widget treeSection() {
