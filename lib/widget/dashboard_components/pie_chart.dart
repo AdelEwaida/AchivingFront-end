@@ -1,5 +1,6 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+
 import '../../utils/func/converters.dart';
 import '../../utils/func/responsive.dart';
 import '../pie_chart_model.dart';
@@ -12,6 +13,7 @@ class PieChartComponent extends StatefulWidget {
   final List<PieChartModel> dataList;
   final double? radiusNormal;
   final double? radiusHover;
+
   const PieChartComponent({
     super.key,
     required this.dataList,
@@ -26,67 +28,56 @@ class PieChartComponent extends StatefulWidget {
 }
 
 class _PieChartComponentState extends State<PieChartComponent> {
-  int touchedIndex = -1;
-  int duration = 100;
-
-  double radiusNormal = 130;
-  double radiusHover = 140;
-
   double width = 500;
   double height = 500;
 
-  Color borderColor = Colors.white;
   bool isMobile = false;
   bool isLoading = false;
-  Widget buildWidget = const Row();
-
-  @override
-  void didChangeDependencies() {
-    // getBuildWidget();
-    super.didChangeDependencies();
-  }
 
   @override
   void initState() {
     setAttributes();
-
     super.initState();
   }
 
-  getBuildWidget() {
-    List<PieChartModel> dataList = widget.dataList;
-    bool isEmpty = dataList.isEmpty ? true : false;
-    setState(() {
-      isLoading = true;
-    });
+  @override
+  Widget build(BuildContext context) {
+    isMobile = Responsive.isMobile(context);
+    return isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : buildPieChart();
+  }
 
-    buildWidget = Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget buildPieChart() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(
           width: width,
-          height: isMobile ? 280 : 250,
-          child: PieChart(
-            PieChartData(
-              centerSpaceRadius: 1,
-              pieTouchData: PieTouchData(
-                enabled: true,
-                touchCallback: (event, pieTouchResponse) {
-                  setState(() {
-                    if (!event.isInterestedForInteractions ||
-                        pieTouchResponse == null ||
-                        pieTouchResponse.touchedSection == null) {
-                      touchedIndex = -1;
-                      return;
-                    }
-                    touchedIndex =
-                        pieTouchResponse.touchedSection!.touchedSectionIndex;
-                  });
-                },
+          height: height * 0.4,
+          child: SfCircularChart(
+            series: <CircularSeries>[
+              PieSeries<PieChartModel, String>(
+                dataSource: widget.dataList,
+                xValueMapper: (PieChartModel data, _) => data.title ?? '',
+                yValueMapper: (PieChartModel data, _) => data.value ?? 0,
+                pointColorMapper: (PieChartModel data, _) =>
+                    data.color ?? Colors.blue,
+                dataLabelMapper: (PieChartModel data, _) =>
+                    '${data.title}: ${Converters.formatNumber(data.value!)}',
+                dataLabelSettings: const DataLabelSettings(
+                  isVisible: true,
+                  overflowMode: OverflowMode.shift,
+                  labelPosition: ChartDataLabelPosition.outside,
+                  connectorLineSettings: ConnectorLineSettings(
+                    length: '18%', // Adjust the length as needed
+                    type: ConnectorType.curve,
+                  ),
+                ),
               ),
-              sections: isEmpty ? noDataList() : showList(dataList),
-            ),
-            swapAnimationDuration: Duration(milliseconds: duration),
+            ],
           ),
         ),
         Container(
@@ -99,95 +90,13 @@ class _PieChartComponentState extends State<PieChartComponent> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: showIndicators(dataList),
+                children: showIndicators(widget.dataList),
               ),
             ),
           ),
         ),
       ],
     );
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    isMobile = Responsive.isMobile(context);
-    radiusNormal = isMobile ? 120 : 120;
-    radiusHover = isMobile ? 130 : 110;
-    getBuildWidget();
-    return isLoading
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : buildWidget;
-  }
-
-  List<PieChartSectionData> showList(List<PieChartModel> dataList) {
-    return List.generate(dataList.length, (i) {
-      bool isTouched = i == touchedIndex;
-      final radius = isTouched ? radiusHover : radiusNormal;
-      PieChartModel data = dataList[i];
-      return PieChartSectionData(
-        value: data.value,
-        title: "${data.title}\n${Converters.formatNumber(data.value!)}",
-        color: data.color,
-        radius: radius,
-        titleStyle: TextStyle(color: Colors.white, fontSize: isMobile ? 9 : 15),
-        borderSide: isTouched
-            ? BorderSide(
-                color: borderColor,
-                strokeAlign: 10,
-                width: 5,
-              )
-            : null,
-        // badgeWidget: Responsive.isDesktop(context) ? badgeLabel(data) : null,
-        badgePositionPercentageOffset: 2,
-      );
-    });
-  }
-
-  Padding badgeLabel(PieChartModel data) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: data.color,
-          borderRadius: BorderRadius.circular(4),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 5,
-              color: Colors.black38,
-            ),
-          ],
-        ),
-        child: Text(
-          data.title ?? "NONE",
-          style: TextStyle(color: Colors.white, fontSize: isMobile ? 9 : 15),
-        ),
-      ),
-    );
-  }
-
-  List<PieChartSectionData> noDataList() {
-    PieChartModel data = PieChartModel(
-      value: 100,
-      title: "NO DATA",
-      color: Colors.blue,
-    );
-
-    List<PieChartSectionData> noData = [
-      PieChartSectionData(
-        value: data.value,
-        title: data.title,
-        color: data.color,
-        radius: radiusNormal,
-        titleStyle: const TextStyle(color: Colors.white),
-      ),
-    ];
-
-    return noData;
   }
 
   List<Widget> showIndicators(List<PieChartModel> dataList) {
@@ -200,7 +109,7 @@ class _PieChartComponentState extends State<PieChartComponent> {
           isSquare: true,
           text: "${data.title!} (${Converters.formatNumber(data.value!)})",
           size: isMobile ? 9 : 16,
-          textSize: isMobile ? 9 : 16,
+          textSize: isMobile ? 9 : 12,
         ),
       );
     });
@@ -212,13 +121,6 @@ class _PieChartComponentState extends State<PieChartComponent> {
     }
     if (widget.height != null) {
       height = widget.height!;
-    }
-
-    if (widget.radiusNormal != null) {
-      radiusNormal = widget.radiusNormal!;
-    }
-    if (widget.radiusHover != null) {
-      radiusHover = widget.radiusHover!;
     }
   }
 }

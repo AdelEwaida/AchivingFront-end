@@ -21,9 +21,10 @@ class _PieDashboardChartState extends State<PieDashboardChart> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.0),
+            padding: EdgeInsets.symmetric(horizontal: 0.0),
           ),
           PieChartComponent(
             // height: 300,

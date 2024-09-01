@@ -1,7 +1,6 @@
+import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-
-import '../../utils/constants/colors.dart';
 import '../../utils/func/responsive.dart';
 
 class LineDashboardChart extends StatefulWidget {
@@ -13,7 +12,6 @@ class LineDashboardChart extends StatefulWidget {
       required this.balances,
       required this.periods,
       required this.isMax});
-
   @override
   State<LineDashboardChart> createState() => _LineDashboardChartState();
 }
@@ -31,11 +29,9 @@ class _LineDashboardChartState extends State<LineDashboardChart> {
       borderData: borderData,
       lineBarsData: lineBarsData2,
       baselineY: 1);
-
   LineTouchData get lineTouchData2 => const LineTouchData(
         enabled: true,
       );
-
   FlTitlesData get titlesData2 => FlTitlesData(
         bottomTitles: AxisTitles(
           sideTitles: bottomTitles,
@@ -43,25 +39,22 @@ class _LineDashboardChartState extends State<LineDashboardChart> {
         rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
+        topTitles: AxisTitles(
+          sideTitles: topTitles,
         ),
         leftTitles: AxisTitles(
           sideTitles: leftTitles,
         ),
       );
-
   List<LineChartBarData> get lineBarsData2 => [
         lineChartBarData2_1,
       ];
-
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontSize: 14,
     );
     String text;
     text = value.ceil().toString();
-
     return Text(text, style: style, textAlign: TextAlign.center);
   }
 
@@ -71,13 +64,11 @@ class _LineDashboardChartState extends State<LineDashboardChart> {
         interval: balances.isEmpty ? 300000 : getMax() / 5,
         reservedSize: 100,
       );
-
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontSize: 14,
     );
     int index = value.round();
-
     Widget text =
         Text(periods.isNotEmpty ? periods[index] : 0.toString(), style: style);
     return SideTitleWidget(
@@ -86,15 +77,23 @@ class _LineDashboardChartState extends State<LineDashboardChart> {
     );
   }
 
+  Widget topTitleWidgets(double value, TitleMeta meta) {
+    return const Text("");
+  }
+
+  SideTitles get topTitles => SideTitles(
+        getTitlesWidget: topTitleWidgets,
+        showTitles: true,
+        interval: balances.isEmpty ? 300000 : getMax() / 5,
+        reservedSize: 35,
+      );
   SideTitles get bottomTitles => SideTitles(
         showTitles: true,
         reservedSize: 32,
         interval: 1,
         getTitlesWidget: bottomTitleWidgets,
       );
-
   FlGridData get gridData => const FlGridData(show: true);
-
   FlBorderData get borderData => FlBorderData(
         show: true,
         border: Border(
@@ -104,11 +103,10 @@ class _LineDashboardChartState extends State<LineDashboardChart> {
           top: const BorderSide(color: Colors.transparent),
         ),
       );
-
   LineChartBarData get lineChartBarData2_1 => LineChartBarData(
       isCurved: true,
       curveSmoothness: 0,
-      color: Colors.green.withOpacity(0.5),
+      color: Color.fromARGB(255, 3, 18, 97).withOpacity(1),
       barWidth: 4,
       isStrokeCapRound: true,
       dotData: const FlDotData(show: true),
@@ -117,7 +115,6 @@ class _LineDashboardChartState extends State<LineDashboardChart> {
           gradient: LinearGradient(
               colors: [Colors.grey.shade300, Colors.green.shade200])),
       spots: getSpots());
-
   List<FlSpot> getSpots() {
     List<FlSpot> spots = [];
     for (int i = 0; i < balances.length; i++) {
@@ -161,8 +158,8 @@ class _LineDashboardChartState extends State<LineDashboardChart> {
                         ? width * 0.8
                         : width * (periods.length / 4)
                     : (widget.isMax && periods.length < 6) || periods.length < 6
-                        ? width * .6
-                        : width * (periods.length / 15),
+                        ? width * 0.6
+                        : width * (periods.length / 8),
                 child: LineChart(
                   sampleData2,
                   // duration: const Duration(milliseconds: 250),
@@ -203,8 +200,8 @@ class _LineDashboardChartState extends State<LineDashboardChart> {
                             : width * (periods.length / 4)
                         : (widget.isMax && periods.length < 6) ||
                                 periods.length < 6
-                            ? width * .6
-                            : width * (periods.length / 15),
+                            ? width * 0.6
+                            : width * (periods.length / 8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
