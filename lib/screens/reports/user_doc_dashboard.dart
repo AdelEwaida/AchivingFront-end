@@ -179,14 +179,16 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
   }
 
   Future<void> getUserDocs() async {
-    userDocList = [];
-
+    listOfBalances.clear();
+    listOfPeriods.clear();
+    userDocList.clear();
     await reportsController.getUserDocuments(searchCriteria!).then((response) {
       if (response.isNotEmpty) {
         for (var element in response) {
           String temp = element.username ?? "NO DATE";
           double countFiles = double.parse(element.countFiles.toString());
           listOfBalances.add(countFiles);
+          print("countFiles ${countFiles}");
           listOfPeriods.add(
             element.username!.isNotEmpty ? element.username! : _locale.userName,
           );
@@ -196,14 +198,13 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
               color: getRandomColor(colorNewList)));
         }
         print("Pie chart data length: ${userDocList.length}");
+
         for (var data in userDocList) {
           print("Title: ${data.title}, Value: ${data.value}");
         }
       } else {}
-   
     });
     setState(() {});
-
   }
 
   Color getRandomColor(List<Color> colorList) {

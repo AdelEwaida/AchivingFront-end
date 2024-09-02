@@ -1,5 +1,6 @@
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/utils/constants/routes_constant.dart';
+import 'package:archiving_flutter_project/utils/constants/user_types_constant/user_types_constant.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -117,8 +118,15 @@ class _LogoutTabState extends State<LogoutTab> {
       },
     ).then((value) async {
       if (value) {
-        await storage.delete(key: "jwt").then((value) {
-          GoRouter.of(context).go(loginScreenRoute);
+        await storage.delete(key: "jwt").then((value) async {
+          await storage.delete(key: "roles").then((value) {
+            // context.read<ScreenContentProvider>().setPage1(-1);
+
+            GoRouter.of(context).go(loginScreenRoute);
+
+            // menuList = getMenus(_locale, value!);
+            // setState(() {});
+          });
           // context.read<ScreenContentProvider>().setPage1(0);
         });
         // LoginController().logOut(locale);

@@ -96,15 +96,15 @@ List<MenuModel> getMenus(AppLocalizations locale, String type) {
         ]
       : type == USERTYPEMANEGER
           ? [
-              MenuModel(
-                title: locale.dashboard,
-                icon: Icons.dashboard,
-                pageNumber: 0,
-                isOpened: true,
-                isParent: false,
-                // route: mainScreenRoute,
-                subMenuList: [],
-              ),
+              // MenuModel(
+              //   title: locale.dashboard,
+              //   icon: Icons.dashboard,
+              //   pageNumber: 0,
+              //   isOpened: true,
+              //   isParent: false,
+              //   // route: mainScreenRoute,
+              //   subMenuList: [],
+              // ),
               MenuModel(
                 title: locale.dailyReminders,
                 icon: Icons.dashboard,
@@ -163,15 +163,15 @@ List<MenuModel> getMenus(AppLocalizations locale, String type) {
                   subMenuList: []),
             ]
           : [
-              MenuModel(
-                title: locale.dashboard,
-                icon: Icons.dashboard,
-                pageNumber: 0,
-                isOpened: true,
-                isParent: false,
-                // route: mainScreenRoute,
-                subMenuList: [],
-              ),
+              // MenuModel(
+              //   title: locale.dashboard,
+              //   icon: Icons.dashboard,
+              //   pageNumber: 0,
+              //   isOpened: true,
+              //   isParent: false,
+              //   // route: mainScreenRoute,
+              //   subMenuList: [],
+              // ),
               MenuModel(
                 title: locale.dailyReminders,
                 icon: Icons.dashboard,

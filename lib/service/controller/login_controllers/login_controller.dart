@@ -111,7 +111,8 @@ class LoginController {
           utf8.fuse(base64).decode(base64.normalize(encodedPayload));
 
       final payLoad = PayloadModel.fromJson(jsonDecode(payloadData));
-      storage.write(key: 'roles', value: payLoad.roles![0]);
+      await storage.write(key: 'roles', value: payLoad.roles![0]);
+
       // SideMenuDate.userType = int.parse(payLoad.roles!.first);
       // storage.write(key: 'roles', value: SideMenuDate.userType.toString());
       print(payLoad.toJson());

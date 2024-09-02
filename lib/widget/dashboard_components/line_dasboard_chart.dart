@@ -61,7 +61,7 @@ class _LineDashboardChartState extends State<LineDashboardChart> {
   SideTitles get leftTitles => SideTitles(
         getTitlesWidget: leftTitleWidgets,
         showTitles: true,
-        interval: balances.isEmpty ? 300000 : getMax() / 5,
+        // interval:,
         reservedSize: 100,
       );
   Widget bottomTitleWidgets(double value, TitleMeta meta) {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archiving_flutter_project/dialogs/actions_dialogs/add_edit_action_dialog.dart';
@@ -14,6 +15,7 @@ import 'package:archiving_flutter_project/models/db/department_models/department
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
+import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
 import 'package:archiving_flutter_project/models/tree_model/my_node.dart';
 import 'package:archiving_flutter_project/models/tree_model/tree_tile.dart';
 import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
@@ -21,6 +23,7 @@ import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/screens/file_screens/fillter_section.dart';
 import 'package:archiving_flutter_project/screens/file_screens/table_file_list_section.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
+import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
@@ -34,13 +37,17 @@ import 'package:archiving_flutter_project/widget/date_time_component.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
+import 'package:csv/csv.dart';
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
+import 'dart:html' as html;
 
 class FileListScreen extends StatefulWidget {
   const FileListScreen({super.key});
@@ -116,6 +123,8 @@ class _FileListScreenState extends State<FileListScreen> {
       // documentListProvider.setDocumentSearchCriterea(
       //     SearchDocumentCriteria(issueNo: issueNoController.text));
     }
+    listOfDep = await DepartmentController().getDep(SearchModel(page: 1));
+    setState(() {});
     super.didChangeDependencies();
   }
 
@@ -220,7 +229,7 @@ class _FileListScreenState extends State<FileListScreen> {
       genranlEdit: context.read<DocumentListProvider>().isViewFile == true
           ? null
           : editDocumentInfo,
-
+      exportToExcel: exportToExecl,
       // add: addAction,
       // genranlEdit: editAction,
       plCols: polCols,
@@ -251,6 +260,50 @@ class _FileListScreenState extends State<FileListScreen> {
         selectedRow = tappedRow;
       },
     );
+  }
+
+  void exportToExecl() {
+    final excel = Excel.createExcel(); // Create a new Excel workbook
+    final sheet = excel['Sheet1']; // Access the first sheet
+
+    if (stateManager == null) return;
+
+    // Extract columns and rows
+    List<String> headers = stateManager!.columns.map((column) {
+      return column.title ?? '';
+    }).toList();
+
+    // Append headers as the first row
+    sheet.appendRow(headers);
+
+    List<List<String>> rows = stateManager!.rows.map((row) {
+      return stateManager!.columns.map((column) {
+        return row.cells[column.field]?.value.toString() ?? '';
+      }).toList();
+    }).toList();
+
+    // Append each row
+    for (var row in rows) {
+      sheet.appendRow(row);
+    }
+
+    // Convert the workbook to a list of bytes
+    final excelBytes = excel.encode();
+
+    // Create a blob from the bytes
+    final blob = html.Blob([excelBytes!],
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+    // Create a URL for the blob
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    // Create an anchor element and trigger the download
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute('download', 'exported_data.xlsx')
+      ..click();
+
+    // Clean up
+    html.Url.revokeObjectUrl(url);
   }
 
   Widget fillterSection() {

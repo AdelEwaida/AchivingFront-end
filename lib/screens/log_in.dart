@@ -9,6 +9,7 @@ import 'package:archiving_flutter_project/providers/screen_content_provider.dart
 import 'package:archiving_flutter_project/service/controller/login_controllers/login_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/routes_constant.dart';
+import 'package:archiving_flutter_project/utils/constants/user_types_constant/user_types_constant.dart';
 import 'package:archiving_flutter_project/utils/encrypt/encryption.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/language_widget/language_widget.dart';
@@ -343,10 +344,19 @@ class _LogInScreenState extends State<LoginScreen>
         .logInPost(userModel, AppLocalizations.of(context)!)
         .then((value) async {
       if (value) {
-        Navigator.pop(context);
-        context.read<ScreenContentProvider>().setPage1(0);
+        await storage.read(key: "roles").then((value1) {
+          if (value1 == USERTYPEADMIN) {
+            context.read<ScreenContentProvider>().setPage1(0);
+          } else {
+            context.read<ScreenContentProvider>().setPage1(1);
+          }
+          Navigator.pop(context);
 
-        GoRouter.of(context).go(mainScreenRoute);
+          GoRouter.of(context).go(mainScreenRoute);
+
+          // menuList = getMenus(_locale, value!);
+          // setState(() {});
+        });
       } else {
         Navigator.pop(context);
       }
