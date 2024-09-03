@@ -1064,7 +1064,7 @@ class _FileListScreenState extends State<FileListScreen> {
       List<PlutoRow> searchList = [];
       print("INNNNNNNNNNNNELLLLLLLLLLLL");
       // rowList.clear();
-      documentListProvider.searchDocumentCriteria.page == -1;
+      documentListProvider.searchDocumentCriteria.page = -1;
 
       List<DocumentModel> result = [];
       documentListProvider.searchDocumentCriteria.fromIssueDate = null;
