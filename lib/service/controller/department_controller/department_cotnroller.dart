@@ -20,6 +20,21 @@ class DepartmentController {
     return list;
   }
 
+  Future<List<DepartmentModel>> search(SearchModel searchModel) async {
+    List<DepartmentModel> list = [];
+    await ApiService()
+        .postRequest(searchDepPageApi, searchModel)
+        .then((response) {
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+        for (var stock in jsonData) {
+          list.add(DepartmentModel.fromJson(stock));
+        }
+      }
+    });
+    return list;
+  }
+
   Future addDep(DepartmentModel departmentModel) async {
     return await ApiService()
         .postRequest(insertDepApi, departmentModel.toJsonAdd());
@@ -34,7 +49,8 @@ class DepartmentController {
     return await ApiService()
         .postRequest(deleteDepApi, departmentModel.toJsonDelete());
   }
-Future<int> getTotalDep() async {
+
+  Future<int> getTotalDep() async {
     var api = totalDepApi;
 
     int itemCount = 0;
@@ -54,6 +70,7 @@ Future<int> getTotalDep() async {
     // });
     return itemCount;
   }
+
   Future<int> getOfficeCount() async {
     var api = getDepCountApi;
 

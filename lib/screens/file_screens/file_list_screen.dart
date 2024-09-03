@@ -124,10 +124,10 @@ class _FileListScreenState extends State<FileListScreen> {
           issueNo: issueNoController.text,
           fromIssueDate: "",
           toIssueDate: "",
-          page: 0));
+          page: -1));
     }
-    listOfDep = await DepartmentController().getDep(SearchModel(page: 1));
-    setState(() {});
+    // listOfDep =
+    // setState(() {});
     super.didChangeDependencies();
   }
 
@@ -394,11 +394,11 @@ class _FileListScreenState extends State<FileListScreen> {
                             ? width * 0.19
                             : width * 0.1,
                     height: height * 0.04,
-                    items: listOfDep,
-                    // onSearch: (p0) async {
-                    //   return await DepartmentController()
-                    //       .getDep(SearchModel(page: 1));
-                    // },
+                    // items: listOfDep,
+                    onSearch: (p0) async {
+                      return await DepartmentController()
+                          .search(SearchModel(page: 1, searchField: p0));
+                    },
                   ),
                   space(0.01),
                   DropDown(
@@ -602,7 +602,7 @@ class _FileListScreenState extends State<FileListScreen> {
     );
   }
 
-  void resetForm() {
+  Future<void> resetForm() async {
     fromDateController.text = Converters.getDateBeforeMonth();
     toDateController.text = Converters.formatDate2(DateTime.now().toString());
     descreptionController.clear();
@@ -621,6 +621,7 @@ class _FileListScreenState extends State<FileListScreen> {
     calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
     documentListProvider.setIsSearch(false);
     documentListProvider.setPage(1);
+
     documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
     setState(() {});
   }
@@ -905,7 +906,7 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.issueNo,
         field: "txtIssueno",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.28 : width * 0.2,
+        width: isDesktop ? width * 0.24 : width * 0.2,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
       ),
@@ -913,24 +914,31 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.issueDate,
         field: "datIssuedate",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.313 : width * 0.2,
+        width: isDesktop ? width * 0.1 : width * 0.2,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
       ),
-      // PlutoColumn(
-      //   title: _locale.userCode,
-      //   field: "txtUsercode",
-      //   type: PlutoColumnType.text(),
-      //   width: isDesktop ? width * 0.35 : width * 0.2,
-      //   backgroundColor: columnColors,
-      // ),
-      // PlutoColumn(
-      //   title: _locale.arrivalDate,
-      //   field: "datArrvialdate",
-      //   type: PlutoColumnType.text(),
-      //   width: isDesktop ? width * 0.35 : width * 0.2,
-      //   backgroundColor: columnColors,
-      // ),
+      PlutoColumn(
+        title: _locale.userCode,
+        field: "txtUsercode",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.08 : width * 0.2,
+        backgroundColor: columnColors,
+      ),
+      PlutoColumn(
+        title: _locale.department,
+        field: "txtDept",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.08 : width * 0.2,
+        backgroundColor: columnColors,
+      ),
+      PlutoColumn(
+        title: _locale.category,
+        field: "txtCategory",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.08 : width * 0.2,
+        backgroundColor: columnColors,
+      ),
       // PlutoColumn(
       //   title: _locale.ref1,
       //   field: "ref1",
@@ -998,7 +1006,7 @@ class _FileListScreenState extends State<FileListScreen> {
             .searchDocCriterea(documentListProvider.searchDocumentCriteria);
 
         for (int i =
-                documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
+                documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 50;
             i < result.length;
             i++) {
           PlutoRow row = result[i].toPlutoRow(i + 1);
@@ -1015,6 +1023,7 @@ class _FileListScreenState extends State<FileListScreen> {
           rows: searchList.toList(),
         ));
       } else {
+        print(11111111111);
         if (documentListProvider.searchDocumentCriteria.page == 1) {
           documentListProvider.searchDocumentCriteria.page = -1;
         } else {
@@ -1030,7 +1039,7 @@ class _FileListScreenState extends State<FileListScreen> {
         int currentPage = documentListProvider.page!; //1
 
         for (int i =
-                documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
+                documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 50;
             i < result.length;
             i++) {
           int rowIndex = (currentPage - 1) * result.length + (i + 1);
@@ -1053,13 +1062,15 @@ class _FileListScreenState extends State<FileListScreen> {
       }
     } else {
       List<PlutoRow> searchList = [];
-
+      print("INNNNNNNNNNNNELLLLLLLLLLLL");
       // rowList.clear();
-      documentListProvider.searchDocumentCriteria.page == 0;
+      documentListProvider.searchDocumentCriteria.page == -1;
 
       List<DocumentModel> result = [];
       documentListProvider.searchDocumentCriteria.fromIssueDate = null;
       documentListProvider.searchDocumentCriteria.toIssueDate = null;
+      documentListProvider.searchDocumentCriteria.issueNo =
+          documentListProvider.issueNumber;
 
       result = await documentsController
           .searchDocCriterea(documentListProvider.searchDocumentCriteria);
