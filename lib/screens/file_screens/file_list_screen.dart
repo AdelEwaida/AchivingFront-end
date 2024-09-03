@@ -118,10 +118,13 @@ class _FileListScreenState extends State<FileListScreen> {
     }
     if (documentListProvider.issueNumber != null) {
       issueNoController.text = documentListProvider.issueNumber ?? "";
-      search();
+      // search();
 
-      // documentListProvider.setDocumentSearchCriterea(
-      //     SearchDocumentCriteria(issueNo: issueNoController.text));
+      documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria(
+          issueNo: issueNoController.text,
+          fromIssueDate: "",
+          toIssueDate: "",
+          page: 0));
     }
     listOfDep = await DepartmentController().getDep(SearchModel(page: 1));
     setState(() {});
@@ -624,21 +627,16 @@ class _FileListScreenState extends State<FileListScreen> {
 
   Future<void> search() async {
     SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
-    print("ONNPRESSSEED");
     searchDocumentCriteria.fromIssueDate =
         documentListProvider.issueNumber != null
             ? null
             : fromDateController.text;
-    print(1);
     searchDocumentCriteria.toIssueDate =
         documentListProvider.issueNumber != null ? null : toDateController.text;
-    print(2);
 
     searchDocumentCriteria.desc = descreptionController.text;
-    print(3);
 
     searchDocumentCriteria.issueNo = issueNoController.text;
-    print(4);
 
     searchDocumentCriteria.dept = selectedDep;
     searchDocumentCriteria.keywords = keyWordController.text;
@@ -647,16 +645,13 @@ class _FileListScreenState extends State<FileListScreen> {
     searchDocumentCriteria.otherRef = otherRefController.text;
     searchDocumentCriteria.cat =
         calssificatonNameAndCodeProvider.classificatonKey;
-    print(5);
 
     searchDocumentCriteria.organization = organizationController.text;
     searchDocumentCriteria.following = followingController.text;
     searchDocumentCriteria.sortedBy = selectedSortedType;
-    print(6);
 
     searchDocumentCriteria.page = 0;
     documentListProvider.setIsSearch(true);
-    print(7);
 
     // documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
     List<DocumentModel> result =
@@ -668,7 +663,6 @@ class _FileListScreenState extends State<FileListScreen> {
     }
     stateManager.setShowLoading(false);
     stateManager.notifyListeners();
-    print(8);
   }
 
   Widget space(double width1) {
@@ -1057,12 +1051,37 @@ class _FileListScreenState extends State<FileListScreen> {
         ));
         // }
       }
+    } else {
+      List<PlutoRow> searchList = [];
+
+      // rowList.clear();
+      documentListProvider.searchDocumentCriteria.page == 0;
+
+      List<DocumentModel> result = [];
+      documentListProvider.searchDocumentCriteria.fromIssueDate = null;
+      documentListProvider.searchDocumentCriteria.toIssueDate = null;
+
+      result = await documentsController
+          .searchDocCriterea(documentListProvider.searchDocumentCriteria);
+
+      for (int i = 0; i < result.length; i++) {
+        PlutoRow row = result[i].toPlutoRow(i + 1);
+        // rowList.add(row);
+        searchList.add(row);
+      }
+
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      return Future.value(PlutoInfinityScrollRowsResponse(
+        isLast: false,
+        rows: searchList.toList(),
+      ));
     }
-    return Future.value(PlutoInfinityScrollRowsResponse(
-        isLast: documentListProvider.searchDocumentCriteria.page == -1
-            ? true
-            : false,
-        rows: []));
+    // return Future.value(PlutoInfinityScrollRowsResponse(
+    //     isLast: documentListProvider.searchDocumentCriteria.page == -1
+    //         ? true
+    //         : false,
+    //     rows: []));
   }
 
   Widget treeSection() {
