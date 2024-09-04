@@ -265,7 +265,7 @@ class _FileListScreenState extends State<FileListScreen> {
     );
   }
 
-  void exportToExecl() {
+  Future<void> exportToExecl() async {
     final excel = Excel.createExcel(); // Create a new Excel workbook
     final sheet = excel['Sheet1']; // Access the first sheet
 
@@ -278,9 +278,44 @@ class _FileListScreenState extends State<FileListScreen> {
 
     // Append headers as the first row
     sheet.appendRow(headers);
+    List<PlutoRow> temp = [];
+    SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
+    searchDocumentCriteria.fromIssueDate =
+        documentListProvider.issueNumber != null
+            ? null
+            : fromDateController.text;
+    searchDocumentCriteria.toIssueDate =
+        documentListProvider.issueNumber != null ? null : toDateController.text;
 
-    List<List<String>> rows = stateManager!.rows.map((row) {
-      return stateManager!.columns.map((column) {
+    searchDocumentCriteria.desc = descreptionController.text;
+
+    searchDocumentCriteria.issueNo = issueNoController.text;
+
+    searchDocumentCriteria.dept = selectedDep;
+    searchDocumentCriteria.keywords = keyWordController.text;
+    searchDocumentCriteria.ref1 = ref1Controller.text;
+    searchDocumentCriteria.ref2 = ref2Controller.text;
+    searchDocumentCriteria.otherRef = otherRefController.text;
+    searchDocumentCriteria.cat =
+        calssificatonNameAndCodeProvider.classificatonKey;
+
+    searchDocumentCriteria.organization = organizationController.text;
+    searchDocumentCriteria.following = followingController.text;
+    searchDocumentCriteria.sortedBy = selectedSortedType;
+
+    searchDocumentCriteria.page = -1;
+    // documentListProvider.setIsSearch(true);
+
+    // documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
+    List<DocumentModel> result =
+        await documentsController.searchDocCriterea(searchDocumentCriteria);
+    // result = await documentsController
+    //     .searchDocCriterea(documentListProvider.searchDocumentCriteria);
+    for (int i = 0; i < result.length; i++) {
+      temp.add(result[i].toPlutoRow(i));
+    }
+    List<List<String>> rows = temp.map((row) {
+      return stateManager.columns.map((column) {
         return row.cells[column.field]?.value.toString() ?? '';
       }).toList();
     }).toList();
@@ -829,9 +864,9 @@ class _FileListScreenState extends State<FileListScreen> {
           if (response.statusCode == 200) {
             // print("DONE");
             documentListProvider.searchDocumentCriteria.page = 0;
-
-            documentListProvider.setDocumentSearchCriterea(
-                documentListProvider.searchDocumentCriteria);
+            setState(() {});
+            // documentListProvider.setDocumentSearchCriterea(
+            //     documentListProvider.searchDocumentCriteria);
           }
         }
       });
@@ -845,8 +880,9 @@ class _FileListScreenState extends State<FileListScreen> {
       if (response.statusCode == 200) {
         // print("DONE");
         documentListProvider.searchDocumentCriteria.page = 0;
-        documentListProvider.setDocumentSearchCriterea(
-            documentListProvider.searchDocumentCriteria);
+        setState(() {});
+        // documentListProvider.setDocumentSearchCriterea(
+        //     documentListProvider.searchDocumentCriteria);
       }
     }
   }
@@ -866,6 +902,7 @@ class _FileListScreenState extends State<FileListScreen> {
         if (value) {
           documentListProvider.searchDocumentCriteria.page = 0;
           selectedRow = null;
+          setState(() {});
           documentListProvider.setDocumentSearchCriterea(
               documentListProvider.searchDocumentCriteria);
         }
@@ -992,7 +1029,37 @@ class _FileListScreenState extends State<FileListScreen> {
     if (documentListProvider.issueNumber == null) {
       if (documentListProvider.isSearch) {
         List<PlutoRow> searchList = [];
+        documentListProvider.searchDocumentCriteria.fromIssueDate =
+            documentListProvider.issueNumber != null
+                ? null
+                : fromDateController.text;
+        documentListProvider.searchDocumentCriteria.toIssueDate =
+            documentListProvider.issueNumber != null
+                ? null
+                : toDateController.text;
 
+        documentListProvider.searchDocumentCriteria.desc =
+            descreptionController.text;
+
+        documentListProvider.searchDocumentCriteria.issueNo =
+            issueNoController.text;
+
+        documentListProvider.searchDocumentCriteria.dept = selectedDep;
+        documentListProvider.searchDocumentCriteria.keywords =
+            keyWordController.text;
+        documentListProvider.searchDocumentCriteria.ref1 = ref1Controller.text;
+        documentListProvider.searchDocumentCriteria.ref2 = ref2Controller.text;
+        documentListProvider.searchDocumentCriteria.otherRef =
+            otherRefController.text;
+        documentListProvider.searchDocumentCriteria.cat =
+            calssificatonNameAndCodeProvider.classificatonKey;
+
+        documentListProvider.searchDocumentCriteria.organization =
+            organizationController.text;
+        documentListProvider.searchDocumentCriteria.following =
+            followingController.text;
+        documentListProvider.searchDocumentCriteria.sortedBy =
+            selectedSortedType;
         // rowList.clear();
         if (documentListProvider.searchDocumentCriteria.page == 0) {
           stateManager.removeAllRows();
