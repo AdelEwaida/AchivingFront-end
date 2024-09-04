@@ -111,6 +111,9 @@ class LoginController {
           utf8.fuse(base64).decode(base64.normalize(encodedPayload));
 
       final payLoad = PayloadModel.fromJson(jsonDecode(payloadData));
+      DateTime expDateTime =
+          DateTime.fromMillisecondsSinceEpoch(payLoad.exp! * 1000);
+      await storage.write(key: "expDate", value: expDateTime.toString());
       await storage.write(key: 'roles', value: payLoad.roles![0]);
 
       // SideMenuDate.userType = int.parse(payLoad.roles!.first);

@@ -67,6 +67,13 @@ class AppRoutes {
 
     const storage = FlutterSecureStorage();
     String? token = await storage.read(key: 'jwt');
+    String? expDate = await storage.read(key: "expDate");
+    if (expDate != null) {
+      DateTime tempExpDate = DateTime.parse(expDate!);
+      if (DateTime.now().isAfter(tempExpDate)) {
+        return loginScreenRoute;
+      }
+    }
 
     return token != null ? mainScreenRoute : loginScreenRoute;
   }
