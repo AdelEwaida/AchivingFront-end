@@ -15,7 +15,8 @@ class Converters {
         NumberFormat('0000.00'); // Format with two digits after point
     return double.parse(formatter.format(formattedValue));
   }
-static TimeOfDay? parseTimeOfDay(String? time) {
+
+  static TimeOfDay? parseTimeOfDay(String? time) {
     if (time == null) return null;
     final parts = time.split(':');
     if (parts.length >= 2) {
@@ -25,11 +26,13 @@ static TimeOfDay? parseTimeOfDay(String? time) {
     }
     return null;
   }
+
   static formatNumber(double num) {
     NumberFormat myFormat = NumberFormat("#.##");
     return myFormat.format(num);
   }
-static String formatTimeOfDay(TimeOfDay time) {
+
+  static String formatTimeOfDay(TimeOfDay time) {
     // Convert TimeOfDay to DateTime
     final now = DateTime.now();
     final dateTime =
@@ -39,6 +42,7 @@ static String formatTimeOfDay(TimeOfDay time) {
     final formattedTime = DateFormat('HH:mm:ss').format(dateTime);
     return formattedTime;
   }
+
   static formatNumber2(double num) {
     NumberFormat myFormat = NumberFormat("#.###");
     return myFormat.format(num);
@@ -112,6 +116,12 @@ static String formatTimeOfDay(TimeOfDay time) {
   static String getFormattedDateSimple(int time) {
     DateFormat newFormat = DateFormat("MMMM dd, yyyy");
     return newFormat.format(DateTime.fromMillisecondsSinceEpoch(time));
+  }
+
+  static String startOfCurrentYearAsString() {
+    DateTime now = DateTime.now();
+    DateTime startOfYear = DateTime(now.year, 1, 1);
+    return DateFormat('yyyy-MM-dd').format(startOfYear);
   }
 
   String replaceArabicWithEnglish(String input) {

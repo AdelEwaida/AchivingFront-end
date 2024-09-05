@@ -75,7 +75,7 @@ class _FileListScreenState extends State<FileListScreen> {
   CategoriesController categoriesController = CategoriesController();
   TextEditingController searchController = TextEditingController();
   TextEditingController fromDateController =
-      TextEditingController(text: Converters.getDateBeforeMonth());
+      TextEditingController(text: Converters.startOfCurrentYearAsString());
   TextEditingController toDateController = TextEditingController(
       text: Converters.formatDate2(DateTime.now().toString()));
   late DocumentListProvider documentListProvider;
@@ -638,7 +638,7 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   Future<void> resetForm() async {
-    fromDateController.text = Converters.getDateBeforeMonth();
+    fromDateController.text = Converters.startOfCurrentYearAsString();
     toDateController.text = Converters.formatDate2(DateTime.now().toString());
     descreptionController.clear();
     issueNoController.clear();
@@ -686,7 +686,7 @@ class _FileListScreenState extends State<FileListScreen> {
     searchDocumentCriteria.following = followingController.text;
     searchDocumentCriteria.sortedBy = selectedSortedType;
 
-    searchDocumentCriteria.page = 0;
+    searchDocumentCriteria.page = -1;
     documentListProvider.setIsSearch(true);
 
     // documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
@@ -1028,6 +1028,7 @@ class _FileListScreenState extends State<FileListScreen> {
         "documentListProvider.searchDocumentCriteria.page ${documentListProvider.searchDocumentCriteria.page}");
     if (documentListProvider.issueNumber == null) {
       if (documentListProvider.isSearch) {
+        print("SSSSSSDDDDDDDDDDD");
         List<PlutoRow> searchList = [];
         documentListProvider.searchDocumentCriteria.fromIssueDate =
             documentListProvider.issueNumber != null
@@ -1087,7 +1088,7 @@ class _FileListScreenState extends State<FileListScreen> {
           isLast: documentListProvider.searchDocumentCriteria.page == -1
               ? true
               : false,
-          rows: searchList.toList(),
+          rows: [],
         ));
       } else {
         print(11111111111);
