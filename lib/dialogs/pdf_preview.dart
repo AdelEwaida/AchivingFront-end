@@ -62,7 +62,7 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
     isDesktop = Responsive.isDesktop(context);
     return AlertDialog(
       title: Container(
-        width: isDesktop ? width * 0.4 : width * 0.8,
+        width: isDesktop ? width * 0.7 : width * 0.8,
         height: height * 0.065,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -177,20 +177,29 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
       // ),
       content: Column(
         children: [
-          SizedBox(
-            width: width * 0.46,
-            height: height * 0.65,
-            child: widget.fileName.contains('.pdf')
-                ? SfPdfViewer.memory(
-                    widget.pdfFile,
-                    initialZoomLevel: 1,
-                    controller: _pdfViewerController,
-                  )
-                : Image.memory(
-                    widget.pdfFile,
-                    fit: BoxFit.fill,
+          widget.fileName.contains('.pdf')
+              ? SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      height: height * 0.7,
+                      width: width * 0.6, //,
+                      child: SfPdfViewer.memory(widget.pdfFile,
+                          initialZoomLevel: 1,
+                          controller: _pdfViewerController,
+                          canShowScrollHead: true,
+                          scrollDirection: PdfScrollDirection.vertical,
+                          enableDoubleTapZooming: true,
+                          canShowScrollStatus: true,
+                          pageLayoutMode: PdfPageLayoutMode.continuous),
+                    ),
                   ),
-          ),
+                )
+              : Image.memory(
+                  widget.pdfFile,
+                  fit: BoxFit.fill,
+                ),
           widget.fileName.contains('.pdf')
               ? SizedBox(
                   height: height * 0.1,
@@ -205,7 +214,9 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                           color: Color.fromARGB(255, 0, 0, 0),
                         ),
                         onPressed: () {
-                          _pdfViewerController.zoomLevel += 0.25;
+                          if (_pdfViewerController.zoomLevel < 2) {
+                            _pdfViewerController.zoomLevel += 0.5;
+                          }
                         },
                       ),
                       IconButton(
@@ -215,7 +226,7 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                           color: Color.fromARGB(255, 0, 0, 0),
                         ),
                         onPressed: () {
-                          _pdfViewerController.zoomLevel -= 0.25;
+                          _pdfViewerController.zoomLevel -= 0.5;
                         },
                       ),
                     ],
