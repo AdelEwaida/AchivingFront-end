@@ -8,6 +8,9 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  <script src="https://unpkg.com/webview_flutter@0.3.0/lib/webview.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
   <script type="text/javascript">
@@ -48,6 +51,34 @@
   <script>
     // The value below is injected by flutter build, do not touch.
     const serviceWorkerVersion = null;
+  </script>
+  <script>
+    async function convertDocxToPdf(base64Docx) {
+      try {
+        const arrayBuffer = Uint8Array.from(atob(base64Docx), c => c.charCodeAt(0)).buffer;
+
+        // Convert DOCX to HTML using Mammoth.js
+        const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+        const htmlContent = result.value;
+
+        // Now create a PDF using pdf-lib
+        const { PDFDocument } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([600, 800]);
+        page.drawText(htmlContent, { x: 50, y: 750, size: 12 });
+
+        // Serialize the PDFDocument to bytes (Uint8Array)
+        const pdfBytes = await pdfDoc.save();
+
+        // Return a Promise that resolves to an object with byteArray
+        return Promise.resolve({
+          byteArray: Array.from(pdfBytes)  // Convert Uint8Array to a regular array
+        });
+      } catch (error) {
+        console.error('Error during DOCX to PDF conversion:', error);
+        return Promise.reject('Conversion failed');
+      }
+    }
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>

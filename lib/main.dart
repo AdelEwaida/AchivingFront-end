@@ -10,6 +10,8 @@ import 'package:excel/excel.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:html' as html;
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_web/webview_flutter_web.dart'; // For web platform
 
 import 'package:archiving_flutter_project/app/auth/session_model/session_config.dart';
 import 'package:archiving_flutter_project/app/auth/session_model/session_time_out_manager.dart';
@@ -35,6 +37,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:js' as js;
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart'; // For macOS/Windows
 
 import 'providers/user_provider.dart';
 

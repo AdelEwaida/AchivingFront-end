@@ -497,6 +497,4 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       // }
     }
   }
-
-
 }

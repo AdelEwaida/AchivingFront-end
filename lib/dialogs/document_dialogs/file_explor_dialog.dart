@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:html' as html; // Web specific
 
@@ -18,6 +19,8 @@ import 'package:archiving_flutter_project/widget/table_component/table_component
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:printing/printing.dart';
@@ -200,6 +203,30 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
       // Uint8List uint8List = Uint8List.fromList(stringBytes);
       saveExcelFile(bytes, selectedRow!.cells['txtFilename']!.value);
+    }
+  }
+
+  Future<void> saveAndOpenFile(String base64String, String fileName) async {
+    try {
+      // Decode the Base64 string
+      Uint8List fileBytes = base64Decode(base64String);
+
+      // Get the directory to save the file
+      Directory tempDir = await getTemporaryDirectory();
+      String tempPath = tempDir.path;
+
+      // Save the file locally
+      File file = File('$tempPath/$fileName');
+      await file.writeAsBytes(fileBytes);
+
+      // Open the file using open_filex
+      await OpenFilex.open(file.path);
+    } catch (e) {
+      print("Error: $e");
+    } finally {
+      // setState(() {
+      //   isLoading = false;
+      // });
     }
   }
 
