@@ -19,6 +19,7 @@ import '../controller/error_controllers/error_controller.dart';
 class ApiService {
   final storage = const FlutterSecureStorage();
   static String urlServer = "";
+  static String whatsAppServer = "";
   static String scannerURL = "http://localhost:5000";
 
   Future getScannersRequest(String ip, String api) async {
@@ -354,8 +355,13 @@ class ApiService {
   Future postRequest(String api, dynamic toJson, {bool? isStart}) async {
     String? token = await storage.read(key: 'jwt');
     final context2 = navigatorKey.currentState!.overlay!.context;
+    var requestUrl = "";
+    if (api == whatsAppSendPath) {
+      requestUrl = "$whatsAppServer/$api";
 
-    var requestUrl = "$urlServer/$api";
+    } else {
+      requestUrl = "$urlServer/$api";
+    }
     print("requestUrl ${requestUrl}");
     try {
       var response = await http.post(

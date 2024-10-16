@@ -207,6 +207,12 @@ class AppRoutes {
     await rootBundle.loadString(centralApiPDFPathConstant).then((value) async {
       await storage.write(key: 'urlPdf', value: value.trim());
     });
+    await rootBundle
+        .loadString(centralApiWhatsAppPathConstant)
+        .then((value) async {
+      ApiService.whatsAppServer = value.trim();
+      await storage.write(key: 'whatsAppService', value: value.trim());
+    });
   }
 
   static Future<String?> _redirect2(BuildContext context, String path) async {

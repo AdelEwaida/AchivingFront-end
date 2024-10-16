@@ -20,6 +20,8 @@ class TableComponent extends StatefulWidget {
   int? count;
   final Function(String)? search;
   final Function()? delete;
+  final Function()? sendWhatspp;
+
   final Function()? exportToExcel;
   final Function()? download;
   final Function()? chooseDep;
@@ -55,6 +57,7 @@ class TableComponent extends StatefulWidget {
   TableComponent(
       {this.key,
       this.viewLocation,
+      this.sendWhatspp,
       this.download,
       this.explor,
       this.chooseDep,
@@ -417,6 +420,19 @@ class _TableComponentState extends State<TableComponent> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              widget.sendWhatspp != null
+                  ? Tooltip(
+                      message: locale.sendViaWhatsApp,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.sendWhatspp!();
+                          },
+                          icon: const Icon(
+                            Icons.send_to_mobile,
+                            size: 20,
+                          )),
+                    )
+                  : SizedBox.shrink(),
               widget.add != null && widget.viewLocation == null
                   ? Tooltip(
                       message: locale.add,

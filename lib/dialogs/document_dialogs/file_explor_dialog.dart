@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:html' as html; // Web specific
 
+import 'package:archiving_flutter_project/dialogs/document_dialogs/whats_app_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
@@ -85,6 +86,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
               rowsHeight: 50,
               delete: deleteFile,
               plCols: polCols,
+              sendWhatspp: sendWhatsapp,
               download: download,
               view: view,
               polRows: [],
@@ -143,6 +145,19 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
           }
         }
       });
+    }
+  }
+
+  void sendWhatsapp() {
+    if (selectedRow != null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return WhatsAppDialog(
+            base64String: selectedRow!.cells['imgBlob']!.value,
+          );
+        },
+      );
     }
   }
 

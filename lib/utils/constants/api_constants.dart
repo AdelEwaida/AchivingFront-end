@@ -68,3 +68,5 @@ const getScanedImageApi = "users/scanProcess";
 const getUserDocsAPI = "report/userDocs";
 const getDocsByCat = "report/docsByCat";
 const getDocsByDept = "report/docsByDept";
+//'
+const whatsAppSendPath = "reports/whatsUp/send";

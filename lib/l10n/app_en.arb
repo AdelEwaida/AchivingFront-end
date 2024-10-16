@@ -203,7 +203,9 @@
 "docByDep":"Documents By Department",
 "totalDocs":"Total Documents",
 "totalDepts":"Total Departments",
-"totalCat":"Total User Categories"
+"totalCat":"Total User Categories",
+"sendViaWhatsApp": "Send Via WhatsApp",
+"send":"Send"
 
 
   
