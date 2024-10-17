@@ -356,14 +356,9 @@ class ApiService {
     String? token = await storage.read(key: 'jwt');
     final context2 = navigatorKey.currentState!.overlay!.context;
     var requestUrl = "";
-    if (api == whatsAppSendPath) {
-      requestUrl = "$whatsAppServer/$api";
-    } else if (api == emailPath) {
-      requestUrl = "$emailServer/$api";
-    } else {
+   
       requestUrl = "$urlServer/$api";
-    }
-    print("requestUrl ${Uri.parse(requestUrl)}");
+    
 
     try {
       var response = await http.post(

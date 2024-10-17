@@ -206,5 +206,6 @@
     "totalCat": "Total User Categories",
     "sendViaWhatsApp": "Send Via WhatsApp",
     "send": "Send",
-    "sendViaEmail": "Send Via Email"
+    "sendViaEmail": "Send Via Email",
+  "sentDone": "Sent Done"
 }

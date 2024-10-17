@@ -253,6 +253,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         context: context,
         builder: (context) {
           return SendEmailDialog(
+              fileName: selectedRow!.cells['txtFilename']!.value,
               base64String: selectedRow!.cells['imgBlob']!.value);
         },
       );

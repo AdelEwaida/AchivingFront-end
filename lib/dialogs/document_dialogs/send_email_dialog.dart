@@ -1,3 +1,4 @@
+import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
 import 'package:archiving_flutter_project/models/email_message_criteria.dart';
 import 'package:archiving_flutter_project/models/whatsapp_message_model.dart';
@@ -14,9 +15,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SendEmailDialog extends StatefulWidget {
   String base64String;
-
+  String fileName;
   SendEmailDialog({
     super.key,
+    required this.fileName,
     required this.base64String,
   });
 
@@ -113,13 +115,33 @@ class _SendEmailDialogState extends State<SendEmailDialog> {
   }
 
   void sendAction() async {
+    openLoadinDialog(context);
+
     var response = await whatsappService.sendEmailMessageMethod(
         SendingEmailCirteria(
             encodedFileContent: widget.base64String,
-            fileName: "test",
+            fileName: widget.fileName,
             recipient: patientFileController.text,
-            subject: "test"),
+            body: widget.fileName,
+            subject: widget.fileName),
         context);
+    Navigator.pop(context);
+    if (response.statusCode == 200) {
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) {
+          return ErrorDialog(
+              icon: Icons.done_all,
+              errorDetails: _locale.done,
+              errorTitle: _locale.sentDone,
+              color: Colors.green,
+              statusCode: 200);
+        },
+      ).then((value) {
+        Navigator.pop(context);
+      });
+    }
   }
 
   void openLoadinDialog(BuildContext context) {

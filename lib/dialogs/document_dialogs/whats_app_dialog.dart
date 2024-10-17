@@ -1,9 +1,11 @@
+import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
 import 'package:archiving_flutter_project/models/whatsapp_message_model.dart';
 import 'package:archiving_flutter_project/service/controller/masseges_service.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
+import 'package:archiving_flutter_project/utils/loading.dart';
 import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:flutter/foundation.dart';
@@ -112,6 +114,7 @@ class _WhatsAppDialogState extends State<WhatsAppDialog> {
   }
 
   void sendAction() async {
+    openLoadinDialog(context);
     var response = await whatsappService.sendMessageMethod(
         WhatsAppMessageModel(
             file: widget.base64String,
@@ -120,6 +123,23 @@ class _WhatsAppDialogState extends State<WhatsAppDialog> {
             mobNumList: [],
             msg: ""),
         context);
+    Navigator.pop(context);
+    if (response.statusCode == 200) {
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) {
+          return ErrorDialog(
+              icon: Icons.done_all,
+              errorDetails: _locale.done,
+              errorTitle: _locale.sentDone,
+              color: Colors.green,
+              statusCode: 200);
+        },
+      ).then((value) {
+        Navigator.pop(context);
+      });
+    }
   }
 
   void openLoadinDialog(BuildContext context) {
