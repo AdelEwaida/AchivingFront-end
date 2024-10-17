@@ -69,4 +69,5 @@ const getUserDocsAPI = "report/userDocs";
 const getDocsByCat = "report/docsByCat";
 const getDocsByDept = "report/docsByDept";
 //'
-const whatsAppSendPath = "reports/whatsUp/send";
+const whatsAppSendPath = "wassanger/sendWhatsappMsg";
+const emailPath = "email";

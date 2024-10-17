@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:html' as html; // Web specific
 
+import 'package:archiving_flutter_project/dialogs/document_dialogs/send_email_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/whats_app_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
@@ -84,6 +85,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
               tableWidth: width * 0.5,
               tableHeigt: height * 0.4,
               rowsHeight: 50,
+              sendEmail: sendEmail,
               delete: deleteFile,
               plCols: polCols,
               sendWhatspp: sendWhatsapp,
@@ -242,6 +244,18 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
       // setState(() {
       //   isLoading = false;
       // });
+    }
+  }
+
+  void sendEmail() {
+    if (selectedRow != null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return SendEmailDialog(
+              base64String: selectedRow!.cells['imgBlob']!.value);
+        },
+      );
     }
   }
 

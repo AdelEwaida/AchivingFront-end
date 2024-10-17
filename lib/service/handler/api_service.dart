@@ -21,7 +21,7 @@ class ApiService {
   static String urlServer = "";
   static String whatsAppServer = "";
   static String scannerURL = "http://localhost:5000";
-
+  static String emailServer = "";
   Future getScannersRequest(String ip, String api) async {
     String? token = await storage.read(key: 'jwt');
 
@@ -358,11 +358,13 @@ class ApiService {
     var requestUrl = "";
     if (api == whatsAppSendPath) {
       requestUrl = "$whatsAppServer/$api";
-
+    } else if (api == emailPath) {
+      requestUrl = "$emailServer/$api";
     } else {
       requestUrl = "$urlServer/$api";
     }
-    print("requestUrl ${requestUrl}");
+    print("requestUrl ${Uri.parse(requestUrl)}");
+
     try {
       var response = await http.post(
         Uri.parse(requestUrl),
@@ -486,6 +488,7 @@ class ApiService {
         if (response.body == "Wrong Credentials") {
           return response;
         }
+
         ErrorController.openErrorDialog(
           response.statusCode,
           response.body,
@@ -494,6 +497,7 @@ class ApiService {
 
       return response;
     } catch (e) {
+      print("e.toString() ${e.toString()}");
       if (api == logInApi) {
         final context = navigatorKey.currentState!.overlay!.context;
         // ignore: use_build_context_synchronously

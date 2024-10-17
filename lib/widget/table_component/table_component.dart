@@ -34,6 +34,8 @@ class TableComponent extends StatefulWidget {
   final Function()? addReminder;
   final Function()? upload;
   final Function()? explor;
+  final Function()? sendEmail;
+
   final Function()? copy;
   final Function()? generalDownload;
   final Function()? filesList;
@@ -61,6 +63,7 @@ class TableComponent extends StatefulWidget {
       this.download,
       this.explor,
       this.chooseDep,
+      this.sendEmail,
       this.copy,
       this.tableHeigt,
       this.upload,
@@ -420,6 +423,18 @@ class _TableComponentState extends State<TableComponent> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              widget.sendEmail != null
+                  ? Tooltip(
+                      message: locale.sendViaEmail,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.sendEmail!();
+                          },
+                          icon: const Icon(
+                            Icons.email,
+                            size: 20,
+                          )))
+                  : SizedBox.shrink(),
               widget.sendWhatspp != null
                   ? Tooltip(
                       message: locale.sendViaWhatsApp,

@@ -237,7 +237,21 @@ class MyApp extends StatelessWidget {
     await rootBundle.loadString(centralApiPDFPathConstant).then((value) async {
       await storage.write(key: 'urlPdf', value: value.trim());
     });
-    // await storage.write(key: 'logOutApi', value: logOutApi);
+    await rootBundle
+        .loadString(centralApiWhatsAppPathConstant)
+        .then((value) async {
+      ApiService.whatsAppServer = value.trim();
+      print(" ApiService.whatsAppServer ${ApiService.whatsAppServer}");
+      await storage.write(key: 'whatsAppService', value: value.trim());
+    });
+    await rootBundle
+        .loadString(centralApiEmailPathConstant)
+        .then((value) async {
+      ApiService.emailServer = value.trim();
+      await storage.write(key: 'email', value: value.trim());
+    });
+    //
+    //    // await storage.write(key: 'logOutApi', value: logOutApi);
   }
 
   // void checkUrlParameters() {

@@ -1,4 +1,5 @@
 import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
+import 'package:archiving_flutter_project/models/email_message_criteria.dart';
 import 'package:archiving_flutter_project/models/whatsapp_message_model.dart';
 import 'package:archiving_flutter_project/service/controller/masseges_service.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
@@ -11,19 +12,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class WhatsAppDialog extends StatefulWidget {
+class SendEmailDialog extends StatefulWidget {
   String base64String;
 
-  WhatsAppDialog({
+  SendEmailDialog({
     super.key,
     required this.base64String,
   });
 
   @override
-  State<WhatsAppDialog> createState() => _WhatsAppDialogState();
+  State<SendEmailDialog> createState() => _SendEmailDialogState();
 }
 
-class _WhatsAppDialogState extends State<WhatsAppDialog> {
+class _SendEmailDialogState extends State<SendEmailDialog> {
   double width = 0;
   double height = 0;
   TextEditingController patientFileController = TextEditingController();
@@ -56,7 +57,7 @@ class _WhatsAppDialogState extends State<WhatsAppDialog> {
     return AlertDialog(
       titlePadding: EdgeInsets.all(0),
       title: TitleDialogWidget(
-        title: _locale.sendViaWhatsApp,
+        title: _locale.sendViaEmail,
         width: isDesktop ? width * 0.2 : width * 0.8,
         height: height * 0.09,
       ),
@@ -70,7 +71,7 @@ class _WhatsAppDialogState extends State<WhatsAppDialog> {
               width: width * 0.2,
               height: height * 0.05,
               controller: patientFileController,
-              text: Text("WhatsApp Number"),
+              text: Text("Email"),
             ),
           ],
         ),
@@ -112,13 +113,12 @@ class _WhatsAppDialogState extends State<WhatsAppDialog> {
   }
 
   void sendAction() async {
-    var response = await whatsappService.sendMessageMethod(
-        WhatsAppMessageModel(
-            file: widget.base64String,
-            mobNum: patientFileController.text,
-            alias: "user1",
-            mobNumList: [],
-            msg: ""),
+    var response = await whatsappService.sendEmailMessageMethod(
+        SendingEmailCirteria(
+            encodedFileContent: widget.base64String,
+            fileName: "test",
+            recipient: patientFileController.text,
+            subject: "test"),
         context);
   }
 
