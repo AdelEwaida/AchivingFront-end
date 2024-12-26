@@ -72,6 +72,10 @@ class MyApp extends StatelessWidget {
     final provider = Provider.of<LocaleProvider>(context);
     final baseTheme = ThemeData.light().copyWith(
       useMaterial3: false,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color.fromARGB(249, 255, 255, 255),
+        foregroundColor: Colors.black,
+      ),
     );
 
     sessionConfig.stream.listen((SessionTimeoutState timeoutEvent) async {
@@ -171,11 +175,15 @@ class MyApp extends StatelessWidget {
         ],
         locale: provider.locale,
         supportedLocales: lang,
-        // theme: baseTheme.copyWith(
-        //   textTheme: customTheme.textTheme,
-        //   dialogBackgroundColor: customTheme.dialogBackgroundColor,
-        // appBarTheme: customTheme.appBarTheme,
-        // ),
+        theme: baseTheme.copyWith(
+          textTheme: customTheme.textTheme,
+          dialogBackgroundColor: customTheme.dialogBackgroundColor,
+          // appBarTheme: customTheme.appBarTheme,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color.fromARGB(249, 255, 255, 255),
+            foregroundColor: Colors.black,
+          ),
+        ),
         routerConfig: AppRoutes.routes,
 
         // home: const LoginScreen(),

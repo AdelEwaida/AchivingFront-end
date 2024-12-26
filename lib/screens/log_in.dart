@@ -21,6 +21,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:html' as html;
 
+import '../service/controller/work_flow_controllers/setup_controller.dart';
+import '../utils/constants/storage_keys.dart';
 import '../widget/curve_clipper.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -360,6 +362,11 @@ class _LogInScreenState extends State<LoginScreen>
       } else {
         Navigator.pop(context);
       }
+    });
+    SetupController().getSetup().then((value) async {
+      await storage.write(
+          key: StorageKeys.bolActive, value: value!.bolActive.toString());
+      // String? intRank = await storage.read(key: StorageKeys.bolActive);
     });
   }
 

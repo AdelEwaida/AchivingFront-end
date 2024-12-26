@@ -207,5 +207,7 @@
     "sendViaWhatsApp": "Send Via WhatsApp",
     "send": "Send",
     "sendViaEmail": "Send Via Email",
-  "sentDone": "Sent Done"
+  "sentDone": "Sent Done",
+  "templateName":"Name",
+  "searchByDep":"Search By Department"
 }

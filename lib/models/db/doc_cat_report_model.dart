@@ -14,6 +14,7 @@ class DocCatReportModel {
     return DocCatReportModel(
       cat: json['cat'],
       countFiles: json['countFiles'],
+      
     );
   }
 

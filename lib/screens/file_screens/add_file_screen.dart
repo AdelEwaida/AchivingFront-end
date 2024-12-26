@@ -64,8 +64,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
   String? imgBlob;
   int? dblFilesize;
   Uint8List? image;
-  String selectedDep = "";
-  String selctedDepDesc = "";
+
   String selectedCat = "";
   String selectedCatDesc = "";
   bool saving = false;
@@ -73,6 +72,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
   bool _isUploadFileSelected = true;
   String url = "";
   List<DepartmentUserModel> departmetList = [];
+  String selectedDep = "";
+  String selctedDepDesc = "";
   late DocumentListProvider documentListProvider;
   var storage = FlutterSecureStorage();
   String? userName = "";

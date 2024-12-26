@@ -71,3 +71,11 @@ const getDocsByDept = "report/docsByDept";
 //'
 const whatsAppSendPath = "send/whatsup";
 const emailPath = "send/email";
+
+const setup = "setup";
+
+//templates
+const createTemplate = "workflowTemplateTransactions/create";
+const updateTemplate = "workflowTemplateTransactions/update";
+const deleteTemplate = "workflowTemplateTransactions/delete";
+const getTemplates = "workflowTemplateInfo/searchCrit";

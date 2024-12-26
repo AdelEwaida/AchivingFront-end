@@ -193,5 +193,8 @@
   "totalCat": "إجمالي  التصنيفات",
   "sendViaWhatsApp": "إرسال من خلال الواتس اب",
   "send": "إرسال",
-  "sentDone":"تم الارسال بنجاح"
+  "sentDone":"تم الارسال بنجاح",
+  "templateName":"الاسم",
+  "searchByDep":"البحث حسب الدائرة"
+
 }

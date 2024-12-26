@@ -19,6 +19,7 @@ import '../screens/change_password_screen.dart';
 import '../screens/file_screens/add_file_screen.dart';
 import '../screens/reports/dashboard_screen.dart';
 import '../screens/user_screen/user_category_screen.dart';
+import '../screens/workflow/work_flow_screen.dart';
 
 List<MenuModel> getMenus(AppLocalizations locale, String type) {
   List<MenuModel> menus = type == USERTYPEADMIN
@@ -63,7 +64,8 @@ List<MenuModel> getMenus(AppLocalizations locale, String type) {
               subMenuList: [
                 SubMenuModel(title: locale.documentExplorer, pageNumber: 6),
                 SubMenuModel(title: locale.addDocument, pageNumber: 7),
-                SubMenuModel(title: locale.searchByContnet, pageNumber: 8)
+                SubMenuModel(title: locale.searchByContnet, pageNumber: 8),
+                SubMenuModel(title: "work Flow", pageNumber: 9)
               ],
               isOpened: false),
           MenuModel(
@@ -277,6 +279,8 @@ Widget getScreenContent(int index) {
       return const FileListScreen();
     case 20:
       return const ErrorPage();
+    case 9:
+      return const WorkFlowScreen();
 
     // case 2:
     //   return UsersScreen();
