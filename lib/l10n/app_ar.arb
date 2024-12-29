@@ -195,6 +195,14 @@
   "send": "إرسال",
   "sentDone":"تم الارسال بنجاح",
   "templateName":"الاسم",
-  "searchByDep":"البحث حسب الدائرة"
+  "searchByDep":"البحث حسب الدائرة",
+  "workFlow":"مخطط سير العمل",
+  "docName":"اسم المخطط",
+  "docDesc":"وصف المخطط",
+  "addWorkFlow":"إضافة مخطط سير عمل",
+  "editWorkFlow":"تعديل مخطط سير العمل",
+  "addStep":"إضافة خطوة",
+  "optional":"اختياري"
+
 
 }

@@ -27,6 +27,8 @@ class TableComponent extends StatefulWidget {
   final Function()? chooseDep;
   final Function()? editPassword;
   final Function()? genranlEdit;
+  final Function()? refresh;
+
   final Function()? view;
   final Function()? advanceSearch;
   final Function()? viewLocation;
@@ -101,7 +103,8 @@ class TableComponent extends StatefulWidget {
       this.generalDownload,
       this.filesList,
       this.dropdown,
-      this.hasDropdown
+      this.hasDropdown,
+      this.refresh
       // required this.stateManger
       });
   @override
@@ -486,6 +489,25 @@ class _TableComponentState extends State<TableComponent> {
                           },
                           icon: const Icon(
                             Icons.edit,
+                            size: 20,
+                          )),
+                    )
+                  : SizedBox.shrink(),
+              widget.refresh != null
+                  ? Tooltip(
+                      message: locale.refresh,
+                      child: IconButton(
+                          onPressed: () {
+                            // dealsProvider.clearProvider();
+                            // dealsProvider.clearCampModel();
+                            widget.refresh!();
+                            // dealsProvider.loadedList = rowList;
+                            // dealsProvider.pageNum = pageLis.value;
+                            // // screenProvider.setPage(32);
+                            // tabsProvider.changeActiveWidget(32, locale);
+                          },
+                          icon: const Icon(
+                            Icons.refresh,
                             size: 20,
                           )),
                     )

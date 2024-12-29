@@ -209,5 +209,12 @@
     "sendViaEmail": "Send Via Email",
   "sentDone": "Sent Done",
   "templateName":"Name",
-  "searchByDep":"Search By Department"
+  "searchByDep":"Search By Department",
+  "workFlow":"Work Flow",
+  "docName":"Document Name",
+  "docDesc":"Document Description",
+  "addWorkFlow":"Add Work Flow",
+  "editWorkFlow":"Edit Work Flow",
+  "addStep":"Add Step",
+  "optional":"Optional"
 }

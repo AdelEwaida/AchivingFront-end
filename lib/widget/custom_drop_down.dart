@@ -263,26 +263,26 @@ class _CustomDropDownState extends State<DropDown> {
                   color: Color.fromARGB(235, 158, 158, 158),
                 ),
               )
-            : SizedBox.shrink(),
-        IconButton(
-          padding: const EdgeInsets.only(bottom: 2, top: 2),
-          icon: const Icon(Icons.close),
-          onPressed: (() {
-            if (widget.onClearIconPressed != null) {
-              print("innCLEEEEEEEAR");
-              print("innCLEEEEEEEAR");
-              widget.onChanged(null);
-              widget.selectedVal = null;
-              widget.valSelected = false;
-              if (widget.selectedVal != null) {}
-              widget.onSearch!("");
-              widget.onClearIconPressed!();
-              setState(() {});
-            }
-            // setState(() {});
-          }),
-          color: const Color.fromARGB(235, 158, 158, 158),
-        )
+            : SizedBox.shrink()
+        // IconButton(
+        //   padding: const EdgeInsets.only(bottom: 2, top: 2),
+        //   icon: const Icon(Icons.close),
+        //   onPressed: (() {
+        //     if (widget.onClearIconPressed != null) {
+        //       print("innCLEEEEEEEAR");
+        //       print("innCLEEEEEEEAR");
+        //       widget.onChanged(null);
+        //       widget.selectedVal = null;
+        //       widget.valSelected = false;
+        //       if (widget.selectedVal != null) {}
+        //       widget.onSearch!("");
+        //       widget.onClearIconPressed!();
+        //       setState(() {});
+        //     }
+        //     // setState(() {});
+        //   }),
+        //   color: const Color.fromARGB(235, 158, 158, 158),
+        // )
       ],
     );
   }

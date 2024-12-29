@@ -94,7 +94,7 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Work Flow"),
+          title: Text(_locale.workFlow),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -118,6 +118,7 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
                         return lazyLoadingfooter(stateManager);
                       },
                       genranlEdit: editTemplate,
+                      refresh: refreshTable,
                       onLoaded: (PlutoGridOnLoadedEvent event) {
                         stateManager = event.stateManager;
                         stateManager!.setShowColumnFilter(true);
@@ -267,7 +268,11 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
     stateManager!.removeAllRows();
     stateManager!.notifyListeners(true);
     selectedRow = null;
+    isSearch.value = false;
     workFlowTemplateBody = null;
+    selectedDep = "";
+    selctedDepDesc = "";
+    setState(() {});
     rowList.clear();
     pageLis.value = 1;
     var response = await fetch(PlutoInfinityScrollRowsRequest());
@@ -319,6 +324,7 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
 
   search() async {
     isSearch.value = true;
+    print("insidee search");
     stateManager!.setShowLoading(true); // Show loading indicator
 
     if (selectedDep.isEmpty) {
@@ -355,7 +361,7 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
     bool isLast = false;
-
+    print("inside ftchhhhhh");
     if (!isSearch.value) {
       if (pageLis.value != -1) {
         if (pageLis.value > 1) {

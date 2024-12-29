@@ -104,8 +104,8 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       backgroundColor: Colors.white,
       title: TitleDialogWidget(
         title: workFlowTemplateBody != null && widget.isEditDialog
-            ? "Edit work flow"
-            : "Add work flow",
+            ? _locale.editWorkFlow
+            : _locale.addWorkFlow,
         width: isDesktop ? width * 0.25 : width * 0.8,
         height: height * 0.07,
       ),
@@ -206,13 +206,13 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       children: [
         Row(
           children: [
-            customTextField("Template Name", templateName, isDesktop, 0.18,
+            customTextField(_locale.docName, templateName, isDesktop, 0.18,
                 true, widget.isEditDialog),
             const SizedBox(
               width: 5,
             ),
-            customTextField("Template Description", templateDescription,
-                isDesktop, 0.18, true, widget.isEditDialog),
+            customTextField(_locale.docDesc, templateDescription, isDesktop,
+                0.18, true, widget.isEditDialog),
           ],
         ),
         Row(
@@ -242,8 +242,8 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                   Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.036),
                   14,
                   primary),
-              child: const Text(
-                "Add Step",
+              child: Text(
+                _locale.addStep,
                 style: TextStyle(color: whiteColor),
               ),
             ),
@@ -418,7 +418,7 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                 });
               },
             ),
-            Text("Optional"),
+            Text(_locale.optional),
           ],
         ),
       ],

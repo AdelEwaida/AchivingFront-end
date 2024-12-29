@@ -279,6 +279,17 @@ class _LogInScreenState extends State<LoginScreen>
       ),
       onPressed: () {
         passwordAndEmailCheck();
+        SetupController().getSetup().then((value) async {
+          if (value != null) {
+            const storage = FlutterSecureStorage();
+            await storage.write(
+                key: StorageKeys.bolActive, value: value!.bolActive.toString());
+          } else {
+            Navigator.pop(context);
+          }
+
+          // String? intRank = await storage.read(key: StorageKeys.bolActive);
+        });
       },
       child: Center(
         child: Text(
@@ -362,11 +373,6 @@ class _LogInScreenState extends State<LoginScreen>
       } else {
         Navigator.pop(context);
       }
-    });
-    SetupController().getSetup().then((value) async {
-      await storage.write(
-          key: StorageKeys.bolActive, value: value!.bolActive.toString());
-      // String? intRank = await storage.read(key: StorageKeys.bolActive);
     });
   }
 
