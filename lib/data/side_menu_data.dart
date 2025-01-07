@@ -20,9 +20,12 @@ import '../screens/file_screens/add_file_screen.dart';
 import '../screens/reports/dashboard_screen.dart';
 import '../screens/user_screen/user_category_screen.dart';
 import '../screens/workflow/work_flow_screen.dart';
+import '../screens/workflow_document/user_workflow_screen.dart';
+import '../screens/workflow_document/work_flow_document.dart';
 
 List<MenuModel> getMenus(
     AppLocalizations locale, String type, String workFlowActive) {
+  print("workFlowActiveworkFlowActive :${workFlowActive}");
   List<MenuModel> menus = type == USERTYPEADMIN
       ? workFlowActive == "1"
           ? [
@@ -30,6 +33,24 @@ List<MenuModel> getMenus(
                 title: locale.dashboard,
                 icon: Icons.dashboard,
                 pageNumber: 0,
+                isOpened: true,
+                isParent: false,
+                // route: mainScreenRoute,
+                subMenuList: [],
+              ),
+              MenuModel(
+                title: locale.approvals,
+                icon: Icons.approval,
+                pageNumber: 10,
+                isOpened: true,
+                isParent: false,
+                // route: mainScreenRoute,
+                subMenuList: [],
+              ),
+              MenuModel(
+                title: locale.myApprovals,
+                icon: Icons.approval_rounded,
+                pageNumber: 12,
                 isOpened: true,
                 isParent: false,
                 // route: mainScreenRoute,
@@ -56,7 +77,7 @@ List<MenuModel> getMenus(
                     ),
                     SubMenuModel(title: locale.listOfDepartment, pageNumber: 3),
                     SubMenuModel(title: locale.listOfReminders, pageNumber: 4),
-                    SubMenuModel(title: locale.workFlow, pageNumber: 9)
+                    SubMenuModel(title: locale.workFlow, pageNumber: 9),
                   ],
                   isOpened: false),
               MenuModel(
@@ -175,78 +196,202 @@ List<MenuModel> getMenus(
                   subMenuList: []),
             ]
       : type == USERTYPEMANEGER
-          ? [
-              MenuModel(
-                title: locale.dailyReminders,
-                icon: Icons.dashboard,
-                pageNumber: 1,
-                isOpened: true,
-                isParent: false,
-                // route: mainScreenRoute,
-                subMenuList: [],
-              ),
-              MenuModel(
-                  title: locale.listOfReminders,
-                  icon: Icons.remember_me,
-                  isParent: false,
-                  pageNumber: 1,
-                  subMenuList: [],
-                  isOpened: false),
-              MenuModel(
-                  title: locale.documents,
-                  icon: Icons.document_scanner_rounded,
-                  isParent: true,
-                  pageNumber: 5,
-                  subMenuList: [
-                    SubMenuModel(title: locale.documentExplorer, pageNumber: 6),
-                    SubMenuModel(title: locale.addDocument, pageNumber: 7),
-                    SubMenuModel(title: locale.searchByContnet, pageNumber: 8)
-                  ],
-                  isOpened: false),
-              MenuModel(
-                  title: locale.changePassword,
-                  icon: Icons.password_outlined,
-                  isParent: false,
-                  pageNumber: 15,
-                  isOpened: false,
-                  subMenuList: []),
-            ]
-          : [
-              MenuModel(
-                title: locale.dailyReminders,
-                icon: Icons.dashboard,
-                pageNumber: 1,
-                isOpened: true,
-                isParent: false,
-                // route: mainScreenRoute,
-                subMenuList: [],
-              ),
-              MenuModel(
-                  title: locale.listOfReminders,
-                  icon: Icons.remember_me,
-                  isParent: false,
-                  pageNumber: 4,
-                  subMenuList: [],
-                  isOpened: false),
-              MenuModel(
-                  title: locale.documents,
-                  icon: Icons.document_scanner_rounded,
-                  isParent: true,
-                  pageNumber: 5,
-                  subMenuList: [
-                    SubMenuModel(title: locale.documentExplorer, pageNumber: 6),
-                    SubMenuModel(title: locale.addDocument, pageNumber: 7),
-                    SubMenuModel(title: locale.searchByContnet, pageNumber: 8)
-                  ],
-                  isOpened: false),
-              MenuModel(
-                  title: locale.changePassword,
-                  icon: Icons.password_outlined,
-                  isParent: false,
-                  pageNumber: 15,
-                  isOpened: false,
-                  subMenuList: []),
-            ];
+          ? workFlowActive == "1"
+              ? [
+                  MenuModel(
+                    title: locale.dailyReminders,
+                    icon: Icons.dashboard,
+                    pageNumber: 1,
+                    isOpened: true,
+                    isParent: false,
+                    // route: mainScreenRoute,
+                    subMenuList: [],
+                  ),
+                  MenuModel(
+                    title: locale.approvals,
+                    icon: Icons.approval,
+                    pageNumber: 10,
+                    isOpened: true,
+                    isParent: false,
+                    // route: mainScreenRoute,
+                    subMenuList: [],
+                  ),
+                  MenuModel(
+                    title: locale.myApprovals,
+                    icon: Icons.approval_rounded,
+                    pageNumber: 12,
+                    isOpened: true,
+                    isParent: false,
+                    // route: mainScreenRoute,
+                    subMenuList: [],
+                  ),
+                  MenuModel(
+                      title: locale.listOfReminders,
+                      icon: Icons.remember_me,
+                      isParent: false,
+                      pageNumber: 1,
+                      subMenuList: [],
+                      isOpened: false),
+                  MenuModel(
+                      title: locale.documents,
+                      icon: Icons.document_scanner_rounded,
+                      isParent: true,
+                      pageNumber: 5,
+                      subMenuList: [
+                        SubMenuModel(
+                            title: locale.documentExplorer, pageNumber: 6),
+                        SubMenuModel(title: locale.addDocument, pageNumber: 7),
+                        SubMenuModel(
+                            title: locale.searchByContnet, pageNumber: 8),
+                        SubMenuModel(title: locale.workFlow, pageNumber: 9),
+                      ],
+                      isOpened: false),
+                  MenuModel(
+                      title: locale.changePassword,
+                      icon: Icons.password_outlined,
+                      isParent: false,
+                      pageNumber: 15,
+                      isOpened: false,
+                      subMenuList: []),
+                ]
+              : [
+                  MenuModel(
+                    title: locale.dailyReminders,
+                    icon: Icons.dashboard,
+                    pageNumber: 1,
+                    isOpened: true,
+                    isParent: false,
+                    // route: mainScreenRoute,
+                    subMenuList: [],
+                  ),
+                  MenuModel(
+                      title: locale.listOfReminders,
+                      icon: Icons.remember_me,
+                      isParent: false,
+                      pageNumber: 1,
+                      subMenuList: [],
+                      isOpened: false),
+                  MenuModel(
+                      title: locale.documents,
+                      icon: Icons.document_scanner_rounded,
+                      isParent: true,
+                      pageNumber: 5,
+                      subMenuList: [
+                        SubMenuModel(
+                            title: locale.documentExplorer, pageNumber: 6),
+                        SubMenuModel(title: locale.addDocument, pageNumber: 7),
+                        SubMenuModel(
+                            title: locale.searchByContnet, pageNumber: 8)
+                      ],
+                      isOpened: false),
+                  MenuModel(
+                      title: locale.changePassword,
+                      icon: Icons.password_outlined,
+                      isParent: false,
+                      pageNumber: 15,
+                      isOpened: false,
+                      subMenuList: []),
+                ]
+          : type == NORMALUSER
+              ? workFlowActive == "1"
+                  ? [
+                      MenuModel(
+                        title: locale.dailyReminders,
+                        icon: Icons.dashboard,
+                        pageNumber: 1,
+                        isOpened: true,
+                        isParent: false,
+                        // route: mainScreenRoute,
+                        subMenuList: [],
+                      ),
+                      MenuModel(
+                        title: locale.approvals,
+                        icon: Icons.approval,
+                        pageNumber: 10,
+                        isOpened: true,
+                        isParent: false,
+                        // route: mainScreenRoute,
+                        subMenuList: [],
+                      ),
+                      MenuModel(
+                        title: locale.myApprovals,
+                        icon: Icons.approval_rounded,
+                        pageNumber: 12,
+                        isOpened: true,
+                        isParent: false,
+                        // route: mainScreenRoute,
+                        subMenuList: [],
+                      ),
+                      MenuModel(
+                          title: locale.listOfReminders,
+                          icon: Icons.remember_me,
+                          isParent: false,
+                          pageNumber: 4,
+                          subMenuList: [],
+                          isOpened: false),
+                      MenuModel(
+                          title: locale.documents,
+                          icon: Icons.document_scanner_rounded,
+                          isParent: true,
+                          pageNumber: 5,
+                          subMenuList: [
+                            SubMenuModel(
+                                title: locale.documentExplorer, pageNumber: 6),
+                            SubMenuModel(
+                                title: locale.addDocument, pageNumber: 7),
+                            SubMenuModel(
+                                title: locale.searchByContnet, pageNumber: 8),
+                            SubMenuModel(title: locale.workFlow, pageNumber: 9),
+                          ],
+                          isOpened: false),
+                      MenuModel(
+                          title: locale.changePassword,
+                          icon: Icons.password_outlined,
+                          isParent: false,
+                          pageNumber: 15,
+                          isOpened: false,
+                          subMenuList: []),
+                    ]
+                  : [
+                      MenuModel(
+                        title: locale.dailyReminders,
+                        icon: Icons.dashboard,
+                        pageNumber: 1,
+                        isOpened: true,
+                        isParent: false,
+                        // route: mainScreenRoute,
+                        subMenuList: [],
+                      ),
+                      MenuModel(
+                          title: locale.listOfReminders,
+                          icon: Icons.remember_me,
+                          isParent: false,
+                          pageNumber: 4,
+                          subMenuList: [],
+                          isOpened: false),
+                      MenuModel(
+                          title: locale.documents,
+                          icon: Icons.document_scanner_rounded,
+                          isParent: true,
+                          pageNumber: 5,
+                          subMenuList: [
+                            SubMenuModel(
+                                title: locale.documentExplorer, pageNumber: 6),
+                            SubMenuModel(
+                                title: locale.addDocument, pageNumber: 7),
+                            SubMenuModel(
+                                title: locale.searchByContnet, pageNumber: 8)
+                          ],
+                          isOpened: false),
+                      MenuModel(
+                          title: locale.changePassword,
+                          icon: Icons.password_outlined,
+                          isParent: false,
+                          pageNumber: 15,
+                          isOpened: false,
+                          subMenuList: []),
+                    ]
+              : [];
 
   return menus;
 }
@@ -283,6 +428,10 @@ Widget getScreenContent(int index) {
       return const ErrorPage();
     case 9:
       return const WorkFlowScreen();
+    case 10:
+      return const WorkFlowDocumentScreen();
+    case 12:
+      return const UserWorkFlow();
 
     // case 2:
     //   return UsersScreen();

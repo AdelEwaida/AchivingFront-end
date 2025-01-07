@@ -58,6 +58,7 @@ class TableComponent extends StatefulWidget {
   Color Function(PlutoRowColorContext)? rowColor;
   Widget? dropdown;
   bool? hasDropdown = false;
+  bool? isworkFlow = false;
   // PlutoGridStateManager stateManger;
   Key? key;
   TableComponent(
@@ -104,6 +105,7 @@ class TableComponent extends StatefulWidget {
       this.filesList,
       this.dropdown,
       this.hasDropdown,
+      this.isworkFlow,
       this.refresh
       // required this.stateManger
       });
@@ -314,121 +316,169 @@ class _TableComponentState extends State<TableComponent> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    widget.hasDropdown == true
+                    widget.hasDropdown == true && widget.isworkFlow == true
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [widget.dropdown!],
-                          )
-                        : CustomSearchField(
-                            horizontalPadding: 0,
-                            width: width * .35,
-                            label: locale.search,
-                            padding: 7,
-                            inputFormatters: [MyInputFormatter()],
-                            onChanged: (value) {
-                              //If input is white-space
-                              if (value.isNotEmpty &&
-                                  value[value.length - 1] == " ") {
-                                // isSearching = true;
-                                // isEnteredSearch = true;
-                                // isLoadingData.value = true;
-                                widget.search!(value);
-                              }
+                            children: [
+                              CustomSearchField(
+                                horizontalPadding: 0,
+                                width: width * .28,
+                                label: locale.search,
+                                padding: 7,
+                                inputFormatters: [MyInputFormatter()],
+                                onChanged: (value) {
+                                  //If input is white-space
+                                  if (value.isNotEmpty &&
+                                      value[value.length - 1] == " ") {
+                                    widget.search!(value);
+                                  }
 
-                              /*If searched previously and delete the inputs in the search field will called
+                                  if (value == " " ||
+                                      value.trim().isEmpty ||
+                                      value.isEmpty) {
+                                    widget.search!(value);
+                                  } else if (value.isNotEmpty &&
+                                      value.length > 1 &&
+                                      value[value.length - 1] == " ") {
+                                    widget.search!(value);
+                                  } else if (value.isEmpty) {
+                                    widget.search!(value);
+
+                                    // isFirstSpace = true;
+                                  } else {
+                                    // isFirstSpace = true;
+                                  }
+                                },
+                                onSubmitted: ((value) {
+                                  widget.search!(value);
+                                  // searchItem().then((value) {
+                                  //   isSearching = false;
+                                  // });
+                                }),
+                                controller: TextEditingController(),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              widget.dropdown!,
+                            ],
+                          )
+                        : widget.hasDropdown == true &&
+                                widget.isworkFlow == false
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [widget.dropdown!])
+                            : CustomSearchField(
+                                horizontalPadding: 0,
+                                width: width * .35,
+                                label: locale.search,
+                                padding: 7,
+                                inputFormatters: [MyInputFormatter()],
+                                onChanged: (value) {
+                                  //If input is white-space
+                                  if (value.isNotEmpty &&
+                                      value[value.length - 1] == " ") {
+                                    // isSearching = true;
+                                    // isEnteredSearch = true;
+                                    // isLoadingData.value = true;
+                                    widget.search!(value);
+                                  }
+
+                                  /*If searched previously and delete the inputs in the search field will called
                           the search method  but if enter inputs in the search field and delete it without searching for,
                            there is no change in the table occur
                          */
-                              // if (value.isEmpty && isEnteredSearch) {
-                              //   isSearching = true;
-                              //   isEnteredSearch = false;
-                              //   isLoadingData.value = true;
+                                  // if (value.isEmpty && isEnteredSearch) {
+                                  //   isSearching = true;
+                                  //   isEnteredSearch = false;
+                                  //   isLoadingData.value = true;
 
-                              //   searchItem().then((value) {
-                              //     isSearching = false;
-                              //   });
-                              // }
-                              // if (value == " " || value.trim().isEmpty) {
-                              //   isFirstSpace = false;
+                                  //   searchItem().then((value) {
+                                  //     isSearching = false;
+                                  //   });
+                                  // }
+                                  // if (value == " " || value.trim().isEmpty) {
+                                  //   isFirstSpace = false;
 
-                              //   stateManager!.removeAllRows();
-                              //   stateManager!.appendRows(rowList);
+                                  //   stateManager!.removeAllRows();
+                                  //   stateManager!.appendRows(rowList);
 
-                              //   itemsNumberDisplayed.value = stateManager!.rows.length;
-                              // }
-                              if (value == " " ||
-                                  value.trim().isEmpty ||
-                                  value.isEmpty) {
-                                // if (isFirstSpace) {
-                                //   isFirstSpace = false;
-                                //   isSearching = true;
-                                //   isEnteredSearch = true;
-                                //   isLoadingData.value = true;
+                                  //   itemsNumberDisplayed.value = stateManager!.rows.length;
+                                  // }
+                                  if (value == " " ||
+                                      value.trim().isEmpty ||
+                                      value.isEmpty) {
+                                    // if (isFirstSpace) {
+                                    //   isFirstSpace = false;
+                                    //   isSearching = true;
+                                    //   isEnteredSearch = true;
+                                    //   isLoadingData.value = true;
 
-                                //   searchItem().then((value) {
-                                //     isSearching = false;
-                                //   });
-                                // }
-                                widget.search!(value);
-                              } else if (value.isNotEmpty &&
-                                  value.length > 1 &&
-                                  value[value.length - 1] == " ") {
-                                widget.search!(value);
+                                    //   searchItem().then((value) {
+                                    //     isSearching = false;
+                                    //   });
+                                    // }
+                                    widget.search!(value);
+                                  } else if (value.isNotEmpty &&
+                                      value.length > 1 &&
+                                      value[value.length - 1] == " ") {
+                                    widget.search!(value);
 
-                                // if (isFirstSpace) {
-                                //   final arabicNumbers = [
-                                //     '٠',
-                                //     '١',
-                                //     '٢',
-                                //     '٣',
-                                //     '٤',
-                                //     '٥',
-                                //     '٦',
-                                //     '٧',
-                                //     '٨',
-                                //     '٩'
-                                //   ];
-                                //   if (value.isNotEmpty &&
-                                //       arabicNumbers.any((numeral) => value.contains(numeral))) {
-                                //     value = Converters.replaceArabicNumbers(value);
-                                //     textEditingControllerSearch.value =
-                                //         textEditingControllerSearch.value.copyWith(
-                                //       text: value,
-                                //       selection: TextSelection.collapsed(offset: value.length),
-                                //       composing: TextRange.empty,
-                                //     );
-                                //   }
-                                //   isFirstSpace = false;
-                                //   isSearching = true;
-                                //   isEnteredSearch = true;
-                                //   isLoadingData.value = true;
+                                    // if (isFirstSpace) {
+                                    //   final arabicNumbers = [
+                                    //     '٠',
+                                    //     '١',
+                                    //     '٢',
+                                    //     '٣',
+                                    //     '٤',
+                                    //     '٥',
+                                    //     '٦',
+                                    //     '٧',
+                                    //     '٨',
+                                    //     '٩'
+                                    //   ];
+                                    //   if (value.isNotEmpty &&
+                                    //       arabicNumbers.any((numeral) => value.contains(numeral))) {
+                                    //     value = Converters.replaceArabicNumbers(value);
+                                    //     textEditingControllerSearch.value =
+                                    //         textEditingControllerSearch.value.copyWith(
+                                    //       text: value,
+                                    //       selection: TextSelection.collapsed(offset: value.length),
+                                    //       composing: TextRange.empty,
+                                    //     );
+                                    //   }
+                                    //   isFirstSpace = false;
+                                    //   isSearching = true;
+                                    //   isEnteredSearch = true;
+                                    //   isLoadingData.value = true;
 
-                                //   searchItem().then((value) {
-                                //     isSearching = false;
-                                //   });
-                                // }
-                              } else if (value.isEmpty) {
-                                widget.search!(value);
+                                    //   searchItem().then((value) {
+                                    //     isSearching = false;
+                                    //   });
+                                    // }
+                                  } else if (value.isEmpty) {
+                                    widget.search!(value);
 
-                                // isFirstSpace = true;
-                              } else {
-                                // isFirstSpace = true;
-                              }
-                            },
-                            onSubmitted: ((value) {
-                              // value = Converters.replaceArabicNumbers(value);
-                              // textEditingControllerSearch.text = value;
-                              // isSearching = true;
-                              // isEnteredSearch = true;
-                              // isLoadingData.value = true;
-                              widget.search!(value);
-                              // searchItem().then((value) {
-                              //   isSearching = false;
-                              // });
-                            }),
-                            controller: TextEditingController(),
-                          ),
+                                    // isFirstSpace = true;
+                                  } else {
+                                    // isFirstSpace = true;
+                                  }
+                                },
+                                onSubmitted: ((value) {
+                                  // value = Converters.replaceArabicNumbers(value);
+                                  // textEditingControllerSearch.text = value;
+                                  // isSearching = true;
+                                  // isEnteredSearch = true;
+                                  // isLoadingData.value = true;
+                                  widget.search!(value);
+                                  // searchItem().then((value) {
+                                  //   isSearching = false;
+                                  // });
+                                }),
+                                controller: TextEditingController(),
+                              ),
                     // Text(rowsLength.value.toString()),
                   ],
                 )

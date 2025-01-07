@@ -202,7 +202,17 @@
   "addWorkFlow":"إضافة مخطط سير عمل",
   "editWorkFlow":"تعديل مخطط سير العمل",
   "addStep":"إضافة خطوة",
-  "optional":"اختياري"
+  "optional":"اختياري",
+  "approvals":"الموافقات",
+  "myApprovals":"موافقاتي",
+  "viewApprovals":"عرض الموافقات",
+  "submitforWorkflowApproval":"الإدراج ضمن الموافقات",
+    "stepNo":"رقم الخطوة"
+
+
+
+
+
 
 
 }

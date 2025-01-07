@@ -79,3 +79,8 @@ const createTemplate = "workflowTemplateTransactions/create";
 const updateTemplate = "workflowTemplateTransactions/update";
 const deleteTemplate = "workflowTemplateTransactions/delete";
 const getTemplates = "workflowTemplateInfo/searchCrit";
+
+const getWorkFlowDoc = "workflowDocumentInfo/searchCrit";
+const updateWorkFlowDoc = "workflowTransactions/update";
+const deleteWorklowDoc = "workflowTransactions/delete";
+const userWorkFlowSteps = "workflowDocumentSteps/getByUser";

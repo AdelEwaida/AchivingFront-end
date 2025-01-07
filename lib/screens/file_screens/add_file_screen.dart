@@ -23,6 +23,7 @@ import '../../models/db/document_models/documnet_info_model.dart';
 import '../../models/db/document_models/upload_file_mode.dart';
 import '../../service/controller/documents_controllers/documents_controller.dart';
 import '../../utils/constants/colors.dart';
+import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/func/converters.dart';
 import '../../utils/func/responsive.dart';
@@ -78,6 +79,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
   var storage = FlutterSecureStorage();
   String? userName = "";
   List<String> scanners = [];
+  bool approval = false;
+  String active = "-1";
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
@@ -114,7 +117,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
         }
       }
     }
-
+    active = (await storage.read(key: StorageKeys.bolActive))!;
     super.didChangeDependencies();
   }
 
@@ -346,6 +349,33 @@ class _AddFileScreenState extends State<AddFileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          active == "1"
+                              ? Row(
+                                  children: [
+                                    Checkbox(
+                                      value: approval,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          approval = value!;
+                                        });
+                                      },
+                                    ),
+                                    Text(_locale.submitforWorkflowApproval),
+                                  ],
+                                )
+                              : Row(
+                                  children: [
+                                    Checkbox(
+                                      value: approval,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          approval = value!;
+                                        });
+                                      },
+                                    ),
+                                    Text(_locale.submitforWorkflowApproval),
+                                  ],
+                                ),
                           Checkbox(
                             value: _isUploadFileSelected,
                             onChanged: (bool? value) {
@@ -587,9 +617,9 @@ class _AddFileScreenState extends State<AddFileScreen> {
 
     // Create DocumentFileRequest instance
     DocumentFileRequest documentFileRequest = DocumentFileRequest(
-      documentInfo: documentModel,
-      documentFile: filesUploadList,
-    );
+        documentInfo: documentModel,
+        documentFile: filesUploadList,
+        submitForWfApproval: approval == true ? 1 : 0);
 
     // Check if all required fields are empty
     if (selectedDep.isEmpty ||
@@ -649,6 +679,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     selectedCat = "";
     selectedCatDesc = "";
     selctedDepDesc = "";
+    approval = false;
     followingController.clear();
     otherRefController.clear();
     organizationController.clear();

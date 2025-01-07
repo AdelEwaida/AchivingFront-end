@@ -118,6 +118,8 @@ class _LogoutTabState extends State<LogoutTab> {
       },
     ).then((value) async {
       if (value) {
+        storage.deleteAll();
+
         await storage.delete(key: "jwt").then((value) async {
           await storage.delete(key: "roles").then((value) {
             // context.read<ScreenContentProvider>().setPage1(-1);

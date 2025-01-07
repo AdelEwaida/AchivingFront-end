@@ -49,6 +49,11 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 import 'dart:html' as html;
 
+import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
+import '../../models/db/work_flow/work_flow_doc_model.dart';
+import '../../models/db/work_flow/work_flow_document_info.dart';
+import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
+
 class FileListScreen extends StatefulWidget {
   const FileListScreen({super.key});
 
@@ -96,6 +101,7 @@ class _FileListScreenState extends State<FileListScreen> {
   int selectedSortedType = -1;
   List<DepartmentModel> listOfDep = [];
   late PlutoGridStateManager stateManager;
+  DocumentModel? documentModel;
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
@@ -212,56 +218,115 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   Widget tableSection() {
-    return TableComponent(
-      key: UniqueKey(),
-      tableHeigt: height * 0.45,
-      tableWidth: width * 0.81,
-      addReminder: context.read<DocumentListProvider>().isViewFile == true
-          ? null
-          : addRemider,
-      upload: context.read<DocumentListProvider>().isViewFile == true
-          ? null
-          : uploadFile,
+    return Column(
+      children: [
+        SizedBox(
+          height: 3,
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            if (documentModel != null) {
+              // Fetch templates based on department
+              List<WorkFlowDocumentInfo> result =
+                  await WorkFlowTemplateContoller().getWorkFlowDocumentInfo(
+                      WorkFlowDocumentModel(
+                          documentCode: documentModel!.txtKey));
 
-      copy: context.read<DocumentListProvider>().isViewFile == true
-          ? null
-          : copyFile,
-      delete: context.read<DocumentListProvider>().isViewFile == true
-          ? null
-          : deleteFile,
-      genranlEdit: context.read<DocumentListProvider>().isViewFile == true
-          ? null
-          : editDocumentInfo,
-      exportToExcel: exportToExecl,
-      // add: addAction,
-      // genranlEdit: editAction,
-      plCols: polCols,
-      mode: PlutoGridMode.selectWithOneTap,
-      polRows: [],
-      footerBuilder: (stateManager) {
-        return lazyLoadingfooter(stateManager);
-      },
-      explor: explorFiels,
-      view: viewDocumentInfo,
-      download: download,
-      filesList: context.read<DocumentListProvider>().isViewFile == true
-          ? fileViewScreen
-          : null,
-      onLoaded: (PlutoGridOnLoadedEvent event) {
-        stateManager = event.stateManager;
+              if (result.isEmpty) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ErrorDialog(
+                      icon: Icons.error,
+                      errorDetails: "Error",
+                      errorTitle: "No workflow template data available.",
+                      color: Colors.red,
+                      statusCode: 400,
+                    );
+                  },
+                );
+                return;
+              }
 
-        stateManager.setShowColumnFilter(true);
-        // pageLis.value = pageLis.value > 1 ? 0 : 1;
-        // totalActionsCount.value = 0;
-        // getCount();
-      },
-      doubleTab: (event) async {
-        PlutoRow? tappedRow = event.row;
-      },
-      onSelected: (event) async {
-        PlutoRow? tappedRow = event.row;
-        selectedRow = tappedRow;
-      },
+              await showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  return EditTemplateDocumentDialog(
+                    workFlowTemplateBody: result,
+                  );
+                },
+              ).then((value) {
+                // Handle dialog result if needed
+                if (value == true) {
+                  // Perform post-dialog actions if required
+                }
+              });
+            }
+          },
+          style: customButtonStyle(
+              Size(isDesktop ? width * 0.1 : width * 0.19, height * 0.043),
+              14,
+              primary),
+          child: Text(
+           _locale.viewApprovals,
+            style: const TextStyle(color: whiteColor),
+          ),
+        ),
+        TableComponent(
+          key: UniqueKey(),
+          tableHeigt: height * 0.45,
+          tableWidth: width * 0.81,
+          addReminder: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : addRemider,
+          upload: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : uploadFile,
+
+          copy: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : copyFile,
+          delete: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : deleteFile,
+          genranlEdit: context.read<DocumentListProvider>().isViewFile == true
+              ? null
+              : editDocumentInfo,
+          exportToExcel: exportToExecl,
+          // add: addAction,
+          // genranlEdit: editAction,
+          plCols: polCols,
+          mode: PlutoGridMode.selectWithOneTap,
+          polRows: [],
+          footerBuilder: (stateManager) {
+            return lazyLoadingfooter(stateManager);
+          },
+          explor: explorFiels,
+          view: viewDocumentInfo,
+          download: download,
+          filesList: context.read<DocumentListProvider>().isViewFile == true
+              ? fileViewScreen
+              : null,
+          onLoaded: (PlutoGridOnLoadedEvent event) {
+            stateManager = event.stateManager;
+
+            stateManager.setShowColumnFilter(true);
+            // pageLis.value = pageLis.value > 1 ? 0 : 1;
+            // totalActionsCount.value = 0;
+            // getCount();
+          },
+          doubleTab: (event) async {
+            PlutoRow? tappedRow = event.row;
+            documentModel = DocumentModel.fromPlutoRow(tappedRow!);
+          },
+          onSelected: (event) async {
+            PlutoRow? tappedRow = event.row;
+            selectedRow = tappedRow;
+            documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+          },
+        ),
+      ],
     );
   }
 

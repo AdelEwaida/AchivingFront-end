@@ -6,7 +6,7 @@ import '../../../utils/constants/colors.dart';
 import '../../../utils/func/lists.dart';
 import '../../../utils/func/responsive.dart';
 
-class DocumentStepsModel {
+class UserWorkflowSteps {
   String? txtKey;
   String? txtWorkflowcode;
   int? intStepno;
@@ -16,20 +16,35 @@ class DocumentStepsModel {
   String? txtFeedback;
   String? datActionDate;
   int? bolOptional;
+  int? intCurrStep;
+  String? txtTemplatecode;
+  String? txtTemplateName;
+  String? txtDocumentcode;
+  String? txtDocumentName;
+  String? txtDept;
+  String? txtDeptName;
 
-  DocumentStepsModel(
-      {this.intStepno,
-      this.txtStepdesc,
-      this.txtUsercode,
-      this.bolOptional,
-      this.txtWorkflowcode,
-      this.txtFeedback,
-      this.datActionDate,
-      this.intStatus,
-      this.txtKey});
+  UserWorkflowSteps({
+    this.intStepno,
+    this.txtStepdesc,
+    this.txtUsercode,
+    this.bolOptional,
+    this.txtWorkflowcode,
+    this.txtFeedback,
+    this.datActionDate,
+    this.intStatus,
+    this.txtKey,
+    this.intCurrStep,
+    this.txtTemplatecode,
+    this.txtTemplateName,
+    this.txtDocumentcode,
+    this.txtDocumentName,
+    this.txtDept,
+    this.txtDeptName,
+  });
 
-  factory DocumentStepsModel.fromJson(Map<String, dynamic> json) {
-    return DocumentStepsModel(
+  factory UserWorkflowSteps.fromJson(Map<String, dynamic> json) {
+    return UserWorkflowSteps(
       intStepno: json['intStepno'].toString() == "null" ? 0 : json['intStepno'],
       txtStepdesc: json['txtStepdesc'].toString() == "null"
           ? ""
@@ -52,6 +67,26 @@ class DocumentStepsModel {
           : json['txtFeedback'].toString(),
       intStatus:
           json['intStatus'].toString() == "null" ? -1 : json['intStatus'],
+      intCurrStep:
+          json['intCurrStep'].toString() == "null" ? -1 : json['intCurrStep'],
+      txtTemplatecode: json['txtTemplatecode'].toString() == "null"
+          ? ""
+          : json['txtTemplatecode'].toString(),
+      txtTemplateName: json['txtTemplateName'].toString() == "null"
+          ? ""
+          : json['txtTemplateName'].toString(),
+      txtDocumentcode: json['txtDocumentcode'].toString() == "null"
+          ? ""
+          : json['txtDocumentcode'].toString(),
+      txtDocumentName: json['txtDocumentName'].toString() == "null"
+          ? ""
+          : json['txtDocumentName'].toString(),
+      txtDept: json['txtDept'].toString() == "null"
+          ? ""
+          : json['txtDept'].toString(),
+      txtDeptName: json['txtDeptName'].toString() == "null"
+          ? ""
+          : json['txtDeptName'].toString(),
     );
   }
 
@@ -65,7 +100,14 @@ class DocumentStepsModel {
       "txtKey": txtKey,
       'datActionDate': datActionDate,
       'txtFeedback': txtFeedback,
-      'intStatus': intStatus
+      'intStatus': intStatus,
+      'intCurrStep': intCurrStep,
+      'txtTemplatecode': txtTemplatecode,
+      'txtTemplateName': txtTemplateName,
+      'txtDocumentcode': txtDocumentcode,
+      'txtDocumentName': txtDocumentName,
+      'txtDept': txtDept,
+      'txtDeptName': txtDeptName,
     };
   }
 
@@ -78,13 +120,19 @@ class DocumentStepsModel {
       'bolOptional': PlutoCell(value: bolOptional ?? -1),
       'datActionDate': PlutoCell(value: datActionDate ?? ""),
       'txtFeedback': PlutoCell(value: txtFeedback ?? ""),
-      // 'intStatus': PlutoCell(value: intStatus ?? -1),
       'intStatus': PlutoCell(
           value: ListConstants.getStatusName(intStatus ?? -1, localizations)),
+      'intCurrStep': PlutoCell(value: intCurrStep ?? -1),
+      'txtTemplatecode': PlutoCell(value: txtTemplatecode ?? ""),
+      'txtTemplateName': PlutoCell(value: txtTemplateName ?? ""),
+      'txtDocumentcode': PlutoCell(value: txtDocumentcode ?? ""),
+      'txtDocumentName': PlutoCell(value: txtDocumentName ?? ""),
+      'txtDept': PlutoCell(value: txtDept ?? ""),
+      'txtDeptName': PlutoCell(value: txtDeptName ?? ""),
     });
   }
 
-  DocumentStepsModel.fromPluto(
+  UserWorkflowSteps.fromPluto(
       PlutoRow plutoRow, AppLocalizations localizations) {
     intStepno = plutoRow.cells['intStepno']?.value as int?;
     txtStepdesc = plutoRow.cells['txtStepdesc']?.value as String?;
@@ -92,46 +140,19 @@ class DocumentStepsModel {
     datActionDate = plutoRow.cells['datActionDate']?.value as String?;
     txtFeedback = plutoRow.cells['txtFeedback']?.value as String?;
     bolOptional = plutoRow.cells['bolOptional']?.value as int?;
-    // intStatus = plutoRow.cells['intStatus']?.value as int?;
     intStatus = ListConstants.getStatusCode(
         plutoRow.cells['intStatus']?.value ?? -1, localizations);
+    intCurrStep = plutoRow.cells['intCurrStep']?.value as int?;
+    txtTemplatecode = plutoRow.cells['txtTemplatecode']?.value as String?;
+    txtTemplateName = plutoRow.cells['txtTemplateName']?.value as String?;
+    txtDocumentcode = plutoRow.cells['txtDocumentcode']?.value as String?;
+    txtDocumentName = plutoRow.cells['txtDocumentName']?.value as String?;
+    txtDept = plutoRow.cells['txtDept']?.value as String?;
+    txtDeptName = plutoRow.cells['txtDeptName']?.value as String?;
   }
 
   @override
   String toString() {
     return txtStepdesc.toString();
-  }
-
-  static List<PlutoColumn> getColumnsForDialogSearchFillter(
-      AppLocalizations localizations, BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    bool isDesktop = Responsive.isDesktop(context);
-    List<PlutoColumn> list = [
-      PlutoColumn(
-          readOnly: true,
-          title: localizations.templateName,
-          field: "txtStepdesc",
-          backgroundColor: columnColors,
-          type: PlutoColumnType.text(),
-          width: isDesktop ? width * 0.11 : width * 0.3,
-          enableRowChecked: true),
-      PlutoColumn(
-        readOnly: true,
-        title: localizations.description,
-        field: "bolOptional",
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.35 : width * 0.4,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: localizations.department,
-        field: "txtUsercode",
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.35 : width * 0.4,
-      ),
-    ];
-    return list;
   }
 }

@@ -66,36 +66,38 @@ class DocumentModel {
 
   factory DocumentModel.fromJson(Map<String, dynamic> json) {
     return DocumentModel(
-        txtKey: json['txtKey'] ?? "",
-        txtOtherRef: json['txtOtherRef'] ?? "",
-        txtOrganization: json['txtOrganization'] ?? "",
-        txtDescription: json['txtDescription'] ?? "",
-        txtKeywords: json['txtKeywords'] ?? "",
-        txtReference1: json['txtReference1'] ?? "",
-        txtReference2: json['txtReference2'] ?? "",
-        intType: json['intType'] ?? 0,
-        datCreationdate: json['datCreationdate'] ?? "",
-        txtLastupdateduser: json['txtLastupdateduser'] ?? "",
-        txtMimetype: json['txtMimetype'] ?? "",
-        intVouchtype: json['intVouchtype'] ?? 0,
-        intVouchnum: json['intVouchnum'] ?? 0,
-        txtJcode: json['txtJcode'] ?? "",
-        txtFollowing: json['txtFollowing'] ?? "",
-        txtCategory: json['txtCategory'] ?? "",
-        txtDept: json['txtDept'] ?? "",
-        txtIssueno: json['txtIssueno'] ?? "",
-        datIssuedate: json['datIssuedate'] ?? "",
-        txtUsercode: json['txtUsercode'] ?? "",
-        txtInsurance: json['txtInsurance'] ?? "",
-        txtLicense: json['txtLicense'] ?? "",
-        txtMaintenance: json['txtMaintenance'] ?? "",
-        txtOtherservices: json['txtOtherservices'] ?? "",
-        bolHasfile: json['bolHasfile'] ?? 0,
-        datArrvialdate: json['datArrvialdate'] ?? "",
-        txtOriginalfilekey: json['txtOriginalfilekey'] ?? "",
-        fileName: json['fileName'],
-        catKey: json['catKey'] ?? "",
-        deptKey: json['deptKey'] ?? "");
+      txtKey: json['txtKey'] ?? "",
+      txtOtherRef: json['txtOtherRef'] ?? "",
+      txtOrganization: json['txtOrganization'] ?? "",
+      txtDescription: json['txtDescription'] ?? "",
+      txtKeywords: json['txtKeywords'] ?? "",
+      txtReference1: json['txtReference1'] ?? "",
+      txtReference2: json['txtReference2'] ?? "",
+      intType: json['intType'] ?? 0,
+      datCreationdate: json['datCreationdate'] ?? "",
+      txtLastupdateduser: json['txtLastupdateduser'] ?? "",
+      txtMimetype: json['txtMimetype'] ?? "",
+      intVouchtype: json['intVouchtype'] ?? 0,
+      intVouchnum: json['intVouchnum'] ?? 0,
+      txtJcode: json['txtJcode'] ?? "",
+      txtFollowing: json['txtFollowing'] ?? "",
+      txtCategory: json['txtCategory'] ?? "",
+      txtDept: json['txtDept'] ?? "",
+      txtIssueno: json['txtIssueno'] ?? "",
+      datIssuedate: json['datIssuedate'] ?? "",
+      txtUsercode: json['txtUsercode'] ?? "",
+      txtInsurance: json['txtInsurance'] ?? "",
+      txtLicense: json['txtLicense'] ?? "",
+      txtMaintenance: json['txtMaintenance'] ?? "",
+      txtOtherservices: json['txtOtherservices'] ?? "",
+      bolHasfile: json['bolHasfile'] ?? 0,
+      datArrvialdate: json['datArrvialdate'] ?? "",
+      txtOriginalfilekey: json['txtOriginalfilekey'] ?? "",
+      fileName: json['fileName'],
+      catKey: json['catKey'] ?? "",
+      deptKey: json['deptKey'] ?? "",
+      // submitForWfApproval: json['submitForWfApproval'] ?? ""
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -129,7 +131,7 @@ class DocumentModel {
       'txtOriginalfilekey': txtOriginalfilekey ?? "",
       'fileName': fileName ?? "",
       'catKey': catKey ?? "",
-      "deptKey": deptKey ?? ""
+      "deptKey": deptKey ?? "",
     };
   }
 
@@ -166,7 +168,8 @@ class DocumentModel {
         'txtOriginalfilekey': PlutoCell(value: txtOriginalfilekey),
         'fileName': PlutoCell(value: fileName),
         'deptKey': PlutoCell(value: deptKey),
-        'catKey': PlutoCell(value: catKey)
+        'catKey': PlutoCell(value: catKey),
+        // 'submitForWfApproval': PlutoCell(value: submitForWfApproval)
       },
     );
   }
@@ -203,6 +206,7 @@ class DocumentModel {
       fileName: row.cells['fileName']?.value,
       deptKey: row.cells['deptKey']?.value,
       catKey: row.cells['catKey']?.value,
+      // submitForWfApproval: row.cells['submitForWfApproval']?.value
     );
   }
 

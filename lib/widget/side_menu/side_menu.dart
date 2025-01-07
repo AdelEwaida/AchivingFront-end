@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../models/dto/side_menu/sub_menu_model.dart';
+import '../../service/controller/work_flow_controllers/setup_controller.dart';
 import '../../utils/constants/storage_keys.dart';
 
 class SideMenu extends StatefulWidget {
@@ -55,11 +56,26 @@ class _SideMenuState extends State<SideMenu> {
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
-    String? active = await storage.read(key: StorageKeys.bolActive);
-    storage.read(key: "roles").then((value) {
-      print("vaaaaaaaaaaal ${value}");
-      menuList = getMenus(_locale, value!, active!);
-      setState(() {});
+    String? active;
+    SetupController().getSetup().then((value) async {
+      // print("in side menu :${value!.bolActive.toString()}");
+      if (value != null) {
+        const storage = FlutterSecureStorage();
+        await storage.write(
+            key: StorageKeys.bolActive, value: value!.bolActive.toString());
+      } else {
+        Navigator.pop(context);
+      }
+
+      // String? intRank = await storage.read(key: StorageKeys.bolActive);
+    }).then((value) async {
+      active = await storage.read(key: StorageKeys.bolActive);
+      storage.read(key: "roles").then((value) {
+        print("vaaaaaaaaaaal ${value}");
+        print("active is :${active}");
+        menuList = getMenus(_locale, value!, active!);
+        setState(() {});
+      });
     });
 
     super.didChangeDependencies();

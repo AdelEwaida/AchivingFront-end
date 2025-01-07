@@ -216,5 +216,10 @@
   "addWorkFlow":"Add Work Flow",
   "editWorkFlow":"Edit Work Flow",
   "addStep":"Add Step",
-  "optional":"Optional"
+  "optional":"Optional",
+  "approvals":"Approvals",
+  "myApprovals":"My Approvals",
+  "viewApprovals":"View Approvals",
+  "submitforWorkflowApproval":"Submit for Workflow Approvals",
+  "stepNo":"Step Number"
 }
