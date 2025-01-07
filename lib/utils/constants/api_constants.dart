@@ -84,3 +84,4 @@ const getWorkFlowDoc = "workflowDocumentInfo/searchCrit";
 const updateWorkFlowDoc = "workflowTransactions/update";
 const deleteWorklowDoc = "workflowTransactions/delete";
 const userWorkFlowSteps = "workflowDocumentSteps/getByUser";
+const updateWorkFlowStep = "workflowDocumentSteps/updateStep";

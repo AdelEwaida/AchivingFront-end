@@ -41,7 +41,6 @@ class AddFileScreen extends StatefulWidget {
 }
 
 class _AddFileScreenState extends State<AddFileScreen> {
-  late AppLocalizations _locale;
   double width = 0;
   double height = 0;
   TextEditingController fileDateController = TextEditingController();
@@ -81,6 +80,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
   List<String> scanners = [];
   bool approval = false;
   String active = "-1";
+  late AppLocalizations _locale;
+
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;

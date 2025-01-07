@@ -221,5 +221,17 @@
   "myApprovals":"My Approvals",
   "viewApprovals":"View Approvals",
   "submitforWorkflowApproval":"Submit for Workflow Approvals",
-  "stepNo":"Step Number"
+  "stepNo":"Step Number",
+  "pending":"Pending",
+  "approved":"Approved",
+  "rejected":"Rejected",
+"approve":"Approve",
+  "reject":"Reject",
+  "notAuthorized":"You are not authorized to approve this step at this time",
+    "updatedSuccess": "updated Success",
+    "success": "Success",
+    "sureToApproveStep":"Are You sure you want to Approve this step?",
+    "sureToRejectStep":"Are You sure you want to Reject this step?",
+    "searchByStatus":"Search by Status",
+    "cannotEdit":"You cannot edit Confirmed step"
 }

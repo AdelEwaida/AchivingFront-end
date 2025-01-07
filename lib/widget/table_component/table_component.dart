@@ -59,6 +59,7 @@ class TableComponent extends StatefulWidget {
   Widget? dropdown;
   bool? hasDropdown = false;
   bool? isworkFlow = false;
+  bool? noHeader = false;
   // PlutoGridStateManager stateManger;
   Key? key;
   TableComponent(
@@ -82,6 +83,7 @@ class TableComponent extends StatefulWidget {
       this.editPassword,
       this.add,
       this.delete,
+      this.noHeader,
       this.count,
       this.search,
       required this.plCols,
@@ -243,7 +245,7 @@ class _TableComponentState extends State<TableComponent> {
     }
     return Column(
       children: [
-        headerTable(),
+        widget.noHeader == true ? SizedBox.shrink() : headerTable(),
         SizedBox(
             height: widget.tableHeigt,
             width: widget.tableWidth,

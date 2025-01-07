@@ -129,11 +129,15 @@ class UserWorkflowSteps {
       'txtDocumentName': PlutoCell(value: txtDocumentName ?? ""),
       'txtDept': PlutoCell(value: txtDept ?? ""),
       'txtDeptName': PlutoCell(value: txtDeptName ?? ""),
+      'txtKey': PlutoCell(value: txtKey ?? ""),
+      'txtWorkflowcode': PlutoCell(value: txtWorkflowcode ?? ""),
     });
   }
 
   UserWorkflowSteps.fromPluto(
       PlutoRow plutoRow, AppLocalizations localizations) {
+    txtKey = plutoRow.cells['txtKey']?.value as String?;
+    txtWorkflowcode = plutoRow.cells['txtWorkflowcode']?.value as String?;
     intStepno = plutoRow.cells['intStepno']?.value as int?;
     txtStepdesc = plutoRow.cells['txtStepdesc']?.value as String?;
     txtUsercode = plutoRow.cells['txtUsercode']?.value as String?;

@@ -7,8 +7,10 @@ import 'package:archiving_flutter_project/providers/classification_name_and_code
 import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/service/controller/users_controller/user_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
+import 'package:archiving_flutter_project/utils/func/lists.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -21,6 +23,7 @@ import '../../models/db/work_flow/work_flow_doc_model.dart';
 import '../../models/db/work_flow/work_flow_document_info.dart';
 import '../../models/db/work_flow/work_flow_template_body.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
+import '../../utils/constants/styles.dart';
 import '../../widget/custom_drop_down.dart';
 
 class UserWorkFlow extends StatefulWidget {
@@ -37,8 +40,7 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
   double width = 0;
   double height = 0;
   bool isDesktop = false;
-  // late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
-  WorkFlowTemplateContoller userController = WorkFlowTemplateContoller();
+
   late DocumentListProvider documentListProvider;
 
   ValueNotifier isSearch = ValueNotifier(false);
@@ -51,9 +53,8 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
   UserModel? userModel;
   var storage = const FlutterSecureStorage();
   String? userName = "";
-  String selectedDep = "";
-  String selctedDepDesc = "";
-  List<DepartmentUserModel> departmetList = [];
+  int selectedStatus = -2;
+  // List<DepartmentUserModel> departmetList = [];
 
   @override
   void didChangeDependencies() async {
@@ -89,7 +90,7 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
       }
     }
     userName = await storage.read(key: "userName");
-    departmetList = await UserController().getDepartmentSelectedUser(userName!);
+    // departmetList = await UserController().getDepartmentSelectedUser(userName!);
     setState(() {});
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
@@ -107,11 +108,126 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
           child: Center(
             child: Column(
               children: [
+                SizedBox(
+                  width: isDesktop ? width * 0.78 : width * 0.9,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            statusDropDown(),
+                          ],
+                        ),
+                        SizedBox(),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (workFlowTemplateBody != null) {
+                                  if (workFlowTemplateBody!.intStatus == 1) {
+                                    CoolAlert.show(
+                                      width: width * 0.4,
+                                      // ignore: use_build_context_synchronously
+                                      context: context,
+                                      type: CoolAlertType.error,
+                                      title: _locale.error,
+                                      text: _locale.cannotEdit,
+                                      confirmBtnText: _locale.ok,
+                                      onConfirmBtnTap: () {},
+                                    );
+                                  } else {
+                                    if (workFlowTemplateBody!.intCurrStep !=
+                                        1) {
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        // ignore: use_build_context_synchronously
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CustomConfirmDialog(
+                                            confirmMessage:
+                                                _locale.notAuthorized,
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      updateApproved(context);
+                                    }
+                                  }
+                                }
+                              },
+                              style: customButtonStyle(
+                                  Size(isDesktop ? width * 0.1 : width * 0.19,
+                                      height * 0.043),
+                                  14,
+                                  greenColor),
+                              child: Text(
+                                _locale.approve,
+                                style: const TextStyle(color: whiteColor),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (workFlowTemplateBody != null) {
+                                  if (workFlowTemplateBody!.intStatus == 1) {
+                                    CoolAlert.show(
+                                      width: width * 0.4,
+                                      // ignore: use_build_context_synchronously
+                                      context: context,
+                                      type: CoolAlertType.error,
+                                      title: _locale.error,
+                                      text: _locale.cannotEdit,
+                                      confirmBtnText: _locale.ok,
+                                      onConfirmBtnTap: () {},
+                                    );
+                                  } else {
+                                    if (workFlowTemplateBody!.intCurrStep !=
+                                        1) {
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        // ignore: use_build_context_synchronously
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CustomConfirmDialog(
+                                            confirmMessage:
+                                                _locale.notAuthorized,
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      updateRejectedBody(context);
+                                    }
+                                  }
+                                }
+                              },
+                              style: customButtonStyle(
+                                  Size(isDesktop ? width * 0.1 : width * 0.19,
+                                      height * 0.043),
+                                  14,
+                                  Colors.red),
+                              child: Text(
+                                _locale.reject,
+                                style: const TextStyle(color: whiteColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Container(
                     width: isDesktop ? width * 0.78 : width * 0.9,
                     child: TableComponent(
                       hasDropdown: true,
+                      noHeader: true,
                       isworkFlow: true,
+                      // dropdown: statusDropDown(),
                       tableHeigt: height * 0.78,
                       tableWidth: width * 0.85,
                       plCols: polCols,
@@ -136,35 +252,96 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
                             UserWorkflowSteps.fromPluto(selectedRow!, _locale);
                       },
                     )),
-                // Container(
-                //   width: isDesktop ? width * 0.8 : width * 0.9,
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.end,
-                //       children: [
-                //         Text(
-                //           "${_locale.totalCount}: ",
-                //           style: const TextStyle(fontWeight: FontWeight.bold),
-                //         ),
-                //         ValueListenableBuilder(
-                //           valueListenable: totalUsersCount,
-                //           builder: ((context, value, child) {
-                //             return Text(
-                //               "${totalUsersCount.value}",
-                //               style:
-                //                   const TextStyle(fontWeight: FontWeight.bold),
-                //             );
-                //           }),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
         ));
+  }
+
+  void updateApproved(BuildContext context) {
+    UserWorkflowSteps userWorkflowSteps = UserWorkflowSteps(
+        txtKey: workFlowTemplateBody!.txtKey,
+        txtWorkflowcode: workFlowTemplateBody!.txtWorkflowcode,
+        intStepno: workFlowTemplateBody!.intStepno,
+        intStatus: 1);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CustomConfirmDialog(confirmMessage: _locale.sureToApproveStep);
+      },
+    ).then((value) {
+      if (value) {
+        workFlowTemplateContoller
+            .updateUserStep(userWorkflowSteps)
+            .then((value) {
+          CoolAlert.show(
+            width: width * 0.4,
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: CoolAlertType.success,
+            title: _locale.success,
+            text: _locale.updatedSuccess,
+            confirmBtnText: _locale.ok,
+            onConfirmBtnTap: () {},
+          ).then((value) {
+            refreshTable();
+          });
+        });
+      }
+    });
+  }
+
+  DropDown statusDropDown() {
+    return DropDown(
+      key: UniqueKey(),
+      isMandatory: true,
+      onChanged: (value) {
+        selectedStatus = ListConstants.getStatusCode(value, _locale)!;
+
+        search();
+        setState(() {});
+      },
+      initialValue: selectedStatus == -2
+          ? ListConstants.getStatusName(0, _locale)
+          : ListConstants.getStatusName(selectedStatus, _locale),
+      bordeText: _locale.searchByStatus,
+      width: width * 0.18,
+      items: ListConstants.getStatus(_locale),
+      height: height * 0.048,
+    );
+  }
+
+  void updateRejectedBody(BuildContext context) {
+    UserWorkflowSteps userWorkflowSteps = UserWorkflowSteps(
+        txtKey: workFlowTemplateBody!.txtKey,
+        txtWorkflowcode: workFlowTemplateBody!.txtWorkflowcode,
+        intStepno: workFlowTemplateBody!.intStepno,
+        intStatus: 2);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CustomConfirmDialog(confirmMessage: _locale.sureToRejectStep);
+      },
+    ).then((value) {
+      if (value) {
+        workFlowTemplateContoller
+            .updateUserStep(userWorkflowSteps)
+            .then((value) {
+          CoolAlert.show(
+            width: width * 0.4,
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: CoolAlertType.success,
+            title: _locale.success,
+            text: _locale.updatedSuccess,
+            confirmBtnText: _locale.ok,
+            onConfirmBtnTap: () {},
+          ).then((value) {
+            refreshTable();
+          });
+        });
+      }
+    });
   }
 
   void fillColumnTable() {
@@ -203,11 +380,42 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
       ),
       PlutoColumn(
         readOnly: true,
-        title: _locale.status,
+        title: _locale.status, // Localized title
         field: "intStatus",
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.12 : width * 0.4,
+        renderer: (rendererContext) {
+          String statusText =
+              rendererContext.cell.value; // Get the string value
+          Color backgroundColor = Colors.grey;
+
+          // Map the localized string value to corresponding styles
+          if (statusText == _locale.pending) {
+            backgroundColor = Colors.orange; // Pending
+          } else if (statusText == _locale.approved) {
+            backgroundColor = Colors.green; // Approved
+          } else if (statusText == _locale.rejected) {
+            backgroundColor = Colors.red; // Rejected
+          }
+
+          return Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              statusText,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+        },
       ),
       PlutoColumn(
         readOnly: true,
@@ -244,20 +452,14 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
     print("insidee search");
     stateManager!.setShowLoading(true); // Show loading indicator
 
-    if (selectedDep.isEmpty) {
-      isSearch.value = false;
-      stateManager!.removeAllRows();
-      stateManager!.appendRows(
-          rowList); // Use existing rows if no department is selected
-    } else if (isSearch.value) {
-      List<WorkFlowDocumentInfo> result = [];
+    if (isSearch.value) {
+      List<UserWorkflowSteps> result = [];
       List<PlutoRow> topList = [];
       pageLis.value = 1;
 
       // Fetch templates based on department
-      result = await workFlowTemplateContoller.getWorkFlowDocumentInfo(
-          WorkFlowDocumentModel(dept: selectedDep, document: searchValue));
-
+      result = await workFlowTemplateContoller.getUserWorkFlowSteps(
+          stepStatus: selectedStatus);
       // Update PlutoRows
       for (int i = 0; i < result.length; i++) {
         topList.add(result[i].toPlutoRow(rowList.length, _locale));
@@ -273,38 +475,23 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
     setState(() {}); // Trigger rebuild of dropdown or other elements
   }
 
-  searchField(String text) async {
-    isSearch.value = true;
-    print("insidee search");
-    stateManager!.setShowLoading(true); // Show loading indicator
+  void refreshTable() async {
+    stateManager!.setShowLoading(true);
+    stateManager!.removeAllRows();
+    stateManager!.notifyListeners(true);
+    selectedRow = null;
+    isSearch.value = false;
+    workFlowTemplateBody = null;
+    selectedStatus = 0;
 
-    if (text.isEmpty) {
-      isSearch.value = false;
-      stateManager!.removeAllRows();
-      stateManager!.appendRows(
-          rowList); // Use existing rows if no department is selected
-    } else if (isSearch.value) {
-      List<WorkFlowDocumentInfo> result = [];
-      List<PlutoRow> topList = [];
-      pageLis.value = 1;
-      searchValue = text;
-      // Fetch templates based on department
-      result = await workFlowTemplateContoller.getWorkFlowDocumentInfo(
-          WorkFlowDocumentModel(dept: selectedDep, document: text.trim()));
-
-      // Update PlutoRows
-      for (int i = 0; i < result.length; i++) {
-        topList.add(result[i].toPlutoRow(rowList.length, _locale));
-      }
-
-      // Refresh the table with new data
-      stateManager!.removeAllRows(); // Clear existing rows
-      stateManager!.appendRows(topList); // Add new rows
-      stateManager!.notifyListeners(true); // Ensure UI updates
-    }
-
-    stateManager!.setShowLoading(false); // Hide loading indicator
-    setState(() {}); // Trigger rebuild of dropdown or other elements
+    setState(() {});
+    rowList.clear();
+    pageLis.value = 1;
+    var response = await fetch(PlutoInfinityScrollRowsRequest());
+    stateManager!.appendRows(response.rows);
+    stateManager!.notifyListeners(true);
+    stateManager!.resetCurrentState();
+    stateManager!.setShowLoading(false);
   }
 
   List<PlutoRow> rowList = [];
@@ -319,7 +506,7 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
         }
         List<UserWorkflowSteps> result = [];
         List<PlutoRow> topList = [];
-        result = await userController.getUserWorkFlowSteps();
+        result = await workFlowTemplateContoller.getUserWorkFlowSteps();
 
         for (int i = pageLis.value == -1 ? 50 : 0; i < result.length; i++) {
           rowList.add(result[i].toPlutoRow(i + 1, _locale)); // Updated here

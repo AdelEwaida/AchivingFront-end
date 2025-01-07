@@ -207,12 +207,26 @@
   "myApprovals":"موافقاتي",
   "viewApprovals":"عرض الموافقات",
   "submitforWorkflowApproval":"الإدراج ضمن الموافقات",
-    "stepNo":"رقم الخطوة"
-
-
-
-
-
+    "stepNo":"رقم الخطوة",
+    "pending":"قيد الانتظار",
+  "approved":"موافق",
+  "rejected":"مرفوض",
+  "approve":"موافقة",
+  "reject":"رفض",
+  "notAuthorized":"لا يمكنك الموافقة على هذه الخطوة في الوقت الحالي",
+  "updatedSuccess": "تم التعديل بنجاح!",
+  "success": "تم بنجاح",
+  "sureToApproveStep":"هل أنت متأكد من الموافقة على هذه الخطوة؟",
+  "sureToRejectStep":"هل أنت متأكد من رفض هذه الخطوة؟",
+  "searchByStatus":"البحث حسب الحالة",
+  "cannotEdit":"لا يمكن تعديل خطوة موافق عليها"
 
 
 }
+
+
+
+
+
+
+

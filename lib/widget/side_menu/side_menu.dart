@@ -15,6 +15,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/dto/side_menu/sub_menu_model.dart';
 import '../../service/controller/work_flow_controllers/setup_controller.dart';
 import '../../utils/constants/storage_keys.dart';
+import '../notification_icon_widget.dart';
 
 class SideMenu extends StatefulWidget {
   String? name;
@@ -203,30 +204,35 @@ class _SideMenuState extends State<SideMenu> {
                 )
               : Container(),
           isDesktop
-              ? MouseRegion(
-                  onEnter: (event) {
-                    setState(() {
-                      isEnteredCollapseIcon = true;
-                    });
-                  },
-                  onExit: (event) {
-                    setState(() {
-                      isEnteredCollapseIcon = false;
-                    });
-                  },
-                  child: IconButton(
-                    splashRadius: 1,
-                    iconSize: width * 0.015,
-                    onPressed: () {
-                      setState(() {
-                        isCollapsed = !isCollapsed;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.flip_to_back_rounded,
-                      color: isEnteredCollapseIcon ? primary : Colors.white,
+              ? Row(
+                  children: [
+                    NotificationIcon(),
+                    MouseRegion(
+                      onEnter: (event) {
+                        setState(() {
+                          isEnteredCollapseIcon = true;
+                        });
+                      },
+                      onExit: (event) {
+                        setState(() {
+                          isEnteredCollapseIcon = false;
+                        });
+                      },
+                      child: IconButton(
+                        splashRadius: 1,
+                        iconSize: width * 0.015,
+                        onPressed: () {
+                          setState(() {
+                            isCollapsed = !isCollapsed;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.flip_to_back_rounded,
+                          color: isEnteredCollapseIcon ? primary : Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 )
               : Container(),
         ],
@@ -534,7 +540,7 @@ class _SideMenuState extends State<SideMenu> {
 
   double drawerWidth() {
     if (isDesktop) {
-      return !isCollapsed ? width * 0.15 : 50;
+      return !isCollapsed ? width * 0.165 : 50;
     } else {
       return width * 0.6;
     }

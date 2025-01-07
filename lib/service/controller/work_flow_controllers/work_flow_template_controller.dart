@@ -80,11 +80,12 @@ class WorkFlowTemplateContoller {
         .postRequest(deleteWorklowDoc, documentFileRequest.toJson());
   }
 
-  Future<List<UserWorkflowSteps>> getUserWorkFlowSteps() async {
+  Future<List<UserWorkflowSteps>> getUserWorkFlowSteps({int stepStatus=0}) async {
     const api = userWorkFlowSteps;
     List<UserWorkflowSteps> templateList = [];
 
-    var response = await ApiService().postRequest(api, {});
+    var response =
+        await ApiService().postRequest(api, {'stepStatus': stepStatus});
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
@@ -98,5 +99,10 @@ class WorkFlowTemplateContoller {
     }
 
     return templateList; // Return the populated list
+  }
+
+  Future updateUserStep(UserWorkflowSteps documentFileRequest) async {
+    return await ApiService()
+        .postRequest(updateWorkFlowStep, documentFileRequest.toJson());
   }
 }
