@@ -229,11 +229,9 @@ class _FileListScreenState extends State<FileListScreen> {
           children: [
             Row(
               children: [
-                Checkbox(
-                  value: approval,
-                  onChanged: (bool? value) {
-                    setState(() async {
-                      approval = value!;
+                ElevatedButton(
+                  onPressed: () async {
+                    if (documentModel != null) {
                       var response = await documentsController
                           .createWorkFlowDocument(documentModel!);
                       if (response.statusCode == 200) {
@@ -250,14 +248,23 @@ class _FileListScreenState extends State<FileListScreen> {
                           },
                         ).then((value) {
                           if (value) {
+                            setState(() {});
                             // Navigator.pop(context, true);
                           }
                         });
                       }
-                    });
+                    }
                   },
+                  style: customButtonStyle(
+                      Size(isDesktop ? width * 0.13 : width * 0.19,
+                          height * 0.043),
+                      14,
+                      greenColor),
+                  child: Text(
+                    _locale.submitforWorkflowApproval,
+                    style: const TextStyle(color: whiteColor),
+                  ),
                 ),
-                Text(_locale.submitforWorkflowApproval),
               ],
             ),
             const SizedBox(
@@ -1072,7 +1079,7 @@ class _FileListScreenState extends State<FileListScreen> {
           bool isOddRow = rendererContext.rowIdx % 2 == 0;
 
           // Default background color based on odd/even row configuration
-          Color backgroundColor = isOddRow ? Colors.white : Colors.grey[100]!;
+          Color backgroundColor = Colors.transparent;
 
           // Conditional logic to map the status to a specific color
           if (statusText == _locale.approved) {
@@ -1088,8 +1095,7 @@ class _FileListScreenState extends State<FileListScreen> {
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: backgroundColor,
-              borderRadius: backgroundColor == Colors.white ||
-                      backgroundColor == Colors.grey[100]!
+              borderRadius: backgroundColor == Colors.transparent
                   ? BorderRadius.circular(0)
                   : BorderRadius.circular(15),
             ),
