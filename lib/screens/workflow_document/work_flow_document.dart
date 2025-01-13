@@ -13,13 +13,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../dialogs/document_dialogs/file_explor_dialog.dart';
 import '../../dialogs/template_work_flow/add_edit_template_dialog.dart';
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
 import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/work_flow/work_flow_doc_model.dart';
 import '../../models/db/work_flow/work_flow_document_info.dart';
 import '../../models/db/work_flow/work_flow_template_body.dart';
+import '../../service/controller/documents_controllers/documents_controller.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
+import '../../utils/constants/loading.dart';
 import '../../widget/custom_drop_down.dart';
 
 class WorkFlowDocumentScreen extends StatefulWidget {
@@ -125,6 +128,7 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
                       },
                       genranlEdit: editTemplate,
                       refresh: refreshTable,
+                      explor: explorFiels,
                       onLoaded: (PlutoGridOnLoadedEvent event) {
                         stateManager = event.stateManager;
                         stateManager!.setShowColumnFilter(true);
@@ -185,6 +189,26 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
         ));
   }
 
+  void explorFiels() {
+    if (selectedRow != null) {
+      openLoadinDialog(context);
+      DocumentsController()
+          .getFilesByHdrKey(selectedRow!.cells['txtDocumentcode']!.value)
+          .then((value) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return FileExplorDialog(
+              listOfFiles: value,
+              isWorkFlowScreen: true,
+            );
+          },
+        );
+      }).then((value) {});
+    }
+  }
+
   DropDown departmentDropdown() {
     return DropDown(
       onClearIconPressed: () {
@@ -226,30 +250,6 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
     }
   }
 
-  // void deleteTemplate() async {
-  //   if (selectedRow != null) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return CustomConfirmDialog(
-  //             confirmMessage: _locale.areYouSureToDelete(
-  //                 selectedRow!.cells['templateName']!.value));
-  //       },
-  //     ).then((value) async {
-  //       if (value == true) {
-  //         TemplateModel templateModel =
-  //             TemplateModel(txtKey: workFlowTemplateBody!.template!.txtKey);
-  //         WorkFlowTemplateBody tempModel =
-  //             WorkFlowTemplateBody(stepsList: null, template: templateModel);
-  //         var response =
-  //             await workFlowTemplateContoller.removeTemplate(tempModel);
-  //         if (response.statusCode == 200) {
-  //           refreshTable();
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
   void deleteWorkFlow() async {
     if (selectedRow != null) {
       showDialog(

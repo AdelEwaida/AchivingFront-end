@@ -147,7 +147,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
 
   void uploadFile() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -241,7 +242,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
 
   viewDocumentInfo() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -268,7 +270,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       ).then((value) async {
         if (value) {
           DocumentModel documentModel =
-              DocumentModel.fromPlutoRow(selectedRow!);
+              DocumentModel.fromPlutoRow(selectedRow!, _locale);
           var response =
               await documentsController.deleteDocument(documentModel);
           if (response.statusCode == 200) {
@@ -285,7 +287,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
 
   void copyFile() async {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       var response = await documentsController.copyDocument(documentModel);
       if (response.statusCode == 200) {
         // print("DONE");
@@ -298,7 +301,8 @@ class _TableFileListSectionState extends State<TableFileListSection> {
 
   editDocumentInfo() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -446,7 +450,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
               documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
           i < result.length;
           i++) {
-        PlutoRow row = result[i].toPlutoRow(i + 1);
+        PlutoRow row = result[i].toPlutoRow(i + 1, _locale);
         // rowList.add(row);
         searchList.add(row);
       }
@@ -479,7 +483,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           i < result.length;
           i++) {
         int rowIndex = (currentPage - 1) * result.length + (i + 1);
-        PlutoRow row = result[i].toPlutoRow(rowList.length + 1);
+        PlutoRow row = result[i].toPlutoRow(rowList.length + 1, _locale);
         rowList.add(row);
         topList.add(row);
       }

@@ -13,10 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../dialogs/document_dialogs/file_explor_dialog.dart';
 import '../../dialogs/template_work_flow/add_edit_template_dialog.dart';
 import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/work_flow/work_flow_template_body.dart';
+import '../../service/controller/documents_controllers/documents_controller.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
+import '../../utils/constants/loading.dart';
 import '../../widget/custom_drop_down.dart';
 
 class WorkFlowScreen extends StatefulWidget {
@@ -111,6 +114,7 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
                       add: addTemplate,
                       search: (s) {},
                       delete: deleteTemplate,
+                      // explor: explorFiels,
                       plCols: polCols,
                       mode: PlutoGridMode.selectWithOneTap,
                       polRows: [],
@@ -178,6 +182,26 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
             ),
           ),
         ));
+  }
+
+  void explorFiels() {
+    if (selectedRow != null) {
+      openLoadinDialog(context);
+      DocumentsController()
+          .getFilesByHdrKey(selectedRow!.cells['txtDocumentcode']!.value)
+          .then((value) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return FileExplorDialog(
+              listOfFiles: value,
+              isWorkFlowScreen: true,
+            );
+          },
+        );
+      }).then((value) {});
+    }
   }
 
   DropDown departmentDropdown() {

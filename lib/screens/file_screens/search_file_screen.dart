@@ -213,7 +213,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
 
   void uploadFile() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -242,7 +243,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
 
   viewDocumentInfo() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -261,7 +263,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
 
   void copyFile() async {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       var response = await documentsController.copyDocument(documentModel);
       if (response.statusCode == 200) {
         // print("DONE");
@@ -273,7 +276,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
 
   editDocumentInfo() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -355,7 +359,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
       }
       for (int i = 0; i < result.length; i++) {
         // rowList.add(result[i].toPlutoRow(i + 1));
-        topList.add(result[i].toPlutoRow(rowList.length));
+        topList.add(result[i].toPlutoRow(rowList.length, _locale));
       }
       stateManager!.removeAllRows();
       stateManager!.appendRows(topList);
@@ -401,8 +405,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         //   rowList = [];
         // }
         for (int i = pageLis.value == -1 ? 50 : 0; i < result.length; i++) {
-          rowList.add(result[i].toPlutoRow(i + 1));
-          topList.add(result[i].toPlutoRow(rowList.length));
+          rowList.add(result[i].toPlutoRow(i + 1, _locale));
+          topList.add(result[i].toPlutoRow(rowList.length, _locale));
         }
 
         if (pageLis.value == 1) {

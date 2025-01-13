@@ -219,7 +219,13 @@
   "sureToApproveStep":"هل أنت متأكد من الموافقة على هذه الخطوة؟",
   "sureToRejectStep":"هل أنت متأكد من رفض هذه الخطوة؟",
   "searchByStatus":"البحث حسب الحالة",
-  "cannotEdit":"لا يمكن تعديل خطوة موافق عليها"
+  "cannotEdit":"لا يمكن تعديل خطوة موافق عليها",
+  "stuckAprrovals":"الموافقات العالقة",
+  "readyToApprove":"جاهز للتصديق",
+  "readyToApprovePending":"جاهز للتصديق / قيد الانتظار",
+  "approvalFlowDetails":"تفاصيل الموافقات"
+
+
 
 
 }

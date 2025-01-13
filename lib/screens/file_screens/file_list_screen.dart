@@ -102,6 +102,8 @@ class _FileListScreenState extends State<FileListScreen> {
   List<DepartmentModel> listOfDep = [];
   late PlutoGridStateManager stateManager;
   DocumentModel? documentModel;
+  bool approval = false;
+
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
@@ -223,55 +225,95 @@ class _FileListScreenState extends State<FileListScreen> {
         SizedBox(
           height: 3,
         ),
-        ElevatedButton(
-          onPressed: () async {
-            if (documentModel != null) {
-              // Fetch templates based on department
-              List<WorkFlowDocumentInfo> result =
-                  await WorkFlowTemplateContoller().getWorkFlowDocumentInfo(
-                      WorkFlowDocumentModel(
-                          documentCode: documentModel!.txtKey));
-
-              if (result.isEmpty) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return ErrorDialog(
-                      icon: Icons.error,
-                      errorDetails: "Error",
-                      errorTitle: "No workflow template data available.",
-                      color: Colors.red,
-                      statusCode: 400,
-                    );
+        Row(
+          children: [
+            Row(
+              children: [
+                Checkbox(
+                  value: approval,
+                  onChanged: (bool? value) {
+                    setState(() async {
+                      approval = value!;
+                      var response = await documentsController
+                          .createWorkFlowDocument(documentModel!);
+                      if (response.statusCode == 200) {
+                        // ignore: use_build_context_synchronously
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialog(
+                                icon: Icons.done_all,
+                                errorDetails: _locale.done,
+                                errorTitle: _locale.editDoneSucess,
+                                color: Colors.green,
+                                statusCode: 200);
+                          },
+                        ).then((value) {
+                          if (value) {
+                            // Navigator.pop(context, true);
+                          }
+                        });
+                      }
+                    });
                   },
-                );
-                return;
-              }
+                ),
+                Text(_locale.submitforWorkflowApproval),
+              ],
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (documentModel != null) {
+                  // Fetch templates based on department
+                  List<WorkFlowDocumentInfo> result =
+                      await WorkFlowTemplateContoller().getWorkFlowDocumentInfo(
+                          WorkFlowDocumentModel(
+                              documentCode: documentModel!.txtKey));
 
-              await showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (context) {
-                  return EditTemplateDocumentDialog(
-                    workFlowTemplateBody: result,
-                  );
-                },
-              ).then((value) {
-                // Handle dialog result if needed
-                if (value == true) {
-                  // Perform post-dialog actions if required
+                  if (result.isEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const ErrorDialog(
+                          icon: Icons.error,
+                          errorDetails: "Error",
+                          errorTitle: "No workflow template data available.",
+                          color: Colors.red,
+                          statusCode: 400,
+                        );
+                      },
+                    );
+                    return;
+                  }
+
+                  await showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return EditTemplateDocumentDialog(
+                        workFlowTemplateBody: result,
+                      );
+                    },
+                  ).then((value) {
+                    // Handle dialog result if needed
+                    if (value == true) {
+                      // Perform post-dialog actions if required
+                    }
+                  });
                 }
-              });
-            }
-          },
-          style: customButtonStyle(
-              Size(isDesktop ? width * 0.1 : width * 0.19, height * 0.043),
-              14,
-              primary),
-          child: Text(
-           _locale.viewApprovals,
-            style: const TextStyle(color: whiteColor),
-          ),
+              },
+              style: customButtonStyle(
+                  Size(isDesktop ? width * 0.1 : width * 0.19, height * 0.043),
+                  14,
+                  primary),
+              child: Text(
+                _locale.viewApprovals,
+                style: const TextStyle(color: whiteColor),
+              ),
+            ),
+          ],
         ),
         TableComponent(
           key: UniqueKey(),
@@ -318,12 +360,12 @@ class _FileListScreenState extends State<FileListScreen> {
           },
           doubleTab: (event) async {
             PlutoRow? tappedRow = event.row;
-            documentModel = DocumentModel.fromPlutoRow(tappedRow!);
+            documentModel = DocumentModel.fromPlutoRow(tappedRow!, _locale);
           },
           onSelected: (event) async {
             PlutoRow? tappedRow = event.row;
             selectedRow = tappedRow;
-            documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+            documentModel = DocumentModel.fromPlutoRow(selectedRow!, _locale);
           },
         ),
       ],
@@ -377,7 +419,7 @@ class _FileListScreenState extends State<FileListScreen> {
     // result = await documentsController
     //     .searchDocCriterea(documentListProvider.searchDocumentCriteria);
     for (int i = 0; i < result.length; i++) {
-      temp.add(result[i].toPlutoRow(i));
+      temp.add(result[i].toPlutoRow(i, _locale));
     }
     List<List<String>> rows = temp.map((row) {
       return stateManager.columns.map((column) {
@@ -760,7 +802,7 @@ class _FileListScreenState extends State<FileListScreen> {
     stateManager.setShowLoading(true);
     stateManager.removeAllRows();
     for (int i = 0; i < result.length; i++) {
-      stateManager.appendRows([result[i].toPlutoRow(i + 1)]);
+      stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
     }
     stateManager.setShowLoading(false);
     stateManager.notifyListeners();
@@ -802,7 +844,8 @@ class _FileListScreenState extends State<FileListScreen> {
 
   void uploadFile() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -896,7 +939,8 @@ class _FileListScreenState extends State<FileListScreen> {
 
   viewDocumentInfo() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -923,7 +967,7 @@ class _FileListScreenState extends State<FileListScreen> {
       ).then((value) async {
         if (value) {
           DocumentModel documentModel =
-              DocumentModel.fromPlutoRow(selectedRow!);
+              DocumentModel.fromPlutoRow(selectedRow!, _locale);
           var response =
               await documentsController.deleteDocument(documentModel);
           if (response.statusCode == 200) {
@@ -940,7 +984,8 @@ class _FileListScreenState extends State<FileListScreen> {
 
   void copyFile() async {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       var response = await documentsController.copyDocument(documentModel);
       if (response.statusCode == 200) {
         // print("DONE");
@@ -954,7 +999,8 @@ class _FileListScreenState extends State<FileListScreen> {
 
   editDocumentInfo() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -1008,9 +1054,55 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.issueNo,
         field: "txtIssueno",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.24 : width * 0.2,
+        width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
+      ),
+      PlutoColumn(
+        title: _locale.status,
+        field: "workflowStatus",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.08 : width * 0.2,
+        backgroundColor: columnColors,
+        renderer: (rendererContext) {
+          // Retrieve the status and current step values from the row
+          String statusText = rendererContext.cell.value;
+
+          // Determine if the row is odd or even
+          bool isOddRow = rendererContext.rowIdx % 2 == 0;
+
+          // Default background color based on odd/even row configuration
+          Color backgroundColor = isOddRow ? Colors.white : Colors.grey[100]!;
+
+          // Conditional logic to map the status to a specific color
+          if (statusText == _locale.approved) {
+            backgroundColor = Colors.green; // Approved
+          } else if (statusText == _locale.rejected) {
+            backgroundColor = Colors.red; // Rejected
+          } else if (statusText == _locale.pending) {
+            backgroundColor = Colors.orange[300]!; // Pending
+          }
+
+          return Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: backgroundColor == Colors.white ||
+                      backgroundColor == Colors.grey[100]!
+                  ? BorderRadius.circular(0)
+                  : BorderRadius.circular(15),
+            ),
+            child: Text(
+              statusText,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+        },
       ),
       PlutoColumn(
         title: _locale.issueDate,
@@ -1031,7 +1123,7 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.department,
         field: "txtDept",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.08 : width * 0.2,
+        width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
@@ -1041,6 +1133,7 @@ class _FileListScreenState extends State<FileListScreen> {
         width: isDesktop ? width * 0.08 : width * 0.2,
         backgroundColor: columnColors,
       ),
+
       // PlutoColumn(
       //   title: _locale.ref1,
       //   field: "ref1",
@@ -1142,7 +1235,7 @@ class _FileListScreenState extends State<FileListScreen> {
                 documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 50;
             i < result.length;
             i++) {
-          PlutoRow row = result[i].toPlutoRow(i + 1);
+          PlutoRow row = result[i].toPlutoRow(i + 1, _locale);
           // rowList.add(row);
           searchList.add(row);
         }
@@ -1176,7 +1269,7 @@ class _FileListScreenState extends State<FileListScreen> {
             i < result.length;
             i++) {
           int rowIndex = (currentPage - 1) * result.length + (i + 1);
-          PlutoRow row = result[i].toPlutoRow(rowList.length + 1);
+          PlutoRow row = result[i].toPlutoRow(rowList.length + 1, _locale);
           rowList.add(row);
           topList.add(row);
         }
@@ -1209,7 +1302,7 @@ class _FileListScreenState extends State<FileListScreen> {
           .searchDocCriterea(documentListProvider.searchDocumentCriteria);
 
       for (int i = 0; i < result.length; i++) {
-        PlutoRow row = result[i].toPlutoRow(i + 1);
+        PlutoRow row = result[i].toPlutoRow(i + 1, _locale);
         // rowList.add(row);
         searchList.add(row);
       }

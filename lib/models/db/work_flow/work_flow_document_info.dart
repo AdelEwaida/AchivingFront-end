@@ -44,9 +44,10 @@ class WorkFlowDocumentInfo {
         'txtDeptName': PlutoCell(value: workflow?.txtDeptName ?? ""),
         'txtTemplateName': PlutoCell(value: workflow?.txtTemplateName ?? ""),
         'intStatus': PlutoCell(
-            value: ListConstants.getStatusName(
+            value: ListConstants.getStatusNameWorkFlow(
                 workflow?.intStatus ?? -1, localizations)),
         'datMaxDate': PlutoCell(value: workflow?.datMaxDate ?? ""),
+        'txtDocumentcode': PlutoCell(value: workflow?.txtDocumentcode ?? ""),
         'stepsList': PlutoCell(value: stepsList),
       },
     );
@@ -64,9 +65,12 @@ class WorkFlowDocumentInfo {
         plutoRow.cells['txtTemplateName']?.value as String? ?? "";
     workflow?.txtDeptName =
         plutoRow.cells['txtDeptName']?.value as String? ?? "";
+
+    workflow?.txtDocumentcode =
+        plutoRow.cells['txtDocumentcode']?.value as String? ?? "";
     workflow?.datMaxDate = plutoRow.cells['datMaxDate']?.value as String? ?? "";
     // workflow?.intStatus = plutoRow.cells['intStatus']?.value as int? ?? -1;
-    workflow?.intStatus = ListConstants.getStatusCode(
+    workflow?.intStatus = ListConstants.getStatusCodeWorkFlow(
         plutoRow.cells['intStatus']?.value ?? -1,
         localizations); // Default to 0 if null
     // Extract stepsList (ensure it is cast to List<StepsModel>)

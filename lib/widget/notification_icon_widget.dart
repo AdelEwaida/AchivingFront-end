@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../models/db/work_flow/user_step_request_body.dart';
 import '../models/db/work_flow/user_work_flow_steps.dart';
 import '../models/db/work_flow/work_flow_document_info.dart';
 import '../service/controller/work_flow_controllers/work_flow_template_controller.dart';
@@ -52,8 +53,8 @@ class _NotificationIconState extends State<NotificationIcon> {
 
   Future<void> _fetchNotificationCount() async {
     try {
-      List<UserWorkflowSteps> result =
-          await workFlowTemplateContoller.getUserWorkFlowSteps();
+      List<UserWorkflowSteps> result = await workFlowTemplateContoller
+          .getUserWorkFlowSteps(UserStepRequestBody(stepStatus: 0, curStep: 1));
       setState(() {
         notificationCount = result.length;
       });
@@ -64,7 +65,8 @@ class _NotificationIconState extends State<NotificationIcon> {
 
   Future<void> _fetchNotificationList() async {
     try {
-      final list = await workFlowTemplateContoller.getUserWorkFlowSteps();
+      final list = await workFlowTemplateContoller
+          .getUserWorkFlowSteps(UserStepRequestBody(stepStatus: 0, curStep: 1));
       setState(() {
         tipsList = list;
       });
@@ -150,20 +152,20 @@ class _NotificationIconState extends State<NotificationIcon> {
                             margin: const EdgeInsets.symmetric(vertical: 5),
                             child: ListTile(
                               title: Tooltip(
-                                message: tipsList[index].txtStepdesc,
+                                message: tipsList[index].txtTemplateName,
                                 child: Row(
                                   children: [
-                                    // txtStepdesc Text
+                                    // txtTemplateName Text
                                     Expanded(
                                       child: Text(
-                                        tipsList[index].txtStepdesc ??
-                                            'No description',
+                                        "${tipsList[index].txtTemplateName ?? ''} - ${tipsList[index].txtDeptName ?? ''}",
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.normal,
                                         ),
                                       ),
                                     ),
+
                                     // Status with orange background
                                     Container(
                                       padding: EdgeInsets.symmetric(

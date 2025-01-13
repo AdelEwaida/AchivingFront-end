@@ -49,6 +49,11 @@ class DocumentsController {
         .postRequest(updateDoc, documentFileRequest.toJson());
   }
 
+  Future createWorkFlowDocument(DocumentModel documentFileRequest) async {
+    return await ApiService()
+        .postRequest(createWorkFlowDoc, documentFileRequest.toJson());
+  }
+
   Future<List<DocumentModel>> searchDocCriterea(
       SearchDocumentCriteria searchDocumentCriteria) async {
     List<DocumentModel> list = [];
@@ -150,6 +155,7 @@ class DocumentsController {
     });
     return itemCount;
   }
+
 //getTotalUserCatCount
   Future<int> getUserCatCount() async {
     var api = getTotalUserCatCount;
@@ -164,6 +170,7 @@ class DocumentsController {
 
     return itemCount;
   }
+
   Future<int> getDocCatCount() async {
     var api = totlaFilesApi;
 

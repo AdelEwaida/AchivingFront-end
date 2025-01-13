@@ -29,7 +29,9 @@ import 'package:printing/printing.dart';
 
 class FileExplorDialog extends StatefulWidget {
   List<FileUploadModel> listOfFiles;
-  FileExplorDialog({super.key, required this.listOfFiles});
+  bool? isWorkFlowScreen;
+  FileExplorDialog(
+      {super.key, required this.listOfFiles, this.isWorkFlowScreen = false});
 
   @override
   State<FileExplorDialog> createState() => _FileExplorDialogState();
@@ -85,10 +87,11 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
               tableWidth: width * 0.5,
               tableHeigt: height * 0.4,
               rowsHeight: 50,
-              sendEmail: sendEmail,
-              delete: deleteFile,
+              sendEmail: widget.isWorkFlowScreen == true ? null : sendEmail,
+              delete: widget.isWorkFlowScreen == true ? null : deleteFile,
               plCols: polCols,
-              sendWhatspp: sendWhatsapp,
+              sendWhatspp:
+                  widget.isWorkFlowScreen == true ? null : sendWhatsapp,
               download: download,
               view: view,
               polRows: [],

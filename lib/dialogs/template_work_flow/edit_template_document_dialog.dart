@@ -104,7 +104,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
         departmentName.text = workFlowTemplateBody!.workflow!.txtDeptName ?? "";
         templateName.text =
             workFlowTemplateBody!.workflow!.txtTemplateName ?? "";
-        workflowStatusController.text = ListConstants.getStatusName(
+        workflowStatusController.text = ListConstants.getStatusNameWorkFlow(
                 workFlowTemplateBody!.workflow!.intStatus!, _locale)!
             .toString();
 
@@ -154,7 +154,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5.0),
         ),
-        width: isDesktop ? width * 0.43 : width * 0.8,
+        width: isDesktop ? width * 0.5 : width * 0.8,
         height: isDesktop ? height * 0.65 : height * 0.5,
         child: formSection(),
       ),
@@ -300,28 +300,34 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
               isworkFlow: true,
 
               tableHeigt: height * 0.35,
-              tableWidth: width * 0.42,
+              tableWidth: width * 0.49,
               // delete: deleteTemplate,
               plCols: polCols,
               mode: PlutoGridMode.selectWithOneTap,
               polRows: rowList,
 
               rowColor: (colorContext) {
-                //  'intStatus': PlutoCell(value: intStatus == 1 ? "Yes" : "No"),
-                String intStatus = colorContext.row.cells['intStatus']!.value!;
+                String localizedStatus =
+                    colorContext.row.cells['intStatus']!.value as String;
 
-                if (intStatus == "Approval") {
+                int? statusCode = ListConstants.getStatusCodeWorkFlow(
+                    localizedStatus, _locale);
+
+                if (statusCode == 1) {
+                  // Approved
                   return Colors.green[100]!;
-                } else if (intStatus == "Pending") {
-                  return Colors.white!;
+                } else if (statusCode == 0) {
+                  // Pending
+                  return Colors.orange[100]!;
+                } else if (statusCode == 2) {
+                  // Rejected
+                  return Colors.red[100]!;
                 }
 
-                return const Color.fromARGB(255, 255, 87, 75);
+                // Default color if status is unknown
+                return Colors.grey[200]!;
               },
-              onLoaded: (PlutoGridOnLoadedEvent event) {
-                stateManager = event.stateManager;
-                stateManager!.setShowColumnFilter(true);
-              },
+
               doubleTab: (event) async {
                 PlutoRow? tappedRow = event.row;
                 workFlowTemplateBody =
@@ -458,14 +464,16 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
             // setState(() {
             //   step.intStatus = value.txtCode;
             // });
-            selectedStatus = ListConstants.getStatusCode(value, _locale)!;
-            step.intStatus = ListConstants.getStatusCode(value, _locale)!;
+            selectedStatus =
+                ListConstants.getStatusCodeWorkFlow(value, _locale)!;
+            step.intStatus =
+                ListConstants.getStatusCodeWorkFlow(value, _locale)!;
           },
           // initialValue: selectedUserCode == "" ? null : selectedUserCode,
-          initialValue: ListConstants.getStatusName(status!, _locale),
+          initialValue: ListConstants.getStatusNameWorkFlow(status!, _locale),
           bordeText: _locale.status,
           width: width * 0.14,
-          items: ListConstants.getStatus(_locale),
+          items: ListConstants.getStatusWorkFlow(_locale),
           height: height * 0.05,
         ),
         Row(

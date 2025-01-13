@@ -53,11 +53,11 @@ class _SideMenuState extends State<SideMenu> {
   late ScreenContentProvider screenProvider;
   int openedMenuIndex = -1;
   List<MenuModel> menuList = [];
-
+  String? active;
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
-    String? active;
+
     SetupController().getSetup().then((value) async {
       // print("in side menu :${value!.bolActive.toString()}");
       if (value != null) {
@@ -206,7 +206,7 @@ class _SideMenuState extends State<SideMenu> {
           isDesktop
               ? Row(
                   children: [
-                    NotificationIcon(),
+                    active == "1" ? NotificationIcon() : SizedBox.shrink(),
                     MouseRegion(
                       onEnter: (event) {
                         setState(() {

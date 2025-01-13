@@ -36,6 +36,7 @@ const getFilesByHdrApi = "docFiles/getByHdr";
 const getLatestFile = "docFiles/getLatestFile";
 const copyFileDocApi = "docFilesTrans/copyDoc";
 const deleteDocApi = "docFilesTrans/delete";
+const createWorkFlowDoc = "docFilesTrans/createWorkflow";
 //users api
 const getUserSearchApi = "users/searchCrit";
 const addUserApi = "users/insert";
@@ -85,3 +86,4 @@ const updateWorkFlowDoc = "workflowTransactions/update";
 const deleteWorklowDoc = "workflowTransactions/delete";
 const userWorkFlowSteps = "workflowDocumentSteps/getByUser";
 const updateWorkFlowStep = "workflowDocumentSteps/updateStep";
+const allUserWorkFlowSteps = "workflowDocumentSteps/searchCrit";

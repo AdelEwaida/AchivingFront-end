@@ -95,44 +95,45 @@ class _ErrorDialogState extends State<ErrorDialog> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: width * 0.2,
-                ),
-                MaterialButton(
-                  onPressed: () async {
-                    print(
-                        "widget.statusCodewidget.statusCode ${widget.statusCode}");
-                    if (widget.isItemStatusScreen == true &&
-                        widget.customOnPressed != null) {
-                      widget.customOnPressed!();
-                    } else {
-                      if (widget.statusCode == 401 ||
-                          widget.statusCode == 417) {
-                        if (kIsWeb) {
-                          // context.read<TabsProvider>().emptyAll();
-                          GoRouter.of(context).go(loginScreenRoute);
+                // SizedBox(
+                //   width: width * 0.2,
+                // ),
+                Row(
+                  children: [
+                    MaterialButton(
+                      onPressed: () async {
+                        if (widget.isItemStatusScreen == true &&
+                            widget.customOnPressed != null) {
+                          widget.customOnPressed!();
                         } else {
-                          // context.read<TabsProvider>().emptyAll();
-                          Navigator.pushReplacementNamed(
-                              context, loginScreenRoute);
+                          if (widget.statusCode == 401 ||
+                              widget.statusCode == 417) {
+                            if (kIsWeb) {
+                              // context.read<TabsProvider>().emptyAll();
+                              GoRouter.of(context).go(loginScreenRoute);
+                            } else {
+                              // context.read<TabsProvider>().emptyAll();
+                              Navigator.pushReplacementNamed(
+                                  context, loginScreenRoute);
+                            }
+                          } else {
+                            Navigator.pop(context, true);
+                          }
                         }
-                      } else {
-                        Navigator.pop(context, true);
-                      }
-                    }
-                  },
-                  child: Text(widget.isItemStatusScreen == true
-                      ? _locale.cancel
-                      : _locale.ok),
-                ),
-                Visibility(
-                  visible: widget.statusCode == 402,
-                  child: MaterialButton(
-                    onPressed: () async {
-                      Navigator.pop(context, false);
-                    },
-                    child: Text(_locale.no),
-                  ),
+                      },
+                      child: Text(widget.isItemStatusScreen == true
+                          ? _locale.cancel
+                          : _locale.ok),
+                    ),
+                    widget.statusCode == 402
+                        ? MaterialButton(
+                            onPressed: () async {
+                              Navigator.pop(context, false);
+                            },
+                            child: Text(_locale.no),
+                          )
+                        : SizedBox.shrink(),
+                  ],
                 )
               ],
             ),

@@ -166,7 +166,8 @@ class _ViewTableState extends State<ViewTable> {
 
   void uploadFile() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -221,7 +222,8 @@ class _ViewTableState extends State<ViewTable> {
 
   viewDocumentInfo() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -284,7 +286,7 @@ class _ViewTableState extends State<ViewTable> {
       ).then((value) async {
         if (value) {
           DocumentModel documentModel =
-              DocumentModel.fromPlutoRow(selectedRow!);
+              DocumentModel.fromPlutoRow(selectedRow!, _locale);
           var response =
               await documentsController.deleteDocument(documentModel);
           if (response.statusCode == 200) {
@@ -301,7 +303,8 @@ class _ViewTableState extends State<ViewTable> {
 
   void copyFile() async {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       var response = await documentsController.copyDocument(documentModel);
       if (response.statusCode == 200) {
         // print("DONE");
@@ -314,7 +317,8 @@ class _ViewTableState extends State<ViewTable> {
 
   editDocumentInfo() {
     if (selectedRow != null) {
-      DocumentModel documentModel = DocumentModel.fromPlutoRow(selectedRow!);
+      DocumentModel documentModel =
+          DocumentModel.fromPlutoRow(selectedRow!, _locale);
       showDialog(
         context: context,
         builder: (context) {
@@ -460,7 +464,7 @@ class _ViewTableState extends State<ViewTable> {
               documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 10;
           i < result.length;
           i++) {
-        PlutoRow row = result[i].toPlutoRow(i + 1);
+        PlutoRow row = result[i].toPlutoRow(i + 1, _locale);
         // rowList.add(row);
         // searchList.add(row);
         stateManager.appendRows([row]);
@@ -496,7 +500,7 @@ class _ViewTableState extends State<ViewTable> {
           i < result.length;
           i++) {
         int rowIndex = (currentPage - 1) * result.length + (i + 1);
-        PlutoRow row = result[i].toPlutoRow(rowList.length + 1);
+        PlutoRow row = result[i].toPlutoRow(rowList.length + 1, _locale);
         // stateManager.appendRows([row]);
         rowList.add(row);
         topList.add(row);
@@ -522,7 +526,7 @@ class _ViewTableState extends State<ViewTable> {
     result = await documentsController
         .searchDocCriterea(documentListProvider.searchDocumentCriteria);
     for (int i = 0; i < result.length; i++) {
-      stateManager.appendRows([result[i].toPlutoRow(i)]);
+      stateManager.appendRows([result[i].toPlutoRow(i, _locale)]);
     }
   }
   // Future<PlutoInfinityScrollRowsResponse> fetch1(

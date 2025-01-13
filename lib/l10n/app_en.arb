@@ -233,5 +233,10 @@
     "sureToApproveStep":"Are You sure you want to Approve this step?",
     "sureToRejectStep":"Are You sure you want to Reject this step?",
     "searchByStatus":"Search by Status",
-    "cannotEdit":"You cannot edit Confirmed step"
+    "cannotEdit":"You cannot edit Confirmed step",
+    "stuckAprrovals":"Pending Aprrovals",
+    "readyToApprove":"Ready to Approve",
+    "readyToApprovePending":"Ready to Approve/ Pending",
+    "approvalFlowDetails":"Approval Flow Details"
+
 }

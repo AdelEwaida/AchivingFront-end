@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:archiving_flutter_project/models/db/work_flow/template_model.dart';
 
 import '../../../models/db/work_flow/setup_model.dart';
+import '../../../models/db/work_flow/user_step_request_body.dart';
 import '../../../models/db/work_flow/user_work_flow_steps.dart';
 import '../../../models/db/work_flow/work_flow_doc_model.dart';
 import '../../../models/db/work_flow/work_flow_document_info.dart';
@@ -80,12 +81,12 @@ class WorkFlowTemplateContoller {
         .postRequest(deleteWorklowDoc, documentFileRequest.toJson());
   }
 
-  Future<List<UserWorkflowSteps>> getUserWorkFlowSteps({int stepStatus=0}) async {
+  Future<List<UserWorkflowSteps>> getUserWorkFlowSteps(
+      UserStepRequestBody usetStepRequestBody) async {
     const api = userWorkFlowSteps;
     List<UserWorkflowSteps> templateList = [];
 
-    var response =
-        await ApiService().postRequest(api, {'stepStatus': stepStatus});
+    var response = await ApiService().postRequest(api, usetStepRequestBody);
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
@@ -104,5 +105,26 @@ class WorkFlowTemplateContoller {
   Future updateUserStep(UserWorkflowSteps documentFileRequest) async {
     return await ApiService()
         .postRequest(updateWorkFlowStep, documentFileRequest.toJson());
+  }
+
+  Future<List<UserWorkflowSteps>> getAllUsersWorkFlowSteps(
+      UserStepRequestBody usetStepRequestBody) async {
+    const api = allUserWorkFlowSteps;
+    List<UserWorkflowSteps> templateList = [];
+
+    var response = await ApiService().postRequest(api, usetStepRequestBody);
+
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+
+      // Assuming jsonData is a list of objects
+      for (var stock in jsonData) {
+        templateList.add(UserWorkflowSteps.fromJson(stock));
+      }
+    } else {
+      print("Error: ${response.statusCode}, ${response.reasonPhrase}");
+    }
+
+    return templateList; // Return the populated list
   }
 }
