@@ -154,7 +154,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
               pickFile();
             },
             style: customButtonStyle(
-                Size(isDesktop ? width * 0.13 : width * 0.4, height * 0.045),
+                Size(isDesktop ? width * 0.14 : width * 0.4, height * 0.045),
                 14,
                 primary3),
             child: Text(

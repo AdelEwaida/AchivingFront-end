@@ -23,6 +23,7 @@ import '../../models/db/work_flow/work_flow_template_body.dart';
 import '../../service/controller/documents_controllers/documents_controller.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import '../../utils/constants/loading.dart';
+import '../../utils/func/lists.dart';
 import '../../widget/custom_drop_down.dart';
 
 class WorkFlowDocumentScreen extends StatefulWidget {
@@ -56,6 +57,7 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
   String selectedDep = "";
   String selctedDepDesc = "";
   List<DepartmentUserModel> departmetList = [];
+  int selectedStatus = -2;
 
   @override
   void didChangeDependencies() async {
@@ -119,6 +121,7 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
                       tableHeigt: height * 0.78,
                       tableWidth: width * 0.85,
                       search: searchField,
+                      statusDropDown: statusDropDown(),
                       // delete: deleteTemplate,
                       plCols: polCols,
                       mode: PlutoGridMode.selectWithOneTap,
@@ -126,7 +129,7 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
                       footerBuilder: (stateManager) {
                         return lazyLoadingfooter(stateManager);
                       },
-                      genranlEdit: editTemplate,
+                      view: editTemplate,
                       refresh: refreshTable,
                       explor: explorFiels,
                       onLoaded: (PlutoGridOnLoadedEvent event) {
@@ -189,6 +192,27 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
         ));
   }
 
+  DropDown statusDropDown() {
+    return DropDown(
+      key: UniqueKey(),
+      isMandatory: true,
+      onChanged: (value) {
+        selectedStatus =
+            ListConstants.getStatusCodeWorkFlowDoc(value, _locale)!;
+
+        search();
+        setState(() {});
+      },
+      initialValue: selectedStatus == -2
+          ? ListConstants.getStatusNameWorkFlowDoc(0, _locale)
+          : ListConstants.getStatusNameWorkFlowDoc(selectedStatus, _locale),
+      bordeText: _locale.searchByStatus,
+      width: width * 0.15,
+      items: ListConstants.getStatusWorkFlowAllOption(_locale),
+      height: height * 0.048,
+    );
+  }
+
   void explorFiels() {
     if (selectedRow != null) {
       openLoadinDialog(context);
@@ -226,7 +250,7 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
       },
       initialValue: selctedDepDesc == "" ? null : selctedDepDesc,
       bordeText: _locale.searchByDep,
-      width: width * 0.18,
+      width: width * 0.15,
       items: departmetList,
       height: height * 0.048,
     );
@@ -284,6 +308,7 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
     workFlowTemplateBody = null;
     selectedDep = "";
     selctedDepDesc = "";
+    selectedStatus = -2;
     setState(() {});
     rowList.clear();
     pageLis.value = 1;
@@ -352,22 +377,29 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
 
   search() async {
     isSearch.value = true;
-    print("insidee search");
+    print("insidee search :${isSearch.value}");
     stateManager!.setShowLoading(true); // Show loading indicator
 
-    if (selectedDep.isEmpty) {
+    if (selectedDep.isEmpty && selectedStatus == -2) {
+      print("insidee search1111 :${isSearch.value}");
+
       isSearch.value = false;
       stateManager!.removeAllRows();
       stateManager!.appendRows(
           rowList); // Use existing rows if no department is selected
     } else if (isSearch.value) {
+      print("insidee search333 :${isSearch.value}");
+
       List<WorkFlowDocumentInfo> result = [];
       List<PlutoRow> topList = [];
       pageLis.value = 1;
 
       // Fetch templates based on department
       result = await workFlowTemplateContoller.getWorkFlowDocumentInfo(
-          WorkFlowDocumentModel(dept: selectedDep, document: searchValue));
+          WorkFlowDocumentModel(
+              dept: selectedDep,
+              document: searchValue,
+              stepStatus: selectedStatus));
 
       // Update PlutoRows
       for (int i = 0; i < result.length; i++) {
@@ -391,9 +423,27 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
 
     if (text.isEmpty) {
       isSearch.value = false;
-      stateManager!.removeAllRows();
-      stateManager!.appendRows(
-          rowList); // Use existing rows if no department is selected
+      List<WorkFlowDocumentInfo> result = [];
+      List<PlutoRow> topList = [];
+      pageLis.value = 1;
+      searchValue = text;
+      // Fetch templates based on department
+      result = await workFlowTemplateContoller
+          .getWorkFlowDocumentInfo(WorkFlowDocumentModel(
+        stepStatus: selectedStatus,
+        dept: selectedDep,
+        document: text.trim(),
+      ));
+
+      // Update PlutoRows
+      for (int i = 0; i < result.length; i++) {
+        topList.add(result[i].toPlutoRow(rowList.length, _locale));
+      }
+
+      // Refresh the table with new data
+      stateManager!.removeAllRows(); // Clear existing rows
+      stateManager!.appendRows(topList); // Add new rows
+      stateManager!.notifyListeners(true); // Ensure UI updates
     } else if (isSearch.value) {
       List<WorkFlowDocumentInfo> result = [];
       List<PlutoRow> topList = [];
@@ -401,7 +451,10 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
       searchValue = text;
       // Fetch templates based on department
       result = await workFlowTemplateContoller.getWorkFlowDocumentInfo(
-          WorkFlowDocumentModel(dept: selectedDep, document: text.trim()));
+          WorkFlowDocumentModel(
+              dept: selectedDep,
+              document: text.trim(),
+              stepStatus: selectedStatus));
 
       // Update PlutoRows
       for (int i = 0; i < result.length; i++) {
@@ -431,8 +484,8 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
         }
         List<WorkFlowDocumentInfo> result = [];
         List<PlutoRow> topList = [];
-        result = await userController
-            .getWorkFlowDocumentInfo(WorkFlowDocumentModel(txtDept: ""));
+        result = await userController.getWorkFlowDocumentInfo(
+            WorkFlowDocumentModel(txtDept: "", stepStatus: 0));
 
         for (int i = pageLis.value == -1 ? 50 : 0; i < result.length; i++) {
           rowList.add(result[i].toPlutoRow(i + 1, _locale)); // Updated here

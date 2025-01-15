@@ -237,6 +237,8 @@
     "stuckAprrovals":"Pending Aprrovals",
     "readyToApprove":"Ready to Approve",
     "readyToApprovePending":"Ready to Approve/ Pending",
-    "approvalFlowDetails":"Approval Flow Details"
+    "approvalFlowDetails":"Approval Flow Details",
+    "attachments":"Attachments",
+    "stepDescription":"Step Description"
 
 }

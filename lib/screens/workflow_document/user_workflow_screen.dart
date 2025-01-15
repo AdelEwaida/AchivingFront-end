@@ -157,7 +157,7 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
                                   14,
                                   primary),
                               child: Text(
-                                _locale.documentExplorer,
+                                _locale.attachments,
                                 style: const TextStyle(color: whiteColor),
                               ),
                             ),

@@ -42,6 +42,7 @@ import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
@@ -53,6 +54,8 @@ import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
 import '../../models/db/work_flow/work_flow_doc_model.dart';
 import '../../models/db/work_flow/work_flow_document_info.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
+import '../../utils/constants/storage_keys.dart';
+import '../../utils/constants/user_types_constant/user_types_constant.dart';
 
 class FileListScreen extends StatefulWidget {
   const FileListScreen({super.key});
@@ -104,12 +107,16 @@ class _FileListScreenState extends State<FileListScreen> {
   DocumentModel? documentModel;
   bool approval = false;
 
+  String active = "0";
+  // String? userName = "";
+  var storage = FlutterSecureStorage();
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
+    // userName = await storage.read(key: "userName");
     fillColumnTable();
     documentListProvider = context.read<DocumentListProvider>();
     calssificatonNameAndCodeProvider =
@@ -134,6 +141,10 @@ class _FileListScreenState extends State<FileListScreen> {
           toIssueDate: "",
           page: -1));
     }
+    active = (await storage.read(key: StorageKeys.bolActive))!;
+    setState(() {});
+    print("activeactiveactiveactiveactiveactive :${active}");
+
     // listOfDep =
     // setState(() {});
     super.didChangeDependencies();
@@ -211,7 +222,128 @@ class _FileListScreenState extends State<FileListScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [tableSection()],
+                  children: [
+                    Column(
+                      children: [
+                        active == "1"
+                            ? Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          if (documentModel != null) {
+                                            var response =
+                                                await documentsController
+                                                    .createWorkFlowDocument(
+                                                        documentModel!);
+                                            if (response.statusCode == 200) {
+                                              // ignore: use_build_context_synchronously
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return ErrorDialog(
+                                                      icon: Icons.done_all,
+                                                      errorDetails:
+                                                          _locale.done,
+                                                      errorTitle: _locale
+                                                          .editDoneSucess,
+                                                      color: Colors.green,
+                                                      statusCode: 200);
+                                                },
+                                              ).then((value) {
+                                                if (value) {
+                                                  setState(() {});
+                                                  // Navigator.pop(context, true);
+                                                }
+                                              });
+                                            }
+                                          }
+                                        },
+                                        style: customButtonStyle(
+                                            Size(
+                                                isDesktop
+                                                    ? width * 0.13
+                                                    : width * 0.19,
+                                                height * 0.043),
+                                            14,
+                                            greenColor),
+                                        child: Text(
+                                          _locale.submitforWorkflowApproval,
+                                          style: const TextStyle(
+                                              color: whiteColor),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      if (documentModel != null) {
+                                        // Fetch templates based on department
+                                        List<WorkFlowDocumentInfo> result =
+                                            await WorkFlowTemplateContoller()
+                                                .getWorkFlowDocumentInfo(
+                                                    WorkFlowDocumentModel(
+                                                        documentCode:
+                                                            documentModel!
+                                                                .txtKey));
+
+                                        if (result.isEmpty) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return const ErrorDialog(
+                                                icon: Icons.error,
+                                                errorDetails: "Error",
+                                                errorTitle:
+                                                    "No workflow template data available.",
+                                                color: Colors.red,
+                                                statusCode: 400,
+                                              );
+                                            },
+                                          );
+                                          return;
+                                        }
+
+                                        await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) {
+                                            return EditTemplateDocumentDialog(
+                                              workFlowTemplateBody: result,
+                                            );
+                                          },
+                                        ).then((value) {
+                                          // Handle dialog result if needed
+                                          if (value == true) {
+                                            // Perform post-dialog actions if required
+                                          }
+                                        });
+                                      }
+                                    },
+                                    style: customButtonStyle(
+                                        Size(
+                                            isDesktop
+                                                ? width * 0.1
+                                                : width * 0.19,
+                                            height * 0.043),
+                                        14,
+                                        primary),
+                                    child: Text(
+                                      _locale.viewApprovals,
+                                      style: const TextStyle(color: whiteColor),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : SizedBox.shrink(),
+                        tableSection(),
+                      ],
+                    )
+                  ],
                 )
               ],
             ),
@@ -222,106 +354,6 @@ class _FileListScreenState extends State<FileListScreen> {
   Widget tableSection() {
     return Column(
       children: [
-        SizedBox(
-          height: 3,
-        ),
-        Row(
-          children: [
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    if (documentModel != null) {
-                      var response = await documentsController
-                          .createWorkFlowDocument(documentModel!);
-                      if (response.statusCode == 200) {
-                        // ignore: use_build_context_synchronously
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return ErrorDialog(
-                                icon: Icons.done_all,
-                                errorDetails: _locale.done,
-                                errorTitle: _locale.editDoneSucess,
-                                color: Colors.green,
-                                statusCode: 200);
-                          },
-                        ).then((value) {
-                          if (value) {
-                            setState(() {});
-                            // Navigator.pop(context, true);
-                          }
-                        });
-                      }
-                    }
-                  },
-                  style: customButtonStyle(
-                      Size(isDesktop ? width * 0.13 : width * 0.19,
-                          height * 0.043),
-                      14,
-                      greenColor),
-                  child: Text(
-                    _locale.submitforWorkflowApproval,
-                    style: const TextStyle(color: whiteColor),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (documentModel != null) {
-                  // Fetch templates based on department
-                  List<WorkFlowDocumentInfo> result =
-                      await WorkFlowTemplateContoller().getWorkFlowDocumentInfo(
-                          WorkFlowDocumentModel(
-                              documentCode: documentModel!.txtKey));
-
-                  if (result.isEmpty) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return const ErrorDialog(
-                          icon: Icons.error,
-                          errorDetails: "Error",
-                          errorTitle: "No workflow template data available.",
-                          color: Colors.red,
-                          statusCode: 400,
-                        );
-                      },
-                    );
-                    return;
-                  }
-
-                  await showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) {
-                      return EditTemplateDocumentDialog(
-                        workFlowTemplateBody: result,
-                      );
-                    },
-                  ).then((value) {
-                    // Handle dialog result if needed
-                    if (value == true) {
-                      // Perform post-dialog actions if required
-                    }
-                  });
-                }
-              },
-              style: customButtonStyle(
-                  Size(isDesktop ? width * 0.1 : width * 0.19, height * 0.043),
-                  14,
-                  primary),
-              child: Text(
-                _locale.viewApprovals,
-                style: const TextStyle(color: whiteColor),
-              ),
-            ),
-          ],
-        ),
         TableComponent(
           key: UniqueKey(),
           tableHeigt: height * 0.45,

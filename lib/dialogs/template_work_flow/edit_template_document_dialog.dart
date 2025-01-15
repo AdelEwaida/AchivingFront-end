@@ -188,7 +188,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
                     style: customButtonStyle(
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        16,
                         redColor),
                     child: Text(
                       _locale.cancel,
@@ -299,7 +299,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
               hasDropdown: true,
               isworkFlow: true,
 
-              tableHeigt: height * 0.35,
+              tableHeigt: height * 0.33,
               tableWidth: width * 0.49,
               // delete: deleteTemplate,
               plCols: polCols,
@@ -502,7 +502,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
       isMandetory: true,
       width: width * 0.16,
       height: height * 0.04,
-      text: Text("Step Description"),
+      text: Text(_locale.description),
       controller: descriptionController,
       onSubmitted: (text) {},
       onChanged: (value) {

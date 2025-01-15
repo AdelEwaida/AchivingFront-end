@@ -433,7 +433,7 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       isMandetory: true,
       width: width * 0.16,
       height: height * 0.04,
-      text: Text("Step Description"),
+      text: Text(_locale.stepDescription),
       controller: descriptionController,
       onSubmitted: (text) {},
       onChanged: (value) {

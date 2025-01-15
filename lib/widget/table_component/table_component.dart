@@ -57,60 +57,62 @@ class TableComponent extends StatefulWidget {
   PlutoGridEnterKeyAction? moveAfterEditng;
   Color Function(PlutoRowColorContext)? rowColor;
   Widget? dropdown;
+  Widget? statusDropDown;
   bool? hasDropdown = false;
   bool? isworkFlow = false;
   bool? noHeader = false;
   // PlutoGridStateManager stateManger;
   Key? key;
-  TableComponent(
-      {this.key,
-      this.viewLocation,
-      this.sendWhatspp,
-      this.download,
-      this.explor,
-      this.chooseDep,
-      this.sendEmail,
-      this.copy,
-      this.tableHeigt,
-      this.upload,
-      this.tableWidth,
-      this.pollScreen,
-      this.addReminder,
-      this.exportToExcel,
-      this.advanceSearch,
-      this.genranlEdit,
-      this.view,
-      this.editPassword,
-      this.add,
-      this.delete,
-      this.noHeader,
-      this.count,
-      this.search,
-      required this.plCols,
-      required this.polRows,
-      this.onSelected,
-      this.columnHeight,
-      this.footerBuilder,
-      this.isWhiteText,
-      this.doubleTab,
-      this.rightClickTap,
-      this.headerBuilder,
-      this.onLoaded,
-      this.mode,
-      this.onChange,
-      this.handleOnRowChecked,
-      this.borderColor,
-      this.rowsHeight,
-      this.moveAfterEditng,
-      this.rowColor,
-      this.generalDownload,
-      this.filesList,
-      this.dropdown,
-      this.hasDropdown,
-      this.isworkFlow,
-      this.refresh
-      // required this.stateManger
-      });
+  TableComponent({
+    this.key,
+    this.viewLocation,
+    this.sendWhatspp,
+    this.download,
+    this.explor,
+    this.chooseDep,
+    this.sendEmail,
+    this.copy,
+    this.tableHeigt,
+    this.upload,
+    this.tableWidth,
+    this.pollScreen,
+    this.addReminder,
+    this.exportToExcel,
+    this.advanceSearch,
+    this.genranlEdit,
+    this.view,
+    this.editPassword,
+    this.add,
+    this.delete,
+    this.noHeader,
+    this.count,
+    this.search,
+    required this.plCols,
+    required this.polRows,
+    this.onSelected,
+    this.columnHeight,
+    this.footerBuilder,
+    this.isWhiteText,
+    this.doubleTab,
+    this.rightClickTap,
+    this.headerBuilder,
+    this.onLoaded,
+    this.mode,
+    this.onChange,
+    this.handleOnRowChecked,
+    this.borderColor,
+    this.rowsHeight,
+    this.moveAfterEditng,
+    this.rowColor,
+    this.generalDownload,
+    this.filesList,
+    this.dropdown,
+    this.hasDropdown,
+    this.isworkFlow,
+    this.refresh,
+    this.statusDropDown,
+    // required this.stateManger
+  });
   @override
   State<TableComponent> createState() => _TableComponentState();
 }
@@ -316,7 +318,7 @@ class _TableComponentState extends State<TableComponent> {
           widget.search != null
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     widget.hasDropdown == true && widget.isworkFlow == true
                         ? Row(
@@ -364,6 +366,10 @@ class _TableComponentState extends State<TableComponent> {
                                 width: 5,
                               ),
                               widget.dropdown!,
+                              SizedBox(
+                                width: 5,
+                              ),
+                              widget.statusDropDown!,
                             ],
                           )
                         : widget.hasDropdown == true &&

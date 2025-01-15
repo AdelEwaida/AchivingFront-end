@@ -203,7 +203,7 @@
   "editWorkFlow":"تعديل مخطط سير العمل",
   "addStep":"إضافة خطوة",
   "optional":"اختياري",
-  "approvals":"الموافقات",
+  "approvals":"تقرير الموافقات",
   "myApprovals":"موافقاتي",
   "viewApprovals":"عرض الموافقات",
   "submitforWorkflowApproval":"الإدراج ضمن الموافقات",
@@ -223,7 +223,10 @@
   "stuckAprrovals":"الموافقات العالقة",
   "readyToApprove":"جاهز للتصديق",
   "readyToApprovePending":"جاهز للتصديق / قيد الانتظار",
-  "approvalFlowDetails":"تفاصيل الموافقات"
+  "approvalFlowDetails":"تفاصيل الموافقات",
+  "attachments":"الملحقات",
+  "stepDescription":"وصف الخطوة"
+
 
 
 

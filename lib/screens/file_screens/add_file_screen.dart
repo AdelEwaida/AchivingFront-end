@@ -25,6 +25,7 @@ import '../../service/controller/documents_controllers/documents_controller.dart
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/styles.dart';
+import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../../utils/func/converters.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/custom_drop_down.dart';
@@ -79,7 +80,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
   String? userName = "";
   List<String> scanners = [];
   bool approval = false;
-  String active = "-1";
+  String active = "0";
   late AppLocalizations _locale;
 
   @override
@@ -364,19 +365,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                                     Text(_locale.submitforWorkflowApproval),
                                   ],
                                 )
-                              : Row(
-                                  children: [
-                                    Checkbox(
-                                      value: approval,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          approval = value!;
-                                        });
-                                      },
-                                    ),
-                                    Text(_locale.submitforWorkflowApproval),
-                                  ],
-                                ),
+                              : SizedBox.shrink(),
                           Checkbox(
                             value: _isUploadFileSelected,
                             onChanged: (bool? value) {

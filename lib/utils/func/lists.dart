@@ -60,4 +60,36 @@ class ListConstants {
       localizations.rejected
     ];
   }
+
+  static List<String> getStatusWorkFlowAllOption(
+      AppLocalizations localizations) {
+    return [
+      localizations.all,
+      localizations.pending,
+      localizations.approved,
+      localizations.rejected,
+    ];
+  }
+
+  static String? getStatusNameWorkFlowDoc(
+      int statusName, AppLocalizations localizations) {
+    Map<int, String> staus = {
+      0: localizations.pending,
+      1: localizations.approved,
+      2: localizations.rejected,
+      -1: localizations.all
+    };
+    return staus[statusName];
+  }
+
+  static int? getStatusCodeWorkFlowDoc(
+      String statusCode, AppLocalizations localizations) {
+    Map<String, int> staus = {
+      localizations.pending: 0,
+      localizations.approved: 1,
+      localizations.rejected: 2,
+      localizations.all: -1
+    };
+    return staus[statusCode];
+  }
 }

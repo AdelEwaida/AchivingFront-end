@@ -18,6 +18,7 @@ class WorkFlowDocumentModel {
   String? dept;
   String? document;
   String? documentCode;
+  int? stepStatus;
 
   WorkFlowDocumentModel(
       {this.txtKey,
@@ -31,43 +32,46 @@ class WorkFlowDocumentModel {
       this.txtDocumentName,
       this.txtTemplateName,
       this.documentCode,
+      this.stepStatus,
       this.txtDeptName});
 
   factory WorkFlowDocumentModel.fromJson(Map<String, dynamic> json) {
     return WorkFlowDocumentModel(
-      txtKey:
-          json['txtKey'].toString() == "null" ? "" : json['txtKey'].toString(),
-      txtDocumentcode: json['txtDocumentcode'].toString() == "null"
-          ? ""
-          : json['txtDocumentcode'].toString(),
-      txtDocumentName: json['txtDocumentName'].toString() == "null"
-          ? ""
-          : json['txtDocumentName'].toString(),
-      txtTemplatecode: json['txtTemplatecode'].toString() == "null"
-          ? ""
-          : json['txtTemplatecode'].toString(),
-      txtDeptName: json['txtDeptName'].toString() == "null"
-          ? ""
-          : json['txtDeptName'].toString(),
-      intStatus:
-          json['intStatus'].toString() == "null" ? -1 : json['intStatus'],
-      txtDept: json['txtDept'].toString() == "null"
-          ? ""
-          : json['txtDept'].toString(),
-      dept: json['dept'].toString() == "null" ? "" : json['dept'].toString(),
-      document: json['document'].toString() == "null"
-          ? ""
-          : json['document'].toString(),
-      datMaxDate: json['datMaxDate'].toString() == "null"
-          ? ""
-          : json['datMaxDate'].toString(),
-      txtTemplateName: json['txtTemplateName'].toString() == "null"
-          ? ""
-          : json['txtTemplateName'].toString(),
-      documentCode: json['documentCode'].toString() == "null"
-          ? ""
-          : json['documentCode'].toString(),
-    );
+        txtKey: json['txtKey'].toString() == "null"
+            ? ""
+            : json['txtKey'].toString(),
+        txtDocumentcode: json['txtDocumentcode'].toString() == "null"
+            ? ""
+            : json['txtDocumentcode'].toString(),
+        txtDocumentName: json['txtDocumentName'].toString() == "null"
+            ? ""
+            : json['txtDocumentName'].toString(),
+        txtTemplatecode: json['txtTemplatecode'].toString() == "null"
+            ? ""
+            : json['txtTemplatecode'].toString(),
+        txtDeptName: json['txtDeptName'].toString() == "null"
+            ? ""
+            : json['txtDeptName'].toString(),
+        intStatus:
+            json['intStatus'].toString() == "null" ? -1 : json['intStatus'],
+        txtDept: json['txtDept'].toString() == "null"
+            ? ""
+            : json['txtDept'].toString(),
+        dept: json['dept'].toString() == "null" ? "" : json['dept'].toString(),
+        document: json['document'].toString() == "null"
+            ? ""
+            : json['document'].toString(),
+        datMaxDate: json['datMaxDate'].toString() == "null"
+            ? ""
+            : json['datMaxDate'].toString(),
+        txtTemplateName: json['txtTemplateName'].toString() == "null"
+            ? ""
+            : json['txtTemplateName'].toString(),
+        documentCode: json['documentCode'].toString() == "null"
+            ? ""
+            : json['documentCode'].toString(),
+        stepStatus:
+            json['stepStatus'].toString() == "null" ? -1 : json['stepStatus']);
   }
 
   Map<String, dynamic> toJsonSearch() {
@@ -87,7 +91,8 @@ class WorkFlowDocumentModel {
       'intStatus': intStatus,
       'txtDocumentName': txtDocumentName,
       'txtTemplateName': txtTemplateName,
-      'documentCode': documentCode
+      'documentCode': documentCode,
+      'stepStatus': stepStatus
     };
   }
 
@@ -103,6 +108,10 @@ class WorkFlowDocumentModel {
       'datMaxDate': PlutoCell(value: datMaxDate),
       'txtDept': PlutoCell(value: txtDept),
       'txtDeptName': PlutoCell(value: txtDeptName),
+      'dept': PlutoCell(value: dept),
+      'document': PlutoCell(value: document),
+      'documentCode': PlutoCell(value: documentCode),
+      'stepStatus': PlutoCell(value: stepStatus),
     });
   }
 
@@ -116,6 +125,7 @@ class WorkFlowDocumentModel {
     datMaxDate = plutoRow.cells['datMaxDate']?.value as String?;
     txtDocumentName = plutoRow.cells['txtDocumentName']?.value as String?;
     txtTemplateName = plutoRow.cells['txtTemplateName']?.value as String?;
+    stepStatus = plutoRow.cells['stepStatus']?.value as int?;
   }
   @override
   String toString() {
