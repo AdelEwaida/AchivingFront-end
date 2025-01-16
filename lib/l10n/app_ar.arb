@@ -225,7 +225,9 @@
   "readyToApprovePending":"جاهز للتصديق / قيد الانتظار",
   "approvalFlowDetails":"تفاصيل الموافقات",
   "attachments":"الملحقات",
-  "stepDescription":"وصف الخطوة"
+  "stepDescription":"وصف الخطوة",
+  "workFlowSettings":"إعدادات مخطط سير العمل",
+  "arDescription":"الوصف بالعربية"
 
 
 

@@ -259,7 +259,7 @@ class _LogInScreenState extends State<LoginScreen>
     return Container(
       alignment: Alignment.topCenter,
       child: Image.asset(
-        'assets/images/logo.png',
+        'assets/images/asd.png',
         width: width * 0.15,
         height: height * 0.13,
       ),
@@ -320,7 +320,6 @@ class _LogInScreenState extends State<LoginScreen>
       });
     } else {
       logIn();
-
     }
   }
 

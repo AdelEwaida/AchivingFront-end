@@ -74,6 +74,7 @@ const whatsAppSendPath = "send/whatsup";
 const emailPath = "send/email";
 
 const setup = "setup";
+const updateSetup = "setup/update";
 
 //templates
 const createTemplate = "workflowTemplateTransactions/create";

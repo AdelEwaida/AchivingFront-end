@@ -21,6 +21,7 @@ import '../screens/reports/dashboard_screen.dart';
 import '../screens/user_screen/user_category_screen.dart';
 import '../screens/workflow/work_flow_screen.dart';
 import '../screens/workflow_document/user_workflow_screen.dart';
+import '../screens/workflow_document/user_workflow_settings.dart';
 import '../screens/workflow_document/work_flow_document.dart';
 
 List<MenuModel> getMenus(
@@ -77,6 +78,7 @@ List<MenuModel> getMenus(
                 SubMenuModel(title: locale.listOfDepartment, pageNumber: 3),
                 SubMenuModel(title: locale.listOfReminders, pageNumber: 4),
                 SubMenuModel(title: locale.workFlow, pageNumber: 9),
+                SubMenuModel(title: locale.workFlowSettings, pageNumber: 16),
               ],
               isOpened: false),
           MenuModel(
@@ -429,6 +431,8 @@ Widget getScreenContent(int index) {
       return const WorkFlowDocumentScreen();
     case 12:
       return const UserWorkFlow();
+    case 16:
+      return const UserWorkFlowSettings();
 
     // case 2:
     //   return UsersScreen();

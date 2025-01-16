@@ -92,4 +92,30 @@ class ListConstants {
     };
     return staus[statusCode];
   }
+
+  //settings status
+  static String? workFlowStatus(
+      int statusName, AppLocalizations localizations) {
+    Map<int, String> staus = {
+      0: localizations.notActive,
+      1: localizations.active,
+    };
+    return staus[statusName];
+  }
+
+  static int? workFlowStatusCode(
+      String statusCode, AppLocalizations localizations) {
+    Map<String, int> staus = {
+      localizations.notActive: 0,
+      localizations.active: 1,
+    };
+    return staus[statusCode];
+  }
+
+  static List<String> getworkFlowStatus(AppLocalizations localizations) {
+    return [
+      localizations.active,
+      localizations.notActive,
+    ];
+  }
 }

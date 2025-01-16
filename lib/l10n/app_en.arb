@@ -239,6 +239,8 @@
     "readyToApprovePending":"Ready to Approve/ Pending",
     "approvalFlowDetails":"Approval Flow Details",
     "attachments":"Attachments",
-    "stepDescription":"Step Description"
+    "stepDescription":"Step Description",
+    "workFlowSettings":"Workflow Settings",
+    "arDescription":"Ar Description"
 
 }
