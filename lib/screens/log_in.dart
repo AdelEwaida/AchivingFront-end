@@ -157,7 +157,7 @@ class _LogInScreenState extends State<LoginScreen>
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             space(),
-            customTextField(_locale.userCode, _userNameController,
+            customTextField(_locale.userName, _userNameController,
                 userNameFocus, false, isDesktop),
             space(),
             customTextField(_locale.password, _passwordController,

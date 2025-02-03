@@ -23,6 +23,7 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
   late AppLocalizations _locale;
   TextEditingController descriptionController = TextEditingController();
   TextEditingController refNumberController = TextEditingController();
+  FocusNode descriptionFocusNode = FocusNode();
 
   double width = 0;
   double height = 0;
@@ -40,6 +41,9 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      descriptionFocusNode.requestFocus();
+    });
   }
 
   @override
@@ -102,6 +106,8 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
               controller: descriptionController,
               onSubmitted: (text) {},
               onChanged: (value) {},
+              autoFocus: true,
+              focusNode: descriptionFocusNode, // Assign the focus node
             ),
             CustomTextField2(
               isMandetory: true,

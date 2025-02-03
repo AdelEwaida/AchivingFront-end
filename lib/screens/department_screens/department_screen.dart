@@ -198,6 +198,20 @@ class _OfficeScreenState extends State<DepartemntScreen> {
               },
               doubleTab: (event) async {
                 PlutoRow? tappedRow = event.row;
+                DepartmentModel departmentModel =
+                    DepartmentModel.fromPlutoRow(tappedRow!);
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return DepartmentDialog(
+                      departmentModel: departmentModel,
+                    );
+                  },
+                ).then((value) {
+                  if (value) {
+                    reloadData();
+                  }
+                });
               },
               onSelected: (event) async {
                 PlutoRow? tappedRow = event.row;

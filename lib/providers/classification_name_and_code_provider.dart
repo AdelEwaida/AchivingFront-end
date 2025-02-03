@@ -14,5 +14,10 @@ class CalssificatonNameAndCodeProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearProvider() {
+    _selectedClassificatonName = "";
+    _selectedClassificatonKey = "";
+  }
+
   String get classificatonKey => _selectedClassificatonKey;
 }

@@ -59,6 +59,15 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
   bool isOptional = false;
   bool isLoading = true;
   WorkFlowTemplateBody? workFlowTemplateBody;
+  FocusNode templateNameFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      templateNameFocusNode.requestFocus();
+    });
+  }
 
   @override
   Future<void> didChangeDependencies() async {
@@ -207,7 +216,8 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
         Row(
           children: [
             customTextField(_locale.docName, templateName, isDesktop, 0.18,
-                true, widget.isEditDialog),
+                true, widget.isEditDialog,
+                focusNode: templateNameFocusNode),
             const SizedBox(
               width: 5,
             ),
@@ -482,7 +492,8 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
   }
 
   Widget customTextField(String hint, TextEditingController controller,
-      bool isDesktop, double width1, bool isMandetory, bool readOnly) {
+      bool isDesktop, double width1, bool isMandetory, bool readOnly,
+      {FocusNode? focusNode}) {
     return CustomTextField2(
       readOnly: readOnly,
       isReport: true,
@@ -492,6 +503,7 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       text: Text(hint),
       controller: controller,
       onSubmitted: (text) {},
+      focusNode: focusNode,
       onChanged: (value) {},
     );
   }

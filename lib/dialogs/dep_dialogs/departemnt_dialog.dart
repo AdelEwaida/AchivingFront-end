@@ -28,6 +28,7 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
   double height = 0;
   double radius = 7;
 
+  FocusNode codeFocusNode = FocusNode();
   TextEditingController codeController = TextEditingController();
   TextEditingController descController = TextEditingController();
   DepartmentController departmentController = DepartmentController();
@@ -39,6 +40,14 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
       descController.text = widget.departmentModel!.txtDescription!;
     }
     super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      codeFocusNode.requestFocus();
+    });
   }
 
   bool isDesktop = false;
@@ -157,7 +166,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
       children: [
         if (isDesktop)
           customTextField(
-              _locale.txtShortcode, codeController, isDesktop, 0.2, true),
+              _locale.txtShortcode, codeController, isDesktop, 0.2, true,
+              focusNode: codeFocusNode),
         customTextField(
             _locale.txtDescription, descController, isDesktop, 0.2, true),
         if (!isDesktop) ...[
@@ -183,7 +193,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
   }
 
   Widget customTextField(String hint, TextEditingController controller,
-      bool isDesktop, double width1, bool isMandetory) {
+      bool isDesktop, double width1, bool isMandetory,
+      {FocusNode? focusNode}) {
     return CustomTextField2(
       readOnly: false,
       // inputFormatters: hint == _locale.phoneNumber
@@ -200,6 +211,7 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
       text: Text(hint),
       controller: controller,
       onSubmitted: (text) {},
+      focusNode: focusNode,
       onChanged: (value) {},
     );
   }

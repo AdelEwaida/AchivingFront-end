@@ -197,6 +197,24 @@ class _OfficeScreenState extends State<ActionScreen> {
               },
               doubleTab: (event) async {
                 PlutoRow? tappedRow = event.row;
+
+                ActionModel actionModel = ActionModel.fromPlutoRow(tappedRow!);
+                print(
+                    "actionModelactionModelactionModelactionModel:${actionModel.toJson()}");
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AddEditActionDialog(
+                      title: _locale.editAction,
+                      isFromList: false,
+                      actionModel: actionModel,
+                    );
+                  },
+                ).then((value) {
+                  if (value) {
+                    reloadData();
+                  }
+                });
               },
               onSelected: (event) async {
                 PlutoRow? tappedRow = event.row;

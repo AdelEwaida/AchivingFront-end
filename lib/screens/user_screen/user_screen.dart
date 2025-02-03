@@ -42,9 +42,19 @@ class _UserScreenState extends State<UserScreen> {
   PlutoGridStateManager? stateManager;
   ValueNotifier isSearch = ValueNotifier(false);
   ValueNotifier totalUsersCount = ValueNotifier(0);
+  FocusNode codeFocusNode = FocusNode();
+
   getCount() {
     userController.getUserCount().then((value) {
       totalUsersCount.value = value;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      codeFocusNode.requestFocus();
     });
   }
 
@@ -120,27 +130,28 @@ class _UserScreenState extends State<UserScreen> {
                       stateManager!.setShowColumnFilter(true);
                       // pageLis.value = pageLis.value > 1 ? 0 : 1;
                       // totalActionsCount.value = 0;
-                      // getCount();
+                      getCount();
                     },
-                    // doubleTab: (event) async {
-                    //   PlutoRow? tappedRow = event.row;
-                    //   UserModel userModel =
-                    //       UserModel.fromPlutoRow(tappedRow!, _locale);
-                    //   showDialog(
-                    //     barrierDismissible: false,
-                    //     context: context,
-                    //     builder: (context) {
-                    //       return AddUserDialog(
-                    //         isChangePassword: false,
-                    //         userModel: userModel,
-                    //       );
-                    //     },
-                    //   ).then((value) {
-                    //     if (value == true) {
-                    //       refreshTable();
-                    //     }
-                    //   });
-                    // },
+                    doubleTab: (event) async {
+                      PlutoRow? tappedRow = event.row;
+
+                      UserModel userModel =
+                          UserModel.fromPlutoRow(tappedRow!, _locale);
+                      showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return AddUserDialog(
+                            isChangePassword: false,
+                            userModel: userModel,
+                          );
+                        },
+                      ).then((value) {
+                        if (value == true) {
+                          refreshTable();
+                        }
+                      });
+                    },
                     onSelected: (event) async {
                       PlutoRow? tappedRow = event.row;
                       selectedRow = tappedRow;

@@ -186,6 +186,21 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
               },
               doubleTab: (event) async {
                 PlutoRow? tappedRow = event.row;
+
+                UserCategory userCategoryModel =
+                    UserCategory.fromPlutoRow(tappedRow!, _locale);
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return EditUserCategoryDialog(
+                      userCategoryModel: userCategoryModel,
+                    );
+                  },
+                ).then((value) {
+                  if (value) {
+                    reloadData();
+                  }
+                });
               },
               onSelected: (event) async {
                 PlutoRow? tappedRow = event.row;

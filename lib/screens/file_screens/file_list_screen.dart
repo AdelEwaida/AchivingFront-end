@@ -51,11 +51,13 @@ import 'package:provider/provider.dart';
 import 'dart:html' as html;
 
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
+import '../../models/db/categories_models/doc_cat_parent.dart';
 import '../../models/db/work_flow/work_flow_doc_model.dart';
 import '../../models/db/work_flow/work_flow_document_info.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/user_types_constant/user_types_constant.dart';
+import '../../widget/custom_drop_down_new.dart';
 
 class FileListScreen extends StatefulWidget {
   const FileListScreen({super.key});
@@ -106,10 +108,18 @@ class _FileListScreenState extends State<FileListScreen> {
   late PlutoGridStateManager stateManager;
   DocumentModel? documentModel;
   bool approval = false;
-
   String active = "0";
   // String? userName = "";
   var storage = FlutterSecureStorage();
+
+  @override
+  void dispose() {
+    calssificatonNameAndCodeProvider.clearProvider();
+    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
+
+    super.dispose();
+  }
+
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
@@ -130,6 +140,7 @@ class _FileListScreenState extends State<FileListScreen> {
         childrenProvider: (MyNode node) => node.children,
       );
       await fetchData();
+      await fetchDropDownTree();
     }
     if (documentListProvider.issueNumber != null) {
       issueNoController.text = documentListProvider.issueNumber ?? "";
@@ -195,22 +206,34 @@ class _FileListScreenState extends State<FileListScreen> {
                                 ],
                               ),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomSearchField(
-                                    label: _locale.search,
-                                    width: width * 0.3,
-                                    padding: 8,
-                                    controller: searchController,
-                                    onChanged: (value) {
-                                      searchTree(value);
-                                      // Add search functionality if needed
-                                    },
-                                  ),
-                                  Expanded(child: treeSection()),
-                                ],
-                              ),
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // CustomSearchField(
+                                    //   label: _locale.search,
+                                    //   width: width * 0.3,
+                                    //   padding: 8,
+                                    //   controller: searchController,
+                                    //   onChanged: (value) {
+                                    //     searchTreeOld(value);
+                                    //   },
+                                    // ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: NewCustomDropDown(
+                                        searchBox: true,
+                                        bordeText: _locale.search,
+                                        initialValue: _locale.search,
+                                        items: dropDownChildren,
+                                        onChanged: (value) {
+                                          searchTree(value);
+                                        },
+                                        heightVal: height * 0.4,
+                                        width: width * .2,
+                                      ),
+                                    ),
+                                    Expanded(child: treeSection()),
+                                  ]),
                             ),
                       SizedBox(
                         width: width * 0.02,
@@ -400,6 +423,29 @@ class _FileListScreenState extends State<FileListScreen> {
           doubleTab: (event) async {
             PlutoRow? tappedRow = event.row;
             documentModel = DocumentModel.fromPlutoRow(tappedRow!, _locale);
+            if (context.read<DocumentListProvider>().isViewFile == true) {
+              return null;
+            } else {
+              DocumentModel documentModel =
+                  DocumentModel.fromPlutoRow(tappedRow!, _locale);
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return InfoDocumentDialog(
+                    isEdit: true,
+                    documentModel: documentModel,
+                  );
+                },
+              ).then((value) {
+                if (value) {
+                  documentListProvider.searchDocumentCriteria.page = 0;
+                  selectedRow = null;
+                  setState(() {});
+                  documentListProvider.setDocumentSearchCriterea(
+                      documentListProvider.searchDocumentCriteria);
+                }
+              });
+            }
           },
           onSelected: (event) async {
             PlutoRow? tappedRow = event.row;
@@ -1372,6 +1418,7 @@ class _FileListScreenState extends State<FileListScreen> {
               )
             : TreeView<MyNode>(
                 key: ValueKey(treeController),
+                shrinkWrap: true,
                 treeController: treeController,
                 nodeBuilder: (BuildContext context, TreeEntry<MyNode> entry) {
                   return MyTreeTile(
@@ -1408,45 +1455,97 @@ class _FileListScreenState extends State<FileListScreen> {
     );
   }
 
-  void searchTree(String query) {
-    if (query == "") {
+  void searchTree(DocumentCategory selectedDocCategory) {
+    if (selectedDocCategory.docCatParent!.txtKey!.isEmpty) {
+      // Reset selection
       selectedCamp.value = "";
       selectedValue.value = "";
+      calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
+      calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
 
-      treeController.roots = [];
-      treeNodes = [];
-      treeController.collapseAll();
-      convertToTreeList(campClassificationList);
-      MyNode node =
-          MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
-      treeController.toggleExpansion(node);
-      treeController.roots = <MyNode>[node];
       treeController.notifyListeners();
-      // setState(() {});
-    } else {
-      for (final node in treeNodes) {
-        if (searchNode(node, query)) {
-          print("INNNNNNNNN SEEEEEEAAAAAAAAAARCH");
-          // selectedCategory = node;
-          selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
-          selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+      return;
+    }
 
-          treeController.roots = [];
-          treeNodes = [];
+    // Update selected category
+    selectedCamp.value = selectedDocCategory.docCatParent!.txtDescription!;
+    selectedValue.value = selectedDocCategory.docCatParent!.txtShortcode!;
+    selectedCategory = selectedDocCategory;
 
-          convertToTreeList(campClassificationList);
-          MyNode node = MyNode(
-              title: '/', children: treeNodes, extra: null, isRoot: true);
-          treeController.toggleExpansion(node);
-          treeController.roots = <MyNode>[node];
-          // setState(() {});
-          treeController.notifyListeners();
+    // Set classification in provider
+    calssificatonNameAndCodeProvider
+        .setSelectedClassificatonKey(selectedDocCategory.docCatParent!.txtKey!);
+    calssificatonNameAndCodeProvider.setSelectedClassificatonName(
+        selectedDocCategory.docCatParent!.txtDescription!);
 
-          break;
-        }
-      }
+    // Find and highlight the selected node
+    highlightSelectedNode(treeController.roots.first);
+    treeController.notifyListeners();
+  }
+
+  /// **Highlight the selected node in the tree without collapsing other nodes**
+  void highlightSelectedNode(MyNode node) {
+    if (node.extra != null &&
+        (node.extra as DocumentCategory).docCatParent!.txtKey ==
+            selectedCategory!.docCatParent!.txtKey) {
+      selectedCamp.value = node.title;
+      return;
+    }
+
+    for (MyNode child in node.children) {
+      highlightSelectedNode(child);
     }
   }
+
+  /// Expands the tree until the selected node is visible
+  void expandSelectedNode(MyNode node) {
+    if (node.extra != null &&
+        (node.extra as DocumentCategory).docCatParent!.txtKey ==
+            selectedCategory!.docCatParent!.txtKey) {
+      treeController.toggleExpansion(node);
+      return;
+    }
+
+    for (MyNode child in node.children) {
+      expandSelectedNode(child);
+    }
+  }
+
+  // void searchTreeOld(String query) {
+  //   if (query == "") {
+  //     selectedCamp.value = "";
+  //     selectedValue.value = "";
+
+  //     treeController.roots = [];
+  //     treeNodes = [];
+  //     treeController.collapseAll();
+  //     convertToTreeList(campClassificationList);
+  //     MyNode node =
+  //         MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
+  //     treeController.toggleExpansion(node);
+  //     treeController.roots = <MyNode>[node];
+  //     treeController.notifyListeners();
+  //   } else {
+  //     for (final node in treeNodes) {
+  //       if (searchNode(node, query)) {
+  //         selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
+  //         selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+
+  //         treeController.roots = [];
+  //         treeNodes = [];
+
+  //         convertToTreeList(campClassificationList);
+  //         MyNode node = MyNode(
+  //             title: '/', children: treeNodes, extra: null, isRoot: true);
+  //         treeController.toggleExpansion(node);
+  //         treeController.roots = <MyNode>[node];
+  //         treeController.notifyListeners();
+
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }
 
   bool searchNode(MyNode node, String query) {
     if (node.title.contains(query)) {
@@ -1528,15 +1627,81 @@ class _FileListScreenState extends State<FileListScreen> {
     treeController.toggleExpansion(roots.first);
   }
 
+  List<DocumentCategory> dropDownChildren = [];
+  Future<void> fetchDropDownTree() async {
+    List<DocumentCategory> result =
+        await categoriesController.getCategoriesTree();
+    dropDownChildren.clear();
+
+    for (var category in result) {
+      dropDownChildren.add(category);
+      dropDownChildren.addAll(getChildren(category));
+    }
+
+    // Add an empty option to reset selection
+    dropDownChildren.insert(
+      0,
+      DocumentCategory(
+        docCatParent:
+            DocCatParent(txtKey: "", txtDescription: "Select Category"),
+        docCatChildren: [],
+      ),
+    );
+  }
+
+  Future<void> fetchDropDownTree1() async {
+    List<DocumentCategory> result =
+        await categoriesController.getCategoriesTree();
+    dropDownChildren.clear();
+
+    for (var category in result) {
+      dropDownChildren.add(category);
+      dropDownChildren.addAll(getChildren(category));
+    }
+
+    // Add an empty option for reset
+    dropDownChildren.insert(
+        0,
+        DocumentCategory(
+          docCatParent:
+              DocCatParent(txtKey: "", txtDescription: "Select Category"),
+          docCatChildren: [],
+        ));
+  }
+
+  Future<void> fetchDropDownTree12() async {
+    List<DocumentCategory> result =
+        await categoriesController.getCategoriesTree();
+    for (int i = 0; i < result.length; i++) {
+      // all.add(result[i].sc!);
+      dropDownChildren.add(result[i]);
+      if (result[i].docCatChildren!.isNotEmpty ||
+          result[i].docCatChildren != null) {
+        for (int j = 0; j < result[i].docCatChildren!.length; j++) {
+          // children.add(value)
+          if (j == 0) {
+            dropDownChildren.add(result[i].docCatChildren![j]);
+          }
+          dropDownChildren.addAll(getChildren(result[i].docCatChildren![j]));
+        }
+      }
+    }
+    dropDownChildren.insert(
+        0,
+        DocumentCategory(
+            docCatParent: DocCatParent(txtKey: "", txtDescription: ""),
+            docCatChildren: []));
+
+    // convertToTreeList(stkCategList);
+    // treeController.toggleExpansion(roots.first);
+  }
+
   ValueNotifier isLoading = ValueNotifier(false);
   void convertToTreeList(List<DocumentCategory> result) {
     for (int i = 0; i < result.length; i++) {
       treeNodes.add(getNodes(result[i]));
     }
     isLoading.value = false;
-    // setState(() {
-    //   isLoading = false;
-    // });
   }
 
   MyNode getNodes(DocumentCategory data) {
@@ -1588,12 +1753,5 @@ class _FileListScreenState extends State<FileListScreen> {
       return value.compareTo(code) == 0;
     }
     return false;
-  }
-
-  @override
-  void dispose() {
-    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
-    // TODO: implement dispose
-    super.dispose();
   }
 }

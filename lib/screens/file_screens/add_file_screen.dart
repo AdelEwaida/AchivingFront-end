@@ -82,6 +82,15 @@ class _AddFileScreenState extends State<AddFileScreen> {
   bool approval = false;
   String active = "0";
   late AppLocalizations _locale;
+  FocusNode issueNameFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      issueNameFocusNode.requestFocus();
+    });
+  }
 
   @override
   Future<void> didChangeDependencies() async {
@@ -171,29 +180,9 @@ class _AddFileScreenState extends State<AddFileScreen> {
                           // mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            DropDown(
-                              key: UniqueKey(),
-                              isMandatory: true,
-                              onChanged: (value) {
-                                selectedDep = value.txtDeptkey;
-                                selctedDepDesc = value.txtDeptName;
-                                // setState(() {});
-                              },
-                              initialValue:
-                                  selctedDepDesc == "" ? null : selctedDepDesc,
-                              bordeText: _locale.department,
-                              width: width * 0.2,
-                              items: departmetList,
-                              height: height * 0.05,
-                              // onSearch: (p0) async {
-                              //   return await DepartmentController()
-                              //       .getDep(
-                              //       SearchModel(
-                              //           page: -1,
-                              //           searchField: p0.trim(),
-                              //           status: -1));
-                              // },
-                            ),
+                            customTextField(_locale.issueNo, issueNoController,
+                                isDesktop, 0.2, false,
+                                focusNode: issueNameFocusNode),
                             SizedBox(
                               width: width * 0.015,
                             ),
@@ -247,12 +236,28 @@ class _AddFileScreenState extends State<AddFileScreen> {
                           SizedBox(
                             width: width * 0.015,
                           ),
-                          customTextField(
-                            _locale.issueNo,
-                            issueNoController,
-                            isDesktop,
-                            0.2,
-                            false,
+                          DropDown(
+                            key: UniqueKey(),
+                            isMandatory: true,
+                            onChanged: (value) {
+                              selectedDep = value.txtDeptkey;
+                              selctedDepDesc = value.txtDeptName;
+                              // setState(() {});
+                            },
+                            initialValue:
+                                selctedDepDesc == "" ? null : selctedDepDesc,
+                            bordeText: _locale.department,
+                            width: width * 0.2,
+                            items: departmetList,
+                            height: height * 0.05,
+                            // onSearch: (p0) async {
+                            //   return await DepartmentController()
+                            //       .getDep(
+                            //       SearchModel(
+                            //           page: -1,
+                            //           searchField: p0.trim(),
+                            //           status: -1));
+                            // },
                           ),
                           SizedBox(
                             width: width * 0.015,
@@ -535,7 +540,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
   }
 
   Widget customTextField(String hint, TextEditingController controller,
-      bool isDesktop, double width1, bool isMandetory) {
+      bool isDesktop, double width1, bool isMandetory,
+      {FocusNode? focusNode}) {
     double height = MediaQuery.of(context).size.height * 0.3;
     return CustomTextField2(
       readOnly: hint == _locale.fileName ? true : false,
@@ -547,6 +553,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
       controller: controller,
       onSubmitted: (text) {},
       onChanged: (value) {},
+      focusNode: focusNode,
     );
   }
 

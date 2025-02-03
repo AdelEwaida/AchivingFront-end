@@ -39,12 +39,22 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController urlController = TextEditingController();
+  FocusNode codeFocusNode = FocusNode();
 
   int? selectedUserType;
   int? userActive;
   UserController userController = UserController();
-  bool isActive = false;
+  bool isActive = true;
   UserModel? userModel;
+  bool obscureOldPassword = true;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      codeFocusNode.requestFocus();
+    });
+  }
+
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
@@ -58,9 +68,14 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           widget.userModel!.txtReferenceUsername ?? "";
       isActive = userModel!.bolActive == 1 ? true : false;
       userActive = isActive ? 1 : 0;
+      passwordController.text = widget.userModel!.txtPwd!;
       urlController.text = userModel!.url ?? "";
     }
-
+    userCodeController.addListener(() {
+      setState(() {
+        userNameController.text = userCodeController.text;
+      });
+    });
     super.didChangeDependencies();
   }
 
@@ -182,7 +197,8 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           userModel != null
               ? const SizedBox.shrink()
               : customTextField(_locale.userCode, userCodeController, isDesktop,
-                  0.2, true, widget.isChangePassword),
+                  0.2, true, widget.isChangePassword,
+                  focusNode: codeFocusNode),
         customTextField(_locale.userName, userNameController, isDesktop, 0.2,
             true, widget.isChangePassword),
         customTextField(_locale.userRefName, txtReferenceUsernameController,
@@ -201,8 +217,8 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           items: getUserTypesList(_locale),
         ),
         userModel != null && widget.isChangePassword
-            ? customTextField(_locale.newPassword, passwordController,
-                isDesktop, 0.2, true, false)
+            ? passwordField(_locale.newPass, passwordController, true,
+                isDesktop, obscureOldPassword)
             : const SizedBox.shrink(),
         customTextField(_locale.url, urlController, isDesktop, 0.2, true,
             widget.isChangePassword),
@@ -247,7 +263,118 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   }
 
   Widget customTextField(String hint, TextEditingController controller,
-      bool isDesktop, double width1, bool isMandetory, bool readOnly) {
+      bool isDesktop, double width1, bool isMandetory, bool readOnly,
+      {bool isPassword = false, FocusNode? focusNode}) {
+    bool obscureText = isPassword; // Start with hidden password
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return CustomTextField2(
+          readOnly: readOnly,
+          isReport: true,
+          isMandetory: isMandetory,
+          width: width * width1,
+          focusNode: focusNode,
+          height: hint == _locale.notes ? height * 0.1 : height * 0.05,
+          text: Text(hint),
+          controller: controller,
+          decoration: InputDecoration(
+            suffixIcon: isPassword
+                ? IconButton(
+                    alignment: Alignment.centerLeft,
+                    onPressed: () {
+                      setState(() {
+                        obscureText = !obscureText; // Toggle visibility
+                      });
+                    },
+                    icon: Icon(
+                      obscureText ? Icons.visibility_off : Icons.visibility,
+                      size: 25,
+                    ),
+                  )
+                : null,
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.all(10),
+            hintText: hint,
+          ),
+          obscureText: isPassword ? obscureText : false, // Apply obscureText
+        );
+      },
+    );
+  }
+
+  Widget passwordField(String hint, TextEditingController controller,
+      bool isPassword, bool isDesktop, bool obscureText) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(radius),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 5,
+            ),
+          ],
+        ),
+        width: isDesktop ? width * 0.2 : width * 0.8,
+        height: hint == _locale.notes ? height * 0.1 : height * 0.05,
+        child: TextFormField(
+          // focusNode: focus,
+          onFieldSubmitted: (value) {},
+          controller: controller,
+          style: const TextStyle(
+            fontSize: 18,
+          ),
+          obscureText: isPassword ? obscureText : false,
+          inputFormatters: [
+            FilteringTextInputFormatter.deny(RegExp(r'\s')),
+          ],
+          decoration: InputDecoration(
+            suffixIcon: isPassword
+                ? obscureText
+                    ? IconButton(
+                        alignment: Alignment.centerLeft,
+                        onPressed: () {
+                          setState(() {
+                            if (controller == passwordController) {
+                              obscureOldPassword = !obscureOldPassword;
+                            }
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.visibility_off,
+                          size: 25,
+                        ),
+                      )
+                    : IconButton(
+                        alignment: Alignment.centerLeft,
+                        onPressed: () {
+                          setState(() {
+                            if (controller == passwordController) {
+                              obscureOldPassword = !obscureOldPassword;
+                            }
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.visibility,
+                          size: 25,
+                        ),
+                      )
+                : null,
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.all(10),
+            hintText: hint,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget customTextField11(String hint, TextEditingController controller,
+      bool isDesktop, double width1, bool isMandetory, bool readOnly,
+      {bool isPassword = false, bool obscureText = false}) {
     return CustomTextField2(
       readOnly: readOnly,
       // inputFormatters: hint == _locale.phoneNumber
@@ -265,6 +392,42 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       controller: controller,
       onSubmitted: (text) {},
       onChanged: (value) {},
+      decoration: InputDecoration(
+        suffixIcon: isPassword
+            ? obscureText
+                ? IconButton(
+                    alignment: Alignment.centerLeft,
+                    onPressed: () {
+                      setState(() {
+                        if (controller == passwordController) {
+                          obscureOldPassword = !obscureOldPassword;
+                        }
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.visibility_off,
+                      size: 25,
+                    ),
+                  )
+                : IconButton(
+                    alignment: Alignment.centerLeft,
+                    onPressed: () {
+                      setState(() {
+                        if (controller == passwordController) {
+                          obscureOldPassword = !obscureOldPassword;
+                        }
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.visibility,
+                      size: 25,
+                    ),
+                  )
+            : null,
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.all(10),
+        hintText: hint,
+      ),
     );
   }
 
@@ -294,7 +457,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           txtCode: userCodeController.text,
           txtNamee: userNameController.text,
           url: urlController.text,
-          bolActive: userActive ?? 0,
+          bolActive: userActive ?? 1,
           txtReferenceUsername: txtReferenceUsernameController.text,
           intType: selectedUserType);
       await userController.addUser(userModel).then((value) {
