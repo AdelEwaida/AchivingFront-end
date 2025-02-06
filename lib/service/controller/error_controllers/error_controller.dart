@@ -34,16 +34,16 @@ class ErrorController {
     // }
     print("responseStatusresponseStatus ${responseStatus}");
     if (responseStatus == 400) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, locale.error400,
+      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
           const Color.fromARGB(255, 232, 232, 23), 400);
     } else if (responseStatus == 200) {
-      dialogBasedonResponseStatus(Icons.done, errorDetails, locale.error200,
+      dialogBasedonResponseStatus(Icons.done, errorDetails, errorDetails,
           const Color.fromARGB(255, 81, 237, 4), 200);
     } else if (responseStatus == 401) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, locale.error401,
+      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
           Color.fromARGB(255, 237, 4, 4), 401);
     } else if (responseStatus == 405) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, locale.error405,
+      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
           const Color.fromARGB(255, 232, 232, 23), 405);
     } else if (responseStatus == 500) {
       dialogBasedonResponseStatus(
@@ -52,10 +52,10 @@ class ErrorController {
       dialogBasedonResponseStatus(
           Icons.error, errorDetails, locale.error406, Colors.red, 406);
     } else if (responseStatus == 204) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, locale.error204,
+      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
           const Color.fromARGB(255, 232, 232, 23), 204);
     } else if (responseStatus == 404) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, locale.error404,
+      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
           const Color.fromARGB(255, 232, 232, 23), 404);
     } else if (responseStatus == 3) {
       dialogBasedonResponseStatus(

@@ -43,7 +43,9 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
   ValueNotifier pageLis = ValueNotifier(1);
   ValueNotifier totalDocCount = ValueNotifier(0);
   getCount() {
-    documentsController.getDocInfoCount().then((value) {
+    documentsController
+        .getDocInfoCount(SearchDocumentCriteria(page: pageLis.value))
+        .then((value) {
       totalDocCount.value = value;
     });
   }
@@ -132,7 +134,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
                     stateManager!.setShowColumnFilter(true);
                     // pageLis.value = pageLis.value > 1 ? 0 : 1;
                     // totalActionsCount.value = 0;
-                    // getCount();
+                    getCount();
                   },
                   doubleTab: (event) async {
                     PlutoRow? tappedRow = event.row;

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../utils/constants/colors.dart';
+
 class ErrorDialog extends StatefulWidget {
   final IconData icon;
   final Color color;
@@ -51,89 +53,100 @@ class _ErrorDialogState extends State<ErrorDialog> {
         padding: const EdgeInsets.all(30),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(
-                  widget.icon,
-                  color: widget.color,
-                  size: height * 0.05,
-                ),
-                SizedBox(width: width * 0.01),
-                Flexible(
-                  child: Text(
-                    widget.errorTitle,
-                    style: TextStyle(
-                      fontSize: height * 0.025,
-                      fontWeight: FontWeight.normal,
-                    ),
+                CircleAvatar(
+                  backgroundColor: widget.color,
+                  radius: 35,
+                  child: Icon(
+                    widget.icon,
+                    size: 40,
+                    color: Colors.white,
                   ),
-                )
+                ),
+                SizedBox(height: height * 0.015),
+                Text(
+                  widget.errorTitle,
+                  style: TextStyle(
+                    fontSize: height * 0.025,
+                    fontWeight: FontWeight.bold,
+                    color: widget.color,
+                  ),
+                ),
               ],
             ),
             SizedBox(
-              height: height * 0.02,
+              height: height * 0.025,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const SizedBox(width: 10),
-                SizedBox(height: height * 0.07),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: [
+            //     const SizedBox(width: 10),
+            //     SizedBox(height: height * 0.07),
+            //   ],
+            // ),
             // if (showDetails)
-            Row(
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(
-                  child: Text(
-                    widget.errorDetails,
-                    style: TextStyle(
-                      fontSize: height * 0.015,
-                      fontWeight: FontWeight.normal,
-                    ),
+                Text(
+                  widget.errorDetails,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: height * 0.018,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey[900],
                   ),
                 ),
-                // SizedBox(
-                //   width: width * 0.2,
-                // ),
-                Row(
-                  children: [
-                    MaterialButton(
-                      onPressed: () async {
-                        if (widget.isItemStatusScreen == true &&
-                            widget.customOnPressed != null) {
-                          widget.customOnPressed!();
+                SizedBox(
+                  height: height * 0.025,
+                ),
+                MaterialButton(
+                  color: primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  onPressed: () async {
+                    if (widget.isItemStatusScreen == true &&
+                        widget.customOnPressed != null) {
+                      widget.customOnPressed!();
+                    } else {
+                      if (widget.statusCode == 401 ||
+                          widget.statusCode == 417) {
+                        if (kIsWeb) {
+                          // context.read<TabsProvider>().emptyAll();
+                          GoRouter.of(context).go(loginScreenRoute);
                         } else {
-                          if (widget.statusCode == 401 ||
-                              widget.statusCode == 417) {
-                            if (kIsWeb) {
-                              // context.read<TabsProvider>().emptyAll();
-                              GoRouter.of(context).go(loginScreenRoute);
-                            } else {
-                              // context.read<TabsProvider>().emptyAll();
-                              Navigator.pushReplacementNamed(
-                                  context, loginScreenRoute);
-                            }
-                          } else {
-                            Navigator.pop(context, true);
-                          }
+                          // context.read<TabsProvider>().emptyAll();
+                          Navigator.pushReplacementNamed(
+                              context, loginScreenRoute);
                         }
-                      },
-                      child: Text(widget.isItemStatusScreen == true
-                          ? _locale.cancel
-                          : _locale.ok),
-                    ),
-                    widget.statusCode == 402
-                        ? MaterialButton(
-                            onPressed: () async {
-                              Navigator.pop(context, false);
-                            },
-                            child: Text(_locale.no),
-                          )
-                        : SizedBox.shrink(),
-                  ],
+                      } else {
+                        Navigator.pop(context, true);
+                      }
+                    }
+                  },
+                  child: Text(
+                    widget.isItemStatusScreen == true
+                        ? _locale.cancel
+                        : _locale.ok,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                Visibility(
+                  visible: widget.statusCode == 402,
+                  child: MaterialButton(
+                    onPressed: () async {
+                      Navigator.pop(context, false);
+                    },
+                    child: Text(_locale.no),
+                  ),
                 )
               ],
             ),

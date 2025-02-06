@@ -61,4 +61,17 @@ class ActionController {
     });
     return itemCount;
   }
+
+  Future<int> getActionCountByDate(String date) async {
+    var api = getActionCountByDateApi;
+
+    int itemCount = 0;
+    await ApiService().postRequest(api, {"date": date}).then((value) {
+      if (value.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
+        itemCount = CountModel.fromJson(jsonData).count!;
+      }
+    });
+    return itemCount;
+  }
 }

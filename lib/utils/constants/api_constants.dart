@@ -19,6 +19,8 @@ const totalDepApi = "docDept/count";
 //Action APIs
 const getActionApi = "actions/page";
 const getActionCountApi = "actions/count";
+const getActionCountByDateApi = "actions/countByDate";
+
 const addActionApi = "actions/insert";
 const deleteActionApi = "actions/delete";
 const updateActionApi = "actions/update";
@@ -31,6 +33,7 @@ const updateDoc = "docInfo/update";
 const searchDocCritereaFile = "docInfo/searchCrit";
 const searchByContentApi = "docInfo/searchByContent";
 const getInfoCount = "docInfo/count";
+const searchDocCountFile = "docInfo/searchCrit/count";
 
 const getFilesByHdrApi = "docFiles/getByHdr";
 const getLatestFile = "docFiles/getLatestFile";
@@ -81,6 +84,7 @@ const createTemplate = "workflowTemplateTransactions/create";
 const updateTemplate = "workflowTemplateTransactions/update";
 const deleteTemplate = "workflowTemplateTransactions/delete";
 const getTemplates = "workflowTemplateInfo/searchCrit";
+const getTemplatesCount = "workflowTemplateInfo/count";
 
 const getWorkFlowDoc = "workflowDocumentInfo/searchCrit";
 const updateWorkFlowDoc = "workflowTransactions/update";

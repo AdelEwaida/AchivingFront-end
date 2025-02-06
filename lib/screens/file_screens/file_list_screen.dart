@@ -111,6 +111,14 @@ class _FileListScreenState extends State<FileListScreen> {
   String active = "0";
   // String? userName = "";
   var storage = FlutterSecureStorage();
+  ValueNotifier totalDocCount = ValueNotifier(0);
+  getCount() {
+    documentsController
+        .getTotalSearchDocCountFile(SearchDocumentCriteria(page: -1))
+        .then((value) {
+      totalDocCount.value = value;
+    });
+  }
 
   @override
   void dispose() {
@@ -120,44 +128,46 @@ class _FileListScreenState extends State<FileListScreen> {
     super.dispose();
   }
 
-  @override
+  bool isFetchExecuted = false; // Track fetch execution
+
   Future<void> didChangeDependencies() async {
-    _locale = AppLocalizations.of(context)!;
-    width = MediaQuery.of(context).size.width;
-    height = MediaQuery.of(context).size.height;
-    isDesktop = Responsive.isDesktop(context);
-    // userName = await storage.read(key: "userName");
-    fillColumnTable();
-    documentListProvider = context.read<DocumentListProvider>();
-    calssificatonNameAndCodeProvider =
-        context.read<CalssificatonNameAndCodeProvider>();
-    if (treeNodes.isEmpty) {
-      roots = <MyNode>[
-        MyNode(title: '/', children: treeNodes, extra: null, isRoot: true),
-      ];
-      treeController = TreeController<MyNode>(
-        roots: roots,
-        childrenProvider: (MyNode node) => node.children,
-      );
-      await fetchData();
-      await fetchDropDownTree();
-    }
-    if (documentListProvider.issueNumber != null) {
-      issueNoController.text = documentListProvider.issueNumber ?? "";
-      // search();
+    if (!isFetchExecuted) {
+      // Execute only if it hasn't run before
+      _locale = AppLocalizations.of(context)!;
+      width = MediaQuery.of(context).size.width;
+      height = MediaQuery.of(context).size.height;
+      isDesktop = Responsive.isDesktop(context);
+      fillColumnTable();
+      documentListProvider = context.read<DocumentListProvider>();
+      calssificatonNameAndCodeProvider =
+          context.read<CalssificatonNameAndCodeProvider>();
 
-      documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria(
-          issueNo: issueNoController.text,
-          fromIssueDate: "",
-          toIssueDate: "",
-          page: -1));
-    }
-    active = (await storage.read(key: StorageKeys.bolActive))!;
-    setState(() {});
-    print("activeactiveactiveactiveactiveactive :${active}");
+      if (treeNodes.isEmpty) {
+        roots = <MyNode>[
+          MyNode(title: '/', children: treeNodes, extra: null, isRoot: true),
+        ];
+        treeController = TreeController<MyNode>(
+          roots: roots,
+          childrenProvider: (MyNode node) => node.children,
+        );
+        await fetchData();
+        await fetchDropDownTree();
+      }
 
-    // listOfDep =
-    // setState(() {});
+      if (documentListProvider.issueNumber != null) {
+        issueNoController.text = documentListProvider.issueNumber ?? "";
+        documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria(
+            issueNo: issueNoController.text,
+            fromIssueDate: "",
+            toIssueDate: "",
+            page: -1));
+      }
+
+      active = (await storage.read(key: StorageKeys.bolActive)) ?? "0";
+      print("Active Status: $active");
+
+      isFetchExecuted = true; // Mark fetch as executed
+    }
     super.didChangeDependencies();
   }
 
@@ -418,7 +428,7 @@ class _FileListScreenState extends State<FileListScreen> {
             stateManager.setShowColumnFilter(true);
             // pageLis.value = pageLis.value > 1 ? 0 : 1;
             // totalActionsCount.value = 0;
-            // getCount();
+            getCount();
           },
           doubleTab: (event) async {
             PlutoRow? tappedRow = event.row;
@@ -452,6 +462,31 @@ class _FileListScreenState extends State<FileListScreen> {
             selectedRow = tappedRow;
             documentModel = DocumentModel.fromPlutoRow(selectedRow!, _locale);
           },
+        ),
+        // pageLis.value = pageLis.value > 1 ? 0 : 1;
+        Container(
+          width: isDesktop ? width * 0.8 : width * 0.9,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "${_locale.totalCount}: ",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: totalDocCount,
+                  builder: ((context, value, child) {
+                    return Text(
+                      "${totalDocCount.value}",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -1260,17 +1295,8 @@ class _FileListScreenState extends State<FileListScreen> {
       PlutoInfinityScrollRowsRequest request) async {
     bool isLast = false;
 
-    // if (documentListProvider.searchDocumentCriteria.fromIssueDate != null &&
-    //     documentListProvider.searchDocumentCriteria.page! <= 1) {
-    //   stateManager.removeAllRows();
-    //   rowList.clear();
-    // }
-    print("documentListProvider.isSearch ${documentListProvider.isSearch}");
-    print(
-        "documentListProvider.searchDocumentCriteria.page ${documentListProvider.searchDocumentCriteria.page}");
     if (documentListProvider.issueNumber == null) {
       if (documentListProvider.isSearch) {
-        print("SSSSSSDDDDDDDDDDD");
         List<PlutoRow> searchList = [];
         documentListProvider.searchDocumentCriteria.fromIssueDate =
             documentListProvider.issueNumber != null
@@ -1333,7 +1359,6 @@ class _FileListScreenState extends State<FileListScreen> {
           rows: [],
         ));
       } else {
-        print(11111111111);
         if (documentListProvider.searchDocumentCriteria.page == 1) {
           documentListProvider.searchDocumentCriteria.page = -1;
         } else {
@@ -1345,7 +1370,6 @@ class _FileListScreenState extends State<FileListScreen> {
 
         result = await documentsController
             .searchDocCriterea(documentListProvider.searchDocumentCriteria);
-
         int currentPage = documentListProvider.page!; //1
 
         for (int i =
@@ -1372,8 +1396,6 @@ class _FileListScreenState extends State<FileListScreen> {
       }
     } else {
       List<PlutoRow> searchList = [];
-      print("INNNNNNNNNNNNELLLLLLLLLLLL");
-      // rowList.clear();
       documentListProvider.searchDocumentCriteria.page = -1;
 
       List<DocumentModel> result = [];
@@ -1398,11 +1420,6 @@ class _FileListScreenState extends State<FileListScreen> {
         rows: searchList.toList(),
       ));
     }
-    // return Future.value(PlutoInfinityScrollRowsResponse(
-    //     isLast: documentListProvider.searchDocumentCriteria.page == -1
-    //         ? true
-    //         : false,
-    //     rows: []));
   }
 
   Widget treeSection() {

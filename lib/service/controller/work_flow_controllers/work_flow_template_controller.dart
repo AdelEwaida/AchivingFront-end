@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:archiving_flutter_project/models/db/work_flow/template_model.dart';
 
+import '../../../models/db/count_model.dart';
 import '../../../models/db/work_flow/setup_model.dart';
 import '../../../models/db/work_flow/user_step_request_body.dart';
 import '../../../models/db/work_flow/user_work_flow_steps.dart';
@@ -31,6 +32,20 @@ class WorkFlowTemplateContoller {
     }
 
     return templateList; // Return the populated list
+  }
+
+  Future<int> getTotalDep(TemplateModel searchCriteria) async {
+    var api = totalDepApi;
+
+    int itemCount = 0;
+    await ApiService().postRequest(api, searchCriteria).then((value) {
+      if (value.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
+        itemCount = CountModel.fromJson(jsonData).count!;
+      }
+    });
+
+    return itemCount;
   }
 
   Future addTemplate(WorkFlowTemplateBody documentFileRequest) async {

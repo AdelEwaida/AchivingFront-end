@@ -3,11 +3,14 @@ import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/key.dart';
 import 'package:archiving_flutter_project/utils/func/text_and_number_inputFormater.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../columns_dialog.dart';
 
 // ignore: must_be_immutable
 class TableComponent extends StatefulWidget {
@@ -133,6 +136,9 @@ class _TableComponentState extends State<TableComponent> {
     super.didChangeDependencies();
   }
 
+  List<PlutoRow> filterRows = [];
+  Map<PlutoRow, ValueNotifier<bool>> isDisplayed = {};
+
   @override
   void initState() {
     super.initState();
@@ -141,6 +147,224 @@ class _TableComponentState extends State<TableComponent> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void showColumnAttributesPopup(BuildContext context, PlutoColumn column,
+      PlutoGridStateManager stateManager) async {
+    final TextEditingController searchController = TextEditingController();
+    final ValueNotifier<List<PlutoRow>> displayedItems = ValueNotifier([]);
+    final ScrollController scrollController = ScrollController();
+    final ValueNotifier<bool> isLoadingMore = ValueNotifier(false);
+    const int batchSize = 50;
+    int currentOffset = 0;
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
+    void loadMoreData() async {
+      if (isLoadingMore.value) return;
+
+      isLoadingMore.value = true;
+
+      final List<PlutoRow> nextBatch =
+          isDisplayed.keys.skip(currentOffset).take(batchSize).toList();
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      if (nextBatch.isNotEmpty) {
+        displayedItems.value = [...displayedItems.value, ...nextBatch];
+        currentOffset += nextBatch.length;
+      }
+
+      isLoadingMore.value = false;
+    }
+
+    void initializeData() {
+      currentOffset = 0;
+      final initialBatch = isDisplayed.keys.take(batchSize).toList();
+      displayedItems.value = initialBatch;
+      currentOffset += initialBatch.length;
+    }
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        loadMoreData();
+      }
+    });
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return ColumnAttributesDialog(
+          searchController: searchController,
+          displayedItems: displayedItems,
+          scrollController: scrollController,
+          isLoadingMore: isLoadingMore,
+          column: column,
+          width: width,
+          height: height,
+          initializeData: initializeData,
+          toggleAttributeVisibility: toggleAttributeVisibility,
+          isDisplayed: isDisplayed,
+          getColumns: getColumnAttributes,
+          stateManager: stateManager,
+          filterRows: filterRows,
+        );
+      },
+    );
+  }
+
+  List<PlutoRow> _processAttributes(Map<String, dynamic> params) {
+    String columnField = params['column'];
+    List<PlutoRow> rows = params['rows'];
+    final Set<String> uniqueValues = {};
+    final List<PlutoRow> attributes = [];
+
+    for (var row in rows) {
+      final value = row.cells[columnField]?.value.toString();
+      if (value != null && !uniqueValues.contains(value)) {
+        uniqueValues.add(value);
+        attributes.add(PlutoRow(cells: {columnField: PlutoCell(value: value)}));
+      }
+    }
+    return attributes;
+  }
+
+  Map<String, List<PlutoRow>> rowGroup = {};
+  Future<List<PlutoRow>> getColumnAttributesAsync(
+    PlutoColumn column,
+    List<PlutoRow> rows,
+  ) async {
+    return compute(_processAttributes, {'column': column.field, 'rows': rows});
+  }
+
+  List<PlutoRow> getColumnAttributes(
+    PlutoColumn column,
+    PlutoGridStateManager stateManager,
+  ) {
+    final Set<String> uniqueValues = {};
+    List<PlutoRow> attributes = [];
+
+    // Check if isDisplayed needs to be cleared
+    if (isDisplayed.isNotEmpty) {
+      if (isDisplayed.keys.toList()[0].cells.keys.toList()[0] != column.field) {
+        isDisplayed.clear();
+        rowGroup.clear();
+        filterRows.clear();
+      }
+    }
+
+    // Add "All" option if isDisplayed is empty
+    if (isDisplayed.isEmpty) {
+      final Map<String, PlutoCell> allModel = <String, PlutoCell>{};
+      allModel[column.field] =
+          PlutoCell(value: "${AppLocalizations.of(context)!.all} (0)");
+      isDisplayed[PlutoRow(cells: allModel)] = ValueNotifier(true);
+    }
+
+    // Process each row in the stateManager
+    for (var row in stateManager.rows) {
+      final value = row.cells[column.field]?.value.toString();
+      filterRows.add(row);
+
+      if (value != null) {
+        if (!uniqueValues.contains(value)) {}
+        uniqueValues.add(value);
+
+        final cellValue = PlutoCell(value: value.toString());
+        final newRow = PlutoRow(cells: {column.field: cellValue});
+
+        if (rowGroup.containsKey(value)) {
+          rowGroup[value]!.add(row);
+        } else {
+          rowGroup[value] = [row];
+        }
+      }
+    }
+
+    // Update "All" option with the count
+    isDisplayed.forEach((key, notifier) {
+      if (key.cells[column.field]?.value
+              .toString()
+              .startsWith(AppLocalizations.of(context)!.all) ==
+          true) {
+        key.cells[column.field]!.value =
+            "${AppLocalizations.of(context)!.all} (${uniqueValues.length})";
+      }
+    });
+
+    // Add unique values to isDisplayed
+    for (var value in uniqueValues) {
+      final cellValue = PlutoCell(value: value.toString());
+      final newRow = PlutoRow(cells: {column.field: cellValue});
+
+      if (!isDisplayed.containsKey(newRow)) {
+        isDisplayed[newRow] = ValueNotifier(true);
+      }
+    }
+
+    return attributes;
+  }
+
+  void toggleAttributeVisibility(
+      PlutoRow attribute, bool? value, PlutoColumn column) {
+    if (value == null) return;
+
+    if (attribute.cells[column.field]?.value
+            .toString()
+            .contains(AppLocalizations.of(context)!.all) ==
+        true) {
+      // "All" checkbox logic
+      isDisplayed.forEach((key, notifier) {
+        notifier.value = value; // Set all checkboxes to match "All"
+      });
+
+      if (value) {
+        // Add all rows to the filter
+        filterRows.clear();
+        isDisplayed.keys.forEach((row) {
+          filterRows.addAll(rowGroup[row.cells[column.field]?.value] ?? []);
+        });
+      } else {
+        // Clear the filter if unchecked
+        filterRows.clear();
+      }
+    } else {
+      // Specific row logic
+      if (value) {
+        // Add rows to the filter
+        filterRows.addAll(rowGroup[attribute.cells[column.field]?.value] ?? []);
+      } else {
+        // Remove rows from the filter
+        filterRows.removeWhere((row) =>
+            rowGroup[attribute.cells[column.field]?.value]?.contains(row) ??
+            false);
+      }
+
+      // Check if "All" should also be unchecked
+      if (isDisplayed[attribute]!.value == false) {
+        isDisplayed.forEach((key, notifier) {
+          if (key.cells[column.field]?.value
+                  .toString()
+                  .contains(AppLocalizations.of(context)!.all) ==
+              true) {
+            notifier.value = false; // Uncheck "All"
+          }
+        });
+      }
+    }
+
+    // Update the specific attribute state
+    if (isDisplayed.containsKey(attribute)) {
+      isDisplayed[attribute]!.value = value;
+    }
+  }
+
+// Update the isAttributeDisplayed function
+  bool isAttributeDisplayed(PlutoRow attribute) {
+    // Check if the key exists in the map
+    return isDisplayed.containsKey(attribute);
   }
 
   ValueNotifier rowsLength = ValueNotifier(0);
@@ -232,12 +456,52 @@ class _TableComponentState extends State<TableComponent> {
       //         ? '${polCols[i].title.split(' ').take(2).join(' ')}\n${polCols[i].title.split(' ').skip(2).join(' ')}'
       //         : polCols[i].title.replaceAll(" ", "\n");
       // _locale.lastPricePurchase
+      // polCols[i].titleSpan = TextSpan(
+      //   children: [
+      //     WidgetSpan(
+      //       child: Text(
+      //         polCols[i].title,
+      //         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      //       ),
+      //     ),
+      //   ],
+      // );
+      // _locale.lastPricePurchase
       polCols[i].titleSpan = TextSpan(
         children: [
           WidgetSpan(
-            child: Text(
-              polCols[i].title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  polCols[i].title,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                polCols[i].title == "#"
+                    ? SizedBox.shrink()
+                    :
+                    // const SizedBox(width: 4), // Add spacing between title and icon
+                    Row(
+                        children: [
+                          const SizedBox(width: 2),
+                          IconButton(
+                            icon: const Icon(
+                                Icons.arrow_drop_down_circle_outlined,
+                                size: 18,
+                                color: primary2),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              if (stateManager != null) {
+                                showColumnAttributesPopup(
+                                    context, polCols[i], stateManager);
+                              } else {}
+                            },
+                          ),
+                          const SizedBox(width: 2),
+                        ],
+                      )
+              ],
             ),
           ),
         ],
@@ -272,9 +536,17 @@ class _TableComponentState extends State<TableComponent> {
                       widget.doubleTab!(event);
                     }
                   : null,
-              onLoaded: (PlutoGridOnLoadedEvent event) {
+              // onLoaded: (PlutoGridOnLoadedEvent event) {
+              //   if (widget.onLoaded != null) {
+              //     widget.onLoaded!(event);
+              //   }
+              // },
+              onLoaded: (event) {
+                // Initialize stateManager when PlutoGrid is loaded
+                stateManager = event.stateManager;
                 if (widget.onLoaded != null) {
-                  widget.onLoaded!(event);
+                  widget.onLoaded!(
+                      event); // Call additional onLoaded logic if provided
                 }
               },
               onChanged: (PlutoGridOnChangedEvent event) {

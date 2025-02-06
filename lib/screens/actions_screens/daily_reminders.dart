@@ -33,7 +33,7 @@ class _DailyRemindersState extends State<DailyReminders> {
       DatesController().formatDate(DatesController().todayDate()));
   ValueNotifier totalDailySales = ValueNotifier(0);
   getCount() {
-    actionController.getActionCount().then((value) {
+    actionController.getActionCountByDate(todayDate).then((value) {
       totalDailySales.value = value;
     });
   }

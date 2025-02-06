@@ -68,6 +68,21 @@ class DocumentsController {
     return list;
   }
 
+  Future<int> getTotalSearchDocCountFile(
+      SearchDocumentCriteria searchDocumentCriteria) async {
+    var api = searchDocCountFile;
+
+    int itemCount = 0;
+    await ApiService().postRequest(api, searchDocumentCriteria).then((value) {
+      if (value.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
+        itemCount = CountModel.fromJson(jsonData).count!;
+      }
+    });
+
+    return itemCount;
+  }
+
   Future<List<DocumentModel>> searchByContent(
       SearchDocumentCriteria searchDocumentCriteria) async {
     List<DocumentModel> list = [];
@@ -143,11 +158,12 @@ class DocumentsController {
     return scannedImage;
   }
 
-  Future<int> getDocInfoCount() async {
+  Future<int> getDocInfoCount(
+      SearchDocumentCriteria searchDocumentCriteria) async {
     var api = getInfoCount;
 
     int itemCount = 0;
-    await ApiService().getRequest(api).then((value) {
+    await ApiService().postRequest(api, searchDocumentCriteria).then((value) {
       if (value.statusCode == 200) {
         var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
         itemCount = CountModel.fromJson(jsonData).count!;
