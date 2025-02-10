@@ -20,6 +20,7 @@ import '../../models/db/work_flow/work_flow_template_body.dart';
 import '../../service/controller/documents_controllers/documents_controller.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import '../../utils/constants/loading.dart';
+import '../../utils/func/lists.dart';
 import '../../widget/custom_drop_down.dart';
 
 class WorkFlowScreen extends StatefulWidget {
@@ -85,9 +86,11 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
         stateManager!.columns[i].titleSpan = polCols[i].titleSpan;
       }
     }
+
     userName = await storage.read(key: "userName");
     departmetList = await UserController().getDepartmentSelectedUser(userName!);
     setState(() {});
+
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }

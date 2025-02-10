@@ -44,7 +44,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
   ValueNotifier totalDocCount = ValueNotifier(0);
   getCount() {
     documentsController
-        .getDocInfoCount(SearchDocumentCriteria(page: pageLis.value))
+        .getDocInfoCount(SearchDocumentCriteria(page: -1))
         .then((value) {
       totalDocCount.value = value;
     });

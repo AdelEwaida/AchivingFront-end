@@ -160,7 +160,7 @@ class DocumentsController {
 
   Future<int> getDocInfoCount(
       SearchDocumentCriteria searchDocumentCriteria) async {
-    var api = getInfoCount;
+    var api = searchByContentDocCountFile;
 
     int itemCount = 0;
     await ApiService().postRequest(api, searchDocumentCriteria).then((value) {

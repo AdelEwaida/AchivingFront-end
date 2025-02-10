@@ -8,6 +8,7 @@ import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
 
 import '../../../models/db/count_model.dart';
 import '../../../models/db/user_models/user_category.dart';
+import '../../../models/db/user_models/user_dept_model.dart';
 import '../../../models/db/user_models/user_update_req.dart';
 import '../../../models/dto/searchs_model/search_model.dart';
 
@@ -38,7 +39,9 @@ class UserController {
     }
     return list;
   }
-  Future<List<DepartmentUserModel>> getDepartmentSelectedUser(String userCode) async {
+
+  Future<List<DepartmentUserModel>> getDepartmentSelectedUser(
+      String userCode) async {
     List<DepartmentUserModel> list = [];
     var response = await ApiService()
         .postRequest(getUserSelectedDepartmentApi, {"user": userCode});
@@ -50,6 +53,7 @@ class UserController {
     }
     return list;
   }
+
   Future updateCurrentUserPassword(UpdateUserPassword userModel) async {
     return await ApiService().postRequest(updateUserPasswordApi, userModel);
   }
@@ -58,7 +62,7 @@ class UserController {
     return await ApiService().postRequest(setUserDepartmentApi, list);
   }
 
-  Future addUser(UserModel userModel) async {
+  Future addUser(UserDeptModel userModel) async {
     return await ApiService().postRequest(addUserApi, userModel);
   }
 

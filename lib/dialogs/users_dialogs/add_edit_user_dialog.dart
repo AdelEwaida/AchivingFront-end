@@ -16,7 +16,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../models/db/user_models/department_user_model.dart';
+import '../../models/db/user_models/user_dept_model.dart';
+import '../../models/dto/searchs_model/search_model.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
+import '../../widget/text_field_widgets/test_drop_down.dart';
 
 class AddUserDialog extends StatefulWidget {
   UserModel? userModel;
@@ -40,7 +44,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController urlController = TextEditingController();
   FocusNode codeFocusNode = FocusNode();
-
+  List<DepartmentModel>? userDeptsList;
   int? selectedUserType;
   int? userActive;
   UserController userController = UserController();
@@ -56,7 +60,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   }
 
   @override
-  void didChangeDependencies() {
+  Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
 
     if (widget.userModel != null) {
@@ -76,11 +80,19 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         userNameController.text = userCodeController.text;
       });
     });
+    if (userModel != null) {
+      List<DepartmentUserModel> response =
+          await userController.getDepartmentUser(widget.userModel!.txtCode!);
+      setState(() {
+        hintUsers = response.map((e) => e.toString()).join(", ");
+      });
+    }
+    print("hintUsershintUsershintUsers :${hintUsers}");
     super.didChangeDependencies();
   }
 
   bool isDesktop = false;
-
+  String hintUsers = "";
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -222,6 +234,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
             : const SizedBox.shrink(),
         customTextField(_locale.url, urlController, isDesktop, 0.2, true,
             widget.isChangePassword),
+        dropDownUsers(),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -460,7 +473,81 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           bolActive: userActive ?? 1,
           txtReferenceUsername: txtReferenceUsernameController.text,
           intType: selectedUserType);
-      await userController.addUser(userModel).then((value) {
+
+      UserDeptModel userDeptModel =
+          UserDeptModel(user: userModel, depts: userDeptsList);
+
+      try {
+        final response = await userController.addUser(userDeptModel);
+
+        print("statusCode ${response.statusCode}");
+
+        if (response.statusCode == 200) {
+          // ignore: use_build_context_synchronously
+          showDialog(
+            context: context,
+            builder: (context) {
+              return ErrorDialog(
+                  icon: Icons.done_all,
+                  errorDetails: _locale.done,
+                  errorTitle: _locale.addDoneSucess,
+                  color: Colors.green,
+                  statusCode: 200);
+            },
+          ).then((value) {
+            Navigator.pop(context, true);
+          });
+        }
+      } catch (e) {
+        print("Error adding user: $e");
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.error,
+                errorDetails: _locale.error,
+                errorTitle: "error",
+                color: Colors.red,
+                statusCode: 500);
+          },
+        );
+      }
+    }
+  }
+
+  void addUser1() async {
+    if (userCodeController.text.trim().isEmpty ||
+        userNameController.text.trim().isEmpty ||
+        txtReferenceUsernameController.text.isEmpty ||
+        urlController.text.trim().isEmpty ||
+        selectedUserType == null) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return ErrorDialog(
+              icon: Icons.error,
+              errorDetails: _locale.error,
+              errorTitle: _locale.pleaseAddAllRequiredFields,
+              color: Colors.red,
+              statusCode: 400);
+        },
+      );
+    } else if (userModel != null && widget.isChangePassword == false) {
+      editMethod();
+    } else if (userModel != null && widget.isChangePassword) {
+      cahngePasswordMethod();
+    } else {
+      UserModel userModel = UserModel(
+          txtCode: userCodeController.text,
+          txtNamee: userNameController.text,
+          url: urlController.text,
+          bolActive: userActive ?? 1,
+          txtReferenceUsername: txtReferenceUsernameController.text,
+          intType: selectedUserType);
+      await userController
+          .addUser(UserDeptModel(user: userModel, depts: userDeptsList))
+          .then((value) {
         print("statusCode ${value.statusCode}");
         if (value.statusCode == 200) {
           showDialog(
@@ -536,5 +623,53 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         });
       }
     });
+  }
+
+  Widget dropDownUsers() {
+    return SizedBox(
+      width: width * 0.2,
+      height: height * 0.045,
+      child: Tooltip(
+        message: hintUsers,
+        child: TestDropdown(
+          cleanPrevSelectedItem: true,
+          isEnabled: true,
+          icon: const Icon(Icons.search),
+          onClearIconPressed: () {
+            setState(() {
+              userDeptsList?.clear();
+              hintUsers = "";
+            });
+          },
+          onChanged: (value) {
+            if (value == null) return; // Prevent null errors
+
+            setState(() async {
+              userDeptsList ??= []; // Ensure the list is initialized
+
+              for (var user in value) {
+                if (user != null &&
+                    !userDeptsList!.any((item) => item.txtKey == user.txtKey)) {
+                  userDeptsList!.add(user);
+                }
+              }
+
+              // Debugging: Print selected users
+              print("Selected Users: ${userDeptsList!.map((e) => e.toJson())}");
+
+              // Update hint text
+              hintUsers = userDeptsList!.isEmpty
+                  ? ""
+                  : userDeptsList!.map((e) => e.toString()).join(", ");
+            });
+          },
+          stringValue: hintUsers ?? "",
+          borderText: _locale.department,
+          onSearch: (text) async {
+            return DepartmentController().getDep(SearchModel(page: 1));
+          },
+        ),
+      ),
+    );
   }
 }

@@ -57,6 +57,7 @@ import '../../models/db/work_flow/work_flow_document_info.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/user_types_constant/user_types_constant.dart';
+import '../../utils/func/lists.dart';
 import '../../widget/custom_drop_down_new.dart';
 
 class FileListScreen extends StatefulWidget {
@@ -130,14 +131,18 @@ class _FileListScreenState extends State<FileListScreen> {
 
   bool isFetchExecuted = false; // Track fetch execution
 
+  @override
   Future<void> didChangeDependencies() async {
+    _locale = AppLocalizations.of(context)!;
+    // Execute only if it hasn't run before
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
+    isDesktop = Responsive.isDesktop(context);
+    fillColumnTable();
+
     if (!isFetchExecuted) {
-      // Execute only if it hasn't run before
-      _locale = AppLocalizations.of(context)!;
-      width = MediaQuery.of(context).size.width;
-      height = MediaQuery.of(context).size.height;
-      isDesktop = Responsive.isDesktop(context);
-      fillColumnTable();
+      // fillColumnTable();
+
       documentListProvider = context.read<DocumentListProvider>();
       calssificatonNameAndCodeProvider =
           context.read<CalssificatonNameAndCodeProvider>();
@@ -163,10 +168,38 @@ class _FileListScreenState extends State<FileListScreen> {
             page: -1));
       }
 
+      // stateManager.notifyListeners(true);
+
       active = (await storage.read(key: StorageKeys.bolActive)) ?? "0";
-      print("Active Status: $active");
 
       isFetchExecuted = true; // Mark fetch as executed
+    }
+
+    polCols = [];
+    fillColumnTable();
+    if (stateManager != null) {
+      for (int i = 0; i < polCols.length; i++) {
+        String title = polCols[i].title;
+        polCols[i].titleSpan = TextSpan(
+          children: [
+            WidgetSpan(
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+        polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
+        polCols[i].textAlign = PlutoColumnTextAlign.center;
+
+        stateManager.columns[i].title = polCols[i].title;
+        stateManager.columns[i].width = polCols[i].width;
+        stateManager.columns[i].titleTextAlign = polCols[i].titleTextAlign;
+        stateManager.columns[i].textAlign = polCols[i].textAlign;
+        stateManager.columns[i].titleSpan = polCols[i].titleSpan;
+      }
     }
     super.didChangeDependencies();
   }
@@ -1235,7 +1268,7 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.userCode,
         field: "txtUsercode",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.08 : width * 0.2,
+        width: isDesktop ? width * 0.09 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(

@@ -43,9 +43,15 @@ class WorkFlowDocumentInfo {
         'txtDocumentName': PlutoCell(value: workflow?.txtDocumentName ?? ""),
         'txtDeptName': PlutoCell(value: workflow?.txtDeptName ?? ""),
         'txtTemplateName': PlutoCell(value: workflow?.txtTemplateName ?? ""),
+        // 'intStatus': PlutoCell(
+        //     value: ListConstants.getStatusNameWorkFlow(
+        //         workflow?.intStatus ?? -1, localizations)),
         'intStatus': PlutoCell(
-            value: ListConstants.getStatusNameWorkFlow(
-                workflow?.intStatus ?? -1, localizations)),
+            value: getStatusWorkFlowNameDependsLang(
+                ListConstants.getStatusNameWorkFlow(
+                        workflow?.intStatus ?? -1, localizations) ??
+                    "",
+                localizations)),
         'datMaxDate': PlutoCell(value: workflow?.datMaxDate ?? ""),
         'txtDocumentcode': PlutoCell(value: workflow?.txtDocumentcode ?? ""),
         'stepsList': PlutoCell(value: stepsList),
@@ -70,9 +76,13 @@ class WorkFlowDocumentInfo {
         plutoRow.cells['txtDocumentcode']?.value as String? ?? "";
     workflow?.datMaxDate = plutoRow.cells['datMaxDate']?.value as String? ?? "";
     // workflow?.intStatus = plutoRow.cells['intStatus']?.value as int? ?? -1;
+    // workflow?.intStatus = ListConstants.getStatusCodeWorkFlow(
+    //     plutoRow.cells['intStatus']?.value ?? -1,
+    //     localizations); // Default to 0 if null
     workflow?.intStatus = ListConstants.getStatusCodeWorkFlow(
-        plutoRow.cells['intStatus']?.value ?? -1,
-        localizations); // Default to 0 if null
+        getStatusWorkFlowNameDependsLang(
+            plutoRow.cells['intStatus']?.value ?? "", localizations),
+        localizations);
     // Extract stepsList (ensure it is cast to List<StepsModel>)
     stepsList = (plutoRow.cells['stepsList']?.value as List<dynamic>?)
         ?.map((step) => step as DocumentStepsModel)

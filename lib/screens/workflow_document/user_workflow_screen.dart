@@ -95,6 +95,15 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
         stateManager!.columns[i].titleSpan = polCols[i].titleSpan;
       }
     }
+
+    for (int i = 0; i < stateManager!.rows.length; i++) {
+      print(
+          "stateManager!.rows[i].cells['intStatus']!.value :${stateManager!.rows[i].cells['intStatus']!.value}");
+      stateManager!.rows[i].cells['intStatus']!.value =
+          getStatusNameDependsLang(
+              stateManager!.rows[i].cells['intStatus']!.value, _locale);
+    }
+    stateManager!.notifyListeners(true);
     userName = await storage.read(key: "userName");
     // departmetList = await UserController().getDepartmentSelectedUser(userName!);
     setState(() {});

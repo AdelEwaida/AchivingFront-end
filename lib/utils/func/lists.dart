@@ -30,18 +30,6 @@ class ListConstants {
     ];
   }
 
-  //work flow document
-  static String? getStatusNameWorkFlow(
-      int statusName, AppLocalizations localizations) {
-    Map<int, String> staus = {
-      0: localizations.pending,
-      1: localizations.approved,
-      2: localizations.rejected,
-      -1: ""
-    };
-    return staus[statusName];
-  }
-
   static int? getStatusCodeWorkFlow(
       String statusCode, AppLocalizations localizations) {
     Map<String, int> staus = {
@@ -117,5 +105,45 @@ class ListConstants {
       localizations.active,
       localizations.notActive,
     ];
+  }
+
+  //work flow document
+  static String? getStatusNameWorkFlow(
+      int statusName, AppLocalizations localizations) {
+    Map<int, String> staus = {
+      0: localizations.pending,
+      1: localizations.approved,
+      2: localizations.rejected,
+      -1: ""
+    };
+    return staus[statusName];
+  }
+}
+
+String getStatusWorkFlowNameDependsLang(String type, AppLocalizations locale) {
+  if (type == "قيد الانتظار" || type == "Pending") {
+    return locale.readyToApprove;
+  } else if (type == "موافق" || type == "Approved") {
+    return locale.approved;
+  } else if (type == "مرفوض" || type == "Rejected") {
+    return locale.rejected;
+  } else if (type == "الكل" || type.toLowerCase() == "all") {
+    return locale.all;
+  } else {
+    return locale.cancel;
+  }
+}
+
+String getStatusNameDependsLang(String type, AppLocalizations locale) {
+  if (type == "جاهز للتصديق" || type == "Ready to Approve") {
+    return locale.readyToApprove;
+  } else if (type == "موافق" || type == "Approved") {
+    return locale.approved;
+  } else if (type == "مرفوض" || type == "Rejected") {
+    return locale.rejected;
+  } else if (type == "الكل" || type.toLowerCase() == "all") {
+    return locale.all;
+  } else {
+    return locale.cancel;
   }
 }

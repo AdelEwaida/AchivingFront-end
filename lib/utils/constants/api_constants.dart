@@ -32,8 +32,9 @@ const uplodeFileInDocApi = "docFilesTrans/uploadFile";
 const updateDoc = "docInfo/update";
 const searchDocCritereaFile = "docInfo/searchCrit";
 const searchByContentApi = "docInfo/searchByContent";
-const getInfoCount = "docInfo/count";
+// const getInfoCount = "docInfo/count";
 const searchDocCountFile = "docInfo/searchCrit/count";
+const searchByContentDocCountFile = "docInfo/searchCrit/count";
 
 const getFilesByHdrApi = "docFiles/getByHdr";
 const getLatestFile = "docFiles/getLatestFile";
@@ -42,7 +43,7 @@ const deleteDocApi = "docFilesTrans/delete";
 const createWorkFlowDoc = "docFilesTrans/createWorkflow";
 //users api
 const getUserSearchApi = "users/searchCrit";
-const addUserApi = "users/insert";
+const addUserApi = "users/insertUserWithDepts";
 const deleteUserApi = "users/delete";
 const updateUserApi = "users/update";
 const updateUserPasswordApi = "users/changePass";
