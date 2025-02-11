@@ -87,8 +87,29 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         hintUsers = response.map((e) => e.toString()).join(", ");
       });
     }
+    if (userModel != null) {
+      List<DepartmentUserModel> response =
+          await userController.getDepartmentUser(widget.userModel!.txtCode!);
+
+      setState(() {
+        userDeptsList = convertUserDeptToDeptModel(response); // ✅ Convert here
+        hintUsers = userDeptsList!.map((e) => e.toString()).join(", ");
+      });
+    }
+
     print("hintUsershintUsershintUsers :${hintUsers}");
     super.didChangeDependencies();
+  }
+
+  List<DepartmentModel> convertUserDeptToDeptModel(
+      List<DepartmentUserModel> userDepts) {
+    return userDepts.map((userDept) {
+      return DepartmentModel(
+        txtKey: userDept.txtDeptkey, // Map department key
+        txtDescription: userDept.txtDeptName, // Map department name
+        txtShortcode: null, // Assuming no equivalent in DepartmentUserModel
+      );
+    }).toList();
   }
 
   bool isDesktop = false;
@@ -606,7 +627,11 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         bolActive: userActive ?? 0,
         txtReferenceUsername: txtReferenceUsernameController.text,
         intType: selectedUserType);
-    await userController.updateUser(userModel).then((value) {
+
+    UserDeptModel userDeptModel =
+        UserDeptModel(user: userModel, depts: userDeptsList);
+
+    await userController.updateUser(userDeptModel).then((value) {
       if (value.statusCode == 200) {
         showDialog(
           context: context,
@@ -632,20 +657,22 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       child: Tooltip(
         message: hintUsers,
         child: TestDropdown(
-          cleanPrevSelectedItem: true,
+          cleanPrevSelectedItem: false, // Keep previous selections
           isEnabled: true,
           icon: const Icon(Icons.search),
           onClearIconPressed: () {
             setState(() {
-              userDeptsList?.clear();
+              userDeptsList = []; // Initialize to an empty list instead of null
               hintUsers = "";
             });
           },
           onChanged: (value) {
-            if (value == null) return; // Prevent null errors
+            setState(() {
+              // Ensure userDeptsList is initialized
+              userDeptsList ??= [];
 
-            setState(() async {
-              userDeptsList ??= []; // Ensure the list is initialized
+              // Check for null value in selection
+              if (value == null || value.isEmpty) return;
 
               for (var user in value) {
                 if (user != null &&
@@ -654,16 +681,13 @@ class _DepartmentDialogState extends State<AddUserDialog> {
                 }
               }
 
-              // Debugging: Print selected users
-              print("Selected Users: ${userDeptsList!.map((e) => e.toJson())}");
-
-              // Update hint text
-              hintUsers = userDeptsList!.isEmpty
-                  ? ""
-                  : userDeptsList!.map((e) => e.toString()).join(", ");
+              // Update tooltip/hint text
+              hintUsers = userDeptsList!.isNotEmpty
+                  ? userDeptsList!.map((e) => e.txtDescription).join(", ")
+                  : "";
             });
           },
-          stringValue: hintUsers ?? "",
+          stringValue: hintUsers,
           borderText: _locale.department,
           onSearch: (text) async {
             return DepartmentController().getDep(SearchModel(page: 1));

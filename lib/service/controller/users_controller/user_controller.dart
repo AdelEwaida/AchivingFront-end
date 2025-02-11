@@ -78,7 +78,7 @@ class UserController {
     return await ApiService().postRequest(deleteUserApi, userModel);
   }
 
-  Future updateUser(UserModel userModel) async {
+  Future updateUser(UserDeptModel userModel) async {
     return await ApiService().postRequest(updateUserApi, userModel);
   }
 
