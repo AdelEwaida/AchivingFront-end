@@ -2,6 +2,7 @@ import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialo
 import 'package:archiving_flutter_project/models/dto/login_model.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
 import 'package:archiving_flutter_project/service/controller/login_controllers/login_controller.dart';
+import 'package:archiving_flutter_project/service/controller/work_flow_controllers/setup_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../models/db/work_flow/setup_model.dart';
 import '../utils/constants/routes_constant.dart';
 import '../utils/encrypt/encryption.dart';
 
@@ -332,6 +334,7 @@ class _LoginDialogState extends State<LoginDialog> {
         .logInPost(userModel, AppLocalizations.of(context)!)
         .then((value) async {
       if (value) {
+   
         Navigator.pop(context, true);
         Navigator.pop(context, true);
         // context
@@ -344,6 +347,7 @@ class _LoginDialogState extends State<LoginDialog> {
         Navigator.pop(context);
       }
     });
+
     // print(userModel.toJson());
     // GoRouter.of(context).go(mainScreenRoute);
     // openLoadinDialog();

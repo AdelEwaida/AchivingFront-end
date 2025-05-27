@@ -12,9 +12,11 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../dialogs/issues_excel/import_excel_dialog.dart';
 import '../../models/dto/side_menu/sub_menu_model.dart';
 import '../../service/controller/work_flow_controllers/setup_controller.dart';
 import '../../utils/constants/storage_keys.dart';
+import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../notification_icon_widget.dart';
 
 class SideMenu extends StatefulWidget {
@@ -54,6 +56,7 @@ class _SideMenuState extends State<SideMenu> {
   int openedMenuIndex = -1;
   List<MenuModel> menuList = [];
   String? active;
+  String? userRole;
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
@@ -74,6 +77,7 @@ class _SideMenuState extends State<SideMenu> {
       storage.read(key: "roles").then((value) {
         print("vaaaaaaaaaaal ${value}");
         print("active is :${active}");
+        userRole = value;
         menuList = getMenus(_locale, value!, active!);
         setState(() {});
       });
@@ -126,7 +130,7 @@ class _SideMenuState extends State<SideMenu> {
 
           // const Divider(), // Add a line before the logout button
           // const Padding(padding: EdgeInsets.all(5)),
-          LogoutTab(isCollapse: false), // Pass the isCollapsed state
+          LogoutTab(isCollapse: isCollapsed), // Pass the isCollapsed state
         ],
       ),
     );
@@ -232,6 +236,26 @@ class _SideMenuState extends State<SideMenu> {
                         ),
                       ),
                     ),
+                    userRole == USERTYPEADMIN
+                        ? IconButton(
+                            splashRadius: 1,
+                            iconSize: width * 0.015,
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return ImportExcelDialog();
+                                },
+                              ).then((value) {
+                                if (value) {}
+                              });
+                            },
+                            icon: Icon(
+                              Icons.file_copy,
+                              color: Colors.white,
+                            ),
+                          )
+                        : SizedBox.shrink()
                   ],
                 )
               : Container(),
@@ -540,7 +564,7 @@ class _SideMenuState extends State<SideMenu> {
 
   double drawerWidth() {
     if (isDesktop) {
-      return !isCollapsed ? width * 0.165 : 50;
+      return !isCollapsed ? width * 0.165 : 70;
     } else {
       return width * 0.6;
     }

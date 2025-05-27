@@ -21,6 +21,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:html' as html;
 
+import '../models/db/work_flow/setup_model.dart';
 import '../service/controller/work_flow_controllers/setup_controller.dart';
 import '../utils/constants/storage_keys.dart';
 import '../widget/curve_clipper.dart';
@@ -346,6 +347,12 @@ class _LogInScreenState extends State<LoginScreen>
         .logInPost(userModel, AppLocalizations.of(context)!)
         .then((value) async {
       if (value) {
+
+        await SetupController().getSetupList().then((value) async {
+          int bolActive = value!.first.bolActive!;
+          await storage.write(key: "bolActive", value: bolActive.toString());
+        });
+
         await storage.read(key: "roles").then((value1) {
           if (value1 == USERTYPEADMIN) {
             context.read<ScreenContentProvider>().setPage1(0);

@@ -17,6 +17,7 @@ class UserModel {
   String? activeToken;
   String? txtReferenceUsername;
   String? url;
+  int? bolLimitActions;
   UserModel({
     this.txtCode,
     this.txtNamee,
@@ -27,6 +28,7 @@ class UserModel {
     this.email,
     this.activeToken,
     this.txtReferenceUsername,
+    this.bolLimitActions,
     this.url,
   });
   static List<PlutoColumn> getColumnsForDialogSearchFillter(
@@ -68,6 +70,7 @@ class UserModel {
         txtDeptkey: json['txtDeptkey'],
         email: json['email'],
         activeToken: json['activeToken'],
+        bolLimitActions: json['bolLimitActions'],
         url: json['url']);
   }
 
@@ -82,6 +85,7 @@ class UserModel {
       'bolActive': bolActive,
       'txtDeptkey': txtDeptkey,
       'email': email,
+      'bolLimitActions': bolLimitActions,
       'activeToken': activeToken,
       'url': url
     };
@@ -105,7 +109,8 @@ class UserModel {
         'txtDeptkey': PlutoCell(value: txtDeptkey ?? ""),
         'email': PlutoCell(value: email ?? ""),
         'activeToken': PlutoCell(value: activeToken ?? ""),
-        'url': PlutoCell(value: url ?? "")
+        'url': PlutoCell(value: url ?? ""),
+        'bolLimitActions': PlutoCell(value: bolLimitActions ?? -1),
       },
     );
   }
@@ -115,6 +120,7 @@ class UserModel {
       txtReferenceUsername: row.cells['txtReferenceUsername']?.value,
       txtCode: row.cells['txtCode']?.value,
       txtNamee: row.cells['txtNamee']?.value,
+      bolLimitActions: row.cells['bolLimitActions']?.value,
       txtPwd: row.cells['txtPwd']?.value,
       intType: getCodeOfUserType(localizations, row.cells['intType']?.value),
       bolActive: row.cells['bolActive']?.value == localizations.active ? 1 : 0,

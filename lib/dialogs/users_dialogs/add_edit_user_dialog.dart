@@ -51,6 +51,9 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   bool isActive = true;
   UserModel? userModel;
   bool obscureOldPassword = true;
+  bool isLimitAction = true;
+  int? limitAction;
+
   @override
   void initState() {
     super.initState();
@@ -72,6 +75,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           widget.userModel!.txtReferenceUsername ?? "";
       isActive = userModel!.bolActive == 1 ? true : false;
       userActive = isActive ? 1 : 0;
+      isLimitAction = userModel!.bolLimitActions == 1 ? true : false;
       passwordController.text = widget.userModel!.txtPwd!;
       urlController.text = userModel!.url ?? "";
     }
@@ -92,7 +96,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           await userController.getDepartmentUser(widget.userModel!.txtCode!);
 
       setState(() {
-        userDeptsList = convertUserDeptToDeptModel(response); // ✅ Convert here
+        userDeptsList = convertUserDeptToDeptModel(response); 
         hintUsers = userDeptsList!.map((e) => e.toString()).join(", ");
       });
     }
@@ -260,18 +264,42 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Checkbox(
-                activeColor: primary2,
-                value: isActive,
-                onChanged: !widget.isChangePassword
-                    ? (value) {
-                        setState(() {
-                          isActive = value!;
-                          userActive = isActive ? 1 : 0;
-                        });
-                      }
-                    : null),
-            Text(_locale.active),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Checkbox(
+                    activeColor: primary2,
+                    value: isActive,
+                    onChanged: !widget.isChangePassword
+                        ? (value) {
+                            setState(() {
+                              isActive = value!;
+                              userActive = isActive ? 1 : 0;
+                            });
+                          }
+                        : null),
+                Text(_locale.active),
+              ],
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Checkbox(
+                    activeColor: primary2,
+                    value: isLimitAction,
+                    onChanged: (value) {
+                      setState(() {
+                        isLimitAction = value!;
+                      });
+                    }),
+                Text(_locale.isLimitAction),
+              ],
+            ),
           ],
         ),
         if (!isDesktop) ...[
@@ -492,6 +520,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           txtNamee: userNameController.text,
           url: urlController.text,
           bolActive: userActive ?? 1,
+          bolLimitActions: isLimitAction == true ? 1 : 0,
           txtReferenceUsername: txtReferenceUsernameController.text,
           intType: selectedUserType);
 
@@ -625,6 +654,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         url: urlController.text,
         txtNamee: userNameController.text,
         bolActive: userActive ?? 0,
+        bolLimitActions: isLimitAction == true ? 1 : 0,
         txtReferenceUsername: txtReferenceUsernameController.text,
         intType: selectedUserType);
 

@@ -227,7 +227,14 @@
   "attachments":"الملحقات",
   "stepDescription":"وصف الخطوة",
   "workFlowSettings":"إعدادات مخطط سير العمل",
-  "arDescription":"الوصف بالعربية"
+  "arDescription":"الوصف بالعربية",
+  "verifyDocuments":"التحقق",
+  "pleaseAddExcel":"الرجاء إدخال ملف إكسل يتكون من عمود واحد لرقم الإشارة, سيقوم النظام بفحص الأرقام وإرجاع ملف إكسل",
+  "uploadExcelFile":"تحميل ملف اكسل",
+  "isLimitAction":"منع تعديل الدوائر الأخرى"
+
+
+
 
 
 

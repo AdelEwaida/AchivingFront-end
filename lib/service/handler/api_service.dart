@@ -352,13 +352,190 @@ class ApiService {
     return response;
   }
 
+  Future postRequestExcel(String api, dynamic toJson, {bool? isStart}) async {
+    String? token = await storage.read(key: 'jwt');
+    final context2 = navigatorKey.currentState!.overlay!.context;
+    var requestUrl = "";
+
+    requestUrl = "$urlServer/$api";
+
+    try {
+      var response = await http.post(
+        Uri.parse(requestUrl),
+        headers: {
+          "Accept": "application/json",
+          "Content-type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(toJson),
+      );
+
+      print("--------------------------------------------");
+      print("token $token");
+      print("urlll $requestUrl");
+      print("urlllbody ${json.encode(toJson)}");
+      print("responseCode ${response.statusCode}");
+      if (response.statusCode == 417 || response.statusCode == 401) {
+        final context = navigatorKey.currentState!.overlay!.context;
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
+      } else if (response.statusCode == 417 || response.statusCode == 401) {
+        final context = navigatorKey.currentState!.overlay!.context;
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
+      } else if (api == logInApi &&
+          (response.statusCode == 400 ||
+              response.statusCode == 406 ||
+              response.statusCode == 402)) {
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
+        return response;
+      } else if (response.statusCode != 200) {
+        if (response.body == "Wrong Credentials") {
+          return response;
+        }
+
+        ErrorController.openErrorDialog(
+          response.statusCode,
+          response.body,
+        );
+      }
+
+      return response;
+    } catch (e) {
+      print("e.toString() ${e.toString()}");
+      if (api == logInApi) {
+        final context = navigatorKey.currentState!.overlay!.context;
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
+        // ignore: use_build_context_synchronously
+
+        // ignore: use_build_context_synchronously
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return ErrorDialog(
+        //         icon: Icons.error_sharp,
+        //         errorDetails: AppLocalizations.of(context)!.error500,
+        //         errorTitle: AppLocalizations.of(context)!.error,
+        //         color: Colors.red,
+        //         statusCode: 500);
+        //   },
+        // );
+        // ignore: use_build_context_synchronously
+        // Navigator.pop(context);
+      } else {
+        final context = navigatorKey.currentState!.overlay!.context;
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+                icon: Icons.error_sharp,
+                errorDetails: AppLocalizations.of(context)!.error500,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 500);
+          },
+        );
+      }
+    }
+  }
+
   Future postRequest(String api, dynamic toJson, {bool? isStart}) async {
     String? token = await storage.read(key: 'jwt');
     final context2 = navigatorKey.currentState!.overlay!.context;
     var requestUrl = "";
-   
-      requestUrl = "$urlServer/$api";
-    
+
+    requestUrl = "$urlServer/$api";
 
     try {
       var response = await http.post(

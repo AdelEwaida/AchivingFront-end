@@ -52,8 +52,10 @@ import 'dart:html' as html;
 
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
 import '../../models/db/categories_models/doc_cat_parent.dart';
+import '../../models/db/user_models/user_model.dart';
 import '../../models/db/work_flow/work_flow_doc_model.dart';
 import '../../models/db/work_flow/work_flow_document_info.dart';
+import '../../service/controller/users_controller/user_controller.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/user_types_constant/user_types_constant.dart';
@@ -110,6 +112,8 @@ class _FileListScreenState extends State<FileListScreen> {
   DocumentModel? documentModel;
   bool approval = false;
   String active = "0";
+  List<UserModel> result = [];
+  String userCode = "";
   // String? userName = "";
   var storage = FlutterSecureStorage();
   ValueNotifier totalDocCount = ValueNotifier(0);
@@ -130,7 +134,7 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   bool isFetchExecuted = false; // Track fetch execution
-
+  int? limitAction;
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
@@ -201,6 +205,13 @@ class _FileListScreenState extends State<FileListScreen> {
         stateManager.columns[i].titleSpan = polCols[i].titleSpan;
       }
     }
+    UserController userController = UserController();
+    userCode = (await storage.read(key: "userName")) ?? "";
+    result = await userController.getUsers(
+      SearchModel(searchField: userCode, page: -1, status: -1),
+    );
+
+    limitAction = result.first!.bolLimitActions;
     super.didChangeDependencies();
   }
 

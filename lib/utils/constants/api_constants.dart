@@ -93,3 +93,4 @@ const deleteWorklowDoc = "workflowTransactions/delete";
 const userWorkFlowSteps = "workflowDocumentSteps/getByUser";
 const updateWorkFlowStep = "workflowDocumentSteps/updateStep";
 const allUserWorkFlowSteps = "workflowDocumentSteps/searchCrit";
+const importIssuesApi = "excel/issuesArchivedReport";

@@ -241,6 +241,10 @@
     "attachments":"Attachments",
     "stepDescription":"Step Description",
     "workFlowSettings":"Workflow Settings",
-    "arDescription":"Ar Description"
+    "arDescription":"Ar Description",
+    "verifyDocuments":"verify Documents",
+    "pleaseAddExcel":"Please upload an Excel file containing a single column for the issue number",
+    "uploadExcelFile":"Upload Excel File",
+    "isLimitAction":"Restrict acess to other department"
 
 }
