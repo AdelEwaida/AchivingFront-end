@@ -187,13 +187,12 @@ class _SideMenuState extends State<SideMenu> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 15),
-                          child: Image.asset(
-                            "assets/images/asd.png",
-                            width: isDesktop ? width * 0.075 : width * 0.5,
-                          ),
+                        Image.asset(
+                          "assets/images/asd.png",
+                          width: isDesktop ? width * 0.073 : width * 0.5,
+                        ),
+                        SizedBox(
+                          width: 5,
                         ),
                         LanguageWidget(
                           color: Colors.white,
@@ -224,7 +223,7 @@ class _SideMenuState extends State<SideMenu> {
                       },
                       child: IconButton(
                         splashRadius: 1,
-                        iconSize: width * 0.015,
+                        iconSize: width * 0.0135,
                         onPressed: () {
                           setState(() {
                             isCollapsed = !isCollapsed;
@@ -239,7 +238,7 @@ class _SideMenuState extends State<SideMenu> {
                     userRole == USERTYPEADMIN
                         ? IconButton(
                             splashRadius: 1,
-                            iconSize: width * 0.015,
+                            iconSize: width * 0.0135,
                             onPressed: () {
                               showDialog(
                                 context: context,
@@ -251,7 +250,7 @@ class _SideMenuState extends State<SideMenu> {
                               });
                             },
                             icon: Icon(
-                              Icons.file_copy,
+                              Icons.file_copy_outlined,
                               color: Colors.white,
                             ),
                           )
@@ -564,7 +563,7 @@ class _SideMenuState extends State<SideMenu> {
 
   double drawerWidth() {
     if (isDesktop) {
-      return !isCollapsed ? width * 0.165 : 70;
+      return !isCollapsed ? width * 0.179 : 70;
     } else {
       return width * 0.6;
     }

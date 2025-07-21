@@ -52,10 +52,12 @@ import 'dart:html' as html;
 
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
 import '../../models/db/categories_models/doc_cat_parent.dart';
+import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/user_models/user_model.dart';
 import '../../models/db/work_flow/work_flow_doc_model.dart';
 import '../../models/db/work_flow/work_flow_document_info.dart';
 import '../../service/controller/users_controller/user_controller.dart';
+import '../../service/controller/work_flow_controllers/setup_controller.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/user_types_constant/user_types_constant.dart';
@@ -111,7 +113,9 @@ class _FileListScreenState extends State<FileListScreen> {
   late PlutoGridStateManager stateManager;
   DocumentModel? documentModel;
   bool approval = false;
-  String active = "0";
+  UserController userController = UserController();
+
+  String? active;
   List<UserModel> result = [];
   String userCode = "";
   // String? userName = "";
@@ -174,7 +178,18 @@ class _FileListScreenState extends State<FileListScreen> {
 
       // stateManager.notifyListeners(true);
 
-      active = (await storage.read(key: StorageKeys.bolActive)) ?? "0";
+      // setState(() async {
+      // String? activeValue = await storage.read(key: StorageKeys.bolActive);
+      // setState(() {
+      //   active = activeValue ?? "0";
+      // });
+      await SetupController().getSetupList().then((value) async {
+        setState(() {
+          active = value!.first.bolActive.toString()!;
+        });
+      });
+
+      // });
 
       isFetchExecuted = true; // Mark fetch as executed
     }
@@ -205,7 +220,6 @@ class _FileListScreenState extends State<FileListScreen> {
         stateManager.columns[i].titleSpan = polCols[i].titleSpan;
       }
     }
-    UserController userController = UserController();
     userCode = (await storage.read(key: "userName")) ?? "";
     result = await userController.getUsers(
       SearchModel(searchField: userCode, page: -1, status: -1),
@@ -534,6 +548,81 @@ class _FileListScreenState extends State<FileListScreen> {
         ),
       ],
     );
+  }
+
+  editDocumentInfo() async {
+    if (selectedRow == null) return;
+
+    final String? selectedDept = selectedRow!.cells['txtDept']?.value;
+    if (selectedDept == null) return;
+
+    DocumentModel documentModel =
+        DocumentModel.fromPlutoRow(selectedRow!, _locale);
+
+    if (limitAction != 1) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return InfoDocumentDialog(
+            isEdit: true,
+            documentModel: documentModel,
+          );
+        },
+      ).then((value) {
+        if (value) {
+          documentListProvider.searchDocumentCriteria.page = 0;
+          selectedRow = null;
+          setState(() {});
+          documentListProvider.setDocumentSearchCriterea(
+              documentListProvider.searchDocumentCriteria);
+        }
+      });
+      return;
+    }
+
+    final List<DepartmentUserModel> userDepartments =
+        await userController.getDepartmentSelectedUser(userCode);
+
+    bool hasMatch = false;
+
+    for (final dept in userDepartments) {
+      final deptName = dept.txtDeptName?.toLowerCase().trim();
+      if (deptName == selectedDept.toLowerCase().trim()) {
+        hasMatch = true;
+        break;
+      }
+    }
+
+    if (hasMatch) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return InfoDocumentDialog(
+            isEdit: true,
+            documentModel: documentModel,
+          );
+        },
+      ).then((value) {
+        if (value) {
+          documentListProvider.searchDocumentCriteria.page = 0;
+          selectedRow = null;
+          setState(() {});
+          documentListProvider.setDocumentSearchCriterea(
+              documentListProvider.searchDocumentCriteria);
+        }
+      });
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => ErrorDialog(
+          icon: Icons.warning,
+          errorDetails: _locale.notAllowedToEditDept,
+          errorTitle: 'Unauthorized',
+          color: Colors.red,
+          statusCode: 403,
+        ),
+      );
+    }
   }
 
   Future<void> exportToExecl() async {
@@ -1006,23 +1095,62 @@ class _FileListScreenState extends State<FileListScreen> {
     }
   }
 
-  void uploadFile() {
-    if (selectedRow != null) {
-      DocumentModel documentModel =
-          DocumentModel.fromPlutoRow(selectedRow!, _locale);
+  void uploadFile() async {
+    if (selectedRow == null) return;
+
+    final String? selectedDept = selectedRow!.cells['txtDept']?.value;
+    if (selectedDept == null) return;
+
+    DocumentModel documentModel =
+        DocumentModel.fromPlutoRow(selectedRow!, _locale);
+
+    if (limitAction != 1) {
+      showUploadDialog(documentModel);
+      return;
+    }
+
+    final List<DepartmentUserModel> userDepartments =
+        await userController.getDepartmentSelectedUser(userCode);
+
+    bool hasMatch = false;
+
+    for (final dept in userDepartments) {
+      final deptName = dept.txtDeptName?.toLowerCase().trim();
+      if (deptName == selectedDept.toLowerCase().trim()) {
+        hasMatch = true;
+        break;
+      }
+    }
+
+    if (hasMatch) {
+      showUploadDialog(documentModel);
+    } else {
       showDialog(
         context: context,
-        builder: (context) {
-          return AddFileDialog(documentModel: documentModel);
-        },
-      ).then((value) {
-        if (value) {
-          documentListProvider.searchDocumentCriteria.page = 0;
-          documentListProvider.setDocumentSearchCriterea(
-              documentListProvider.searchDocumentCriteria);
-        }
-      });
+        builder: (context) => ErrorDialog(
+          icon: Icons.warning,
+          errorDetails: _locale.notAllowedToEditDept,
+          errorTitle: 'Unauthorized',
+          color: Colors.red,
+          statusCode: 403,
+        ),
+      );
     }
+  }
+
+  void showUploadDialog(DocumentModel documentModel) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AddFileDialog(documentModel: documentModel);
+      },
+    ).then((value) {
+      if (value) {
+        documentListProvider.searchDocumentCriteria.page = 0;
+        documentListProvider.setDocumentSearchCriterea(
+            documentListProvider.searchDocumentCriteria);
+      }
+    });
   }
 
   fileViewScreen() {
@@ -1158,30 +1286,6 @@ class _FileListScreenState extends State<FileListScreen> {
         // documentListProvider.setDocumentSearchCriterea(
         //     documentListProvider.searchDocumentCriteria);
       }
-    }
-  }
-
-  editDocumentInfo() {
-    if (selectedRow != null) {
-      DocumentModel documentModel =
-          DocumentModel.fromPlutoRow(selectedRow!, _locale);
-      showDialog(
-        context: context,
-        builder: (context) {
-          return InfoDocumentDialog(
-            isEdit: true,
-            documentModel: documentModel,
-          );
-        },
-      ).then((value) {
-        if (value) {
-          documentListProvider.searchDocumentCriteria.page = 0;
-          selectedRow = null;
-          setState(() {});
-          documentListProvider.setDocumentSearchCriterea(
-              documentListProvider.searchDocumentCriteria);
-        }
-      });
     }
   }
 

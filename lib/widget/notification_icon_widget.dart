@@ -219,7 +219,7 @@ class _NotificationIconState extends State<NotificationIcon> {
             message: _locale.approvals,
             child: const Icon(
               Icons.notifications_active_rounded,
-              size: 30.0,
+              size: 25.0,
               color: Colors.yellow,
             ),
           ),
