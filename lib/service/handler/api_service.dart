@@ -37,7 +37,7 @@ class ApiService {
         },
       );
       print("--------------------------------------------");
-      print("token $token");
+      // print("token $token");
       print("urlll $requestUrl");
       print("responseCode ${response.statusCode}");
       if (response.statusCode == 417 || response.statusCode == 401) {
@@ -120,7 +120,7 @@ class ApiService {
         },
       );
       print("--------------------------------------------");
-      print("token $token");
+      // print("token $token");
       print("urlll $requestUrl");
       print("responseCode ${response.statusCode}");
       if (response.statusCode == 417 || response.statusCode == 401) {
@@ -201,7 +201,7 @@ class ApiService {
       body: json.encode(toJson),
     );
     print("--------------------------------------------");
-    print("token $token");
+    // print("token $token");
     print("urlll $requestUrl");
     print("urlllbody ${json.encode(toJson)}");
     print("responseCode ${response.statusCode}");
@@ -288,7 +288,7 @@ class ApiService {
     );
 
     print("--------------------------------------------");
-    print("token $token");
+    // print("token $token");
     print("urlll $requestUrl");
     print("urlllbody ${json.encode(toJson)}");
     print("responseCode ${response.statusCode}");
@@ -371,7 +371,7 @@ class ApiService {
       );
 
       print("--------------------------------------------");
-      print("token $token");
+      // print("token $token");
       print("urlll $requestUrl");
       print("urlllbody ${json.encode(toJson)}");
       print("responseCode ${response.statusCode}");
@@ -549,7 +549,7 @@ class ApiService {
       );
 
       print("--------------------------------------------");
-      print("token $token");
+      // print("token $token");
       print("urlll $requestUrl");
       print("urlllbody ${json.encode(toJson)}");
       print("responseCode ${response.statusCode}");

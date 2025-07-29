@@ -97,10 +97,10 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
     width = MediaQuery.of(context).size.width;
     isDesktop = Responsive.isDesktop(context);
 
-    // Only render the chart if the data has been loaded
-    if (userDocList.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    // // Only render the chart if the data has been loaded
+    // if (userDocList.isEmpty) {
+    //   return const Center(child: CircularProgressIndicator());
+    // }
 
     return Container(
       decoration: const BoxDecoration(),
@@ -150,7 +150,7 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
                                       searchCriteria: searchCriteria);
                                 },
                               ).then((value) {
-                                if (value != null) {
+                                if (value != null && value) {
                                   searchCriteria = value;
                                   listOfBalances.clear();
                                   listOfPeriods.clear();

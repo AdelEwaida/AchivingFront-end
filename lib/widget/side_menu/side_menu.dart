@@ -188,7 +188,7 @@ class _SideMenuState extends State<SideMenu> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Image.asset(
-                          "assets/images/asd.png",
+                          "assets/images/logo-white.png",
                           width: isDesktop ? width * 0.073 : width * 0.5,
                         ),
                         SizedBox(

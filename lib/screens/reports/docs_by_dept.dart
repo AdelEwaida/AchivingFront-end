@@ -95,9 +95,9 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
     isDesktop = Responsive.isDesktop(context);
 
     // Only render the chart if the data has been loaded
-    if (barData.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    // if (barData.isEmpty) {
+    //   return const Center(child: CircularProgressIndicator());
+    // }
 
     return Container(
       decoration: const BoxDecoration(),
@@ -147,7 +147,7 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
                                   );
                                 },
                               ).then((value) {
-                                if (value != null) {
+                                if (value != null && value) {
                                   searchCriteria = value;
                                   listOfBalances.clear();
                                   listOfPeriods.clear();

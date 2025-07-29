@@ -260,7 +260,7 @@ class _LogInScreenState extends State<LoginScreen>
     return Container(
       alignment: Alignment.topCenter,
       child: Image.asset(
-        'assets/images/asd.png',
+        'assets/images/logo.png',
         width: width * 0.15,
         height: height * 0.13,
       ),

@@ -92,9 +92,9 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
     isDesktop = Responsive.isDesktop(context);
 
     // Only render the chart if the data has been loaded
-    if (barData.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    // if (barData.isEmpty) {
+    //   return const Center(child: CircularProgressIndicator());
+    // }
 
     return Container(
       decoration: const BoxDecoration(),
@@ -144,7 +144,7 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
                                   );
                                 },
                               ).then((value) {
-                                if (value != null) {
+                                if (value != null && value) {
                                   searchCriteria = value;
                                   barData.clear();
                                   docByCat();
@@ -154,7 +154,6 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
                           )),
                     ],
                   ),
-            
                   BarDashboardChart(
                     key: UniqueKey(),
                     barChartData: barData,
@@ -183,6 +182,5 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
       }
     });
     setState(() {});
-
   }
 }
