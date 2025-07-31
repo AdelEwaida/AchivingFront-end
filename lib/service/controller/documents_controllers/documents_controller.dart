@@ -12,6 +12,7 @@ import '../../../models/db/document_models/documnet_info_model.dart';
 import '../../../models/db/document_models/upload_file_mode.dart';
 import '../../../utils/constants/api_constants.dart';
 import '../../handler/api_service.dart';
+import 'ScanResult.dart';
 
 class DocumentsController {
   //modify this method
@@ -138,7 +139,7 @@ class DocumentsController {
     return list;
   }
 
-  Future<List<String>> getAllScannersMethod(String ip) async {
+  Future<List<String>> getAllScannersMethodOld(String ip) async {
     List<String> list = [];
     var response = await ApiService().getRequest(getAllScanners);
     if (response.statusCode == 200) {
@@ -150,6 +151,33 @@ class DocumentsController {
     return list;
   }
 
+  Future<List<String>> getAllScannersMethod(String ip) async {
+    List<String> list = [];
+
+    try {
+      var response = await ApiService()
+          .getRequest(getAllScanners)
+          .timeout(const Duration(seconds: 90));
+
+      // print(" Status Code: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+
+        if (jsonData['scanners'] != null) {
+          for (var scanner in jsonData['scanners']) {
+            list.add(scanner);
+          }
+        }
+      } else {
+        print("❌ Failed to load scanners. Status: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("⚠️ Error fetching scanners: $e");
+    }
+
+    return list;
+  }
+
   Future<ScannedImage> getSccanedImageMethod(String ip, int index) async {
     var response = await ApiService().getRequest("$getScanedImageApi/$index");
     var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
@@ -157,6 +185,26 @@ class DocumentsController {
     ScannedImage scannedImage = ScannedImage.fromJson(jsonData);
     return scannedImage;
   }
+
+  // Future<ScanResult> getSccanedImageMethod(String ip, int index) async {
+  //   final url = "$getScanedImageApi/$index";
+
+  //   final response = await ApiService().getRequest(url);
+
+  //   if (response.statusCode != 200) {
+  //     print(utf8.decode(response.bodyBytes));
+  //     return ScanResult(statusCode: response.statusCode, scannedImage: null);
+  //   }
+
+  //   final decoded = utf8.decode(response.bodyBytes);
+
+  //   final jsonData = jsonDecode(decoded);
+
+  //   final scannedImage = ScannedImage.fromJson(jsonData);
+
+  //   return ScanResult(
+  //       statusCode: response.statusCode, scannedImage: scannedImage);
+  // }
 
   Future<int> getDocInfoCount(
       SearchDocumentCriteria searchDocumentCriteria) async {

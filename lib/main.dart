@@ -61,7 +61,6 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
   final sessionStateStream = StreamController<SessionState>();
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final sessionConfig = SessionConfig(

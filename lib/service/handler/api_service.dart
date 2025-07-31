@@ -20,7 +20,7 @@ class ApiService {
   final storage = const FlutterSecureStorage();
   static String urlServer = "";
   static String whatsAppServer = "";
-  static String scannerURL = "http://localhost:5000";
+  // static String scannerURL = "http://localhost:5000";
   static String emailServer = "";
   Future getScannersRequest(String ip, String api) async {
     String? token = await storage.read(key: 'jwt');
@@ -201,7 +201,7 @@ class ApiService {
       body: json.encode(toJson),
     );
     print("--------------------------------------------");
-    // print("token $token");
+    print("token $token");
     print("urlll $requestUrl");
     print("urlllbody ${json.encode(toJson)}");
     print("responseCode ${response.statusCode}");
@@ -549,7 +549,7 @@ class ApiService {
       );
 
       print("--------------------------------------------");
-      // print("token $token");
+      print("token $token");
       print("urlll $requestUrl");
       print("urlllbody ${json.encode(toJson)}");
       print("responseCode ${response.statusCode}");

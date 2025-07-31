@@ -150,7 +150,7 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
                                       searchCriteria: searchCriteria);
                                 },
                               ).then((value) {
-                                if (value != null && value) {
+                                if (value != null && value is ReportsCriteria) {
                                   searchCriteria = value;
                                   listOfBalances.clear();
                                   listOfPeriods.clear();

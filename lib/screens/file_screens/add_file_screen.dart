@@ -704,6 +704,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                 }
               }
             },
+            noDataString: "⚠️ No scanners found",
             initialValue: "",
             // items: scanners,
             bordeText: _locale.scanners,
@@ -716,8 +717,31 @@ class _AddFileScreenState extends State<AddFileScreen> {
           ),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () {
-              scan();
+            onPressed: () async {
+              openLoadinDialog(context);
+
+              await DocumentsController()
+                  .getAllScannersMethod(url)
+                  .then((value) {
+                Navigator.pop(context);
+                if (value.isNotEmpty) {
+                  scan();
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (_) => ErrorDialog(
+                      icon: Icons.error_outline,
+                      errorTitle: _locale.error,
+                      errorDetails: _locale.noScannersFound,
+                      color: Colors.red,
+                      statusCode: 406,
+                    ),
+                  );
+                }
+              }).catchError((e) {
+                // Optional: handle network or decoding error
+                Navigator.pop(context); // Ensure loading is closed
+              });
             },
             style: customButtonStyle(
                 Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.055),
@@ -733,6 +757,22 @@ class _AddFileScreenState extends State<AddFileScreen> {
     );
   }
 
+  // scan() async {
+  //   openLoadinDialog(context);
+
+  //   await documentsController
+  //       .getSccanedImageMethod(url, scannerIndex)
+  //       .then((result) {
+  //     if (result.statusCode == 200 && result.scannedImage != null) {
+  //       filesName.add("${issueNoController.text}.pdf");
+  //       filesBlobs.add(result.scannedImage!.scannedImage!);
+  //       Navigator.pop(context);
+  //     } else {
+  //       // print("elseeeeeeeeeeeeeeeeeeeeeeee");
+  //       Navigator.pop(context);
+  //     }
+  //   });
+  // }
   scan() async {
     openLoadinDialog(context);
     var response =

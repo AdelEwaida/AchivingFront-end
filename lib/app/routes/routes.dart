@@ -44,6 +44,7 @@ class AppRoutes {
           path: mainScreenRoute,
           builder: (_, state) => const HomePage(),
           redirect: (context, state) => _redirect(context, mainScreenRoute),
+          
         ),
         // GoRoute(
         //   path: officesScreenRoute,

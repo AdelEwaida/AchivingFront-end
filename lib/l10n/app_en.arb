@@ -246,6 +246,8 @@
     "pleaseAddExcel":"Please upload an Excel file containing a single column for the issue number",
     "uploadExcelFile":"Upload Excel File",
     "isLimitAction":"Restrict acess to other department",
-    "notAllowedToEditDept":"You are not authorized for this department."
+    "notAllowedToEditDept":"You are not authorized for this department.",
+    "noScannersFound": "No scanners found"
+
 
 }

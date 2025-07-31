@@ -144,7 +144,7 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
                                   );
                                 },
                               ).then((value) {
-                                if (value != null && value) {
+                                if (value != null && value is ReportsCriteria) {
                                   searchCriteria = value;
                                   barData.clear();
                                   docByCat();

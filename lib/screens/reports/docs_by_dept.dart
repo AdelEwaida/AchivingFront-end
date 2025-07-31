@@ -147,7 +147,7 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
                                   );
                                 },
                               ).then((value) {
-                                if (value != null && value) {
+                                if (value != null && value is ReportsCriteria) {
                                   searchCriteria = value;
                                   listOfBalances.clear();
                                   listOfPeriods.clear();

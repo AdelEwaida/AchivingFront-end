@@ -30,6 +30,7 @@ class DropDown extends StatefulWidget {
   final bool? showBorder;
   bool? isEnabled;
   bool? isMandatory;
+  String? noDataString;
   DropDown(
       {Key? key,
       this.onClearIconPressed,
@@ -56,6 +57,7 @@ class DropDown extends StatefulWidget {
       this.icon,
       this.onBeforeOpening,
       this.showBorder,
+      this.noDataString,
       this.color})
       : super(key: key);
   @override
@@ -131,16 +133,16 @@ class _CustomDropDownState extends State<DropDown> {
             popupProps: PopupProps.menu(
               searchDelay: const Duration(milliseconds: 1),
               showSearchBox: widget.searchBox ?? true,
-              isFilterOnline: widget.onSearch != null ? true : false,
+              isFilterOnline: widget.onSearch != null,
               searchFieldProps: TextFieldProps(
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                      color: primary2,
-                    )),
-                    constraints: BoxConstraints.tightFor(height: height * .18),
-                  )),
+                autofocus: true,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide(color: primary2),
+                  ),
+                  constraints: BoxConstraints.tightFor(height: height * .18),
+                ),
+              ),
               constraints:
                   BoxConstraints.tightFor(height: widget.heightVal ?? height),
               itemBuilder: (context, item, isSelected) {
@@ -149,13 +151,21 @@ class _CustomDropDownState extends State<DropDown> {
                     item.toString(),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 11, // Set your desired font size here
+                      fontSize: 11,
                       color: isSelected ? Colors.white : Colors.black,
                     ),
                   ),
-                  // Add any other customization for the ListTile here
                 );
               },
+              emptyBuilder: (context, searchEntry) => Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    widget.noDataString ?? "",
+                    style: TextStyle(color: Colors.grey.shade600),
+                  ),
+                ),
+              ),
             ),
             onBeforePopupOpening: widget.onBeforeOpening,
             onChanged: (value) {

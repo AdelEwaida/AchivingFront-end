@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:excel/excel.dart';
@@ -73,7 +74,7 @@ class _ImportExcelDialogState extends State<ImportExcelDialog> {
         ),
         content: SizedBox(
           width: width * 0.25,
-          height: height * 0.3,
+          height: height * 0.35,
           child: Stack(
             children: [
               Column(
@@ -102,10 +103,12 @@ class _ImportExcelDialogState extends State<ImportExcelDialog> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
+                          openLoadinDialog(context);
                           await importExcelController
                               .importIssues(issuesList)
-                              .then((value) {
-                            if (value.statusCode == 200) {
+                              .then((value) async {
+                            if (value.statusCode == 200 &&
+                                issuesList.isNotEmpty) {
                               final blob = html.Blob([value.bodyBytes]);
                               final url =
                                   html.Url.createObjectUrlFromBlob(blob);
@@ -115,19 +118,25 @@ class _ImportExcelDialogState extends State<ImportExcelDialog> {
                                 ..click();
                               html.Url.revokeObjectUrl(url);
 
-                              showDialog(
+                              Navigator.pop(context);
+
+                              await showDialog(
                                 context: context,
                                 builder: (context) {
                                   return ErrorDialog(
-                                      icon: Icons.done_all,
-                                      errorDetails: _locale.done,
-                                      errorTitle: _locale.addDoneSucess,
-                                      color: Colors.green,
-                                      statusCode: 200);
+                                    icon: Icons.done_all,
+                                    errorDetails: _locale.done,
+                                    errorTitle: _locale.addDoneSucess,
+                                    color: Colors.green,
+                                    statusCode: 200,
+                                  );
                                 },
-                              ).then((value) {
-                                Navigator.pop(context, true);
-                              });
+                              );
+
+                              // ignore: use_build_context_synchronously
+                              Navigator.pop(context, true);
+                            } else {
+                              Navigator.pop(context);
                             }
                           });
                         },
