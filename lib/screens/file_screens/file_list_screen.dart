@@ -304,7 +304,7 @@ class _FileListScreenState extends State<FileListScreen> {
                                   ]),
                             ),
                       SizedBox(
-                        width: width * 0.02,
+                        width: width * 0.01,
                       ),
                       fillterSection()
                     ],
@@ -1383,7 +1383,7 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.userCode,
         field: "txtUsercode",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.09 : width * 0.2,
+        width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
