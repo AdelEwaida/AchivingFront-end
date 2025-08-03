@@ -114,6 +114,7 @@ class _FileListScreenState extends State<FileListScreen> {
   DocumentModel? documentModel;
   bool approval = false;
   UserController userController = UserController();
+  ValueNotifier isTableLoading = ValueNotifier(true);
 
   String? active;
   List<UserModel> result = [];
@@ -128,6 +129,8 @@ class _FileListScreenState extends State<FileListScreen> {
       totalDocCount.value = value;
     });
   }
+
+  bool _isInitialized = false;
 
   @override
   void dispose() {
@@ -383,6 +386,7 @@ class _FileListScreenState extends State<FileListScreen> {
                                                                 .txtKey));
 
                                         if (result.isEmpty) {
+                                          // ignore: use_build_context_synchronously
                                           showDialog(
                                             context: context,
                                             builder: (context) {
@@ -399,6 +403,7 @@ class _FileListScreenState extends State<FileListScreen> {
                                           return;
                                         }
 
+                                        // ignore: use_build_context_synchronously
                                         await showDialog(
                                           barrierDismissible: false,
                                           context: context,
@@ -446,7 +451,7 @@ class _FileListScreenState extends State<FileListScreen> {
     return Column(
       children: [
         TableComponent(
-          key: UniqueKey(),
+          // key: UniqueKey(),
           tableHeigt: height * 0.45,
           tableWidth: width * 0.81,
           addReminder: context.read<DocumentListProvider>().isViewFile == true
@@ -483,9 +488,13 @@ class _FileListScreenState extends State<FileListScreen> {
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
 
-            stateManager.setShowColumnFilter(true);
+            // stateManager.setShowColumnFilter(true);
             // pageLis.value = pageLis.value > 1 ? 0 : 1;
             // totalActionsCount.value = 0;
+            if (isLoading.value) {
+              stateManager!.setShowLoading(true);
+            }
+            stateManager!.setShowColumnFilter(true);
             getCount();
           },
           doubleTab: (event) async {
@@ -971,8 +980,12 @@ class _FileListScreenState extends State<FileListScreen> {
                 width: width * 0.01,
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   resetForm();
+                  // await search();
+
+                  // documentListProvider.setIsSearch(false);
+                  // documentListProvider.searchDocumentCriteria.page = -1;
                 },
                 style: customButtonStyle(
                     Size(
@@ -995,6 +1008,38 @@ class _FileListScreenState extends State<FileListScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> initializePage() async {
+    // Reset tree state
+    isFetchExecuted = false;
+    treeNodes.clear();
+    roots = <MyNode>[
+      MyNode(title: '/', children: treeNodes, extra: null, isRoot: true),
+    ];
+    treeController.roots = roots;
+    treeController.notifyListeners();
+
+    // Reset filters
+    documentListProvider.setPage(1);
+    documentListProvider.setIsSearch(false);
+    documentListProvider.setIssueNumber(null);
+    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
+
+    // Fetch initial data
+    await fetchDropDownTree();
+    await fetchData();
+
+    // Fetch initial document list
+    stateManager.setShowLoading(true);
+    stateManager.removeAllRows();
+    List<DocumentModel> result = await documentsController
+        .searchDocCriterea(SearchDocumentCriteria(page: 1));
+    for (int i = 0; i < result.length; i++) {
+      stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
+    }
+    stateManager.setShowLoading(false);
+    getCount();
   }
 
   Future<void> resetForm() async {
@@ -1022,6 +1067,8 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   Future<void> search() async {
+    stateManager.setShowLoading(true);
+
     SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
     searchDocumentCriteria.fromIssueDate =
         documentListProvider.issueNumber != null
@@ -1046,13 +1093,12 @@ class _FileListScreenState extends State<FileListScreen> {
     searchDocumentCriteria.following = followingController.text;
     searchDocumentCriteria.sortedBy = selectedSortedType;
 
-    searchDocumentCriteria.page = -1;
+    searchDocumentCriteria.page = 1;
     documentListProvider.setIsSearch(true);
 
     // documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
     List<DocumentModel> result =
         await documentsController.searchDocCriterea(searchDocumentCriteria);
-    stateManager.setShowLoading(true);
     stateManager.removeAllRows();
     for (int i = 0; i < result.length; i++) {
       stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
@@ -1069,8 +1115,6 @@ class _FileListScreenState extends State<FileListScreen> {
 
   void explorFiels() {
     if (selectedRow != null) {
-      print(
-          "selectedRow!.cells['txtKey']!.value ${selectedRow!.cells['txtDescription']!.value} ${selectedRow!.cells['txtKey']!.value}");
       openLoadinDialog(context);
       documentsController
           .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
@@ -1125,6 +1169,7 @@ class _FileListScreenState extends State<FileListScreen> {
     if (hasMatch) {
       showUploadDialog(documentModel);
     } else {
+      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (context) => ErrorDialog(
@@ -1437,14 +1482,14 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   List<PlutoRow> rowList = [];
-  ValueNotifier<int> pageLis = ValueNotifier(1);
 
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
     bool isLast = false;
-
+    stateManager.setShowLoading(true);
     if (documentListProvider.issueNumber == null) {
       if (documentListProvider.isSearch) {
+        print("is search :${documentListProvider.isSearch}");
         List<PlutoRow> searchList = [];
         documentListProvider.searchDocumentCriteria.fromIssueDate =
             documentListProvider.issueNumber != null
@@ -1501,15 +1546,16 @@ class _FileListScreenState extends State<FileListScreen> {
         await Future.delayed(const Duration(milliseconds: 500));
 
         return Future.value(PlutoInfinityScrollRowsResponse(
-          isLast: documentListProvider.searchDocumentCriteria.page == -1
-              ? true
-              : false,
-          rows: [],
+          isLast: true,
+          rows: searchList.toList(),
         ));
       } else {
+        print("111111");
         if (documentListProvider.searchDocumentCriteria.page == 1) {
+          print("222222222222222222222222");
           documentListProvider.searchDocumentCriteria.page = -1;
         } else {
+          print("3333333333333333333333333");
           documentListProvider.searchDocumentCriteria.page = 1;
         }
 
@@ -1533,6 +1579,7 @@ class _FileListScreenState extends State<FileListScreen> {
         isLast = topList.isEmpty;
 
         await Future.delayed(const Duration(milliseconds: 500));
+        stateManager.setShowLoading(false);
 
         return Future.value(PlutoInfinityScrollRowsResponse(
           isLast: documentListProvider.searchDocumentCriteria.page == -1
@@ -1562,6 +1609,7 @@ class _FileListScreenState extends State<FileListScreen> {
       }
 
       await Future.delayed(const Duration(milliseconds: 500));
+      stateManager.setShowLoading(false);
 
       return Future.value(PlutoInfinityScrollRowsResponse(
         isLast: false,
