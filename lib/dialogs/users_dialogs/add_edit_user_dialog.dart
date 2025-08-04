@@ -11,6 +11,7 @@ import 'package:archiving_flutter_project/utils/encrypt/encryption.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
 import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -96,7 +97,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           await userController.getDepartmentUser(widget.userModel!.txtCode!);
 
       setState(() {
-        userDeptsList = convertUserDeptToDeptModel(response); 
+        userDeptsList = convertUserDeptToDeptModel(response);
         hintUsers = userDeptsList!.map((e) => e.toString()).join(", ");
       });
     }
@@ -140,7 +141,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.43 : height * 0.5,
+        height: isDesktop ? height * 0.47 : height * 0.5,
         child: formSection(),
       ),
       actions: [
@@ -494,76 +495,96 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   }
 
   void addUser() async {
-    if (userCodeController.text.trim().isEmpty ||
-        userNameController.text.trim().isEmpty ||
-        txtReferenceUsernameController.text.isEmpty ||
-        urlController.text.trim().isEmpty ||
-        selectedUserType == null) {
-      showDialog(
+    UserController()
+        .getByUserURL(urlController.text.trim())
+        .then((value) async {
+      // if (value == null) {
+      CoolAlert.show(
+        width: width * 0.4,
+        // ignore: use_build_context_synchronously
         context: context,
-        builder: (context) {
-          return ErrorDialog(
-              icon: Icons.error,
-              errorDetails: _locale.error,
-              errorTitle: _locale.pleaseAddAllRequiredFields,
-              color: Colors.red,
-              statusCode: 400);
+        type: CoolAlertType.confirm,
+        title: _locale.error,
+        text: _locale.urlError,
+        confirmBtnText: _locale.ok,
+        cancelBtnText: _locale.cancel,
+
+        onConfirmBtnTap: () async {
+          // Navigator.pop(context);
+          if (userCodeController.text.trim().isEmpty ||
+              userNameController.text.trim().isEmpty ||
+              txtReferenceUsernameController.text.isEmpty ||
+              urlController.text.trim().isEmpty ||
+              selectedUserType == null) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return ErrorDialog(
+                    icon: Icons.error,
+                    errorDetails: _locale.error,
+                    errorTitle: _locale.pleaseAddAllRequiredFields,
+                    color: Colors.red,
+                    statusCode: 400);
+              },
+            );
+          } else if (userModel != null && widget.isChangePassword == false) {
+            editMethod();
+          } else if (userModel != null && widget.isChangePassword) {
+            cahngePasswordMethod();
+          } else {
+            UserModel userModel = UserModel(
+                txtCode: userCodeController.text,
+                txtNamee: userNameController.text,
+                url: urlController.text,
+                bolActive: userActive ?? 1,
+                bolLimitActions: isLimitAction == true ? 1 : 0,
+                txtReferenceUsername: txtReferenceUsernameController.text,
+                intType: selectedUserType);
+
+            UserDeptModel userDeptModel =
+                UserDeptModel(user: userModel, depts: userDeptsList);
+
+            try {
+              final response = await userController.addUser(userDeptModel);
+
+              print("statusCode ${response.statusCode}");
+
+              if (response.statusCode == 200) {
+                // ignore: use_build_context_synchronously
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ErrorDialog(
+                        icon: Icons.done_all,
+                        errorDetails: _locale.done,
+                        errorTitle: _locale.addDoneSucess,
+                        color: Colors.green,
+                        statusCode: 200);
+                  },
+                ).then((value) {
+                  Navigator.pop(context, true);
+                });
+              }
+            } catch (e) {
+              print("Error adding user: $e");
+              // ignore: use_build_context_synchronously
+              // showDialog(
+              //   context: context,
+              //   builder: (context) {
+              //     return ErrorDialog(
+              //         icon: Icons.error,
+              //         errorDetails: _locale.error,
+              //         errorTitle: "error",
+              //         color: Colors.red,
+              //         statusCode: 500);
+              //   },
+              // );
+            }
+          }
         },
       );
-    } else if (userModel != null && widget.isChangePassword == false) {
-      editMethod();
-    } else if (userModel != null && widget.isChangePassword) {
-      cahngePasswordMethod();
-    } else {
-      UserModel userModel = UserModel(
-          txtCode: userCodeController.text,
-          txtNamee: userNameController.text,
-          url: urlController.text,
-          bolActive: userActive ?? 1,
-          bolLimitActions: isLimitAction == true ? 1 : 0,
-          txtReferenceUsername: txtReferenceUsernameController.text,
-          intType: selectedUserType);
-
-      UserDeptModel userDeptModel =
-          UserDeptModel(user: userModel, depts: userDeptsList);
-
-      try {
-        final response = await userController.addUser(userDeptModel);
-
-        print("statusCode ${response.statusCode}");
-
-        if (response.statusCode == 200) {
-          // ignore: use_build_context_synchronously
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialog(
-                  icon: Icons.done_all,
-                  errorDetails: _locale.done,
-                  errorTitle: _locale.addDoneSucess,
-                  color: Colors.green,
-                  statusCode: 200);
-            },
-          ).then((value) {
-            Navigator.pop(context, true);
-          });
-        }
-      } catch (e) {
-        print("Error adding user: $e");
-        // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-                icon: Icons.error,
-                errorDetails: _locale.error,
-                errorTitle: "error",
-                color: Colors.red,
-                statusCode: 500);
-          },
-        );
-      }
-    }
+      // }
+    });
   }
 
   void addUser1() async {

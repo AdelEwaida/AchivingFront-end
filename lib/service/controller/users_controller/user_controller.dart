@@ -146,4 +146,26 @@ class UserController {
     });
     return itemCount;
   }
+
+  Future<UserModel?> getByUserURL(String url) async {
+    var response = await ApiService().postRequest(findUserByUrl, {"url": url});
+
+    if (response.statusCode == 200) {
+      var decoded = utf8.decode(response.bodyBytes);
+
+      if (decoded.isEmpty || decoded == "null") {
+        return null;
+      }
+
+      var jsonData = jsonDecode(decoded);
+
+      if (jsonData is Map && jsonData.isEmpty) {
+        return null;
+      }
+
+      return UserModel.fromJson(jsonData);
+    } else {
+      throw Exception("Failed to fetch user. Status: ${response.statusCode}");
+    }
+  }
 }
