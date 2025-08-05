@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
@@ -22,6 +23,7 @@ import '../../models/db/user_models/user_dept_model.dart';
 import '../../models/dto/searchs_model/search_model.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
+import '../error_dialgos/confirm_dialog.dart';
 
 class AddUserDialog extends StatefulWidget {
   UserModel? userModel;
@@ -494,7 +496,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
     );
   }
 
-  void addUser() async {
+  void addUserAPI() async {
     UserController()
         .getByUserURL(urlController.text.trim())
         .then((value) async {
@@ -567,18 +569,6 @@ class _DepartmentDialogState extends State<AddUserDialog> {
               }
             } catch (e) {
               print("Error adding user: $e");
-              // ignore: use_build_context_synchronously
-              // showDialog(
-              //   context: context,
-              //   builder: (context) {
-              //     return ErrorDialog(
-              //         icon: Icons.error,
-              //         errorDetails: _locale.error,
-              //         errorTitle: "error",
-              //         color: Colors.red,
-              //         statusCode: 500);
-              //   },
-              // );
             }
           }
         },
@@ -587,11 +577,12 @@ class _DepartmentDialogState extends State<AddUserDialog> {
     });
   }
 
-  void addUser1() async {
+  void addUser() async {
     if (userCodeController.text.trim().isEmpty ||
         userNameController.text.trim().isEmpty ||
         txtReferenceUsernameController.text.isEmpty ||
         urlController.text.trim().isEmpty ||
+        ((userDeptsList ?? []).isEmpty) ||
         selectedUserType == null) {
       showDialog(
         context: context,
@@ -616,25 +607,35 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           bolActive: userActive ?? 1,
           txtReferenceUsername: txtReferenceUsernameController.text,
           intType: selectedUserType);
-      await userController
-          .addUser(UserDeptModel(user: userModel, depts: userDeptsList))
-          .then((value) {
-        print("statusCode ${value.statusCode}");
-        if (value.statusCode == 200) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialog(
-                  icon: Icons.done_all,
-                  errorDetails: _locale.done,
-                  errorTitle: _locale.addDoneSucess,
-                  color: Colors.green,
-                  statusCode: 200);
-            },
-          ).then((value) {
-            Navigator.pop(context, true);
-          });
-        }
+      UserController().getByUserURL(urlController.text.trim()).then((value) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return CustomConfirmDialog(confirmMessage: _locale.urlError);
+          },
+        ).then((value) async {
+          if (value == true) {
+            await userController
+                .addUser(UserDeptModel(user: userModel, depts: userDeptsList))
+                .then((value) {
+              if (value.statusCode == 200) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ErrorDialog(
+                        icon: Icons.done_all,
+                        errorDetails: _locale.done,
+                        errorTitle: _locale.addDoneSucess,
+                        color: Colors.green,
+                        statusCode: 200);
+                  },
+                ).then((value) {
+                  Navigator.pop(context, true);
+                });
+              }
+            });
+          }
+        });
       });
     }
   }
@@ -670,7 +671,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   void editMethod() async {
     // print(
     //     "widget.departmentModel!.txtKey!widget.departmentModel!.txtKey!:${widget.departmentModel!.txtKey!}");
-    UserModel userModel = UserModel(
+    UserModel user = UserModel(
         txtCode: userCodeController.text,
         url: urlController.text,
         txtNamee: userNameController.text,
@@ -680,25 +681,61 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         intType: selectedUserType);
 
     UserDeptModel userDeptModel =
-        UserDeptModel(user: userModel, depts: userDeptsList);
+        UserDeptModel(user: user, depts: userDeptsList);
 
-    await userController.updateUser(userDeptModel).then((value) {
-      if (value.statusCode == 200) {
+    String newUrl = urlController.text.trim();
+    String oldUrl = userModel!.url ?? "";
+    print("urlController.texturlController.text :${newUrl} ${oldUrl}");
+    if (newUrl != oldUrl) {
+      UserController()
+          .getByUserURL(urlController.text.trim())
+          .then((value) async {
         showDialog(
           context: context,
           builder: (context) {
-            return ErrorDialog(
-                icon: Icons.done_all,
-                errorDetails: _locale.done,
-                errorTitle: _locale.editDoneSucess,
-                color: Colors.green,
-                statusCode: 200);
+            return CustomConfirmDialog(confirmMessage: _locale.urlError);
           },
-        ).then((value) {
-          Navigator.pop(context, true);
+        ).then((value) async {
+          if (value == true) {
+            await userController.updateUser(userDeptModel).then((value) {
+              if (value.statusCode == 200) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ErrorDialog(
+                        icon: Icons.done_all,
+                        errorDetails: _locale.done,
+                        errorTitle: _locale.editDoneSucess,
+                        color: Colors.green,
+                        statusCode: 200);
+                  },
+                ).then((value) {
+                  Navigator.pop(context, true);
+                });
+              }
+            });
+          }
         });
-      }
-    });
+      });
+    } else {
+      await userController.updateUser(userDeptModel).then((value) {
+        if (value.statusCode == 200) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return ErrorDialog(
+                  icon: Icons.done_all,
+                  errorDetails: _locale.done,
+                  errorTitle: _locale.editDoneSucess,
+                  color: Colors.green,
+                  statusCode: 200);
+            },
+          ).then((value) {
+            Navigator.pop(context, true);
+          });
+        }
+      });
+    }
   }
 
   Widget dropDownUsers() {
