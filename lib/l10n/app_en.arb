@@ -248,6 +248,7 @@
     "isLimitAction":"Restrict acess to other department",
     "notAllowedToEditDept":"You are not authorized for this department.",
     "noScannersFound": "No scanners found",
-    "urlError": "A user already exists with this URL. Do you want to add it again?"
+    "urlError": "A user already exists with this URL. Do you want to add it again?",
+    "numOfFilesNum":"Files Number Displayed"
 
 }

@@ -384,46 +384,34 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
     bool isLast = false;
-    // if (documentListProvider.searchDocumentCriteria.fromIssueDate != null &&
-    //     documentListProvider.searchDocumentCriteria.page! <= 1) {
-    //   stateManager.removeAllRows();
-    //   rowList.clear();
-    // }
 
     if (!isSearch.value) {
-      if (pageLis.value != -1) {
-        List<DocumentModel> result = [];
-        List<PlutoRow> topList = [];
-        if (pageLis.value > 1) {
-          pageLis.value = -1;
-        }
-        result = await documentsController
-            .searchDocCriterea(SearchDocumentCriteria(page: pageLis.value));
-        // if (documentListProvider.searchDocumentCriteria.page! >= 1) {
-        //   documentListProvider.searchDocumentCriteria.page =
-        //       documentListProvider.searchDocumentCriteria.page! + 1;
-        // } else {
-        //   rowList.clear();
-        //   rowList = [];
-        // }
-        for (int i = pageLis.value == -1 ? 50 : 0; i < result.length; i++) {
-          rowList.add(result[i].toPlutoRow(i + 1, _locale));
-          topList.add(result[i].toPlutoRow(rowList.length, _locale));
-        }
+      List<DocumentModel> result = [];
+      List<PlutoRow> topList = [];
 
-        if (pageLis.value == 1) {
-          pageLis.value = pageLis.value + 1;
-        }
-        isLast = documentListProvider.searchDocumentCriteria.page == -1
-            ? true
-            : topList.isEmpty
-                ? true
-                : false;
-        return Future.value(
-            PlutoInfinityScrollRowsResponse(isLast: false, rows: topList));
+      // Fetch data for current page
+      result = await documentsController
+          .searchDocCriterea(SearchDocumentCriteria(page: pageLis.value));
+
+      // Convert to PlutoRows
+      for (int i = 0; i < result.length; i++) {
+        final index = rowList.length + 1;
+        final row = result[i].toPlutoRow(index, _locale);
+        rowList.add(row);
+        topList.add(row);
       }
+
+      // Increment page number for next fetch
+      pageLis.value++;
+
+      // If no more rows returned, set isLast to true
+      if (result.isEmpty) {
+        isLast = true;
+      }
+
+      return PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList);
     }
-    return Future.value(
-        PlutoInfinityScrollRowsResponse(isLast: isLast, rows: []));
+
+    return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
   }
 }

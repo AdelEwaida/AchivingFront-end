@@ -1,5 +1,6 @@
 import 'dart:html';
 
+import 'package:archiving_flutter_project/models/db/categories_models/doc_cat_parent.dart';
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
 import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
 import 'package:archiving_flutter_project/models/tree_model/my_node.dart';
@@ -151,6 +152,7 @@ class DealClassificationTreeScreenState
                     )),
                 IconButton(
                     onPressed: () {
+                      print("selectedCategory :${selectedCategory!.toJson()}");
                       if (selectedCategory != null) {
                         showDialog(
                             context: context,
@@ -271,6 +273,7 @@ class DealClassificationTreeScreenState
 
     treeNodes.clear();
     convertToTreeList(campClassificationList);
+    selectedCategory = null;
 
     children = [];
     for (int i = 0; i < campClassificationList.length; i++) {

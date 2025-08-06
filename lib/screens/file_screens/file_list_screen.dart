@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -45,6 +46,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
@@ -119,6 +121,8 @@ class _FileListScreenState extends State<FileListScreen> {
   String? active;
   List<UserModel> result = [];
   String userCode = "";
+  ValueNotifier fileNumberDisplayed = ValueNotifier(0);
+
   // String? userName = "";
   var storage = FlutterSecureStorage();
   ValueNotifier totalDocCount = ValueNotifier(0);
@@ -136,7 +140,8 @@ class _FileListScreenState extends State<FileListScreen> {
   void dispose() {
     calssificatonNameAndCodeProvider.clearProvider();
     documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
-
+    documentListProvider.searchDocumentCriteria.page = 1;
+    documentListProvider.setPage(1);
     super.dispose();
   }
 
@@ -227,6 +232,7 @@ class _FileListScreenState extends State<FileListScreen> {
     result = await userController.getUsers(
       SearchModel(searchField: userCode, page: -1, status: -1),
     );
+    print("documentListProvider.page :${documentListProvider.page}");
 
     limitAction = result.first!.bolLimitActions;
     super.didChangeDependencies();
@@ -603,6 +609,7 @@ class _FileListScreenState extends State<FileListScreen> {
     }
 
     if (hasMatch) {
+      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (context) {
@@ -621,6 +628,7 @@ class _FileListScreenState extends State<FileListScreen> {
         }
       });
     } else {
+      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (context) => ErrorDialog(
@@ -634,83 +642,100 @@ class _FileListScreenState extends State<FileListScreen> {
     }
   }
 
+  ValueNotifier<int> progress = ValueNotifier(0);
+
   Future<void> exportToExecl() async {
-    final excel = Excel.createExcel(); // Create a new Excel workbook
-    final sheet = excel['Sheet1']; // Access the first sheet
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        content: Lottie.asset(
+          'assets/lottie/loading.json',
+          width: 150,
+          height: 150,
+          repeat: true,
+        ),
+      ),
+    );
 
-    if (stateManager == null) return;
+    try {
+      final excel = Excel.createExcel();
+      final sheet = excel['Sheet1'];
 
-    // Extract columns and rows
-    List<String> headers = stateManager!.columns.map((column) {
-      return column.title ?? '';
-    }).toList();
+      if (stateManager == null) return;
 
-    // Append headers as the first row
-    sheet.appendRow(headers);
-    List<PlutoRow> temp = [];
-    SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
-    searchDocumentCriteria.fromIssueDate =
-        documentListProvider.issueNumber != null
-            ? null
-            : fromDateController.text;
-    searchDocumentCriteria.toIssueDate =
-        documentListProvider.issueNumber != null ? null : toDateController.text;
-
-    searchDocumentCriteria.desc = descreptionController.text;
-
-    searchDocumentCriteria.issueNo = issueNoController.text;
-
-    searchDocumentCriteria.dept = selectedDep;
-    searchDocumentCriteria.keywords = keyWordController.text;
-    searchDocumentCriteria.ref1 = ref1Controller.text;
-    searchDocumentCriteria.ref2 = ref2Controller.text;
-    searchDocumentCriteria.otherRef = otherRefController.text;
-    searchDocumentCriteria.cat =
-        calssificatonNameAndCodeProvider.classificatonKey;
-
-    searchDocumentCriteria.organization = organizationController.text;
-    searchDocumentCriteria.following = followingController.text;
-    searchDocumentCriteria.sortedBy = selectedSortedType;
-
-    searchDocumentCriteria.page = -1;
-    // documentListProvider.setIsSearch(true);
-
-    // documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
-    List<DocumentModel> result =
-        await documentsController.searchDocCriterea(searchDocumentCriteria);
-    // result = await documentsController
-    //     .searchDocCriterea(documentListProvider.searchDocumentCriteria);
-    for (int i = 0; i < result.length; i++) {
-      temp.add(result[i].toPlutoRow(i, _locale));
-    }
-    List<List<String>> rows = temp.map((row) {
-      return stateManager.columns.map((column) {
-        return row.cells[column.field]?.value.toString() ?? '';
+      List<String> headers = stateManager!.columns.map((column) {
+        return column.title ?? '';
       }).toList();
-    }).toList();
 
-    // Append each row
-    for (var row in rows) {
-      sheet.appendRow(row);
+      sheet.appendRow(headers);
+      List<PlutoRow> temp = [];
+
+      SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
+      if (documentListProvider.isSearch ||
+          documentListProvider.issueNumber != null) {
+        searchDocumentCriteria.fromIssueDate =
+            documentListProvider.issueNumber != null
+                ? null
+                : fromDateController.text;
+        searchDocumentCriteria.toIssueDate =
+            documentListProvider.issueNumber != null
+                ? null
+                : toDateController.text;
+      } else {
+        searchDocumentCriteria.fromIssueDate = null;
+        searchDocumentCriteria.toIssueDate = null;
+      }
+
+      searchDocumentCriteria.desc = descreptionController.text;
+      searchDocumentCriteria.issueNo = issueNoController.text;
+      searchDocumentCriteria.dept = selectedDep;
+      searchDocumentCriteria.keywords = keyWordController.text;
+      searchDocumentCriteria.ref1 = ref1Controller.text;
+      searchDocumentCriteria.ref2 = ref2Controller.text;
+      searchDocumentCriteria.otherRef = otherRefController.text;
+      searchDocumentCriteria.cat =
+          calssificatonNameAndCodeProvider.classificatonKey;
+      searchDocumentCriteria.organization = organizationController.text;
+      searchDocumentCriteria.following = followingController.text;
+      searchDocumentCriteria.sortedBy = selectedSortedType;
+      searchDocumentCriteria.page = -1;
+
+      List<DocumentModel> result =
+          await documentsController.searchDocCriterea(searchDocumentCriteria);
+
+      for (int i = 0; i < result.length; i++) {
+        temp.add(result[i].toPlutoRow(i, _locale));
+      }
+
+      List<List<String>> rows = temp.map((row) {
+        return stateManager.columns.map((column) {
+          return row.cells[column.field]?.value.toString() ?? '';
+        }).toList();
+      }).toList();
+
+      for (var row in rows) {
+        sheet.appendRow(row);
+      }
+
+      final excelBytes = excel.encode();
+      final blob = html.Blob([excelBytes!],
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download',
+            'exported_files${Converters.formatDate(DateTime.now().toString())}.xlsx')
+        ..click();
+      html.Url.revokeObjectUrl(url);
+    } catch (e) {
+      log("Export error: $e");
+    } finally {
+      // Close loading dialog
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
     }
-
-    // Convert the workbook to a list of bytes
-    final excelBytes = excel.encode();
-
-    // Create a blob from the bytes
-    final blob = html.Blob([excelBytes!],
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-
-    // Create a URL for the blob
-    final url = html.Url.createObjectUrlFromBlob(blob);
-
-    // Create an anchor element and trigger the download
-    final anchor = html.AnchorElement(href: url)
-      ..setAttribute('download', 'exported_data.xlsx')
-      ..click();
-
-    // Clean up
-    html.Url.revokeObjectUrl(url);
   }
 
   Widget fillterSection() {
@@ -939,7 +964,7 @@ class _FileListScreenState extends State<FileListScreen> {
                       width: context.read<DocumentListProvider>().isViewFile ==
                               true
                           ? width * 0.19
-                          : width * 0.1,
+                          : width * 0.32,
                       height: height * 0.04,
                       text: Text(_locale.issueNo),
                       controller: issueNoController,
@@ -1055,6 +1080,45 @@ class _FileListScreenState extends State<FileListScreen> {
     organizationController.clear();
     followingController.clear();
     selectedDep = "";
+    selectedSortedType = -1;
+
+    documentListProvider.setIssueNumber(null);
+    documentListProvider.setIsSearch(false);
+    documentListProvider.setPage(1);
+    calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
+    calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
+    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
+
+    stateManager.removeAllRows();
+    stateManager.setShowLoading(true);
+
+    List<DocumentModel> result = await documentsController
+        .searchDocCriterea(SearchDocumentCriteria(page: 1));
+
+    for (int i = 0; i < result.length; i++) {
+      stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
+    }
+
+    documentListProvider.setPage(2);
+
+    stateManager.setShowLoading(false);
+    getCount();
+    setState(() {});
+  }
+
+  Future<void> resetFormOld() async {
+    fromDateController.text = Converters.startOfCurrentYearAsString();
+    toDateController.text = Converters.formatDate2(DateTime.now().toString());
+    descreptionController.clear();
+    issueNoController.clear();
+    classificationController.clear();
+    keyWordController.clear();
+    ref1Controller.clear();
+    ref2Controller.clear();
+    otherRefController.clear();
+    organizationController.clear();
+    followingController.clear();
+    selectedDep = "";
     documentListProvider.setIssueNumber(null);
     selectedSortedType = -1;
     calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
@@ -1069,42 +1133,47 @@ class _FileListScreenState extends State<FileListScreen> {
   Future<void> search() async {
     stateManager.setShowLoading(true);
 
-    SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
-    searchDocumentCriteria.fromIssueDate =
+    documentListProvider.setIsSearch(true);
+    documentListProvider.setPage(1);
+
+    documentListProvider.searchDocumentCriteria.page = 1;
+    documentListProvider.searchDocumentCriteria.fromIssueDate =
         documentListProvider.issueNumber != null
             ? null
             : fromDateController.text;
-    searchDocumentCriteria.toIssueDate =
+    documentListProvider.searchDocumentCriteria.toIssueDate =
         documentListProvider.issueNumber != null ? null : toDateController.text;
-
-    searchDocumentCriteria.desc = descreptionController.text;
-
-    searchDocumentCriteria.issueNo = issueNoController.text;
-
-    searchDocumentCriteria.dept = selectedDep;
-    searchDocumentCriteria.keywords = keyWordController.text;
-    searchDocumentCriteria.ref1 = ref1Controller.text;
-    searchDocumentCriteria.ref2 = ref2Controller.text;
-    searchDocumentCriteria.otherRef = otherRefController.text;
-    searchDocumentCriteria.cat =
+    documentListProvider.searchDocumentCriteria.desc =
+        descreptionController.text;
+    documentListProvider.searchDocumentCriteria.issueNo =
+        issueNoController.text;
+    documentListProvider.searchDocumentCriteria.dept = selectedDep;
+    documentListProvider.searchDocumentCriteria.keywords =
+        keyWordController.text;
+    documentListProvider.searchDocumentCriteria.ref1 = ref1Controller.text;
+    documentListProvider.searchDocumentCriteria.ref2 = ref2Controller.text;
+    documentListProvider.searchDocumentCriteria.otherRef =
+        otherRefController.text;
+    documentListProvider.searchDocumentCriteria.cat =
         calssificatonNameAndCodeProvider.classificatonKey;
+    documentListProvider.searchDocumentCriteria.organization =
+        organizationController.text;
+    documentListProvider.searchDocumentCriteria.following =
+        followingController.text;
+    documentListProvider.searchDocumentCriteria.sortedBy = selectedSortedType;
 
-    searchDocumentCriteria.organization = organizationController.text;
-    searchDocumentCriteria.following = followingController.text;
-    searchDocumentCriteria.sortedBy = selectedSortedType;
+    List<DocumentModel> result = await documentsController
+        .searchDocCriterea(documentListProvider.searchDocumentCriteria);
 
-    searchDocumentCriteria.page = 1;
-    documentListProvider.setIsSearch(true);
-
-    // documentListProvider.setDocumentSearchCriterea(searchDocumentCriteria);
-    List<DocumentModel> result =
-        await documentsController.searchDocCriterea(searchDocumentCriteria);
     stateManager.removeAllRows();
+
     for (int i = 0; i < result.length; i++) {
       stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
     }
+
+    documentListProvider.setPage(2);
+
     stateManager.setShowLoading(false);
-    stateManager.notifyListeners();
   }
 
   Widget space(double width1) {
@@ -1127,9 +1196,9 @@ class _FileListScreenState extends State<FileListScreen> {
           },
         );
       }).then((value) {
-        // print("valuevaluevaluevaluevaluevaluevalue:${value}");
+        // log("valuevaluevaluevaluevaluevaluevalue:${value}");
         // if (value != null) {
-        //   // print("DONE");
+        //   // log("DONE");
         //   documentListProvider.setDocumentSearchCriterea(
         //       documentListProvider.searchDocumentCriteria);
         //   Navigator.pop(context);
@@ -1268,7 +1337,7 @@ class _FileListScreenState extends State<FileListScreen> {
         String? fileName = file.txtFilename;
         saveExcelFile(bytes, fileName!);
       } catch (e) {
-        print("Error downloading file: $e");
+        log("Error downloading file: $e");
         // Handle error here
       }
     }
@@ -1308,7 +1377,7 @@ class _FileListScreenState extends State<FileListScreen> {
           var response =
               await documentsController.deleteDocument(documentModel);
           if (response.statusCode == 200) {
-            // print("DONE");
+            // log("DONE");
             documentListProvider.searchDocumentCriteria.page = 0;
             setState(() {});
             // documentListProvider.setDocumentSearchCriterea(
@@ -1325,7 +1394,7 @@ class _FileListScreenState extends State<FileListScreen> {
           DocumentModel.fromPlutoRow(selectedRow!, _locale);
       var response = await documentsController.copyDocument(documentModel);
       if (response.statusCode == 200) {
-        // print("DONE");
+        // log("DONE");
         documentListProvider.searchDocumentCriteria.page = 0;
         setState(() {});
         // documentListProvider.setDocumentSearchCriterea(
@@ -1482,30 +1551,24 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   List<PlutoRow> rowList = [];
-
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
-    bool isLast = false;
     stateManager.setShowLoading(true);
+    List<PlutoRow> resultRows = [];
+
     if (documentListProvider.issueNumber == null) {
       if (documentListProvider.isSearch) {
-        print("is search :${documentListProvider.isSearch}");
-        List<PlutoRow> searchList = [];
-        documentListProvider.searchDocumentCriteria.fromIssueDate =
-            documentListProvider.issueNumber != null
-                ? null
-                : fromDateController.text;
-        documentListProvider.searchDocumentCriteria.toIssueDate =
-            documentListProvider.issueNumber != null
-                ? null
-                : toDateController.text;
+        documentListProvider.searchDocumentCriteria.page =
+            documentListProvider.page ?? 1;
 
+        documentListProvider.searchDocumentCriteria.fromIssueDate =
+            fromDateController.text;
+        documentListProvider.searchDocumentCriteria.toIssueDate =
+            toDateController.text;
         documentListProvider.searchDocumentCriteria.desc =
             descreptionController.text;
-
         documentListProvider.searchDocumentCriteria.issueNo =
             issueNoController.text;
-
         documentListProvider.searchDocumentCriteria.dept = selectedDep;
         documentListProvider.searchDocumentCriteria.keywords =
             keyWordController.text;
@@ -1515,106 +1578,74 @@ class _FileListScreenState extends State<FileListScreen> {
             otherRefController.text;
         documentListProvider.searchDocumentCriteria.cat =
             calssificatonNameAndCodeProvider.classificatonKey;
-
         documentListProvider.searchDocumentCriteria.organization =
             organizationController.text;
         documentListProvider.searchDocumentCriteria.following =
             followingController.text;
         documentListProvider.searchDocumentCriteria.sortedBy =
             selectedSortedType;
-        // rowList.clear();
-        if (documentListProvider.searchDocumentCriteria.page == 0) {
-          stateManager.removeAllRows();
-          documentListProvider.searchDocumentCriteria.page = 1;
-        } else {
-          documentListProvider.searchDocumentCriteria.page = -1;
-        }
-        List<DocumentModel> result = [];
 
-        result = await documentsController
+        List<DocumentModel> result = await documentsController
             .searchDocCriterea(documentListProvider.searchDocumentCriteria);
 
-        for (int i =
-                documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 50;
-            i < result.length;
-            i++) {
-          PlutoRow row = result[i].toPlutoRow(i + 1, _locale);
-          // rowList.add(row);
-          searchList.add(row);
+        for (int i = 0; i < result.length; i++) {
+          resultRows.add(result[i].toPlutoRow(
+              (documentListProvider.page! - 1) * 50 + (i + 1), _locale));
         }
 
-        await Future.delayed(const Duration(milliseconds: 500));
+        documentListProvider.setPage(documentListProvider.page! + 1);
 
-        return Future.value(PlutoInfinityScrollRowsResponse(
-          isLast: true,
-          rows: searchList.toList(),
-        ));
-      } else {
-        print("111111");
-        if (documentListProvider.searchDocumentCriteria.page == 1) {
-          print("222222222222222222222222");
-          documentListProvider.searchDocumentCriteria.page = -1;
-        } else {
-          print("3333333333333333333333333");
-          documentListProvider.searchDocumentCriteria.page = 1;
-        }
-
-        List<DocumentModel> result = [];
-        List<PlutoRow> topList = [];
-
-        result = await documentsController
-            .searchDocCriterea(documentListProvider.searchDocumentCriteria);
-        int currentPage = documentListProvider.page!; //1
-
-        for (int i =
-                documentListProvider.searchDocumentCriteria.page != -1 ? 0 : 50;
-            i < result.length;
-            i++) {
-          int rowIndex = (currentPage - 1) * result.length + (i + 1);
-          PlutoRow row = result[i].toPlutoRow(rowList.length + 1, _locale);
-          rowList.add(row);
-          topList.add(row);
-        }
-
-        isLast = topList.isEmpty;
-
-        await Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 300));
         stateManager.setShowLoading(false);
+        return PlutoInfinityScrollRowsResponse(
+          isLast: result.isEmpty,
+          rows: resultRows,
+        );
+      } else {
+        documentListProvider.searchDocumentCriteria.page =
+            documentListProvider.page ?? 1;
 
-        return Future.value(PlutoInfinityScrollRowsResponse(
-          isLast: documentListProvider.searchDocumentCriteria.page == -1
-              ? true
-              : false,
-          rows: topList.toList(),
-        ));
-        // }
+        List<DocumentModel> result = await documentsController
+            .searchDocCriterea(documentListProvider.searchDocumentCriteria);
+
+        for (int i = 0; i < result.length; i++) {
+          resultRows.add(result[i].toPlutoRow(
+              (documentListProvider.page! - 1) * 50 + (i + 1), _locale));
+        }
+
+        documentListProvider.setPage(documentListProvider.page! + 1);
+
+        await Future.delayed(const Duration(milliseconds: 300));
+        stateManager.setShowLoading(false);
+        return PlutoInfinityScrollRowsResponse(
+          isLast: result.isEmpty,
+          rows: resultRows,
+        );
       }
     } else {
-      List<PlutoRow> searchList = [];
-      documentListProvider.searchDocumentCriteria.page = -1;
-
-      List<DocumentModel> result = [];
+      documentListProvider.searchDocumentCriteria.page =
+          documentListProvider.page ?? 1;
       documentListProvider.searchDocumentCriteria.fromIssueDate = null;
       documentListProvider.searchDocumentCriteria.toIssueDate = null;
       documentListProvider.searchDocumentCriteria.issueNo =
           documentListProvider.issueNumber;
 
-      result = await documentsController
+      List<DocumentModel> result = await documentsController
           .searchDocCriterea(documentListProvider.searchDocumentCriteria);
 
       for (int i = 0; i < result.length; i++) {
-        PlutoRow row = result[i].toPlutoRow(i + 1, _locale);
-        // rowList.add(row);
-        searchList.add(row);
+        resultRows.add(result[i].toPlutoRow(
+            (documentListProvider.page! - 1) * 50 + (i + 1), _locale));
       }
 
-      await Future.delayed(const Duration(milliseconds: 500));
-      stateManager.setShowLoading(false);
+      documentListProvider.setPage(documentListProvider.page! + 1);
 
-      return Future.value(PlutoInfinityScrollRowsResponse(
-        isLast: false,
-        rows: searchList.toList(),
-      ));
+      await Future.delayed(const Duration(milliseconds: 300));
+      stateManager.setShowLoading(false);
+      return PlutoInfinityScrollRowsResponse(
+        isLast: result.isEmpty,
+        rows: resultRows,
+      );
     }
   }
 
