@@ -5,6 +5,7 @@ import 'package:archiving_flutter_project/utils/func/text_and_number_inputFormat
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 
@@ -378,6 +379,15 @@ class _TableComponentState extends State<TableComponent> {
 
     int maxNumber = 1;
     configuration = PlutoGridConfiguration(
+      shortcut: PlutoGridShortcut(
+        actions: {
+          ...PlutoGridShortcut.defaultActions,
+          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyC):
+              CopyWithSnack(context),
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyC):
+              CopyWithSnack(context),
+        },
+      ),
       localeText: PlutoGridLocaleText(
           freezeColumnToStart: locale.freezeColumnToStart,
           freezeColumnToEnd: locale.freezeColumnToEnd,
@@ -445,6 +455,12 @@ class _TableComponentState extends State<TableComponent> {
         ),
       ),
     );
+    configuration.shortcut.actions.addAll({
+      LogicalKeySet(LogicalKeyboardKey.arrowUp):
+          const PlutoGridActionMoveCellFocus(PlutoMoveDirection.up),
+      LogicalKeySet(LogicalKeyboardKey.arrowDown):
+          const PlutoGridActionMoveCellFocus(PlutoMoveDirection.down),
+    });
     for (int i = 0; i < polCols.length; i++) {
       int length = polCols[i].title.split(" ").length;
       if (length > maxNumber) {
@@ -1120,6 +1136,43 @@ enum _CustomColumnMenuItem {
   setFilter,
   resetFilter,
   cancelAutoFit
+}
+
+class CopyWithSnack extends PlutoGridShortcutAction {
+  final BuildContext context;
+  CopyWithSnack(this.context);
+
+  @override
+  void execute({
+    required PlutoKeyManagerEvent keyEvent,
+    required PlutoGridStateManager stateManager,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+
+    String textToCopy = stateManager.hasCurrentSelectingPosition
+        ? stateManager.currentSelectingText
+        : (stateManager.currentCell?.value?.toString() ?? '');
+
+    if (textToCopy.isEmpty) return;
+
+    Clipboard.setData(ClipboardData(text: textToCopy));
+
+    // Optional: preview only first N chars to keep the snackbar tidy
+    final preview =
+        textToCopy.length > 80 ? '${textToCopy.substring(0, 80)}…' : textToCopy;
+
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Text('${l10n.copied}: $preview',
+              style: const TextStyle(color: Colors.white)),
+          backgroundColor: Colors.blue,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+  }
 }
 
 // ignore: must_be_immutable

@@ -76,7 +76,7 @@ class _ViewTableState extends State<ViewTable> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Consumer<DocumentListProvider>(builder: (context, value, child) {
-        print("object");
+
         return TableComponent(
           // key: UniqueKey(),
           tableHeigt: height * 0.4,
@@ -237,41 +237,45 @@ class _ViewTableState extends State<ViewTable> {
   }
 
   fileViewScreen() {
-    openLoadinDialog(context);
-    documentsController
-        .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
-        .then((value) {
-      var encoded = base64Decode(value[0].imgBlob!);
-      var bytes = Uint8List.fromList(encoded);
+    print("testttttttttttttttttttttttttttttttt");
+    print("selectedRow :${selectedRow}");
+    if (selectedRow != null) {
+      openLoadinDialog(context);
+      documentsController
+          .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
+          .then((value) {
+        var encoded = base64Decode(value[0].imgBlob!);
+        var bytes = Uint8List.fromList(encoded);
 
-      Navigator.pop(context);
-      if (value[0].txtFilename!.contains(".pdf") ||
-          value[0].txtFilename!.contains(".jpeg") ||
-          value[0].txtFilename!.contains(".png") ||
-          value[0].txtFilename!.contains(".jpg")) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return PdfPreview1(
-              pdfFile: bytes,
-              fileName: value[0].txtFilename!,
-            );
-          },
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-                icon: Icons.error_outlined,
-                errorDetails: _locale.previewNotAvilable,
-                errorTitle: _locale.error,
-                color: Colors.red,
-                statusCode: 500);
-          },
-        );
-      }
-    });
+        Navigator.pop(context);
+        if (value[0].txtFilename!.contains(".pdf") ||
+            value[0].txtFilename!.contains(".jpeg") ||
+            value[0].txtFilename!.contains(".png") ||
+            value[0].txtFilename!.contains(".jpg")) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return PdfPreview1(
+                pdfFile: bytes,
+                fileName: value[0].txtFilename!,
+              );
+            },
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return ErrorDialog(
+                  icon: Icons.error_outlined,
+                  errorDetails: _locale.previewNotAvilable,
+                  errorTitle: _locale.error,
+                  color: Colors.red,
+                  statusCode: 500);
+            },
+          );
+        }
+      });
+    }
   }
 
   Future<void> deleteFile() async {

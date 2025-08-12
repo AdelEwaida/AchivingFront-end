@@ -249,6 +249,13 @@
     "notAllowedToEditDept":"You are not authorized for this department.",
     "noScannersFound": "No scanners found",
     "urlError": "A user already exists with this URL. Do you want to add it again?",
-    "numOfFilesNum":"Files Number Displayed"
+    "numOfFilesNum":"Files Number Displayed",
+    "copied": "Copied",
+    "noFileAvailableToPreview": "No file available to preview.",
+    "noFileContentReturned": "No file content returned.",
+    "sucessScanFile": "File Scaned"
+
+
+
 
 }

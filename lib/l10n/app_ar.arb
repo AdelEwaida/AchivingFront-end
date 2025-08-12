@@ -235,7 +235,13 @@
   "notAllowedToEditDept":"غير مصرح لك التعديل على هذه الدائرة",
   "noScannersFound": "لم يتم العثور على أجهزة ماسح ضوئي",
   "urlError": "يوجد مستخدم بالفعل بهذا الرابط. هل تريد إضافته مرة أخرى؟",
-    "numOfFilesNum":"عدد الملفات المعروضة"
+  "numOfFilesNum":"عدد الملفات المعروضة",
+  "copied": "تم نسخ",
+  "noFileAvailableToPreview": "لا توجد ملفات للعرض.",
+  "noFileContentReturned": "لا توجد بيانات للملف.",
+  "sucessScanFile": "تم مسح الملف"
+
+
 
 
 

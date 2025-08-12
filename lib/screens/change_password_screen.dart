@@ -197,6 +197,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       ).then((value) {
         oldPasswordController.clear();
         newPasswordController.clear();
+        confirmNewPasswordController.clear();
       });
     }
     // else if (response.statusCode == 400 || response.statusCode == 406) {

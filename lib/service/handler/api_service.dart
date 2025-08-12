@@ -140,36 +140,7 @@ class ApiService {
               );
             },
           );
-          // showDialog(
-          //   context: context,
-          //   builder: (context) {
-          //     return const LoginDialog();
-          //   },
-          // ).then((value) async {
-          //   if (value) {
-          //     var response = await http.post(
-          //       Uri.parse(requestUrl),
-          //       headers: {
-          //         "Accept": "application/json",
-          //         "Content-type": "application/json",
-          //         "Authorization": "Bearer $token"
-          //       },
-          //       body: json.encode(toJson),
-          //     );
-          //     return response;
-          //   }
-          //   print("object  ${value}");
-          // });
-          // if (kIsWeb) {
-          //   GoRouter.of(context).go(loginScreenRoute);
-          // } else {
-          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
-          // }
         });
-        // ErrorController.openErrorDialog(
-        //   response.statusCode,
-        //   response.body,
-        // );
       } else if (response.statusCode != 200) {
         if (response.body == "Wrong Credentials") {
           return response;

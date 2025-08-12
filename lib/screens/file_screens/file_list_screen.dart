@@ -491,6 +491,7 @@ class _FileListScreenState extends State<FileListScreen> {
           filesList: context.read<DocumentListProvider>().isViewFile == true
               ? fileViewScreen
               : null,
+
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
 
@@ -526,6 +527,7 @@ class _FileListScreenState extends State<FileListScreen> {
                   setState(() {});
                   documentListProvider.setDocumentSearchCriterea(
                       documentListProvider.searchDocumentCriteria);
+                  resetForm();
                 }
               });
             }
@@ -1267,40 +1269,89 @@ class _FileListScreenState extends State<FileListScreen> {
     });
   }
 
-  fileViewScreen() {
+  void fileViewScreen() {
+    if (selectedRow == null) return;
+
     openLoadinDialog(context);
+
     documentsController
         .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
-        .then((value) {
-      var encoded = base64Decode(value[0].imgBlob!);
-      var bytes = Uint8List.fromList(encoded);
-      Navigator.pop(context);
-      if (value[0].txtFilename!.contains(".pdf") ||
-          value[0].txtFilename!.contains(".jpeg") ||
-          value[0].txtFilename!.contains(".png") ||
-          value[0].txtFilename!.contains(".jpg")) {
+        .then((files) {
+      // close loader
+      if (Navigator.canPop(context)) Navigator.pop(context);
+
+      // 1) 200 but empty (or null) -> show message
+      if (files == null || files.isEmpty) {
         showDialog(
           context: context,
-          builder: (context) {
-            return PdfPreview1(
-              pdfFile: bytes,
-              fileName: value[0].txtFilename!,
-            );
-          },
+          builder: (_) => ErrorDialog(
+            icon: Icons.info_outline,
+            errorDetails: _locale.noFileAvailableToPreview,
+            errorTitle: _locale.error,
+            color: Colors.orange,
+            statusCode: 200,
+          ),
+        );
+        return;
+      }
+
+      final file = files.first;
+
+      if ((file.imgBlob ?? '').isEmpty) {
+        showDialog(
+          context: context,
+          builder: (_) => ErrorDialog(
+            icon: Icons.info_outline,
+            errorDetails: _locale.noFileContentReturned,
+            errorTitle: _locale.error,
+            color: Colors.orange,
+            statusCode: 200,
+          ),
+        );
+        return;
+      }
+
+      // decode
+      final bytes = Uint8List.fromList(base64Decode(file.imgBlob!));
+      final name = (file.txtFilename ?? '').toLowerCase();
+
+      // 3) preview
+      if (name.endsWith('.pdf') ||
+          name.endsWith('.jpeg') ||
+          name.endsWith('.png') ||
+          name.endsWith('.jpg')) {
+        showDialog(
+          context: context,
+          builder: (_) => PdfPreview1(
+            pdfFile: bytes,
+            fileName: file.txtFilename ?? 'file',
+          ),
         );
       } else {
         showDialog(
           context: context,
-          builder: (context) {
-            return ErrorDialog(
-                icon: Icons.error_outlined,
-                errorDetails: _locale.previewNotAvilable,
-                errorTitle: _locale.error,
-                color: Colors.red,
-                statusCode: 500);
-          },
+          builder: (_) => ErrorDialog(
+            icon: Icons.error_outlined,
+            errorDetails: _locale.previewNotAvilable,
+            errorTitle: _locale.error,
+            color: Colors.red,
+            statusCode: 500,
+          ),
         );
       }
+    }).catchError((e) {
+      // close loader if still open
+      if (Navigator.canPop(context)) Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => ErrorDialog(
+          icon: Icons.error_outline,
+          errorDetails: _locale.previewNotAvilable,
+          errorTitle: _locale.error,
+          color: Colors.red,
+          statusCode: 500,
+        ),
+      );
     });
   }
 
@@ -1424,6 +1475,7 @@ class _FileListScreenState extends State<FileListScreen> {
         width: isDesktop ? width * 0.16 : width * 0.4,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
+        readOnly: true,
       ),
       // PlutoColumn(
       //   title: _locale.dateCreated,
@@ -1439,10 +1491,12 @@ class _FileListScreenState extends State<FileListScreen> {
         width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
+        readOnly: true,
       ),
       PlutoColumn(
         title: _locale.status,
         field: "workflowStatus",
+        readOnly: true,
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.08 : width * 0.2,
         backgroundColor: columnColors,
@@ -1492,6 +1546,7 @@ class _FileListScreenState extends State<FileListScreen> {
         width: isDesktop ? width * 0.1 : width * 0.2,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
+        readOnly: true,
       ),
       PlutoColumn(
         title: _locale.userCode,
@@ -1499,6 +1554,7 @@ class _FileListScreenState extends State<FileListScreen> {
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
+        readOnly: true,
       ),
       PlutoColumn(
         title: _locale.department,
@@ -1506,6 +1562,7 @@ class _FileListScreenState extends State<FileListScreen> {
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
+        readOnly: true,
       ),
       PlutoColumn(
         title: _locale.category,
@@ -1513,6 +1570,7 @@ class _FileListScreenState extends State<FileListScreen> {
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.08 : width * 0.2,
         backgroundColor: columnColors,
+        readOnly: true,
       ),
 
       // PlutoColumn(

@@ -159,13 +159,12 @@ class DocumentsController {
           .getRequest(getAllScanners)
           .timeout(const Duration(seconds: 90));
 
-      // print(" Status Code: ${response.statusCode}");
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
 
-        if (jsonData['scanners'] != null) {
-          for (var scanner in jsonData['scanners']) {
-            list.add(scanner);
+        if (jsonData is List) {
+          for (var scanner in jsonData) {
+            list.add(scanner.toString());
           }
         }
       } else {

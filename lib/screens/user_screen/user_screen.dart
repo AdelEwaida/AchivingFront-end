@@ -233,8 +233,13 @@ class _UserScreenState extends State<UserScreen> {
             userModel: userModel,
           );
         },
-      ).then((value) {});
-      selectedRow = null;
+      ).then((value) {
+        selectedRow = null;
+
+        if (value == true) {
+          refreshTable();
+        }
+      });
     }
   }
 

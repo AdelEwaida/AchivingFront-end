@@ -13,6 +13,10 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  void setSelectedUsers(List<UserModel> users) {
+    _selectedUsers = users;
+  }
+
   void addUsers(List<UserModel> users) {
     for (var user in users) {
       if (!_selectedUsers.any((item) => item.txtCode == user.txtCode)) {

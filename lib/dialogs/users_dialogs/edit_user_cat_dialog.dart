@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
-import 'package:archiving_flutter_project/dialogs/users_dialogs/selected_users_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/users_dialogs/selected_users_table.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
@@ -111,8 +111,8 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
       ),
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.2 : height * 0.5,
+        width: isDesktop ? width * 0.4 : width * 0.8,
+        height: isDesktop ? height * 0.75 : height * 0.5,
         child: formSection(),
       ),
       actions: [
@@ -202,11 +202,15 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (isDesktop) dropDownUsers(),
-        if (!isDesktop) ...[
-          customTextField(
-              _locale.txtShortcode, userListController, isDesktop, 0.8, true),
-        ],
+        if (isDesktop)
+          SizedBox(
+            width: width * 0.4,
+            child: const UserSelectionTable(),
+          ),
+          if (!isDesktop) ...[
+            customTextField(
+                _locale.txtShortcode, userListController, isDesktop, 0.8, true),
+          ],
       ],
     );
   }
@@ -284,98 +288,98 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
     }
   }
 
-  Widget dropDownUsers() {
-    return SizedBox(
-      width: width * 0.18,
-      height: height * 0.045,
-      child: Consumer<UserProvider>(
-        builder: (context, value, child) {
-          return Tooltip(
-            message: hintUsers,
-            child: TestDropdown(
-              cleanPrevSelectedItem: true,
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return const UserSelectionDialog();
-                    }).then((value) {
-                  if (userProvider.selectedUsers.isEmpty) {
-                    hintUsers = "";
-                  } else {
-                    hintUsers = "";
-                    for (int i = 0;
-                        i < userProvider.selectedUsers.length;
-                        i++) {
-                      if (i == 0) {
-                        hintUsers = userProvider.selectedUsers[i].toString();
-                      } else {
-                        hintUsers =
-                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
-                      }
-                    }
-                  }
+  // Widget dropDownUsers() {
+  //   return SizedBox(
+  //     width: width * 0.18,
+  //     height: height * 0.045,
+  //     child: Consumer<UserProvider>(
+  //       builder: (context, value, child) {
+  //         return Tooltip(
+  //           message: hintUsers,
+  //           child: TestDropdown(
+  //             cleanPrevSelectedItem: true,
+  //             onPressed: () {
+  //               showDialog(
+  //                   context: context,
+  //                   builder: (context) {
+  //                     return const UserSelectionDialog();
+  //                   }).then((value) {
+  //                 if (userProvider.selectedUsers.isEmpty) {
+  //                   hintUsers = "";
+  //                 } else {
+  //                   hintUsers = "";
+  //                   for (int i = 0;
+  //                       i < userProvider.selectedUsers.length;
+  //                       i++) {
+  //                     if (i == 0) {
+  //                       hintUsers = userProvider.selectedUsers[i].toString();
+  //                     } else {
+  //                       hintUsers =
+  //                           "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+  //                     }
+  //                   }
+  //                 }
 
-                  setState(() {});
-                });
-              },
-              isEnabled: true,
-              icon: const Icon(Icons.search),
-              onClearIconPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return CustomConfirmDialog(
-                        confirmMessage:
-                            _locale.areYouSureToDelete(_locale.users));
-                  },
-                ).then((value) {
-                  if (value == true) {
-                    setState(() {
-                      usersListNames!.clear();
-                      hintUsers = "";
-                      context.read<UserProvider>().clearUsers();
-                    });
-                  }
-                });
-              },
-              onChanged: (value) {
-                setState(() {
-                  List<UserModel> selectedUsers = [];
+  //                 setState(() {});
+  //               });
+  //             },
+  //             isEnabled: true,
+  //             icon: const Icon(Icons.search),
+  //             onClearIconPressed: () {
+  //               showDialog(
+  //                 context: context,
+  //                 builder: (context) {
+  //                   return CustomConfirmDialog(
+  //                       confirmMessage:
+  //                           _locale.areYouSureToDelete(_locale.users));
+  //                 },
+  //               ).then((value) {
+  //                 if (value == true) {
+  //                   setState(() {
+  //                     usersListNames!.clear();
+  //                     hintUsers = "";
+  //                     context.read<UserProvider>().clearUsers();
+  //                   });
+  //                 }
+  //               });
+  //             },
+  //             onChanged: (value) {
+  //               setState(() {
+  //                 List<UserModel> selectedUsers = [];
 
-                  for (int i = 0; i < value.length; i++) {
-                    selectedUsers.add(value[i]);
-                  }
-                  userProvider.addUsers(selectedUsers);
+  //                 for (int i = 0; i < value.length; i++) {
+  //                   selectedUsers.add(value[i]);
+  //                 }
+  //                 userProvider.addUsers(selectedUsers);
 
-                  if (userProvider.selectedUsers.isEmpty) {
-                    hintUsers = "";
-                  } else {
-                    hintUsers = "";
-                    for (int i = 0;
-                        i < userProvider.selectedUsers.length;
-                        i++) {
-                      if (i == 0) {
-                        hintUsers = userProvider.selectedUsers[i].toString();
-                      } else {
-                        hintUsers =
-                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
-                      }
-                    }
-                  }
-                });
-              },
-              stringValue: hintUsers ?? "",
-              borderText: _locale.user,
-              onSearch: (text) async {
-                List<UserModel> newList = await userController.getUsers(
-                    SearchModel(page: -1, searchField: text, status: -1));
-                return newList;
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
+  //                 if (userProvider.selectedUsers.isEmpty) {
+  //                   hintUsers = "";
+  //                 } else {
+  //                   hintUsers = "";
+  //                   for (int i = 0;
+  //                       i < userProvider.selectedUsers.length;
+  //                       i++) {
+  //                     if (i == 0) {
+  //                       hintUsers = userProvider.selectedUsers[i].toString();
+  //                     } else {
+  //                       hintUsers =
+  //                           "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+  //                     }
+  //                   }
+  //                 }
+  //               });
+  //             },
+  //             stringValue: hintUsers ?? "",
+  //             borderText: _locale.user,
+  //             onSearch: (text) async {
+  //               List<UserModel> newList = await userController.getUsers(
+  //                   SearchModel(page: -1, searchField: text, status: -1));
+  //               return newList;
+  //             },
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 }

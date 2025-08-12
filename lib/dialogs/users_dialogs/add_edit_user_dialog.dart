@@ -17,7 +17,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:encrypt/encrypt.dart' as enc;
 import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/user_models/user_dept_model.dart';
 import '../../models/dto/searchs_model/search_model.dart';
@@ -63,6 +65,28 @@ class _DepartmentDialogState extends State<AddUserDialog> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       codeFocusNode.requestFocus();
     });
+
+    urlController.addListener(() {
+      final text = urlController.text;
+      String fixedText = text;
+
+      if (fixedText.contains(r'http:\\')) {
+        fixedText = fixedText.replaceAll(r'http:\\', 'http://');
+      }
+      if (fixedText.contains(r'https:\\')) {
+        fixedText = fixedText.replaceAll(r'https:\\', 'https://');
+      }
+
+      if (fixedText != text) {
+        final selectionIndex = urlController.selection.baseOffset;
+        urlController.value = TextEditingValue(
+          text: fixedText,
+          selection: TextSelection.collapsed(
+            offset: selectionIndex - (text.length - fixedText.length),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -79,7 +103,14 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       isActive = userModel!.bolActive == 1 ? true : false;
       userActive = isActive ? 1 : 0;
       isLimitAction = userModel!.bolLimitActions == 1 ? true : false;
-      passwordController.text = widget.userModel!.txtPwd!;
+
+      try {
+        passwordController.text =
+            EncryptionPass.decryptBase64(widget.userModel!.txtPwd!);
+      } catch (e) {
+        passwordController.text = '';
+      }
+
       urlController.text = userModel!.url ?? "";
     }
     userCodeController.addListener(() {
@@ -95,12 +126,19 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       });
     }
     if (userModel != null) {
-      List<DepartmentUserModel> response =
+      final response =
           await userController.getDepartmentUser(widget.userModel!.txtCode!);
 
+      // keep only selected
+      final selected =
+          response.where((e) => (e.bolSelected ?? 0) == 1).toList();
+
       setState(() {
-        userDeptsList = convertUserDeptToDeptModel(response);
-        hintUsers = userDeptsList!.map((e) => e.toString()).join(", ");
+        userDeptsList = convertUserDeptToDeptModel(selected);
+        hintUsers = selected
+            .map((e) => e.txtDeptName)
+            .whereType<String>() // drop nulls safely
+            .join(", ");
       });
     }
 
@@ -607,35 +645,59 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           bolActive: userActive ?? 1,
           txtReferenceUsername: txtReferenceUsernameController.text,
           intType: selectedUserType);
-      UserController().getByUserURL(urlController.text.trim()).then((value) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return CustomConfirmDialog(confirmMessage: _locale.urlError);
-          },
-        ).then((value) async {
-          if (value == true) {
-            await userController
-                .addUser(UserDeptModel(user: userModel, depts: userDeptsList))
-                .then((value) {
-              if (value.statusCode == 200) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return ErrorDialog(
-                        icon: Icons.done_all,
-                        errorDetails: _locale.done,
-                        errorTitle: _locale.addDoneSucess,
-                        color: Colors.green,
-                        statusCode: 200);
-                  },
-                ).then((value) {
-                  Navigator.pop(context, true);
-                });
-              }
-            });
-          }
-        });
+      UserController()
+          .getByUserURL(urlController.text.trim())
+          .then((value) async {
+        if ((value?.txtCode ?? "").isNotEmpty) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return CustomConfirmDialog(confirmMessage: _locale.urlError);
+            },
+          ).then((value) async {
+            if (value == true) {
+              await userController
+                  .addUser(UserDeptModel(user: userModel, depts: userDeptsList))
+                  .then((value) {
+                if (value.statusCode == 200) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ErrorDialog(
+                          icon: Icons.done_all,
+                          errorDetails: _locale.done,
+                          errorTitle: _locale.addDoneSucess,
+                          color: Colors.green,
+                          statusCode: 200);
+                    },
+                  ).then((value) {
+                    Navigator.pop(context, true);
+                  });
+                }
+              });
+            }
+          });
+        } else {
+          await userController
+              .addUser(UserDeptModel(user: userModel, depts: userDeptsList))
+              .then((value) {
+            if (value.statusCode == 200) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return ErrorDialog(
+                      icon: Icons.done_all,
+                      errorDetails: _locale.done,
+                      errorTitle: _locale.addDoneSucess,
+                      color: Colors.green,
+                      statusCode: 200);
+                },
+              ).then((value) {
+                Navigator.pop(context, true);
+              });
+            }
+          });
+        }
       });
     }
   }
@@ -649,6 +711,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         passwordController.text, key, byteArray);
     UserModel tempUserModel =
         UserModel(txtCode: userModel!.txtCode, txtPwd: passEncrypted);
+
     var response = await userController.updateOtherUserPassword(tempUserModel);
     if (response.statusCode == 200) {
       // ignore: use_build_context_synchronously
@@ -690,32 +753,52 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       UserController()
           .getByUserURL(urlController.text.trim())
           .then((value) async {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return CustomConfirmDialog(confirmMessage: _locale.urlError);
-          },
-        ).then((value) async {
-          if (value == true) {
-            await userController.updateUser(userDeptModel).then((value) {
-              if (value.statusCode == 200) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return ErrorDialog(
-                        icon: Icons.done_all,
-                        errorDetails: _locale.done,
-                        errorTitle: _locale.editDoneSucess,
-                        color: Colors.green,
-                        statusCode: 200);
-                  },
-                ).then((value) {
-                  Navigator.pop(context, true);
-                });
-              }
-            });
-          }
-        });
+        if ((value?.txtCode ?? "").isNotEmpty) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return CustomConfirmDialog(confirmMessage: _locale.urlError);
+            },
+          ).then((value) async {
+            if (value == true) {
+              await userController.updateUser(userDeptModel).then((value) {
+                if (value.statusCode == 200) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ErrorDialog(
+                          icon: Icons.done_all,
+                          errorDetails: _locale.done,
+                          errorTitle: _locale.editDoneSucess,
+                          color: Colors.green,
+                          statusCode: 200);
+                    },
+                  ).then((value) {
+                    Navigator.pop(context, true);
+                  });
+                }
+              });
+            }
+          });
+        } else {
+          await userController.updateUser(userDeptModel).then((value) {
+            if (value.statusCode == 200) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return ErrorDialog(
+                      icon: Icons.done_all,
+                      errorDetails: _locale.done,
+                      errorTitle: _locale.editDoneSucess,
+                      color: Colors.green,
+                      statusCode: 200);
+                },
+              ).then((value) {
+                Navigator.pop(context, true);
+              });
+            }
+          });
+        }
       });
     } else {
       await userController.updateUser(userDeptModel).then((value) {

@@ -56,11 +56,19 @@ class _AddFileScreenState extends State<AddFileScreen> {
   TextEditingController organizationController = TextEditingController();
   TextEditingController followingController = TextEditingController();
   TextEditingController fileNameController = TextEditingController();
+  TextEditingController scannedFile = TextEditingController();
+
   bool isDesktop = false;
   UserController userController = UserController();
   DocumentsController documentsController = DocumentsController();
   // ValueNotifier isFileLoading = ValueNotifier(false);
   bool isFileLoading = false;
+// في State
+  Future<List<String>>?
+      _scannersFuture; // نحتفظ بالـ Future عشان أي طلبات لاحقة تنتظر نفس النداء
+  List<String> scannersCache = []; // كاش محلي
+  bool _errorShown = false; // لتجنّب تكرار الديالوج
+  String? _scanStatusText;
   String? txtFilename;
   String? imgBlob;
   int? dblFilesize;
@@ -147,8 +155,9 @@ class _AddFileScreenState extends State<AddFileScreen> {
     isDesktop = Responsive.isDesktop(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(_locale.addDocument),
+        title: Text(_locale.fileName),
       ),
+      //https://arch2.asdnova.com:7002//users/getScanners
       body: Stack(
         children: [
           Column(
@@ -181,7 +190,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             customTextField(_locale.issueNo, issueNoController,
-                                isDesktop, 0.2, false,
+                                isDesktop, 0.2, true,
                                 focusNode: issueNameFocusNode),
                             SizedBox(
                               width: width * 0.015,
@@ -622,7 +631,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
     if (selectedDep.isEmpty ||
         selectedCat.isEmpty ||
         (fileNameController.text.isEmpty && _isUploadFileSelected) ||
-        descriptionController.text.isEmpty) {
+        descriptionController.text.isEmpty ||
+        issueNoController.text.isEmpty) {
       CoolAlert.show(
         width: width * 0.4,
         context: context,
@@ -689,96 +699,112 @@ class _AddFileScreenState extends State<AddFileScreen> {
   int scannerIndex = 0;
   Widget buildScanDropdown() {
     return Padding(
-      padding: const EdgeInsets.only(top: 10, left: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          DropDown(
-            key: UniqueKey(),
-            isMandatory: true,
-            onChanged: (value) {
-              for (int i = 0; i < scanners.length; i++) {
-                if (scanners[i] == value) {
-                  scannerIndex = i;
-                }
-              }
-            },
-            noDataString: "⚠️ No scanners found",
-            initialValue: "",
-            // items: scanners,
-            bordeText: _locale.scanners,
-            width: width * 0.2,
-            height: height * 0.05,
-            onSearch: (p0) async {
-              scanners = await DocumentsController().getAllScannersMethod(url);
-              return scanners;
-            },
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () async {
-              openLoadinDialog(context);
+        padding: const EdgeInsets.only(top: 10, left: 10),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              DropDown(
+                isMandatory: true,
+                onChanged: (value) {
+                  for (int i = 0; i < scanners.length; i++) {
+                    if (scanners[i] == value) {
+                      scannerIndex = i;
+                    }
+                  }
+                },
+                noDataString: "⚠️ No scanners found",
+                initialValue: "",
+                bordeText: _locale.scanners,
+                width: width * 0.2,
+                height: height * 0.05,
+                onSearch: (p0) async {
+                  scanners =
+                      await DocumentsController().getAllScannersMethod(url);
+                  return scanners;
+                },
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () async {
+                  openLoadinDialog(context);
 
-              await DocumentsController()
-                  .getAllScannersMethod(url)
-                  .then((value) {
-                Navigator.pop(context);
-                if (value.isNotEmpty) {
-                  scan();
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (_) => ErrorDialog(
-                      icon: Icons.error_outline,
-                      errorTitle: _locale.error,
-                      errorDetails: _locale.noScannersFound,
-                      color: Colors.red,
-                      statusCode: 406,
+                  await DocumentsController()
+                      .getAllScannersMethod(url)
+                      .then((value) {
+                    Navigator.pop(context);
+                    if (value.isNotEmpty) {
+                      scan();
+                    } else {}
+                  }).catchError((e) {
+                    Navigator.pop(context);
+                  });
+                },
+                style: customButtonStyle(
+                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.055),
+                    14,
+                    primary3),
+                child: Text(
+                  _locale.scanFile,
+                  style: const TextStyle(color: whiteColor),
+                ),
+              ),
+              if (_scanStatusText != null && _scanStatusText!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.check_circle,
+                        color: Colors.green, size: 18),
+                    const SizedBox(width: 6),
+                    Text(
+                      "${_locale.sucessScanFile} " "$_scanStatusText",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.green,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  );
-                }
-              }).catchError((e) {
-                // Optional: handle network or decoding error
-                Navigator.pop(context); // Ensure loading is closed
-              });
-            },
-            style: customButtonStyle(
-                Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.055),
-                14,
-                primary3),
-            child: Text(
-              _locale.scanFile,
-              style: const TextStyle(color: whiteColor),
-            ),
-          ),
-        ],
-      ),
-    );
+                  ],
+                ),
+              ],
+            ]));
   }
 
-  // scan() async {
-  //   openLoadinDialog(context);
-
-  //   await documentsController
-  //       .getSccanedImageMethod(url, scannerIndex)
-  //       .then((result) {
-  //     if (result.statusCode == 200 && result.scannedImage != null) {
-  //       filesName.add("${issueNoController.text}.pdf");
-  //       filesBlobs.add(result.scannedImage!.scannedImage!);
-  //       Navigator.pop(context);
-  //     } else {
-  //       // print("elseeeeeeeeeeeeeeeeeeeeeeee");
-  //       Navigator.pop(context);
-  //     }
-  //   });
-  // }
   scan() async {
     openLoadinDialog(context);
-    var response =
-        await documentsController.getSccanedImageMethod(url, scannerIndex);
-    filesName.add("${issueNoController.text}.pdf");
-    filesBlobs.add(response.scannedImage!);
-    Navigator.pop(context);
+    try {
+      final response =
+          await documentsController.getSccanedImageMethod(url, scannerIndex);
+
+      final String base64Data = response.scannedImage ?? "";
+
+      if (base64Data.isNotEmpty) {
+        final fileName = "${issueNoController.text}.pdf";
+
+        // decode base64 to bytes
+        final bytes = base64Decode(base64Data);
+
+        // size in MB using 10^6 (per your request)
+        final sizeMB = bytes.length / 1000000; // 10^6
+
+        // keep your existing arrays updated
+        filesName.add(fileName);
+        filesBlobs.add(base64Data);
+
+        setState(() {
+          scannedFile.text = fileName; // if you still want it in the controller
+          _scanStatusText = "${sizeMB.toStringAsFixed(2)} MB";
+        });
+      } else {
+        setState(() {
+          _scanStatusText =
+              _locale.noFileAvailableToPreview; // or any message you prefer
+        });
+      }
+    } finally {
+      Navigator.pop(context); // close loading
+    }
   }
 }

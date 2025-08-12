@@ -440,36 +440,44 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
   }
 
   Future<void> updateDocument() async {
-    // DocumentModel tempDocumentModel = DocumentModel();
-    documentModel!.datIssuedate = issueDateController.text;
-    documentModel!.datArrvialdate = arrivalDate.text;
-    documentModel!.txtDept = selectedDep;
-    documentModel!.txtCategory = selectedCat;
-    // documentModel!.txtDept = value.txtKey;
-    print("documentModeldocumentModeldocumentModel ${documentModel!.toJson()}");
-    // print(documentModel!.toJson());
-    var response = await documentsController.updateDocument(documentModel!);
-    if (response.statusCode == 200) {
-      // ignore: use_build_context_synchronously
+    if (issueNoController.text.trim().isEmpty) {
       showDialog(
         context: context,
         builder: (context) {
           return ErrorDialog(
-              icon: Icons.done_all,
-              errorDetails: _locale.done,
-              errorTitle: _locale.editDoneSucess,
-              color: Colors.green,
-              statusCode: 200);
+            icon: Icons.error,
+            errorDetails: _locale.pleaseAddAllRequiredFields,
+            errorTitle: _locale.error,
+            color: Colors.red,
+            statusCode: 400,
+          );
+        },
+      );
+      return;
+    }
+
+    documentModel!.datIssuedate = issueDateController.text;
+    documentModel!.datArrvialdate = arrivalDate.text;
+    documentModel!.txtDept = selectedDep;
+    documentModel!.txtCategory = selectedCat;
+
+    var response = await documentsController.updateDocument(documentModel!);
+
+    if (response.statusCode == 200) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return ErrorDialog(
+            icon: Icons.done_all,
+            errorDetails: _locale.done,
+            errorTitle: _locale.editDoneSucess,
+            color: Colors.green,
+            statusCode: 200,
+          );
         },
       ).then((value) {
         Navigator.pop(context, true);
       });
     }
-    // tempDocumentModel.txtKey = documentModel!.txtKey;
-    // tempDocumentModel.bolHasfile = documentModel!.bolHasfile;
-    // tempDocumentModel.datArrvialdate = documentModel!.datArrvialdate;
-    // tempDocumentModel.datCreationdate = documentModel!.datCreationdate;
-    // tempDocumentModel.datIssuedate = documentModel!.datIssuedate;
-    // tempDocumentModel.txtDept = documentModel!.txtDept;
   }
 }
