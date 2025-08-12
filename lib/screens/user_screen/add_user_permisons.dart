@@ -223,18 +223,10 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
 
                   const SizedBox(width: 12),
 
-                  SizedBox(
-                    width: screenWidth * 0.4,
-                    child: ValueListenableBuilder<String>(
-                      valueListenable: selectedKey,
-                      builder: (context, catId, _) {
-                        return UserSelectionTable(
-                          key: ValueKey(catId), // يضمن إعادة بناء الودجت
-                          selectedCategoryId: catId, // مرّر الكاتيجوري المختار
-                        );
-                      },
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: screenWidth * 0.4,
+                  //   child: const UserSelectionTable(),
+                  // ),
                 ],
               ),
             ),
@@ -415,7 +407,9 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   }
 
   void searchTree(String query) {
-    if (query == "") {
+    final q = query.trim().toLowerCase(); // 👈 توحيد الحروف
+
+    if (q.isEmpty) {
       selectedCamp.value = "";
       selectedValue.value = "";
       selectedKey.value = "";
@@ -423,32 +417,55 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
       treeNodes = [];
       treeController.collapseAll();
       convertToTreeList(campClassificationList);
-      MyNode node =
+      final root =
           MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
-      treeController.toggleExpansion(node);
-      treeController.roots = <MyNode>[node];
+      treeController.toggleExpansion(root);
+      treeController.roots = <MyNode>[root];
       setState(() {});
-    } else {
-      for (final node in treeNodes) {
-        if (searchNode(node, query)) {
-          print("INNNNNNNNN SEEEEEEAAAAAAAAAARCH");
-          // selectedCategory = node;
-          selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
-          selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-          selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
-          treeController.roots = [];
-          treeNodes = [];
+      return;
+    }
 
-          convertToTreeList(campClassificationList);
-          MyNode node = MyNode(
-              title: '/', children: treeNodes, extra: null, isRoot: true);
-          treeController.toggleExpansion(node);
-          treeController.roots = <MyNode>[node];
-          setState(() {});
-          break;
-        }
+    for (final node in treeNodes) {
+      if (searchNode(node, q)) {
+        // 👈 مرّر q الصغيرة
+        // عند أول تطابق
+        selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
+        selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+        selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
+
+        // أعد بناء الجذر مع توسيع الشجرة
+        treeController.roots = [];
+        treeNodes = [];
+        convertToTreeList(campClassificationList);
+        final root =
+            MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
+        treeController.toggleExpansion(root);
+        treeController.roots = <MyNode>[root];
+        setState(() {});
+        break;
       }
     }
+  }
+
+  bool searchNode(MyNode node, String q) {
+    // 👇 وحّد حالة الحروف في العنوان وفي الحقول نفسها لزيادة الدقّة
+    final title = node.title.toLowerCase();
+    final extra = node.extra as DocumentCategory?;
+    final shortCode = extra?.docCatParent?.txtShortcode?.toLowerCase() ?? '';
+    final desc = extra?.docCatParent?.txtDescription?.toLowerCase() ?? '';
+
+    if (title.contains(q) || shortCode.contains(q) || desc.contains(q)) {
+      selectedCategory = node.extra as DocumentCategory;
+      selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
+      selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+      selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
+      return true;
+    }
+
+    for (final child in node.children) {
+      if (searchNode(child, q)) return true;
+    }
+    return false;
   }
 
   void removeNodeFromTree(DocumentCategory? category) {
@@ -495,22 +512,6 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
     }
 
     return null;
-  }
-
-  bool searchNode(MyNode node, String query) {
-    if (node.title.contains(query)) {
-      selectedCategory = node.extra;
-      selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
-      selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-      selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
-      return true;
-    }
-    for (final child in node.children) {
-      if (searchNode(child, query)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   Widget nodeDesign(MyNode node) {
@@ -632,5 +633,102 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
     return discountList;
   }
 
+  // Widget dropDownUsers() {
+  //   return SizedBox(
+  //     width: screenWidth * 0.18,
+  //     height: screenHeight * 0.045,
+  //     child: Consumer<UserProvider>(
+  //       builder: (context, value, child) {
+  //         return Tooltip(
+  //           message: hintUsers,
+  //           child: TestDropdown(
+  //             cleanPrevSelectedItem: true,
+  //             onPressed: () {
+  //               showDialog(
+  //                   context: context,
+  //                   builder: (context) {
+  //                     return const UserSelectionTable();
+  //                   }).then((value) {
+  //                 if (userProvider.selectedUsers.isEmpty) {
+  //                   hintUsers = "";
+  //                 } else {
+  //                   hintUsers = "";
+  //                   for (int i = 0;
+  //                       i < userProvider.selectedUsers.length;
+  //                       i++) {
+  //                     if (i == 0) {
+  //                       hintUsers = userProvider.selectedUsers[i].toString();
+  //                     } else {
+  //                       hintUsers =
+  //                           "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+  //                     }
+  //                   }
+  //                 }
 
+  //                 setState(() {});
+  //               });
+  //             },
+  //             isEnabled: true,
+  //             icon: const Icon(Icons.search),
+  //             onClearIconPressed: () {
+  //               showDialog(
+  //                 context: context,
+  //                 builder: (context) {
+  //                   return CustomConfirmDialog(
+  //                       confirmMessage:
+  //                           _locale.areYouSureToDelete(_locale.users));
+  //                 },
+  //               ).then((value) {
+  //                 if (value == true) {
+  //                   setState(() {
+  //                     listOfUsersCode!.clear();
+  //                     hintUsers = "";
+  //                     usersListModel!.clear();
+  //                     context.read<UserProvider>().clearUsers();
+  //                   });
+  //                 }
+  //               });
+  //             },
+  //             onChanged: (value) {
+  //               setState(() {
+  //                 List<UserModel> selectedUsers = [];
+
+  //                 for (int i = 0; i < value.length; i++) {
+  //                   selectedUsers.add(value[i]);
+  //                 }
+  //                 userProvider.addUsers(selectedUsers);
+
+  //                 if (userProvider.selectedUsers.isEmpty) {
+  //                   hintUsers = "";
+  //                 } else {
+  //                   hintUsers = "";
+  //                   for (int i = 0;
+  //                       i < userProvider.selectedUsers.length;
+  //                       i++) {
+  //                     if (i == 0) {
+  //                       hintUsers = userProvider.selectedUsers[i].toString();
+  //                     } else {
+  //                       hintUsers =
+  //                           "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+  //                     }
+  //                   }
+  //                 }
+  //               });
+  //             },
+  //             stringValue: hintUsers ?? "",
+  //             borderText: _locale.users,
+  //             onSearch: (text) async {
+  //               List<UserModel> newList = await userController.getUsers(
+  //                   SearchModel(
+  //                       searchField: text.trim(), page: -1, status: -1));
+  //               newList.removeWhere(
+  //                   (user) => listOfUsersCode!.contains(user.txtCode));
+  //               return newList;
+  //             },
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 }
