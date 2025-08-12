@@ -546,18 +546,44 @@ class _FileListScreenState extends State<FileListScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  "${_locale.totalCount}: ",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: totalDocCount,
-                  builder: ((context, value, child) {
-                    return Text(
-                      "${totalDocCount.value}",
+                Row(
+                  // mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "${_locale.numOfFilesNum}: ",
                       style: const TextStyle(fontWeight: FontWeight.bold),
-                    );
-                  }),
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: fileNumberDisplayed,
+                      builder: ((context, value, child) {
+                        return Text(
+                          "${fileNumberDisplayed.value}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Row(
+                  // mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "${_locale.totalCount}: ",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: totalDocCount,
+                      builder: ((context, value, child) {
+                        return Text(
+                          "${totalDocCount.value}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        );
+                      }),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -1100,7 +1126,7 @@ class _FileListScreenState extends State<FileListScreen> {
     for (int i = 0; i < result.length; i++) {
       stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
     }
-
+    fileNumberDisplayed.value = stateManager.refRows.length;
     documentListProvider.setPage(2);
 
     stateManager.setShowLoading(false);
@@ -1172,6 +1198,7 @@ class _FileListScreenState extends State<FileListScreen> {
     for (int i = 0; i < result.length; i++) {
       stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
     }
+    fileNumberDisplayed.value = stateManager.refRows.length;
 
     documentListProvider.setPage(2);
 
@@ -1672,7 +1699,9 @@ class _FileListScreenState extends State<FileListScreen> {
         }
 
         documentListProvider.setPage(documentListProvider.page! + 1);
-
+        final currentLoaded = stateManager.refRows.length; //
+        final newlyFetched = resultRows.length; //
+        fileNumberDisplayed.value = currentLoaded + newlyFetched;
         await Future.delayed(const Duration(milliseconds: 300));
         stateManager.setShowLoading(false);
         return PlutoInfinityScrollRowsResponse(
@@ -1697,7 +1726,9 @@ class _FileListScreenState extends State<FileListScreen> {
       }
 
       documentListProvider.setPage(documentListProvider.page! + 1);
-
+      final currentLoaded = stateManager.refRows.length; //
+      final newlyFetched = resultRows.length; //
+      fileNumberDisplayed.value = currentLoaded + newlyFetched;
       await Future.delayed(const Duration(milliseconds: 300));
       stateManager.setShowLoading(false);
       return PlutoInfinityScrollRowsResponse(

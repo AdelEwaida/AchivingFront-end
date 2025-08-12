@@ -23,6 +23,7 @@ import '../../providers/user_provider.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
 import '../error_dialgos/confirm_dialog.dart';
+import 'selected_users_table_dialog.dart';
 
 class EditUserCategoryDialog extends StatefulWidget {
   UserCategory? userCategoryModel;
@@ -205,11 +206,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
         if (isDesktop)
           SizedBox(
             width: width * 0.4,
-            child: UserSelectionTable(
-              key: ValueKey(
-                  widget.userCategoryModel?.categoryId ?? ''),
-              selectedCategoryId: widget.userCategoryModel?.categoryId ?? '',
-            ),
+            child: const UserSelectionTableDialog(),
           ),
         if (!isDesktop) ...[
           customTextField(
