@@ -51,7 +51,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   bool isLoading = false;
   ValueNotifier selectedCamp = ValueNotifier("");
   ValueNotifier selectedValue = ValueNotifier("");
-  ValueNotifier selectedKey = ValueNotifier("");
+  ValueNotifier<String> selectedKey = ValueNotifier<String>("");
 
   Color currentColor = Color.fromARGB(255, 225, 65, 65);
   Color selectedColor = Colors.grey;
@@ -180,7 +180,9 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                                                       .txtShortcode;
                                               selectedKey.value =
                                                   selectedCategory!
-                                                      .docCatParent!.txtKey;
+                                                          .docCatParent!
+                                                          .txtKey ??
+                                                      "";
                                               treeController
                                                   .toggleExpansion(entry.node);
                                             } else {
@@ -192,7 +194,9 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                                                       .txtDescription!;
                                               selectedKey.value =
                                                   selectedCategory!
-                                                      .docCatParent!.txtKey;
+                                                          .docCatParent!
+                                                          .txtKey ??
+                                                      "";
                                               selectedValue.value =
                                                   selectedCategory!
                                                       .docCatParent!
@@ -221,7 +225,15 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
 
                   SizedBox(
                     width: screenWidth * 0.4,
-                    child: const UserSelectionTable(),
+                    child: ValueListenableBuilder<String>(
+                      valueListenable: selectedKey,
+                      builder: (context, catId, _) {
+                        return UserSelectionTable(
+                          key: ValueKey(catId), // يضمن إعادة بناء الودجت
+                          selectedCategoryId: catId, // مرّر الكاتيجوري المختار
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -423,7 +435,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
           // selectedCategory = node;
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-          selectedKey.value = selectedCategory!.docCatParent!.txtKey;
+          selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
           treeController.roots = [];
           treeNodes = [];
 
@@ -490,7 +502,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
       selectedCategory = node.extra;
       selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
       selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-      selectedKey.value = selectedCategory!.docCatParent!.txtKey;
+      selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
       return true;
     }
     for (final child in node.children) {
@@ -510,7 +522,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
           selectedCategory = node.extra;
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-          selectedKey.value = selectedCategory!.docCatParent!.txtKey;
+          selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
           getUsersForCategory(selectedKey.value);
 
           setState(() {});
@@ -620,102 +632,5 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
     return discountList;
   }
 
-  Widget dropDownUsers() {
-    return SizedBox(
-      width: screenWidth * 0.18,
-      height: screenHeight * 0.045,
-      child: Consumer<UserProvider>(
-        builder: (context, value, child) {
-          return Tooltip(
-            message: hintUsers,
-            child: TestDropdown(
-              cleanPrevSelectedItem: true,
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return const UserSelectionTable();
-                    }).then((value) {
-                  if (userProvider.selectedUsers.isEmpty) {
-                    hintUsers = "";
-                  } else {
-                    hintUsers = "";
-                    for (int i = 0;
-                        i < userProvider.selectedUsers.length;
-                        i++) {
-                      if (i == 0) {
-                        hintUsers = userProvider.selectedUsers[i].toString();
-                      } else {
-                        hintUsers =
-                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
-                      }
-                    }
-                  }
 
-                  setState(() {});
-                });
-              },
-              isEnabled: true,
-              icon: const Icon(Icons.search),
-              onClearIconPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return CustomConfirmDialog(
-                        confirmMessage:
-                            _locale.areYouSureToDelete(_locale.users));
-                  },
-                ).then((value) {
-                  if (value == true) {
-                    setState(() {
-                      listOfUsersCode!.clear();
-                      hintUsers = "";
-                      usersListModel!.clear();
-                      context.read<UserProvider>().clearUsers();
-                    });
-                  }
-                });
-              },
-              onChanged: (value) {
-                setState(() {
-                  List<UserModel> selectedUsers = [];
-
-                  for (int i = 0; i < value.length; i++) {
-                    selectedUsers.add(value[i]);
-                  }
-                  userProvider.addUsers(selectedUsers);
-
-                  if (userProvider.selectedUsers.isEmpty) {
-                    hintUsers = "";
-                  } else {
-                    hintUsers = "";
-                    for (int i = 0;
-                        i < userProvider.selectedUsers.length;
-                        i++) {
-                      if (i == 0) {
-                        hintUsers = userProvider.selectedUsers[i].toString();
-                      } else {
-                        hintUsers =
-                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
-                      }
-                    }
-                  }
-                });
-              },
-              stringValue: hintUsers ?? "",
-              borderText: _locale.users,
-              onSearch: (text) async {
-                List<UserModel> newList = await userController.getUsers(
-                    SearchModel(
-                        searchField: text.trim(), page: -1, status: -1));
-                newList.removeWhere(
-                    (user) => listOfUsersCode!.contains(user.txtCode));
-                return newList;
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
 }

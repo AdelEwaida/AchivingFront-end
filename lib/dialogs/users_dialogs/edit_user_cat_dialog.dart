@@ -205,12 +205,16 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
         if (isDesktop)
           SizedBox(
             width: width * 0.4,
-            child: const UserSelectionTable(),
+            child: UserSelectionTable(
+              key: ValueKey(
+                  widget.userCategoryModel?.categoryId ?? ''),
+              selectedCategoryId: widget.userCategoryModel?.categoryId ?? '',
+            ),
           ),
-          if (!isDesktop) ...[
-            customTextField(
-                _locale.txtShortcode, userListController, isDesktop, 0.8, true),
-          ],
+        if (!isDesktop) ...[
+          customTextField(
+              _locale.txtShortcode, userListController, isDesktop, 0.8, true),
+        ],
       ],
     );
   }
@@ -287,99 +291,4 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
       });
     }
   }
-
-  // Widget dropDownUsers() {
-  //   return SizedBox(
-  //     width: width * 0.18,
-  //     height: height * 0.045,
-  //     child: Consumer<UserProvider>(
-  //       builder: (context, value, child) {
-  //         return Tooltip(
-  //           message: hintUsers,
-  //           child: TestDropdown(
-  //             cleanPrevSelectedItem: true,
-  //             onPressed: () {
-  //               showDialog(
-  //                   context: context,
-  //                   builder: (context) {
-  //                     return const UserSelectionDialog();
-  //                   }).then((value) {
-  //                 if (userProvider.selectedUsers.isEmpty) {
-  //                   hintUsers = "";
-  //                 } else {
-  //                   hintUsers = "";
-  //                   for (int i = 0;
-  //                       i < userProvider.selectedUsers.length;
-  //                       i++) {
-  //                     if (i == 0) {
-  //                       hintUsers = userProvider.selectedUsers[i].toString();
-  //                     } else {
-  //                       hintUsers =
-  //                           "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
-  //                     }
-  //                   }
-  //                 }
-
-  //                 setState(() {});
-  //               });
-  //             },
-  //             isEnabled: true,
-  //             icon: const Icon(Icons.search),
-  //             onClearIconPressed: () {
-  //               showDialog(
-  //                 context: context,
-  //                 builder: (context) {
-  //                   return CustomConfirmDialog(
-  //                       confirmMessage:
-  //                           _locale.areYouSureToDelete(_locale.users));
-  //                 },
-  //               ).then((value) {
-  //                 if (value == true) {
-  //                   setState(() {
-  //                     usersListNames!.clear();
-  //                     hintUsers = "";
-  //                     context.read<UserProvider>().clearUsers();
-  //                   });
-  //                 }
-  //               });
-  //             },
-  //             onChanged: (value) {
-  //               setState(() {
-  //                 List<UserModel> selectedUsers = [];
-
-  //                 for (int i = 0; i < value.length; i++) {
-  //                   selectedUsers.add(value[i]);
-  //                 }
-  //                 userProvider.addUsers(selectedUsers);
-
-  //                 if (userProvider.selectedUsers.isEmpty) {
-  //                   hintUsers = "";
-  //                 } else {
-  //                   hintUsers = "";
-  //                   for (int i = 0;
-  //                       i < userProvider.selectedUsers.length;
-  //                       i++) {
-  //                     if (i == 0) {
-  //                       hintUsers = userProvider.selectedUsers[i].toString();
-  //                     } else {
-  //                       hintUsers =
-  //                           "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
-  //                     }
-  //                   }
-  //                 }
-  //               });
-  //             },
-  //             stringValue: hintUsers ?? "",
-  //             borderText: _locale.user,
-  //             onSearch: (text) async {
-  //               List<UserModel> newList = await userController.getUsers(
-  //                   SearchModel(page: -1, searchField: text, status: -1));
-  //               return newList;
-  //             },
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 }

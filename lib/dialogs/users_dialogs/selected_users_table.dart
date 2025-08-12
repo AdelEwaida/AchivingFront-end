@@ -16,13 +16,11 @@ import '../../utils/func/text_and_number_inputFormater.dart';
 import '../../widget/table_component/table_component.dart';
 
 class UserSelectionTable extends StatefulWidget {
-  final int? index;
-  final List<UserModel>? selectedUsersModel;
+  final String selectedCategoryId;
   const UserSelectionTable({
-    this.selectedUsersModel,
-    this.index,
-    super.key,
-  });
+    Key? key,
+    required this.selectedCategoryId,
+  }) : super(key: key);
 
   @override
   State<UserSelectionTable> createState() => _UserSelectionTableState();
@@ -56,6 +54,25 @@ class _UserSelectionTableState extends State<UserSelectionTable> {
 
   ValueNotifier itemsNumber = ValueNotifier(0);
   List<PlutoColumn> polCols = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers(); // تحميل أولي
+  }
+
+  @override
+  void didUpdateWidget(covariant UserSelectionTable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedCategoryId != widget.selectedCategoryId) {
+      _loadUsers(); // إعادة تحميل عند تغيّر الكاتيجوري
+    }
+  }
+
+  Future<void> _loadUsers() async {
+    if (widget.selectedCategoryId.isEmpty) return;
+
+    setState(() {});
+  }
 
   @override
   void didChangeDependencies() {
@@ -146,11 +163,6 @@ class _UserSelectionTableState extends State<UserSelectionTable> {
         backgroundColor: columnColors,
       ),
     ]);
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
