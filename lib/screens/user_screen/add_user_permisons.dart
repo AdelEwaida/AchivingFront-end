@@ -47,11 +47,11 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   late AppLocalizations _locale;
   CategoriesController categoriesController = CategoriesController();
   List<MyNode> treeNodes = [];
-  bool _loadedInitial = false;
+
   bool isLoading = false;
   ValueNotifier selectedCamp = ValueNotifier("");
   ValueNotifier selectedValue = ValueNotifier("");
-  ValueNotifier<String> selectedKey = ValueNotifier<String>("");
+  ValueNotifier selectedKey = ValueNotifier("");
 
   Color currentColor = Color.fromARGB(255, 225, 65, 65);
   Color selectedColor = Colors.grey;
@@ -116,144 +116,189 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            // MAIN AREA: Tree (left) + Users table (right)
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // LEFT: search + tree
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 🔎 tree search
-                        CustomSearchField(
-                          label: _locale.search,
-                          width: screenWidth * 0.45,
-                          padding: 8,
-                          controller: searchController,
-                          onChanged: (value) => searchTree(value),
-                        ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "${_locale.pleaseSelectCat} *",
-                            style: TextStyle(
-                              color: textSecondary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        // 🌲 tree itself
-                        Expanded(
-                          child: isLoading
-                              ? Center(
-                                  child: SpinKitCircle(
-                                    color: Theme.of(context).primaryColor,
-                                    size: 50.0,
-                                  ),
-                                )
-                              : Stack(
-                                  children: [
-                                    TreeView<MyNode>(
-                                      key: ValueKey(treeController),
-                                      treeController: treeController,
-                                      nodeBuilder: (context, entry) {
-                                        return MyTreeTile(
-                                          onPointerDown: (p0) {},
-                                          key: ValueKey(entry.node),
-                                          entry: entry,
-                                          folderOnTap: () {
-                                            if (entry
-                                                .node.children.isNotEmpty) {
-                                              selectedCategory =
-                                                  entry.node.extra;
-                                              selectedCamp.value =
-                                                  selectedCategory!
-                                                      .docCatParent!
-                                                      .txtDescription!;
-                                              selectedValue.value =
-                                                  selectedCategory!
-                                                      .docCatParent!
-                                                      .txtShortcode;
-                                              selectedKey.value =
-                                                  selectedCategory!
-                                                          .docCatParent!
-                                                          .txtKey ??
-                                                      "";
-                                              treeController
-                                                  .toggleExpansion(entry.node);
-                                            } else {
-                                              selectedCategory =
-                                                  entry.node.extra;
-                                              selectedCamp.value =
-                                                  selectedCategory!
-                                                      .docCatParent!
-                                                      .txtDescription!;
-                                              selectedKey.value =
-                                                  selectedCategory!
-                                                          .docCatParent!
-                                                          .txtKey ??
-                                                      "";
-                                              selectedValue.value =
-                                                  selectedCategory!
-                                                      .docCatParent!
-                                                      .txtShortcode;
-                                            }
-                                            // ✅ prefill right table with users of this category
-                                            getUsersForCategory(
-                                                selectedKey.value);
-                                          },
-                                          textWidget: nodeDesign(entry.node),
-                                        );
-                                      },
-                                    ),
-                                    if (isLoading)
-                                      const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                  ],
-                                ),
-                        ),
-                      ],
-                    ),
-                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomSearchField(
+                  label: _locale.search,
+                  width: screenWidth * 0.45,
+                  padding: 8,
+                  controller: searchController,
+                  onChanged: (value) {
+                    searchTree(value);
+                    // Add search functionality if needed
+                  },
+                ),
+                dropDownUsers()
+                // Tooltip(
+                //   message: hintUsers,
+                //   child: Column(
+                //     children: [
+                //       Container(
+                //         width: screenWidth * 0.2,
+                //         height: screenHeight * 0.05,
+                //         child: TestDropdown(
+                //           cleanPrevSelectedItem: true,
+                //           icon: const Icon(Icons.search),
+                //           isEnabled: true,
+                //           stringValue: usersListModel!
+                //                   .map((e) => e.txtNamee!)
+                //                   .join(', ')
+                //                   .isEmpty
+                //               ? null
+                //               : usersListModel!
+                //                   .map((e) => e.txtNamee!)
+                //                   .join(', '),
+                //           borderText: _locale.users,
+                //           onClearIconPressed: () {
+                //             showDialog(
+                //               context: context,
+                //               builder: (context) {
+                //                 return CustomConfirmDialog(
+                //                     confirmMessage: _locale
+                //                         .areYouSureToDelete(_locale.users));
+                //               },
+                //             ).then((value) {
+                //               if (value == true) {
+                //                 setState(() {
+                //                   listOfUsersCode!.clear();
+                //                   hintUsers = "";
+                //                   usersListModel!.clear();
+                //                   usersListModel!.clear();
+                //                 });
+                //               }
+                //             });
+                //           },
+                //           onChanged: (val) {
+                //             listOfUsersCode!.clear();
+                //             for (int i = 0; i < val.length; i++) {
+                //               listOfUsersCode!.add(val[i].txtCode);
+                //               usersListModel!.add(val[i]);
+                //               // usersList!.add(val[i].userId!);
+                //             }
+                //             // usersListModel!.addAll(usersListCode);
+                //             if (usersListModel!.isEmpty) {
+                //               hintUsers = "";
+                //             } else {
+                //               hintUsers = usersListModel!
+                //                   .map((e) => e.txtCode!)
+                //                   .join(', ');
+                //               if (hintUsers.endsWith(', ')) {
+                //                 hintUsers = hintUsers.substring(
+                //                     0, hintUsers.length - 2);
+                //               }
+                //             }
 
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    width: screenWidth * 0.4,
-                    child: ValueListenableBuilder<String>(
-                      valueListenable: selectedKey,
-                      builder: (context, catId, _) {
-                        return UserSelectionTable(
-                          key: ValueKey(
-                              catId), // 👈 force fresh grid+fetch per category
-                          selectedCategoryId: catId,
-                        );
-                      },
-                    ),
+                //             setState(() {});
+                //           },
+                //           onSearch: (text) async {
+                //             List<UserModel> newList =
+                //                 await userController.getUsers(SearchModel(
+                //                     searchField: text.trim(),
+                //                     page: -1,
+                //                     status: -1));
+                //             newList.removeWhere((user) =>
+                //                 listOfUsersCode!.contains(user.txtCode));
+                //             return newList;
+                //           },
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "${_locale.pleaseSelectCat} " + "*",
+                    style: TextStyle(
+                        color: textSecondary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
             ),
+            if (isLoading)
+              Expanded(
+                child: Center(
+                  child: SpinKitCircle(
+                    color: Theme.of(context).primaryColor,
+                    size: 50.0,
+                  ),
+                ),
+              )
+            else
+              Expanded(
+                child: Stack(
+                  children: [
+                    TreeView<MyNode>(
+                      key: ValueKey(treeController),
+                      treeController: treeController,
+                      nodeBuilder:
+                          (BuildContext context, TreeEntry<MyNode> entry) {
+                        return MyTreeTile(
+                          onPointerDown: (p0) {},
+                          key: ValueKey(entry.node),
+                          entry: entry,
+                          folderOnTap: () {
+                            if (entry.node.children.isNotEmpty) {
+                              selectedCategory = entry.node.extra;
+                              selectedCamp.value = selectedCategory!
+                                  .docCatParent!.txtDescription!;
+                              selectedValue.value =
+                                  selectedCategory!.docCatParent!.txtShortcode;
+                              selectedKey.value =
+                                  selectedCategory!.docCatParent!.txtKey;
+                              treeController.toggleExpansion(entry.node);
+                            } else {
+                              // if (!entry.node.isRoot) {
+                              selectedCategory = entry.node.extra;
+                              selectedCamp.value = selectedCategory!
+                                  .docCatParent!.txtDescription!;
+                              selectedKey.value =
+                                  selectedCategory!.docCatParent!.txtKey;
+                              selectedValue.value =
+                                  selectedCategory!.docCatParent!.txtShortcode;
+                              // }
+                            }
+                            getUsersForCategory(selectedKey.value);
+                          },
+                          textWidget: nodeDesign(entry.node),
+                        );
+                      },
+                    ),
+                    if (isLoading)
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                  ],
+                ),
+              ),
+            // const Divider(height: 3),
 
+            // SizedBox(
+            //   height: screenHeight * 0.01,
+            // ),
             Padding(
               padding: const EdgeInsets.only(bottom: 30.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: save,
+                    onPressed: () {
+                      save();
+                    },
                     style: customButtonStyle(
-                      Size(
-                        isDesktop ? screenWidth * 0.1 : screenWidth * 0.4,
-                        screenHeight * 0.045,
-                      ),
-                      18,
-                      primary,
-                    ),
+                        Size(isDesktop ? screenWidth * 0.1 : screenWidth * 0.4,
+                            screenHeight * 0.045),
+                        18,
+                        primary),
                     child: Text(
                       _locale.save,
                       style: const TextStyle(color: whiteColor),
@@ -455,27 +500,6 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
     }
   }
 
-  bool searchNode(MyNode node, String q) {
-    // 👇 وحّد حالة الحروف في العنوان وفي الحقول نفسها لزيادة الدقّة
-    final title = node.title.toLowerCase();
-    final extra = node.extra as DocumentCategory?;
-    final shortCode = extra?.docCatParent?.txtShortcode?.toLowerCase() ?? '';
-    final desc = extra?.docCatParent?.txtDescription?.toLowerCase() ?? '';
-
-    if (title.contains(q) || shortCode.contains(q) || desc.contains(q)) {
-      selectedCategory = node.extra as DocumentCategory;
-      selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
-      selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-      selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
-      return true;
-    }
-
-    for (final child in node.children) {
-      if (searchNode(child, q)) return true;
-    }
-    return false;
-  }
-
   void removeNodeFromTree(DocumentCategory? category) {
     if (category == null) return;
 
@@ -522,6 +546,27 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
     return null;
   }
 
+  bool searchNode(MyNode node, String q) {
+    // 👇 وحّد حالة الحروف في العنوان وفي الحقول نفسها لزيادة الدقّة
+    final title = node.title.toLowerCase();
+    final extra = node.extra as DocumentCategory?;
+    final shortCode = extra?.docCatParent?.txtShortcode?.toLowerCase() ?? '';
+    final desc = extra?.docCatParent?.txtDescription?.toLowerCase() ?? '';
+
+    if (title.contains(q) || shortCode.contains(q) || desc.contains(q)) {
+      selectedCategory = node.extra as DocumentCategory;
+      selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
+      selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+      selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
+      return true;
+    }
+
+    for (final child in node.children) {
+      if (searchNode(child, q)) return true;
+    }
+    return false;
+  }
+
   Widget nodeDesign(MyNode node) {
     return SizedBox(
       width: node.isRoot ? 200 : 300,
@@ -531,7 +576,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
           selectedCategory = node.extra;
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-          selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
+          selectedKey.value = selectedCategory!.docCatParent!.txtKey;
           getUsersForCategory(selectedKey.value);
 
           setState(() {});
@@ -639,5 +684,104 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
       }
     }
     return discountList;
+  }
+
+  Widget dropDownUsers() {
+    return SizedBox(
+      width: screenWidth * 0.18,
+      height: screenHeight * 0.045,
+      child: Consumer<UserProvider>(
+        builder: (context, value, child) {
+          return Tooltip(
+            message: hintUsers,
+            child: TestDropdown(
+              cleanPrevSelectedItem: true,
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const UserSelectionDialog();
+                    }).then((value) {
+                  if (userProvider.selectedUsers.isEmpty) {
+                    hintUsers = "";
+                  } else {
+                    hintUsers = "";
+                    for (int i = 0;
+                        i < userProvider.selectedUsers.length;
+                        i++) {
+                      if (i == 0) {
+                        hintUsers = userProvider.selectedUsers[i].toString();
+                      } else {
+                        hintUsers =
+                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+                      }
+                    }
+                  }
+
+                  setState(() {});
+                });
+              },
+              isEnabled: true,
+              icon: const Icon(Icons.search),
+              onClearIconPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return CustomConfirmDialog(
+                        confirmMessage:
+                            _locale.areYouSureToDelete(_locale.users));
+                  },
+                ).then((value) {
+                  if (value == true) {
+                    setState(() {
+                      listOfUsersCode!.clear();
+                      hintUsers = "";
+                      usersListModel!.clear();
+                      context.read<UserProvider>().clearUsers();
+                    });
+                  }
+                });
+              },
+              onChanged: (value) {
+                setState(() {
+                  List<UserModel> selectedUsers = [];
+
+                  for (int i = 0; i < value.length; i++) {
+                    selectedUsers.add(value[i]);
+                  }
+                  userProvider.addUsers(selectedUsers);
+
+                  if (userProvider.selectedUsers.isEmpty) {
+                    hintUsers = "";
+                  } else {
+                    hintUsers = "";
+                    for (int i = 0;
+                        i < userProvider.selectedUsers.length;
+                        i++) {
+                      if (i == 0) {
+                        hintUsers = userProvider.selectedUsers[i].toString();
+                      } else {
+                        hintUsers =
+                            "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
+                      }
+                    }
+                  }
+                });
+              },
+              stringValue: hintUsers ?? "",
+              borderText: _locale.users,
+              onSearch: (text) async {
+                List<UserModel> newList = await userController.getUsers(
+                    SearchModel(
+                        searchField: text.trim(), page: -1, status: -1));
+                newList.removeWhere(
+                    (user) => listOfUsersCode!.contains(user.txtCode));
+                return newList;
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 }
