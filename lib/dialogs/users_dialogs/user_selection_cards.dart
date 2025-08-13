@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import '../../models/db/user_models/user_model.dart';
 import '../../models/dto/searchs_model/search_model.dart';
 import '../../providers/user_provider.dart';
 import '../../service/controller/users_controller/user_controller.dart';
+import '../../widget/text_field_widgets/custom_searchField.dart';
 
 class UserSelectionCards extends StatefulWidget {
   final String selectedCategoryId; // يتغير عند اختيار تصنيف جديد
@@ -32,7 +34,6 @@ class _UserSelectionCardsState extends State<UserSelectionCards> {
   final _searchCtrl = TextEditingController();
   bool _didInitialFetch = false;
 
-  // data + paging
   final List<UserModel> _items = [];
   final Set<String> _codesSeen = {}; // prevents duplicates across pages
   int _page = 1;
@@ -47,7 +48,6 @@ class _UserSelectionCardsState extends State<UserSelectionCards> {
     super.initState();
     _scroll.addListener(_onScroll);
 
-    // if the parent already passed a category id, load immediately
     if (widget.selectedCategoryId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _resetAndLoad());
       _didInitialFetch = true;
@@ -84,14 +84,12 @@ class _UserSelectionCardsState extends State<UserSelectionCards> {
 
     final all = await _fetchAllUsers(query: _query);
 
-    // أمنع التكرار
     for (final u in all) {
       final code = u.txtCode ?? '';
       if (code.isEmpty) continue;
       if (_codesSeen.add(code)) _items.add(u);
     }
 
-    // بما إننا جبنا الكل بالفعل:
     _isLast = true;
     _loading = false;
     setState(() {});
@@ -105,13 +103,11 @@ class _UserSelectionCardsState extends State<UserSelectionCards> {
 
   Future<List<UserModel>> _fetchAllUsers({required String query}) async {
     try {
-      // ✳️ لو السيرفر يدعم page = -1 (كما في كودك القديم)
       final all = await _userController.getUsers(
         SearchModel(page: -1, searchField: query, status: -1),
       );
       return all;
     } catch (_) {
-      // 🔁 fallback: نجمع كل الصفحات
       final all = <UserModel>[];
       var page = 1;
       while (true) {
@@ -121,7 +117,7 @@ class _UserSelectionCardsState extends State<UserSelectionCards> {
         if (batch.isEmpty) break;
         all.addAll(batch);
         page += 1;
-        if (page > 10000) break; // أمان
+        if (page > 10000) break;
       }
       return all;
     }
@@ -129,14 +125,26 @@ class _UserSelectionCardsState extends State<UserSelectionCards> {
 
   void _onSearchChanged(String v) {
     _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 350), () {
+    _debounce = Timer(const Duration(milliseconds: 350), () async {
       _query = v.trim();
+
+      setState(() => _loading = true);
+
+      // clear and refill
       _items.clear();
       _codesSeen.clear();
-      _page = 1;
-      _isLast = false;
-      setState(() {});
-      _fetchAllUsers(query: '');
+
+      // ✅ use the actual _query and await the result
+      final all = await _fetchAllUsers(query: _query);
+
+      for (final u in all) {
+        final code = u.txtCode ?? '';
+        if (code.isEmpty) continue;
+        if (_codesSeen.add(code)) _items.add(u);
+      }
+
+      _isLast = true; // we're fetching all results at once
+      setState(() => _loading = false);
     });
   }
 
@@ -168,24 +176,13 @@ class _UserSelectionCardsState extends State<UserSelectionCards> {
         Row(
           children: [
             Expanded(
-              child: TextField(
+              child: CustomSearchField(
+                label: _local.search,
+                width: double.infinity, // fills the left pane
+                padding: 8,
                 controller: _searchCtrl,
-                onChanged: _onSearchChanged,
-                decoration: InputDecoration(
-                  labelText: _local.search,
-                  isDense: true,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchCtrl.text.isEmpty
-                      ? null
-                      : IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _searchCtrl.clear();
-                            _onSearchChanged('');
-                          },
-                        ),
-                ),
+                onChanged: (value) =>
+                    _onSearchChanged(value), // tree-only search
               ),
             ),
             const SizedBox(width: 8),
@@ -224,31 +221,49 @@ class _UserSelectionCardsState extends State<UserSelectionCards> {
                     final name = u.txtNamee ?? '';
                     final selected = provider.selectedCodes.contains(code);
 
-                    // Alternate colors: even = white, odd = light grey
                     final backgroundColor =
                         index.isEven ? Colors.white : Colors.grey[200];
-
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       elevation: selected ? 4 : 1,
                       color: backgroundColor,
                       child: ListTile(
-                        onTap: () => provider.toggleUser(u),
-
-                        // Show index + name
-                        title: Text(
-                          '${index + 1}. ${name.isEmpty ? _local.userName : name}',
+                        enabled: true,
+                        title: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: '${index + 1}-  ',
+                                style: DefaultTextStyle.of(context).style,
+                              ),
+                              TextSpan(
+                                text: name.isEmpty ? _local.userName : name,
+                                style: const TextStyle(
+                                    color: primary,
+                                    fontWeight: FontWeight.w200),
+                              ),
+                            ],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         subtitle: Text(
                           '${_local.userCode}: ${code.isEmpty ? "-" : code} · ${_local.refNumber}: ${ref.isEmpty ? "-" : ref}',
                         ),
                         trailing: Checkbox(
                           value: selected,
+                          fillColor:
+                              MaterialStateProperty.resolveWith((states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return primary;
+                            }
+                            return null;
+                          }),
                           onChanged: (val) {
                             if (val == true) {
                               provider.addUser(u);
-                            } else {
-                              if (code.isNotEmpty) provider.removeByCode(code);
+                            } else if (code.isNotEmpty) {
+                              provider.removeByCode(code);
                             }
                           },
                         ),

@@ -6,10 +6,9 @@ import 'package:archiving_flutter_project/utils/constants/key.dart';
 import 'package:archiving_flutter_project/utils/encrypt/encryption.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'dart:html' as html;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ErrorController {
@@ -86,7 +85,9 @@ class ErrorController {
       String errorTitle, Color color, int statusCode) async {
     final context = navigatorKey.currentState!.overlay!.context;
     const storage = FlutterSecureStorage();
-    String? token = await storage.read(key: 'jwt');
+    // String? token = await storage.read(key: 'jwt');
+    String? token = html.window.sessionStorage['jwt'];
+
     if (statusCode == 401 && token != null ||
         (statusCode == 401 && token == null && !ErrorController.temp)) {
       showDialog(

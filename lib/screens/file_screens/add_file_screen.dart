@@ -64,15 +64,15 @@ class _AddFileScreenState extends State<AddFileScreen> {
   // ValueNotifier isFileLoading = ValueNotifier(false);
   bool isFileLoading = false;
 // في State
-  Future<List<String>>?
-      _scannersFuture; // نحتفظ بالـ Future عشان أي طلبات لاحقة تنتظر نفس النداء
-  List<String> scannersCache = []; // كاش محلي
-  bool _errorShown = false; // لتجنّب تكرار الديالوج
+  Future<List<String>>? _scannersFuture;
+  List<String> scannersCache = [];
+  bool _errorShown = false;
   String? _scanStatusText;
   String? txtFilename;
   String? imgBlob;
   int? dblFilesize;
   Uint8List? image;
+  List<String> scanners = [];
 
   String selectedCat = "";
   String selectedCatDesc = "";
@@ -86,7 +86,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
   late DocumentListProvider documentListProvider;
   var storage = FlutterSecureStorage();
   String? userName = "";
-  List<String> scanners = [];
   bool approval = false;
   String active = "0";
   late AppLocalizations _locale;
@@ -696,6 +695,24 @@ class _AddFileScreenState extends State<AddFileScreen> {
     setState(() {});
   }
 
+  List<dynamic> _cachedScanners = [];
+  bool _loadedScanners = false;
+
+  Future<List<dynamic>> _getScanners(String filter) async {
+    if (_loadedScanners && filter.isEmpty) {
+      return _cachedScanners;
+    }
+
+    final result = await DocumentsController().getAllScannersMethod(url);
+
+    if (filter.isEmpty) {
+      _cachedScanners = result;
+      _loadedScanners = true;
+    }
+
+    return result;
+  }
+
   int scannerIndex = 0;
   Widget buildScanDropdown() {
     return Padding(
@@ -718,11 +735,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                 bordeText: _locale.scanners,
                 width: width * 0.2,
                 height: height * 0.05,
-                onSearch: (p0) async {
-                  scanners =
-                      await DocumentsController().getAllScannersMethod(url);
-                  return scanners;
-                },
+                onSearch: _getScanners,
               ),
               const SizedBox(height: 10),
               ElevatedButton(
@@ -735,7 +748,20 @@ class _AddFileScreenState extends State<AddFileScreen> {
                     Navigator.pop(context);
                     if (value.isNotEmpty) {
                       scan();
-                    } else {}
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (_) => ErrorDialog(
+                          icon: Icons.error_outline,
+                          errorTitle: _locale.error,
+                          errorDetails: _locale.noScannersFound,
+                          color: Colors.red,
+                          statusCode: 406,
+                        ),
+                      ).then((value) {
+                        Navigator.pop(context);
+                      });
+                    }
                   }).catchError((e) {
                     Navigator.pop(context);
                   });

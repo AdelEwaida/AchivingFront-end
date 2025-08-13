@@ -96,16 +96,17 @@ class MyApp extends StatelessWidget {
         const storage = FlutterSecureStorage();
         String userCode = storage.read(key: "userName").toString();
 
-        await storage.delete(key: "jwt").then((value) {
-          // isLoginDialog = true;
+        html.window.sessionStorage.remove('jwt');
 
-          showDialog(
-              context: context2,
-              barrierDismissible: false,
-              builder: (builder) {
-                return const LoginDialog();
-              });
-        });
+        // isLoginDialog = true;
+
+        showDialog(
+            context: context2,
+            barrierDismissible: false,
+            builder: (builder) {
+              return const LoginDialog();
+            });
+        // });
 
         // const storage = FlutterSecureStorage();
         // String userCode = storage.read(key: "userName").toString();
@@ -145,7 +146,9 @@ class MyApp extends StatelessWidget {
 
         if (kIsWeb) {
           storage.deleteAll();
-          storage.delete(key: "jwt");
+          // storage.delete(key: "jwt");
+          html.window.sessionStorage.remove('jwt');
+
           // GoRouter.of(context).pushReplacementNamed(loginScreenRoute);
           GoRouter.of(context2).go(loginScreenRoute);
         } else {

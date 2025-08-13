@@ -133,7 +133,7 @@ class _CustomDropDownState extends State<DropDown> {
             popupProps: PopupProps.menu(
               searchDelay: const Duration(milliseconds: 1),
               showSearchBox: widget.searchBox ?? true,
-              isFilterOnline: widget.onSearch != null,
+              isFilterOnline: false,
               searchFieldProps: TextFieldProps(
                 autofocus: true,
                 decoration: InputDecoration(

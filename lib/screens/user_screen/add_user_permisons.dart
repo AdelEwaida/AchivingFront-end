@@ -117,7 +117,6 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            // MAIN AREA: Tree (left) + Users table (right)
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,54 +124,75 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                   // الشجرة (نفس كودك الحالي)
                   Expanded(
                     flex: 1,
-                    child: Stack(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TreeView<MyNode>(
-                          key: ValueKey(treeController),
-                          treeController: treeController,
-                          nodeBuilder: (context, entry) {
-                            return MyTreeTile(
-                              onPointerDown: (p0) {},
-                              key: ValueKey(entry.node),
-                              entry: entry,
-                              folderOnTap: () {
-                                if (entry.node.children.isNotEmpty) {
-                                  selectedCategory = entry.node.extra;
-                                  selectedCamp.value = selectedCategory!
-                                      .docCatParent!.txtDescription!;
-                                  selectedValue.value = selectedCategory!
-                                      .docCatParent!.txtShortcode;
-                                  selectedKey.value =
-                                      selectedCategory!.docCatParent!.txtKey ??
-                                          "";
-                                  treeController.toggleExpansion(entry.node);
-                                } else {
-                                  selectedCategory = entry.node.extra;
-                                  selectedCamp.value = selectedCategory!
-                                      .docCatParent!.txtDescription!;
-                                  selectedKey.value =
-                                      selectedCategory!.docCatParent!.txtKey ??
-                                          "";
-                                  selectedValue.value = selectedCategory!
-                                      .docCatParent!.txtShortcode;
-                                }
-                                // مهم: هذا يُحدّث الـ Provider بقائمة مستخدمي التصنيف
-                                getUsersForCategory(selectedKey.value);
-                                setState(() {});
-                              },
-                              textWidget: nodeDesign(entry.node),
-                            );
-                          },
+                        // ⬇️ Search sits on top of the tree
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: CustomSearchField(
+                            label: _locale.search,
+                            width: double.infinity, // fills the left pane
+                            padding: 8,
+                            controller: searchController,
+                            onChanged: (value) =>
+                                searchTree(value), // tree-only search
+                          ),
                         ),
-                        if (isLoading)
-                          const Center(child: CircularProgressIndicator()),
+
+                        // ⬇️ TreeView with the same loading overlay
+                        Expanded(
+                          child: Stack(
+                            children: [
+                              TreeView<MyNode>(
+                                key: ValueKey(treeController),
+                                treeController: treeController,
+                                nodeBuilder: (context, entry) {
+                                  return MyTreeTile(
+                                    onPointerDown: (p0) {},
+                                    key: ValueKey(entry.node),
+                                    entry: entry,
+                                    folderOnTap: () {
+                                      if (entry.node.children.isNotEmpty) {
+                                        selectedCategory = entry.node.extra;
+                                        selectedCamp.value = selectedCategory!
+                                            .docCatParent!.txtDescription!;
+                                        selectedValue.value = selectedCategory!
+                                            .docCatParent!.txtShortcode;
+                                        selectedKey.value = selectedCategory!
+                                                .docCatParent!.txtKey ??
+                                            "";
+                                        treeController
+                                            .toggleExpansion(entry.node);
+                                      } else {
+                                        selectedCategory = entry.node.extra;
+                                        selectedCamp.value = selectedCategory!
+                                            .docCatParent!.txtDescription!;
+                                        selectedKey.value = selectedCategory!
+                                                .docCatParent!.txtKey ??
+                                            "";
+                                        selectedValue.value = selectedCategory!
+                                            .docCatParent!.txtShortcode;
+                                      }
+                                      getUsersForCategory(selectedKey.value);
+                                      setState(() {});
+                                    },
+                                    textWidget: nodeDesign(entry.node),
+                                  );
+                                },
+                              ),
+                              if (isLoading)
+                                const Center(
+                                    child: CircularProgressIndicator()),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
 
                   const SizedBox(width: 16),
 
-                  // الجدول (بدون Dialog)
                   Expanded(
                     flex: 1,
                     child: ValueListenableBuilder(
@@ -189,7 +209,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                           );
                         }
                         return UserSelectionCards(
-                          key: ValueKey(id), // يعيد البناء عند تغيير التصنيف
+                          key: ValueKey(id), //     
                           selectedCategoryId: id,
                           listHeight: screenHeight * 0.68,
                           listWidth: screenWidth * 0.42,
@@ -239,7 +259,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
       if (value) {
         await categoriesController
             .deleteCategory(InsertCategoryModel(
-            shortCode: selectedCategory!.docCatParent!.txtShortcode!))
+                shortCode: selectedCategory!.docCatParent!.txtShortcode!))
             .then((value) {
           if (value.statusCode == 200) {
             reloadData();
@@ -251,7 +271,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
 
   void getUsersForCategory(String categoryId) async {
     List<UserCategory> userList =
-    await userController.getUsersByCatMethod(categoryId);
+        await userController.getUsersByCatMethod(categoryId);
     setState(() {
       usersListModelCategory = userList;
       hintUsers = usersListModelCategory!.map((e) => e.userName!).join(', ');
@@ -377,7 +397,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
       treeController.collapseAll();
       convertToTreeList(campClassificationList);
       final root =
-      MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
+          MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
       treeController.toggleExpansion(root);
       treeController.roots = <MyNode>[root];
       setState(() {});
@@ -397,7 +417,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
         treeNodes = [];
         convertToTreeList(campClassificationList);
         final root =
-        MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
+            MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
         treeController.toggleExpansion(root);
         treeController.roots = <MyNode>[root];
         setState(() {});
@@ -492,7 +512,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
           if (!node.isRoot && node.children.isEmpty) {
             selectedCategory = node.extra;
             selectedCamp.value =
-            selectedCategory!.docCatParent!.txtDescription!;
+                selectedCategory!.docCatParent!.txtDescription!;
           }
         },
         child: ValueListenableBuilder(
@@ -544,7 +564,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   MyNode getNodes(DocumentCategory data) {
     MyNode node = MyNode(
       title:
-      "${data.docCatParent!.txtShortcode}@${data.docCatParent!.txtDescription!}",
+          "${data.docCatParent!.txtShortcode}@${data.docCatParent!.txtDescription!}",
       extra: data,
       isRoot: false,
       children: List.from(data.docCatChildren!.map((x) => getNodes(x))),

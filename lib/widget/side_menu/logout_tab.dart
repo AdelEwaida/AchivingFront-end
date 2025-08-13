@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/foundation.dart';
+import 'dart:html' as html;
 
 import '../../providers/screen_content_provider.dart';
 
@@ -120,18 +121,13 @@ class _LogoutTabState extends State<LogoutTab> {
       if (value) {
         storage.deleteAll();
 
-        await storage.delete(key: "jwt").then((value) async {
-          await storage.delete(key: "roles").then((value) {
-            // context.read<ScreenContentProvider>().setPage1(-1);
+        html.window.sessionStorage.remove('jwt');
+        await storage.delete(key: "roles").then((value) {
+          // context.read<ScreenContentProvider>().setPage1(-1);
 
-            GoRouter.of(context).go(loginScreenRoute);
-
-            // menuList = getMenus(_locale, value!);
-            // setState(() {});
-          });
-          // context.read<ScreenContentProvider>().setPage1(0);
+          GoRouter.of(context).go(loginScreenRoute);
         });
-        // LoginController().logOut(locale);
+        // });
       }
     });
   }

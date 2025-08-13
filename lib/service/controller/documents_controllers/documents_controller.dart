@@ -167,12 +167,8 @@ class DocumentsController {
             list.add(scanner.toString());
           }
         }
-      } else {
-        print("❌ Failed to load scanners. Status: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("⚠️ Error fetching scanners: $e");
-    }
+      } else {}
+    } catch (e) {}
 
     return list;
   }
