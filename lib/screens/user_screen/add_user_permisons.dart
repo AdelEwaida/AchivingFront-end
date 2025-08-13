@@ -25,6 +25,7 @@ import '../../dialogs/categories_dialogs/add_category_dialog.dart';
 import '../../dialogs/categories_dialogs/edit_category_dialog.dart';
 import '../../dialogs/error_dialgos/confirm_dialog.dart';
 import '../../dialogs/users_dialogs/selected_users_table.dart';
+import '../../dialogs/users_dialogs/user_selection_cards.dart';
 import '../../models/db/user_models/user_category.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/constants/colors.dart';
@@ -121,116 +122,77 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // LEFT: search + tree
+                  // الشجرة (نفس كودك الحالي)
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    flex: 1,
+                    child: Stack(
                       children: [
-                        // 🔎 tree search
-                        CustomSearchField(
-                          label: _locale.search,
-                          width: screenWidth * 0.45,
-                          padding: 8,
-                          controller: searchController,
-                          onChanged: (value) => searchTree(value),
+                        TreeView<MyNode>(
+                          key: ValueKey(treeController),
+                          treeController: treeController,
+                          nodeBuilder: (context, entry) {
+                            return MyTreeTile(
+                              onPointerDown: (p0) {},
+                              key: ValueKey(entry.node),
+                              entry: entry,
+                              folderOnTap: () {
+                                if (entry.node.children.isNotEmpty) {
+                                  selectedCategory = entry.node.extra;
+                                  selectedCamp.value = selectedCategory!
+                                      .docCatParent!.txtDescription!;
+                                  selectedValue.value = selectedCategory!
+                                      .docCatParent!.txtShortcode;
+                                  selectedKey.value =
+                                      selectedCategory!.docCatParent!.txtKey ??
+                                          "";
+                                  treeController.toggleExpansion(entry.node);
+                                } else {
+                                  selectedCategory = entry.node.extra;
+                                  selectedCamp.value = selectedCategory!
+                                      .docCatParent!.txtDescription!;
+                                  selectedKey.value =
+                                      selectedCategory!.docCatParent!.txtKey ??
+                                          "";
+                                  selectedValue.value = selectedCategory!
+                                      .docCatParent!.txtShortcode;
+                                }
+                                // مهم: هذا يُحدّث الـ Provider بقائمة مستخدمي التصنيف
+                                getUsersForCategory(selectedKey.value);
+                                setState(() {});
+                              },
+                              textWidget: nodeDesign(entry.node),
+                            );
+                          },
                         ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "${_locale.pleaseSelectCat} *",
-                            style: TextStyle(
-                              color: textSecondary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        // 🌲 tree itself
-                        Expanded(
-                          child: isLoading
-                              ? Center(
-                                  child: SpinKitCircle(
-                                    color: Theme.of(context).primaryColor,
-                                    size: 50.0,
-                                  ),
-                                )
-                              : Stack(
-                                  children: [
-                                    TreeView<MyNode>(
-                                      key: ValueKey(treeController),
-                                      treeController: treeController,
-                                      nodeBuilder: (context, entry) {
-                                        return MyTreeTile(
-                                          onPointerDown: (p0) {},
-                                          key: ValueKey(entry.node),
-                                          entry: entry,
-                                          folderOnTap: () {
-                                            if (entry
-                                                .node.children.isNotEmpty) {
-                                              selectedCategory =
-                                                  entry.node.extra;
-                                              selectedCamp.value =
-                                                  selectedCategory!
-                                                      .docCatParent!
-                                                      .txtDescription!;
-                                              selectedValue.value =
-                                                  selectedCategory!
-                                                      .docCatParent!
-                                                      .txtShortcode;
-                                              selectedKey.value =
-                                                  selectedCategory!
-                                                          .docCatParent!
-                                                          .txtKey ??
-                                                      "";
-                                              treeController
-                                                  .toggleExpansion(entry.node);
-                                            } else {
-                                              selectedCategory =
-                                                  entry.node.extra;
-                                              selectedCamp.value =
-                                                  selectedCategory!
-                                                      .docCatParent!
-                                                      .txtDescription!;
-                                              selectedKey.value =
-                                                  selectedCategory!
-                                                          .docCatParent!
-                                                          .txtKey ??
-                                                      "";
-                                              selectedValue.value =
-                                                  selectedCategory!
-                                                      .docCatParent!
-                                                      .txtShortcode;
-                                            }
-                                            // ✅ prefill right table with users of this category
-                                            getUsersForCategory(
-                                                selectedKey.value);
-                                          },
-                                          textWidget: nodeDesign(entry.node),
-                                        );
-                                      },
-                                    ),
-                                    if (isLoading)
-                                      const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                  ],
-                                ),
-                        ),
+                        if (isLoading)
+                          const Center(child: CircularProgressIndicator()),
                       ],
                     ),
                   ),
 
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    width: screenWidth * 0.4,
-                    child: ValueListenableBuilder<String>(
+                  const SizedBox(width: 16),
+
+                  // الجدول (بدون Dialog)
+                  Expanded(
+                    flex: 1,
+                    child: ValueListenableBuilder(
                       valueListenable: selectedKey,
                       builder: (context, catId, _) {
-                        return UserSelectionTable(
-                          key: ValueKey(
-                              catId), // 👈 force fresh grid+fetch per category
-                          selectedCategoryId: catId,
+                        final id = (catId as String?) ?? '';
+                        if (id.isEmpty) {
+                          return Center(
+                            child: Text(
+                              _locale.pleaseSelectCat,
+                              style: const TextStyle(
+                                  fontSize: 16, color: Colors.grey),
+                            ),
+                          );
+                        }
+                        return UserSelectionCards(
+                          key: ValueKey(id), // يعيد البناء عند تغيير التصنيف
+                          selectedCategoryId: id,
+                          listHeight: screenHeight * 0.68,
+                          listWidth: screenWidth * 0.42,
                         );
                       },
                     ),
@@ -238,7 +200,6 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                 ],
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.only(bottom: 30.0),
               child: Row(
@@ -317,36 +278,26 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   }
 
   save() async {
-    List<String> userCodes = context
+    final userCodes = context
         .read<UserProvider>()
         .selectedUsers
-        .map((user) => user.txtCode!)
+        .map((u) => u.txtCode!)
         .toList();
-    UserUpdateReq userUpdateReq =
-        UserUpdateReq(categoryId: selectedKey.value, users: userCodes);
-    var response = await userController.updateUserCatgeory(userUpdateReq);
+    final req = UserUpdateReq(categoryId: selectedKey.value, users: userCodes);
+    final response = await userController.updateUserCatgeory(req);
     if (response.statusCode == 200) {
-      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
-        builder: (context) {
-          return ErrorDialog(
-              icon: Icons.done_all,
-              errorDetails: _locale.done,
-              errorTitle: _locale.addDoneSucess,
-              color: Colors.green,
-              statusCode: 200);
-        },
-      ).then((value) {
-        setState(() {
-          listOfUsersCode!.clear();
-          hintUsers = "";
-          usersListModel!.clear();
-          usersListModel!.clear();
-          userProvider.clearUsers();
-        });
-        // setState(() {});
-        // resetPage(); // reloadData();
+        builder: (_) => ErrorDialog(
+          icon: Icons.done_all,
+          errorDetails: _locale.done,
+          errorTitle: _locale.addDoneSucess,
+          color: Colors.green,
+          statusCode: 200,
+        ),
+      ).then((_) {
+        context.read<UserProvider>().clearUsers(); // نظّف الاختيارات
+        // لا داعي لـ hintUsers/listOfUsersCode/...
       });
     }
   }
