@@ -186,8 +186,8 @@ class _UserSelectionTableState extends State<UserSelectionTable> {
   }
 
   Future<PlutoInfinityScrollRowsResponse> _fetch(
-    PlutoInfinityScrollRowsRequest request,
-  ) async {
+      PlutoInfinityScrollRowsRequest request,
+      ) async {
     // إذا كنا في وضع البحث: لا نحمّل Lazy (النتائج تُعرض من _onSearch)
     if (_isSearch.value) {
       return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);

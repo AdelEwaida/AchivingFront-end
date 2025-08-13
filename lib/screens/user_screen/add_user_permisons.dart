@@ -239,7 +239,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
       if (value) {
         await categoriesController
             .deleteCategory(InsertCategoryModel(
-                shortCode: selectedCategory!.docCatParent!.txtShortcode!))
+            shortCode: selectedCategory!.docCatParent!.txtShortcode!))
             .then((value) {
           if (value.statusCode == 200) {
             reloadData();
@@ -251,7 +251,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
 
   void getUsersForCategory(String categoryId) async {
     List<UserCategory> userList =
-        await userController.getUsersByCatMethod(categoryId);
+    await userController.getUsersByCatMethod(categoryId);
     setState(() {
       usersListModelCategory = userList;
       hintUsers = usersListModelCategory!.map((e) => e.userName!).join(', ');
@@ -377,7 +377,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
       treeController.collapseAll();
       convertToTreeList(campClassificationList);
       final root =
-          MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
+      MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
       treeController.toggleExpansion(root);
       treeController.roots = <MyNode>[root];
       setState(() {});
@@ -397,7 +397,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
         treeNodes = [];
         convertToTreeList(campClassificationList);
         final root =
-            MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
+        MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
         treeController.toggleExpansion(root);
         treeController.roots = <MyNode>[root];
         setState(() {});
@@ -492,7 +492,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
           if (!node.isRoot && node.children.isEmpty) {
             selectedCategory = node.extra;
             selectedCamp.value =
-                selectedCategory!.docCatParent!.txtDescription!;
+            selectedCategory!.docCatParent!.txtDescription!;
           }
         },
         child: ValueListenableBuilder(
@@ -544,7 +544,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   MyNode getNodes(DocumentCategory data) {
     MyNode node = MyNode(
       title:
-          "${data.docCatParent!.txtShortcode}@${data.docCatParent!.txtDescription!}",
+      "${data.docCatParent!.txtShortcode}@${data.docCatParent!.txtDescription!}",
       extra: data,
       isRoot: false,
       children: List.from(data.docCatChildren!.map((x) => getNodes(x))),
