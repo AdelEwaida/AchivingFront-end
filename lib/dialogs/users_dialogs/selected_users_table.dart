@@ -55,23 +55,27 @@ class _UserSelectionTableState extends State<UserSelectionTable> {
   ValueNotifier itemsNumber = ValueNotifier(0);
   List<PlutoColumn> polCols = [];
   @override
-  void initState() {
-    super.initState();
-    _loadUsers(); // تحميل أولي
-  }
-
-  @override
   void didUpdateWidget(covariant UserSelectionTable oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     if (oldWidget.selectedCategoryId != widget.selectedCategoryId) {
-      _loadUsers(); // إعادة تحميل عند تغيّر الكاتيجوري
+      selectedUsersModel.clear();
+      rowList2.clear();
+
+      // Only run if there’s something to load
+      if (filterProvider.selectedUsers.isNotEmpty) {
+        for (int i = 0; i < filterProvider.selectedUsers.length; i++) {
+          selectedUsersModel.add(filterProvider.selectedUsers[i]);
+          rowList2.add(
+            filterProvider.selectedUsers[i].toPlutoRow(i + 1, _local),
+          );
+          print(
+              "filterProvider.selectedUsers[i] :${filterProvider.selectedUsers[i]}");
+        }
+      }
+
+      setState(() {});
     }
-  }
-
-  Future<void> _loadUsers() async {
-    if (widget.selectedCategoryId.isEmpty) return;
-
-    setState(() {});
   }
 
   @override
@@ -82,10 +86,10 @@ class _UserSelectionTableState extends State<UserSelectionTable> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
     filterProvider = context.read<UserProvider>();
-
+    print("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttt");
     selectedUsersModel.clear();
     rowList2.clear();
-    filterProvider.setSelectedUsers([]);
+    // filterProvider.setSelectedUsers([]);/
 
     fillColumnTable();
     if (stateManager != null) {
@@ -113,11 +117,19 @@ class _UserSelectionTableState extends State<UserSelectionTable> {
       }
     }
 
-    for (int i = 0; i < filterProvider.selectedUsers.length!; i++) {
-      log("filterProvider.selectedUsers[i] :${filterProvider.selectedUsers[i].txtCode}");
-      selectedUsersModel.add(filterProvider.selectedUsers[i]);
-      rowList2.add(filterProvider.selectedUsers[i].toPlutoRow(i + 1, _local));
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final users = filterProvider.selectedUsers;
+      if (users.isNotEmpty) {
+        selectedUsersModel = List.from(users);
+        rowList2 = users
+            .asMap()
+            .entries
+            .map((e) => e.value.toPlutoRow(e.key + 1, _local))
+            .toList();
+        setState(() {});
+      }
+    });
+
     super.didChangeDependencies();
   }
 
@@ -207,18 +219,19 @@ class _UserSelectionTableState extends State<UserSelectionTable> {
                     selectedUsersModel =
                         List<UserModel>.from(provider.selectedUsers);
 
-                    // after the table paints, sync the checked state
                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (stateManager == null) return;
                       final codes = provider.selectedUsers
                           .map((u) => u.txtCode ?? '')
                           .where((c) => c.isNotEmpty)
                           .toSet();
-                      print('Selected user codes: $codes');
 
                       _applyPreselection(codes);
+                      _placeSelectedFirstAndPrecheck(codes);
                     });
 
                     return TableComponent(
+                      key: ValueKey(widget.selectedCategoryId),
                       tableHeigt: height * 0.6,
                       tableWidth: width * 0.85,
                       search: search,
@@ -231,12 +244,21 @@ class _UserSelectionTableState extends State<UserSelectionTable> {
                       onLoaded: (PlutoGridOnLoadedEvent event) {
                         stateManager = event.stateManager;
                         stateManager!.setShowColumnFilter(true);
+
+                        // Apply immediately if provider already has users
+                        final codes = provider.selectedUsers
+                            .map((u) => u.txtCode ?? '')
+                            .where((c) => c.isNotEmpty)
+                            .toSet();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _placeSelectedFirstAndPrecheck(codes);
+                        });
                       },
                       onSelected: (event) {},
                     );
                   },
                 ),
-              ),
+              )
             ],
 
             // actions: [
@@ -269,6 +291,69 @@ class _UserSelectionTableState extends State<UserSelectionTable> {
     final p = context.read<UserProvider>();
     p.clearUsers();
     p.addUsers(selectedUsersModel);
+  }
+
+  void _placeSelectedFirstAndPrecheck(Set<String> codes) {
+    print('[_placeSelectedFirstAndPrecheck] codes: $codes');
+    if (codes.isEmpty || stateManager == null) return;
+
+    // 1) شفرة الصفوف الموجودة الآن في الجدول
+    final all = List<PlutoRow>.from(stateManager!.rows);
+    final presentCodes = <String>{
+      for (final r in all) (r.cells['txtCode']?.value?.toString() ?? '')
+    };
+
+    // 2) الأكواد الناقصة (موجودة في الـ provider بس مش موجودة كصفوف في الجدول)
+    final missingCodes = codes.difference(presentCodes);
+    print('Missing selected codes (not in grid yet): $missingCodes');
+
+    // 3) ابنِ صفوف للناقص من الـ provider وأضفها أعلى الجدول
+    if (missingCodes.isNotEmpty) {
+      final prov = context.read<UserProvider>();
+      final toInsert = <PlutoRow>[];
+
+      for (final u in prov.selectedUsers) {
+        final c = (u.txtCode ?? '').trim();
+        if (missingCodes.contains(c)) {
+          final row = u.toPlutoRow(0, _local);
+          row.setChecked(true); // precheck
+          toInsert.add(row);
+        }
+      }
+
+      // أدخلهم من الأخير للأول عشان يحافظ على نفس الترتيب المقصود
+      for (final r in toInsert.reversed) {
+        stateManager!.insertRows(0, [r]);
+      }
+
+      print('Inserted ${toInsert.length} missing selected rows at top.');
+    }
+
+    // 4) الآن اقسم كل الصفوف إلى مختارة/غير مختارة ثم أعد الترتيب
+    final current = List<PlutoRow>.from(stateManager!.rows);
+    final selected = <PlutoRow>[];
+    final rest = <PlutoRow>[];
+
+    for (final r in current) {
+      final code = r.cells['txtCode']?.value?.toString() ?? '';
+      final isSelected = codes.contains(code);
+      if (isSelected) {
+        r.setChecked(true);
+        selected.add(r);
+      } else {
+        rest.add(r);
+      }
+    }
+
+    print('Selected rows count (after insert): ${selected.length}');
+    print('Unselected rows count: ${rest.length}');
+
+    // لإزالة التكرار: امسح كل الصفوف وأعد إدراجها بالترتيب
+    stateManager!
+      ..removeRows(current)
+      ..appendRows([...selected, ...rest]);
+
+    print('Reordered grid → selected first.');
   }
 
   PlutoInfinityScrollRows lazyLoadingfooter(

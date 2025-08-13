@@ -222,11 +222,19 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                   ),
 
                   const SizedBox(width: 12),
-
-                  // SizedBox(
-                  //   width: screenWidth * 0.4,
-                  //   child: const UserSelectionTable(),
-                  // ),
+                  SizedBox(
+                    width: screenWidth * 0.4,
+                    child: ValueListenableBuilder<String>(
+                      valueListenable: selectedKey,
+                      builder: (context, catId, _) {
+                        return UserSelectionTable(
+                          key: ValueKey(
+                              catId), // 👈 force fresh grid+fetch per category
+                          selectedCategoryId: catId,
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -632,103 +640,4 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
     }
     return discountList;
   }
-
-  // Widget dropDownUsers() {
-  //   return SizedBox(
-  //     width: screenWidth * 0.18,
-  //     height: screenHeight * 0.045,
-  //     child: Consumer<UserProvider>(
-  //       builder: (context, value, child) {
-  //         return Tooltip(
-  //           message: hintUsers,
-  //           child: TestDropdown(
-  //             cleanPrevSelectedItem: true,
-  //             onPressed: () {
-  //               showDialog(
-  //                   context: context,
-  //                   builder: (context) {
-  //                     return const UserSelectionTable();
-  //                   }).then((value) {
-  //                 if (userProvider.selectedUsers.isEmpty) {
-  //                   hintUsers = "";
-  //                 } else {
-  //                   hintUsers = "";
-  //                   for (int i = 0;
-  //                       i < userProvider.selectedUsers.length;
-  //                       i++) {
-  //                     if (i == 0) {
-  //                       hintUsers = userProvider.selectedUsers[i].toString();
-  //                     } else {
-  //                       hintUsers =
-  //                           "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
-  //                     }
-  //                   }
-  //                 }
-
-  //                 setState(() {});
-  //               });
-  //             },
-  //             isEnabled: true,
-  //             icon: const Icon(Icons.search),
-  //             onClearIconPressed: () {
-  //               showDialog(
-  //                 context: context,
-  //                 builder: (context) {
-  //                   return CustomConfirmDialog(
-  //                       confirmMessage:
-  //                           _locale.areYouSureToDelete(_locale.users));
-  //                 },
-  //               ).then((value) {
-  //                 if (value == true) {
-  //                   setState(() {
-  //                     listOfUsersCode!.clear();
-  //                     hintUsers = "";
-  //                     usersListModel!.clear();
-  //                     context.read<UserProvider>().clearUsers();
-  //                   });
-  //                 }
-  //               });
-  //             },
-  //             onChanged: (value) {
-  //               setState(() {
-  //                 List<UserModel> selectedUsers = [];
-
-  //                 for (int i = 0; i < value.length; i++) {
-  //                   selectedUsers.add(value[i]);
-  //                 }
-  //                 userProvider.addUsers(selectedUsers);
-
-  //                 if (userProvider.selectedUsers.isEmpty) {
-  //                   hintUsers = "";
-  //                 } else {
-  //                   hintUsers = "";
-  //                   for (int i = 0;
-  //                       i < userProvider.selectedUsers.length;
-  //                       i++) {
-  //                     if (i == 0) {
-  //                       hintUsers = userProvider.selectedUsers[i].toString();
-  //                     } else {
-  //                       hintUsers =
-  //                           "${hintUsers!}, ${userProvider.selectedUsers[i].toString()}";
-  //                     }
-  //                   }
-  //                 }
-  //               });
-  //             },
-  //             stringValue: hintUsers ?? "",
-  //             borderText: _locale.users,
-  //             onSearch: (text) async {
-  //               List<UserModel> newList = await userController.getUsers(
-  //                   SearchModel(
-  //                       searchField: text.trim(), page: -1, status: -1));
-  //               newList.removeWhere(
-  //                   (user) => listOfUsersCode!.contains(user.txtCode));
-  //               return newList;
-  //             },
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 }
