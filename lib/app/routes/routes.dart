@@ -81,12 +81,12 @@ class AppRoutes {
 
   static scanMethod(
       BuildContext context, Map<String, String> queryParams) async {
-    // openLoadinDialog(context);
     await loadApi();
     late ScreenContentProvider screenContentProvider;
     late DocumentListProvider fileListProvider;
     screenContentProvider = context.read<ScreenContentProvider>();
     fileListProvider = context.read<DocumentListProvider>();
+
     String key = "archiveProj@s2024ASD/Key@team.CT";
     final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
     final byteArray =
@@ -95,29 +95,27 @@ class AppRoutes {
     const storage = FlutterSecureStorage();
 
     Uri uri = Uri.parse(url);
+
     String? desc = uri.queryParameters['DOCN_NAME_EN'];
-    String? lParam = uri.queryParameters['L'];
+    fileListProvider.setDescription(desc ?? "");
+
     String? fld1Param = uri.queryParameters['FLD_1'];
+    fileListProvider.setIssueNumber(fld1Param ?? "");
+
     String? userName = uri.queryParameters['DUN'];
     String emailEncrypted =
         Encryption.performAesEncryption(userName ?? '', key, byteArray);
-    storage.write(key: "userName", value: userName);
+    storage.write(key: "userName", value: userName ?? "");
 
     var response = await LoginController().logInWithOutPass(
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
+
     if (response) {
       fileListProvider.setIsViewFile(true);
-
-      fileListProvider.setDescription(desc!);
-      fileListProvider.setIssueNumber(fld1Param!);
       screenContentProvider.setPage1(7);
-      // ignore: use_build_context_synchronously
-      // Navigator.pop(context);
-      // GoRouter.of(context).go(mainScreenRoute);
       return mainScreenRoute;
     } else {
       fileListProvider.setIsViewFile(true);
-
       screenContentProvider.setPage1(20);
     }
   }
@@ -156,7 +154,8 @@ class AppRoutes {
     if (response) {
       fileListProvider.setIsViewFile(true);
 
-      fileListProvider.setIssueNumber(fld1Param!);
+      fileListProvider.setIssueNumber(fld1Param ?? "");
+
       screenContentProvider.setPage1(6);
 
       return mainScreenRoute;

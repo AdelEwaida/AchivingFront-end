@@ -14,21 +14,19 @@ import '../../utils/func/responsive.dart';
 import '../../utils/func/text_and_number_inputFormater.dart';
 import '../../widget/table_component/table_component.dart';
 
-class UserSelectionTableDialog extends StatefulWidget {
+class UserSelectionDialog extends StatefulWidget {
   final int? index;
-  final List<UserModel>? selectedUsersModel;
-  const UserSelectionTableDialog({
-    this.selectedUsersModel,
+
+  const UserSelectionDialog({
     this.index,
     super.key,
   });
 
   @override
-  State<UserSelectionTableDialog> createState() =>
-      _UserSelectionTableDialogState();
+  State<UserSelectionDialog> createState() => _UserSelectionDialogState();
 }
 
-class _UserSelectionTableDialogState extends State<UserSelectionTableDialog> {
+class _UserSelectionDialogState extends State<UserSelectionDialog> {
   late AppLocalizations _local;
   TextEditingController searchName = TextEditingController();
   TextEditingController searchCode = TextEditingController();
@@ -66,10 +64,6 @@ class _UserSelectionTableDialogState extends State<UserSelectionTableDialog> {
     isDesktop = Responsive.isDesktop(context);
     filterProvider = context.read<UserProvider>();
 
-    selectedUsersModel.clear();
-    rowList2.clear();
-    filterProvider.setSelectedUsers([]);
-
     fillColumnTable();
     if (stateManager != null) {
       for (int i = 0; i < polCols.length; i++) {
@@ -95,7 +89,6 @@ class _UserSelectionTableDialogState extends State<UserSelectionTableDialog> {
         stateManager!.columns[i].titleSpan = polCols[i].titleSpan;
       }
     }
-
     for (int i = 0; i < filterProvider.selectedUsers.length!; i++) {
       selectedUsersModel.add(filterProvider.selectedUsers[i]);
       rowList2.add(filterProvider.selectedUsers[i].toPlutoRow(i + 1, _local));
@@ -106,24 +99,10 @@ class _UserSelectionTableDialogState extends State<UserSelectionTableDialog> {
   void fillColumnTable() {
     polCols.addAll([
       PlutoColumn(
-        title: '#',
-        field: 'count',
-        type: PlutoColumnType.text(),
-        readOnly: true,
-        enableFilterMenuItem: false,
-        enableRowChecked: true,
-        enableSorting: false,
-        width: isDesktop ? width * 0.06 : width * 0.15,
-        backgroundColor: columnColors,
-        renderer: (ctx) {
-          // rowIdx is 0-based; show 1-based
-          return Center(child: Text('${ctx.rowIdx + 1}'));
-        },
-      ),
-      PlutoColumn(
         enableFilterMenuItem: true,
         title: _local.userCode,
         field: "txtCode",
+        enableRowChecked: true,
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.15 : width * 0.4,
         backgroundColor: columnColors,
@@ -163,15 +142,6 @@ class _UserSelectionTableDialogState extends State<UserSelectionTableDialog> {
   double width = 0;
   double height = 0;
   bool isFirstSpace = true;
-  void _applyPreselection(Set<String> preselectedCodes) {
-    if (stateManager == null) return;
-
-    for (final row in stateManager!.rows) {
-      final code = row.cells['txtCode']?.value?.toString();
-      row.setChecked(preselectedCodes.contains(code));
-    }
-    stateManager!.notifyListeners(true);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,83 +149,94 @@ class _UserSelectionTableDialogState extends State<UserSelectionTableDialog> {
     height = MediaQuery.of(context).size.height;
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-    final double dialogWidth = screenWidth * 0.3;
-    final double dialogHeight = screenHeight * 0.7;
+    final double dialogWidth = screenWidth * 0.45;
+    final double dialogHeight = screenHeight * 0.85;
 
     return bolIsLooding
         ? Center(child: CircularProgressIndicator()) // Loading indicator
-        : Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                width: isDesktop ? width * 0.8 : width * 0.9,
-                child: Consumer<UserProvider>(
-                  builder: (context, provider, _) {
-                    selectedUsersModel =
-                        List<UserModel>.from(provider.selectedUsers);
+        : AlertDialog(
+            content: Container(
+              width: dialogWidth,
+              height: dialogHeight,
+              child: Column(
+                mainAxisAlignment:
+                    MainAxisAlignment.start, // Aligning content to start
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(),
+                      Text(_local.search),
+                      Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: Color.fromARGB(255, 237, 34, 20),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                      width: isDesktop ? width * 0.8 : width * 0.9,
+                      child: TableComponent(
+                        // key: UniqueKey(),
+                        tableHeigt: height * 0.65,
+                        tableWidth: width * 0.85,
+                        search: search,
+                        plCols: polCols,
+                        mode: PlutoGridMode.selectWithOneTap,
+                        polRows: [],
+                        footerBuilder: (stateManager) {
+                          return lazyLoadingfooter(stateManager);
+                        },
+                        handleOnRowChecked: (event) {
+                          handleOnRowChecked(event);
+                        },
+                        onLoaded: (PlutoGridOnLoadedEvent event) {
+                          stateManager = event.stateManager;
+                          stateManager!.setShowColumnFilter(true);
+                        },
 
-                    // after the table paints, sync the checked state
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      final codes = provider.selectedUsers
-                          .map((u) => u.txtCode ?? '')
-                          .where((c) => c.isNotEmpty)
-                          .toSet();
-                      print('Selected user codes: $codes');
-
-                      _applyPreselection(codes);
-                    });
-
-                    return TableComponent(
-                      tableHeigt: height * 0.6,
-                      tableWidth: width * 0.85,
-                      search: search,
-                      plCols: polCols,
-                      mode: PlutoGridMode.selectWithOneTap,
-                      polRows: [],
-                      footerBuilder: (stateManager) =>
-                          lazyLoadingfooter(stateManager),
-                      handleOnRowChecked: handleOnRowChecked,
-                      onLoaded: (PlutoGridOnLoadedEvent event) {
-                        stateManager = event.stateManager;
-                        stateManager!.setShowColumnFilter(true);
-                      },
-                      onSelected: (event) {},
-                    );
-                  },
-                ),
+                        onSelected: (event) async {
+                          PlutoRow? tappedRow = event.row;
+                          // selectedRow = tappedRow;
+                        },
+                      )),
+                ],
+              ),
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      filterProvider.clearUsers();
+                      filterProvider.addUsers(selectedUsersModel);
+                      Navigator.pop(context);
+                    },
+                    style: customButtonStyle(
+                      Size(width * 0.09, height * 0.045),
+                      18,
+                      const Color(0xff1F6E8C),
+                    ),
+                    child: Text(
+                      _local.save,
+                      style: const TextStyle(color: whiteColor),
+                    ),
+                  ),
+                ],
               ),
             ],
-
-            // actions: [
-            //   Row(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [
-            // ElevatedButton(
-            //   onPressed: () {
-            //     filterProvider.clearUsers();
-            //     filterProvider.addUsers(selectedUsersModel);
-            //     Navigator.pop(context);
-            //   },
-            //   style: customButtonStyle(
-            //     Size(width * 0.09, height * 0.045),
-            //     18,
-            //     const Color(0xff1F6E8C),
-            //   ),
-            //   child: Text(
-            //     _local.save,
-            //     style: const TextStyle(color: whiteColor),
-            //   ),
-            // ),
-            //     ],
-            //   ),
-            // ],
           );
-  }
-
-  void _syncProvider() {
-    final p = context.read<UserProvider>();
-    p.clearUsers();
-    p.addUsers(selectedUsersModel);
   }
 
   PlutoInfinityScrollRows lazyLoadingfooter(
@@ -320,18 +301,13 @@ class _UserSelectionTableDialogState extends State<UserSelectionTableDialog> {
                 topList[j].cells['txtCode']!.value) {
               PlutoRow fetchedRow = topList[j];
 
-              if (i < rowList2.length) {
-                rowList2[i] = fetchedRow;
-              } else {
-                rowList2.add(fetchedRow);
-              }
+              rowList2[i] = fetchedRow;
 
               rowList.remove(fetchedRow);
               topList.remove(fetchedRow);
             }
           }
         }
-
         if (pageLis.value == 2) {
           List<PlutoRow> fetchedRows2 = [];
           for (int i = 0; i < topList.length; i++) {
@@ -359,6 +335,8 @@ class _UserSelectionTableDialogState extends State<UserSelectionTableDialog> {
 
   void handleOnRowChecked(PlutoGridOnRowCheckedEvent event) {
     if (event.isRow) {
+      // or event.isAll
+
       if (event.isChecked == false) {
         for (int i = 0; i < selectedUsersModel.length; i++) {
           if (selectedUsersModel[i].txtCode ==
@@ -370,15 +348,16 @@ class _UserSelectionTableDialogState extends State<UserSelectionTableDialog> {
       } else {
         selectedUsersModel.add(UserModel.fromPlutoRow(event.row!, _local));
       }
-    } else {
-      final selectedRows = stateManager!.checkedRows;
-      selectedUsersModel = [];
-      for (final row in selectedRows) {
-        selectedUsersModel.add(UserModel.fromPlutoRow(row, _local));
-      }
-    }
 
-    itemsNumber.value = selectedUsersModel.length;
-    _syncProvider();
+      itemsNumber.value = selectedUsersModel.length;
+    } else {
+      List<PlutoRow>? selectedRows = stateManager!.checkedRows;
+      selectedUsersModel = [];
+      for (PlutoRow? row in selectedRows) {
+        selectedUsersModel.add(UserModel.fromPlutoRow(row!, _local));
+      }
+
+      itemsNumber.value = selectedUsersModel.length;
+    }
   }
 }

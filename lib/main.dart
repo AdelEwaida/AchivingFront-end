@@ -264,44 +264,6 @@ class MyApp extends StatelessWidget {
     //    // await storage.write(key: 'logOutApi', value: logOutApi);
   }
 
-  // void checkUrlParameters() {
-  //   // final context2 = navigatorKey.currentState!.overlay!.context;
-  //   late ScreenContentProvider screenContentProvider;
-  //   late DocumentListProvider fileListProvider;
-  //   final context2 = navigatorKey.currentState!.overlay!.context;
-  //   print("HHHHHHHHHHHHHHHHHHEEEEEEEEEREEEEEEEE");
-  //   screenContentProvider = context2.read<ScreenContentProvider>();
-  //   fileListProvider = context2.read<DocumentListProvider>();
-  //   String url = html.window.location.href;
-  //   Uri uri = Uri.parse(url);
-  //   print('Full URL: $url');
-  //   print('Scheme: ${uri.scheme}');
-  //   print('Host: ${uri.host}');
-  //   print('Path: ${uri.path}');
-  //   print('Fragment: ${uri.fragment}');
-  //   FlutterSecureStorage storage = FlutterSecureStorage();
-
-  //   // Get query parameters
-  //   Map<String, String> queryParams = uri.queryParameters;
-  //   queryParams.forEach((key, value) {
-  //     print('Query Parameter: $key = $value');
-  //   });
-
-  //   // Access specific query parameters
-  //   String? lParam = uri.queryParameters['L'];
-  //   String? fld1Param = uri.queryParameters['FLD_1'];
-  //   if (fld1Param != null && fld1Param!.isNotEmpty) {
-  //     print("HHHHHHHH");
-  //     storage.write(
-  //         key: 'jwt',
-  //         value:
-  //             "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2giLCJyb2xlcyI6WyJST0xFX0FETUlOIl0sImV4cCI6MTcxOTgyNzA5OSwiaWF0IjoxNzE5ODE2Mjk5LCJncm91cCI6ImFyY2hpdmUifQ.hhI0Bn0ZqpC7Y55-6QVbn5ey7HCovuicd3NciPShHWU");
-  //     fileListProvider.setIssueNumber(fld1Param);
-  //     screenContentProvider.setPage1(6);
-  //   }
-  //   print('L Parameter: $lParam');
-  //   print('FLD_1 Parameter: $fld1Param');
-  // }
 
   void checkReferrer() {
     String referrer = html.document.referrer;
