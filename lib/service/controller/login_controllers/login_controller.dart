@@ -153,44 +153,24 @@ class LoginController {
       });
     } else {
       final context = navigatorKey.currentState!.overlay!.context;
-      // Navigator.pop(context);
 
       if (response.statusCode == 400 || response.statusCode == 406) {
-        // Navigator.pop(context);
-
-        ErrorController.dialogBasedonResponseStatus(Icons.warning,
-            local.worningPassOrEmeail, local.wrongInput, Colors.red, 400);
+        // ignore: use_build_context_synchronously
+        await showDialog(
+          context: context,
+          builder: (builder) {
+            return ErrorDialog(
+              icon: Icons.warning,
+              errorDetails: "",
+              errorTitle: local.worningPassOrEmeail,
+              color: Colors.red,
+              statusCode: 400,
+            );
+          },
+        );
       }
     }
+
     return responseStatus;
   }
-
-  // Future logOutPost(LogoutModel userModel, AppLocalizations local) async {
-  //   String api = logOutApi;
-
-  //   return await ApiService().putRequest(api, userModel.toJson());
-  //   // var response = await ApiService().putRequest(api, userModel.toJson());
-  //   // if (response == 200) {
-  //   //   return true;
-  //   // }
-  //   // return false;
-  // }
-
-  // Future<void> logOut(AppLocalizations locale) async {
-  //   final context = navigatorKey.currentState!.overlay!.context;
-  //   const storage = FlutterSecureStorage();
-
-  //   LogInModel userModel = LogInModel("", "");
-  //   // await LoginController().logOutPost(userModel, locale).then((value) async {
-  //   //   await storage.delete(key: "jwt").then((value) {
-  //   //     if (kIsWeb) {
-  //   //       context.read<TabsProvider>().emptyAll();
-  //   //       GoRouter.of(context).go(loginScreenRoute);
-  //   //     } else {
-  //   //       context.read<TabsProvider>().emptyAll();
-  //   //       Navigator.pushReplacementNamed(context, loginScreenRoute);
-  //   //     }
-  //   //   });
-  //   // });
-  // }
 }

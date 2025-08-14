@@ -195,6 +195,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
                     return EditUserCategoryDialog(
                       userCategoryModel: userCategoryModel,
                     );
+                    
                   },
                 ).then((value) {
                   if (value) {
@@ -216,22 +217,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Text(
-                //   "${_locale.officeNumberDisplayed}: ",
-                //   style: const TextStyle(fontWeight: FontWeight.bold),
-                // ),
-                // ValueListenableBuilder(
-                //   valueListenable: officeNumberDisplayed,
-                //   builder: ((context, value, child) {
-                //     return Text(
-                //       "${officeNumberDisplayed.value}",
-                //       style: const TextStyle(fontWeight: FontWeight.bold),
-                //     );
-                //   }),
-                // ),
-                // SizedBox(
-                //   width: width * 0.05,
-                // ),
+              
                 Text(
                   "${_locale.totalCount}: ",
                   style: const TextStyle(fontWeight: FontWeight.bold),
