@@ -476,7 +476,7 @@ class _FileListScreenState extends State<FileListScreen> {
           genranlEdit: context.read<DocumentListProvider>().isViewFile == true
               ? null
               : editDocumentInfo,
-          exportToExcel: exportToExecl,
+
           // add: addAction,
           // genranlEdit: editAction,
           plCols: polCols,
@@ -491,7 +491,7 @@ class _FileListScreenState extends State<FileListScreen> {
           filesList: context.read<DocumentListProvider>().isViewFile == true
               ? fileViewScreen
               : null,
-
+          exportToExcel: exportToExecl,
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
 
@@ -670,7 +670,7 @@ class _FileListScreenState extends State<FileListScreen> {
     }
   }
 
-  ValueNotifier<int> progress = ValueNotifier(0);
+  bool _isExportingExcel = false; // <— add this
 
   Future<void> exportToExecl() async {
     showDialog(
@@ -679,11 +679,15 @@ class _FileListScreenState extends State<FileListScreen> {
       builder: (_) => AlertDialog(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        content: Lottie.asset(
-          'assets/lottie/loading.json',
-          width: 150,
-          height: 150,
-          repeat: true,
+        content: const SizedBox(
+          width: 100,
+          height: 100,
+          child: Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 4,
+              color: Colors.white, // Adjust for your theme
+            ),
+          ),
         ),
       ),
     );
@@ -1679,6 +1683,9 @@ class _FileListScreenState extends State<FileListScreen> {
         }
 
         documentListProvider.setPage(documentListProvider.page! + 1);
+        final currentLoaded = stateManager.refRows.length;
+        final newlyFetched = resultRows.length;
+        fileNumberDisplayed.value = currentLoaded + newlyFetched;
 
         await Future.delayed(const Duration(milliseconds: 300));
         stateManager.setShowLoading(false);

@@ -45,6 +45,7 @@ class TableComponent extends StatefulWidget {
   final Function()? copy;
   final Function()? generalDownload;
   final Function()? filesList;
+  bool? isFileScreen = false;
 
   final Function(PlutoGridOnLoadedEvent event)? onLoaded;
   final Function(PlutoGridOnRowDoubleTapEvent event)? doubleTab;
@@ -65,58 +66,61 @@ class TableComponent extends StatefulWidget {
   bool? hasDropdown = false;
   bool? isworkFlow = false;
   bool? noHeader = false;
+  Widget? excelButton;
   // PlutoGridStateManager stateManger;
   Key? key;
-  TableComponent({
-    this.key,
-    this.viewLocation,
-    this.sendWhatspp,
-    this.download,
-    this.explor,
-    this.chooseDep,
-    this.sendEmail,
-    this.copy,
-    this.tableHeigt,
-    this.upload,
-    this.tableWidth,
-    this.pollScreen,
-    this.addReminder,
-    this.exportToExcel,
-    this.advanceSearch,
-    this.genranlEdit,
-    this.view,
-    this.editPassword,
-    this.add,
-    this.delete,
-    this.noHeader,
-    this.count,
-    this.search,
-    required this.plCols,
-    required this.polRows,
-    this.onSelected,
-    this.columnHeight,
-    this.footerBuilder,
-    this.isWhiteText,
-    this.doubleTab,
-    this.rightClickTap,
-    this.headerBuilder,
-    this.onLoaded,
-    this.mode,
-    this.onChange,
-    this.handleOnRowChecked,
-    this.borderColor,
-    this.rowsHeight,
-    this.moveAfterEditng,
-    this.rowColor,
-    this.generalDownload,
-    this.filesList,
-    this.dropdown,
-    this.hasDropdown,
-    this.isworkFlow,
-    this.refresh,
-    this.statusDropDown,
-    // required this.stateManger
-  });
+  TableComponent(
+      {this.key,
+      this.viewLocation,
+      this.sendWhatspp,
+      this.download,
+      this.explor,
+      this.chooseDep,
+      this.sendEmail,
+      this.copy,
+      this.tableHeigt,
+      this.upload,
+      this.tableWidth,
+      this.pollScreen,
+      this.addReminder,
+      this.exportToExcel,
+      this.advanceSearch,
+      this.genranlEdit,
+      this.view,
+      this.editPassword,
+      this.add,
+      this.delete,
+      this.noHeader,
+      this.count,
+      this.search,
+      required this.plCols,
+      required this.polRows,
+      this.onSelected,
+      this.columnHeight,
+      this.footerBuilder,
+      this.isWhiteText,
+      this.doubleTab,
+      this.rightClickTap,
+      this.headerBuilder,
+      this.onLoaded,
+      this.mode,
+      this.onChange,
+      this.handleOnRowChecked,
+      this.borderColor,
+      this.rowsHeight,
+      this.moveAfterEditng,
+      this.rowColor,
+      this.generalDownload,
+      this.filesList,
+      this.dropdown,
+      this.hasDropdown,
+      this.isworkFlow,
+      this.refresh,
+      this.isFileScreen,
+      this.statusDropDown,
+      this.excelButton
+      // required this.stateManger
+      });
   @override
   State<TableComponent> createState() => _TableComponentState();
 }
@@ -527,7 +531,11 @@ class _TableComponentState extends State<TableComponent> {
     }
     return Column(
       children: [
-        widget.noHeader == true ? SizedBox.shrink() : headerTable(),
+        widget.noHeader == true
+            ? SizedBox.shrink()
+            : widget.isFileScreen == true
+                ? headerTableFiles()
+                : headerTable(),
         SizedBox(
             height: widget.tableHeigt,
             width: widget.tableWidth,
@@ -977,45 +985,6 @@ class _TableComponentState extends State<TableComponent> {
                       child: IconButton(
                           onPressed: () async {
                             widget.exportToExcel!();
-                            // dealsProvider.clearProvider();
-                            // if (selectedCampLogsModel != null) {
-                            //   dealsProvider.loadedList = rowList;
-                            //   dealsProvider.pageNum = pageLis.value;
-
-                            //   String key = selectedCampLogsModel!.txtKey!;
-                            //   ModifiedItemSearchCriteria modifiedItemSearchCriteria =
-                            //       ModifiedItemSearchCriteria(hdrKey: key);
-                            //   CampSaveModel? campSaveModel;
-                            //   stateManager!.setShowLoading(true);
-
-                            //   await LogsController()
-                            //       .getModifiedCampaign(modifiedItemSearchCriteria)
-                            //       .then((value) {
-                            //     campSaveModel = value;
-                            //     campSaveModel!.setCampLogModel(selectedCampLogsModel!);
-
-                            //     dealsProvider.setCampSaveModel(campSaveModel);
-
-                            //     stateManager!.setShowLoading(false);
-                            //     if (campSaveModel != null &&
-                            //         campSaveModel!.discountLines!.isNotEmpty) {
-                            //       tabsProvider.changeActiveWidget(32, locale);
-                            //     }
-                            //   });
-                            // } else {
-                            //   CoolAlert.show(
-                            //     width: width * 0.4,
-                            //     context: context,
-                            //     type: CoolAlertType.warning,
-                            //     title: locale.chooseTransaction,
-                            //     text: locale
-                            //         .chooseTransToEdit, // Customize the message as needed
-                            //     confirmBtnText: locale.ok,
-                            //     onConfirmBtnTap: () {
-                            //       // Navigator.pop(context); // Close the alert
-                            //     },
-                            //   );
-                            // }
                           },
                           icon: const Icon(
                             Icons.description,
@@ -1116,6 +1085,500 @@ class _TableComponentState extends State<TableComponent> {
                   : const SizedBox.shrink(),
               SizedBox(
                 width: width * .01,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget headerTableFiles() {
+    return SizedBox(
+      height: 50,
+      child: Row(
+        children: [
+          widget.excelButton ?? Container(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              widget.search != null
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        widget.hasDropdown == true && widget.isworkFlow == true
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomSearchField(
+                                    horizontalPadding: 0,
+                                    width: width * .28,
+                                    label: locale.search,
+                                    padding: 7,
+                                    inputFormatters: [MyInputFormatter()],
+                                    onChanged: (value) {
+                                      //If input is white-space
+                                      if (value.isNotEmpty &&
+                                          value[value.length - 1] == " ") {
+                                        widget.search!(value);
+                                      }
+
+                                      if (value == " " ||
+                                          value.trim().isEmpty ||
+                                          value.isEmpty) {
+                                        widget.search!(value);
+                                      } else if (value.isNotEmpty &&
+                                          value.length > 1 &&
+                                          value[value.length - 1] == " ") {
+                                        widget.search!(value);
+                                      } else if (value.isEmpty) {
+                                        widget.search!(value);
+
+                                        // isFirstSpace = true;
+                                      } else {
+                                        // isFirstSpace = true;
+                                      }
+                                    },
+                                    onSubmitted: ((value) {
+                                      widget.search!(value);
+                                      // searchItem().then((value) {
+                                      //   isSearching = false;
+                                      // });
+                                    }),
+                                    controller: TextEditingController(),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  widget.dropdown!,
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  widget.statusDropDown!,
+                                ],
+                              )
+                            : widget.hasDropdown == true &&
+                                    widget.isworkFlow == false
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [widget.dropdown!])
+                                : CustomSearchField(
+                                    horizontalPadding: 0,
+                                    width: width * .35,
+                                    label: locale.search,
+                                    padding: 7,
+                                    inputFormatters: [MyInputFormatter()],
+                                    onChanged: (value) {
+                                      //If input is white-space
+                                      if (value.isNotEmpty &&
+                                          value[value.length - 1] == " ") {
+                                        // isSearching = true;
+                                        // isEnteredSearch = true;
+                                        // isLoadingData.value = true;
+                                        widget.search!(value);
+                                      }
+
+                                      /*If searched previously and delete the inputs in the search field will called
+                              the search method  but if enter inputs in the search field and delete it without searching for,
+                               there is no change in the table occur
+                             */
+                                      // if (value.isEmpty && isEnteredSearch) {
+                                      //   isSearching = true;
+                                      //   isEnteredSearch = false;
+                                      //   isLoadingData.value = true;
+
+                                      //   searchItem().then((value) {
+                                      //     isSearching = false;
+                                      //   });
+                                      // }
+                                      // if (value == " " || value.trim().isEmpty) {
+                                      //   isFirstSpace = false;
+
+                                      //   stateManager!.removeAllRows();
+                                      //   stateManager!.appendRows(rowList);
+
+                                      //   itemsNumberDisplayed.value = stateManager!.rows.length;
+                                      // }
+                                      if (value == " " ||
+                                          value.trim().isEmpty ||
+                                          value.isEmpty) {
+                                        // if (isFirstSpace) {
+                                        //   isFirstSpace = false;
+                                        //   isSearching = true;
+                                        //   isEnteredSearch = true;
+                                        //   isLoadingData.value = true;
+
+                                        //   searchItem().then((value) {
+                                        //     isSearching = false;
+                                        //   });
+                                        // }
+                                        widget.search!(value);
+                                      } else if (value.isNotEmpty &&
+                                          value.length > 1 &&
+                                          value[value.length - 1] == " ") {
+                                        widget.search!(value);
+
+                                        // if (isFirstSpace) {
+                                        //   final arabicNumbers = [
+                                        //     '٠',
+                                        //     '١',
+                                        //     '٢',
+                                        //     '٣',
+                                        //     '٤',
+                                        //     '٥',
+                                        //     '٦',
+                                        //     '٧',
+                                        //     '٨',
+                                        //     '٩'
+                                        //   ];
+                                        //   if (value.isNotEmpty &&
+                                        //       arabicNumbers.any((numeral) => value.contains(numeral))) {
+                                        //     value = Converters.replaceArabicNumbers(value);
+                                        //     textEditingControllerSearch.value =
+                                        //         textEditingControllerSearch.value.copyWith(
+                                        //       text: value,
+                                        //       selection: TextSelection.collapsed(offset: value.length),
+                                        //       composing: TextRange.empty,
+                                        //     );
+                                        //   }
+                                        //   isFirstSpace = false;
+                                        //   isSearching = true;
+                                        //   isEnteredSearch = true;
+                                        //   isLoadingData.value = true;
+
+                                        //   searchItem().then((value) {
+                                        //     isSearching = false;
+                                        //   });
+                                        // }
+                                      } else if (value.isEmpty) {
+                                        widget.search!(value);
+
+                                        // isFirstSpace = true;
+                                      } else {
+                                        // isFirstSpace = true;
+                                      }
+                                    },
+                                    onSubmitted: ((value) {
+                                      // value = Converters.replaceArabicNumbers(value);
+                                      // textEditingControllerSearch.text = value;
+                                      // isSearching = true;
+                                      // isEnteredSearch = true;
+                                      // isLoadingData.value = true;
+                                      widget.search!(value);
+                                      // searchItem().then((value) {
+                                      //   isSearching = false;
+                                      // });
+                                    }),
+                                    controller: TextEditingController(),
+                                  ),
+                        // Text(rowsLength.value.toString()),
+                      ],
+                    )
+                  : SizedBox.shrink(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  widget.sendEmail != null
+                      ? Tooltip(
+                          message: locale.sendViaEmail,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.sendEmail!();
+                              },
+                              icon: const Icon(
+                                Icons.email,
+                                size: 20,
+                              )))
+                      : SizedBox.shrink(),
+                  widget.sendWhatspp != null
+                      ? Tooltip(
+                          message: locale.sendViaWhatsApp,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.sendWhatspp!();
+                              },
+                              icon: const Icon(
+                                Icons.send_to_mobile,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.add != null && widget.viewLocation == null
+                      ? Tooltip(
+                          message: locale.add,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.add!();
+                              },
+                              icon: const Icon(
+                                Icons.add,
+                                size: 20,
+                              )),
+                        )
+                      : const SizedBox.shrink(),
+                  widget.genranlEdit != null
+                      ? Tooltip(
+                          message: locale.edit,
+                          child: IconButton(
+                              onPressed: () {
+                                // dealsProvider.clearProvider();
+                                // dealsProvider.clearCampModel();
+                                widget.genranlEdit!();
+                                // dealsProvider.loadedList = rowList;
+                                // dealsProvider.pageNum = pageLis.value;
+                                // // screenProvider.setPage(32);
+                                // tabsProvider.changeActiveWidget(32, locale);
+                              },
+                              icon: const Icon(
+                                Icons.edit,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.refresh != null
+                      ? Tooltip(
+                          message: locale.refresh,
+                          child: IconButton(
+                              onPressed: () {
+                                // dealsProvider.clearProvider();
+                                // dealsProvider.clearCampModel();
+                                widget.refresh!();
+                                // dealsProvider.loadedList = rowList;
+                                // dealsProvider.pageNum = pageLis.value;
+                                // // screenProvider.setPage(32);
+                                // tabsProvider.changeActiveWidget(32, locale);
+                              },
+                              icon: const Icon(
+                                Icons.refresh,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.generalDownload != null
+                      ? Tooltip(
+                          message: locale.download,
+                          child: IconButton(
+                              onPressed: () {
+                                // dealsProvider.clearProvider();
+                                // dealsProvider.clearCampModel();
+                                widget.generalDownload!();
+                                // dealsProvider.loadedList = rowList;
+                                // dealsProvider.pageNum = pageLis.value;
+                                // // screenProvider.setPage(32);
+                                // tabsProvider.changeActiveWidget(32, locale);
+                              },
+                              icon: const Icon(
+                                Icons.download,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.filesList != null
+                      ? Tooltip(
+                          message: locale.previewFile,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.filesList!();
+                              },
+                              icon: const Icon(
+                                Icons.file_copy,
+                                color: Colors.green,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.chooseDep != null
+                      ? Tooltip(
+                          message: locale.chooseListOfDepartment,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.chooseDep!();
+                                // dealsProvider.clearProvider();
+                                // dealsProvider.clearCampModel();
+
+                                // dealsProvider.loadedList = rowList;
+                                // dealsProvider.pageNum = pageLis.value;
+                                // // screenProvider.setPage(32);
+                                // tabsProvider.changeActiveWidget(32, locale);
+                              },
+                              icon: const Icon(
+                                Icons.store_mall_directory_outlined,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.explor != null
+                      ? Tooltip(
+                          message: locale.documentExplorer,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.explor!();
+                                // dealsProvider.clearProvider();
+                                // dealsProvider.clearCampModel();
+
+                                // dealsProvider.loadedList = rowList;
+                                // dealsProvider.pageNum = pageLis.value;
+                                // // screenProvider.setPage(32);
+                                // tabsProvider.changeActiveWidget(32, locale);
+                              },
+                              icon: const Icon(
+                                Icons.travel_explore_sharp,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.copy != null
+                      ? Tooltip(
+                          message: locale.copy,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.copy!();
+                                // dealsProvider.clearProvider();
+                                // dealsProvider.clearCampModel();
+
+                                // dealsProvider.loadedList = rowList;
+                                // dealsProvider.pageNum = pageLis.value;
+                                // // screenProvider.setPage(32);
+                                // tabsProvider.changeActiveWidget(32, locale);
+                              },
+                              icon: const Icon(
+                                Icons.copy,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.view != null
+                      ? Tooltip(
+                          message: locale.view,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.view!();
+                                // dealsProvider.clearProvider();
+                                // dealsProvider.clearCampModel();
+
+                                // dealsProvider.loadedList = rowList;
+                                // dealsProvider.pageNum = pageLis.value;
+                                // // screenProvider.setPage(32);
+                                // tabsProvider.changeActiveWidget(32, locale);
+                              },
+                              icon: const Icon(
+                                Icons.remove_red_eye,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.exportToExcel != null
+                      ? Tooltip(
+                          message: locale.exportToExcel,
+                          child: IconButton(
+                              onPressed: () async {
+                                widget.exportToExcel!();
+                              },
+                              icon: const Icon(
+                                Icons.description,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.advanceSearch != null
+                      ? Tooltip(
+                          message: locale.advanceSearch,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.advanceSearch!();
+                              },
+                              icon: const Icon(
+                                Icons.search,
+                                size: 20,
+                              )),
+                        )
+                      : SizedBox.shrink(),
+                  widget.editPassword != null
+                      ? Tooltip(
+                          message: locale.editPassword,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.editPassword!();
+                              },
+                              icon: const Icon(
+                                // color: redColor,
+                                Icons.password_outlined,
+                                size: 20,
+                              )),
+                        )
+                      : const SizedBox.shrink(),
+                  widget.delete != null
+                      ? Tooltip(
+                          message: locale.delete,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.delete!();
+                              },
+                              icon: Icon(
+                                color: redColor,
+                                Icons.delete,
+                                size: 20,
+                              )),
+                        )
+                      : const SizedBox.shrink(),
+                  widget.upload != null
+                      ? Tooltip(
+                          message: locale.uploadFile,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.upload!();
+                              },
+                              icon: const Icon(
+                                // color: redColor,
+                                Icons.upload_rounded,
+                                size: 20,
+                              )),
+                        )
+                      : const SizedBox.shrink(),
+                  widget.addReminder != null
+                      ? Tooltip(
+                          message: locale.addReminder,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.addReminder!();
+                              },
+                              icon: const Icon(
+                                Icons.remember_me_sharp,
+                                size: 20,
+                              )),
+                        )
+                      : const SizedBox.shrink(),
+                  widget.download != null
+                      ? Tooltip(
+                          message: locale.download,
+                          child: IconButton(
+                              onPressed: () {
+                                widget.download!();
+                              },
+                              icon: const Icon(
+                                Icons.download,
+                                size: 20,
+                              )),
+                        )
+                      : const SizedBox.shrink(),
+                  widget.viewLocation != null
+                      ? IconButton(
+                          onPressed: () {
+                            widget.viewLocation!();
+                          },
+                          icon: const Icon(
+                            Icons.location_on,
+                            size: 20,
+                          ))
+                      : const SizedBox.shrink(),
+                  SizedBox(
+                    width: width * .01,
+                  ),
+                ],
               ),
             ],
           ),
