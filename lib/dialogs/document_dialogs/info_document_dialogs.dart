@@ -386,6 +386,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               },
               height: height * 0.05,
               readOnly: !widget.isEdit,
+              isMandetory: true,
               width: width * 0.135,
             ),
             spaceWidth(0.01),

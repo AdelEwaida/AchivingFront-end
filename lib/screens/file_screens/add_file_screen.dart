@@ -759,7 +759,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                           statusCode: 406,
                         ),
                       ).then((value) {
-                        Navigator.pop(context);
+                        // Navigator.pop(context);
                       });
                     }
                   }).catchError((e) {

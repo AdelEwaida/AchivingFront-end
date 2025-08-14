@@ -318,7 +318,9 @@ class DealClassificationTreeScreenState
   }
 
   void searchTree(String query) {
-    if (query == "") {
+    final normalizedQuery = query.toLowerCase(); // normalize here
+
+    if (normalizedQuery.isEmpty) {
       selectedCamp.value = "";
       selectedValue.value = "";
 
@@ -333,15 +335,13 @@ class DealClassificationTreeScreenState
       setState(() {});
     } else {
       for (final node in treeNodes) {
-        if (searchNode(node, query)) {
-          print("INNNNNNNNN SEEEEEEAAAAAAAAAARCH");
-          // selectedCategory = node;
+        if (searchNode(node, normalizedQuery)) {
+          print("IN SEARCH (case-insensitive)");
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
 
           treeController.roots = [];
           treeNodes = [];
-
           convertToTreeList(campClassificationList);
           MyNode node = MyNode(
               title: '/', children: treeNodes, extra: null, isRoot: true);
@@ -401,7 +401,10 @@ class DealClassificationTreeScreenState
   }
 
   bool searchNode(MyNode node, String query) {
-    if (node.title.contains(query)) {
+    final nodeTitle = node.title.toLowerCase(); // normalize
+    final searchQuery = query.toLowerCase(); // normalize
+
+    if (nodeTitle.contains(searchQuery)) {
       selectedCategory = node.extra;
       selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
       selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
