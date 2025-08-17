@@ -85,8 +85,8 @@ class ErrorController {
       String errorTitle, Color color, int statusCode) async {
     final context = navigatorKey.currentState!.overlay!.context;
     const storage = FlutterSecureStorage();
-    // String? token = await storage.read(key: 'jwt');
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
+    // String? token = html.window.sessionStorage['jwt'];
 
     if (statusCode == 401 && token != null ||
         (statusCode == 401 && token == null && !ErrorController.temp)) {

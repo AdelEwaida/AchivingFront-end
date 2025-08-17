@@ -44,7 +44,7 @@ class AppRoutes {
     final checkResult = await checkUrlParameters(context);
 
     const storage = FlutterSecureStorage();
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
     String? expDate = await storage.read(key: "expDate");
     if (expDate != null) {
       DateTime tempExpDate = DateTime.parse(expDate!);
@@ -182,8 +182,8 @@ class AppRoutes {
 
   static Future<String?> _redirect2(BuildContext context, String path) async {
     const storage = FlutterSecureStorage();
-    // String? token = await storage.read(key: 'jwt');
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
+    // String? token = html.window.sessionStorage['jwt'];
     return mainScreenRoute;
   }
 }

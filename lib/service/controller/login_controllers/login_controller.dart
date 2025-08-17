@@ -23,8 +23,8 @@ class LoginController {
 
   Future<bool> logInWithOutPass(
       LogInModel userModel, AppLocalizations local) async {
-    // String? token = await storage.read(key: 'jwt');
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
+    // String? token = html.window.sessionStorage['jwt'];
 
     String? url = await storage.read(key: 'url');
     String api = "$url/${logInWitoutPassApi}";
@@ -42,8 +42,8 @@ class LoginController {
     if (response.statusCode == 200) {
       String token = response.body.substring(8, response.body.length - 2);
       const storage = FlutterSecureStorage();
-//      await storage.write(key: 'jwt', value: token);
-      html.window.sessionStorage['jwt'] = token;
+      await storage.write(key: 'jwt', value: token);
+      // html.window.sessionStorage['jwt'] = token;
 
       final encodedPayload = token.split('.')[1];
       final payloadData =
@@ -108,7 +108,7 @@ class LoginController {
     if (response.statusCode == 200) {
       String token = response.body.substring(8, response.body.length - 2);
       const storage = FlutterSecureStorage();
-      html.window.sessionStorage['jwt'] = token;
+      await storage.write(key: 'jwt', value: token);
 
       final encodedPayload = token.split('.')[1];
       final payloadData =

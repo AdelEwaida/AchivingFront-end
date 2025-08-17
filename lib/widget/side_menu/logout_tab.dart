@@ -120,8 +120,17 @@ class _LogoutTabState extends State<LogoutTab> {
     ).then((value) async {
       if (value) {
         storage.deleteAll();
+        await storage.delete(key: "jwt").then((value) async {
+          await storage.delete(key: "roles").then((value) {
+            // context.read<ScreenContentProvider>().setPage1(-1);
 
-        html.window.sessionStorage.remove('jwt');
+            GoRouter.of(context).go(loginScreenRoute);
+
+            // menuList = getMenus(_locale, value!);
+            // setState(() {});
+          });
+          // context.read<ScreenContentProvider>().setPage1(0);
+        });
         await storage.delete(key: "roles").then((value) {
           // context.read<ScreenContentProvider>().setPage1(-1);
 

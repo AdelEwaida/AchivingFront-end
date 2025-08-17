@@ -13,7 +13,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'dart:html' as html;
+
 import '../controller/error_controllers/error_controller.dart';
 
 class ApiService {
@@ -23,11 +23,10 @@ class ApiService {
   // static String scannerURL = "http://localhost:5000";
   static String emailServer = "";
   Future getScannersRequest(String ip, String api) async {
-    // String? token = await storage.read(key: 'jwt');
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
 
     var requestUrl = "$ip/$api";
-    print("requestUrl ${requestUrl}");
+    print("requestUrlrequestUrl ${requestUrl}");
     try {
       var response = await http.get(
         Uri.parse(requestUrl),
@@ -43,22 +42,50 @@ class ApiService {
       print("responseCode ${response.statusCode}");
       if (response.statusCode == 417 || response.statusCode == 401) {
         final context = navigatorKey.currentState!.overlay!.context;
-        html.window.sessionStorage.remove('jwt');
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (builder) {
-            return ErrorDialog(
-              icon: Icons.error_outline,
-              errorDetails:
-                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
-              errorTitle: AppLocalizations.of(context)!.error,
-              color: Colors.red,
-              statusCode: 401,
-            );
-          },
-        );
-        // });
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails: "1",
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
       } else if (response.statusCode != 200) {
         if (response.body == "Wrong Credentials") {
           return response;
@@ -78,7 +105,7 @@ class ApiService {
   }
 
   Future getRequest(String api) async {
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
 
     var requestUrl = "$urlServer/$api";
     print("requestUrlrequestUrl ${requestUrl}");
@@ -97,23 +124,51 @@ class ApiService {
       print("responseCode ${response.statusCode}");
       if (response.statusCode == 417 || response.statusCode == 401) {
         final context = navigatorKey.currentState!.overlay!.context;
-        html.window.sessionStorage.remove('jwt');
-
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (builder) {
-            return ErrorDialog(
-              icon: Icons.error_outline,
-              errorDetails:
-                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
-              errorTitle: AppLocalizations.of(context)!.error,
-              color: Colors.red,
-              statusCode: 401,
-            );
-          },
-        );
-        // });
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
       } else if (response.statusCode != 200) {
         if (response.body == "Wrong Credentials") {
           return response;
@@ -133,7 +188,7 @@ class ApiService {
   }
 
   Future putRequest(String api, dynamic toJson) async {
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
     var requestUrl = "$urlServer/$api";
     var response = await http.put(
       Uri.parse(requestUrl),
@@ -151,22 +206,51 @@ class ApiService {
     print("responseCode ${response.statusCode}");
     if (response.statusCode == 417 || response.statusCode == 401) {
       final context = navigatorKey.currentState!.overlay!.context;
-      html.window.sessionStorage.remove('jwt');
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (builder) {
-          return ErrorDialog(
-            icon: Icons.error_outline,
-            errorDetails:
-                AppLocalizations.of(context)!.expiredSessionLoginDialog,
-            errorTitle: AppLocalizations.of(context)!.error,
-            color: Colors.red,
-            statusCode: 401,
-          );
-        },
-      );
-      // });
+      await storage.delete(key: "jwt").then((value) {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (builder) {
+            return ErrorDialog(
+              icon: Icons.error_outline,
+              errorDetails:
+                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
+              errorTitle: AppLocalizations.of(context)!.error,
+              color: Colors.red,
+              statusCode: 401,
+            );
+          },
+        );
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return const LoginDialog();
+        //   },
+        // ).then((value) async {
+        //   if (value) {
+        //     var response = await http.post(
+        //       Uri.parse(requestUrl),
+        //       headers: {
+        //         "Accept": "application/json",
+        //         "Content-type": "application/json",
+        //         "Authorization": "Bearer $token"
+        //       },
+        //       body: json.encode(toJson),
+        //     );
+        //     return response;
+        //   }
+        //   print("object  ${value}");
+        // });
+        // if (kIsWeb) {
+        //   GoRouter.of(context).go(loginScreenRoute);
+        // } else {
+        //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+        // }
+      });
+      // ErrorController.openErrorDialog(
+      //   response.statusCode,
+      //   response.body,
+      // );
     } else if (api == logInApi &&
         (response.statusCode == 400 || response.statusCode == 406)) {
       ErrorController.openErrorDialog(
@@ -189,7 +273,7 @@ class ApiService {
   }
 
   Future deleteRequest(String api, dynamic toJson) async {
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
 
     var requestUrl = "$urlServer/$api";
     var response = await http.delete(
@@ -209,22 +293,51 @@ class ApiService {
     print("responseCode ${response.statusCode}");
     if (response.statusCode == 417 || response.statusCode == 401) {
       final context = navigatorKey.currentState!.overlay!.context;
-      html.window.sessionStorage.remove('jwt');
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (builder) {
-          return ErrorDialog(
-            icon: Icons.error_outline,
-            errorDetails:
-                AppLocalizations.of(context)!.expiredSessionLoginDialog,
-            errorTitle: AppLocalizations.of(context)!.error,
-            color: Colors.red,
-            statusCode: 401,
-          );
-        },
-      );
-      // });
+      await storage.delete(key: "jwt").then((value) {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (builder) {
+            return ErrorDialog(
+              icon: Icons.error_outline,
+              errorDetails:
+                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
+              errorTitle: AppLocalizations.of(context)!.error,
+              color: Colors.red,
+              statusCode: 401,
+            );
+          },
+        );
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return const LoginDialog();
+        //   },
+        // ).then((value) async {
+        //   if (value) {
+        //     var response = await http.post(
+        //       Uri.parse(requestUrl),
+        //       headers: {
+        //         "Accept": "application/json",
+        //         "Content-type": "application/json",
+        //         "Authorization": "Bearer $token"
+        //       },
+        //       body: json.encode(toJson),
+        //     );
+        //     return response;
+        //   }
+        //   print("object  ${value}");
+        // });
+        // if (kIsWeb) {
+        //   GoRouter.of(context).go(loginScreenRoute);
+        // } else {
+        //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+        // }
+      });
+      // ErrorController.openErrorDialog(
+      //   response.statusCode,
+      //   response.body,
+      // );
     } else if (api == logInApi &&
         (response.statusCode == 400 || response.statusCode == 406)) {
       return response;
@@ -239,7 +352,7 @@ class ApiService {
   }
 
   Future postRequestExcel(String api, dynamic toJson, {bool? isStart}) async {
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
     final context2 = navigatorKey.currentState!.overlay!.context;
     var requestUrl = "";
 
@@ -257,45 +370,104 @@ class ApiService {
       );
 
       print("--------------------------------------------");
+      // print("token $token");
       print("urlll $requestUrl");
       print("urlllbody ${json.encode(toJson)}");
       print("responseCode ${response.statusCode}");
       if (response.statusCode == 417 || response.statusCode == 401) {
         final context = navigatorKey.currentState!.overlay!.context;
-        html.window.sessionStorage.remove('jwt');
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (builder) {
-            return ErrorDialog(
-              icon: Icons.error_outline,
-              errorDetails:
-                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
-              errorTitle: AppLocalizations.of(context)!.error,
-              color: Colors.red,
-              statusCode: 401,
-            );
-          },
-        );
-        // });
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
       } else if (response.statusCode == 417 || response.statusCode == 401) {
         final context = navigatorKey.currentState!.overlay!.context;
-        html.window.sessionStorage.remove('jwt');
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (builder) {
-            return ErrorDialog(
-              icon: Icons.error_outline,
-              errorDetails:
-                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
-              errorTitle: AppLocalizations.of(context)!.error,
-              color: Colors.red,
-              statusCode: 401,
-            );
-          },
-        );
-        // });
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
       } else if (api == logInApi &&
           (response.statusCode == 400 ||
               response.statusCode == 406 ||
@@ -323,6 +495,22 @@ class ApiService {
         final context = navigatorKey.currentState!.overlay!.context;
         // ignore: use_build_context_synchronously
         Navigator.pop(context);
+        // ignore: use_build_context_synchronously
+
+        // ignore: use_build_context_synchronously
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return ErrorDialog(
+        //         icon: Icons.error_sharp,
+        //         errorDetails: AppLocalizations.of(context)!.error500,
+        //         errorTitle: AppLocalizations.of(context)!.error,
+        //         color: Colors.red,
+        //         statusCode: 500);
+        //   },
+        // );
+        // ignore: use_build_context_synchronously
+        // Navigator.pop(context);
       } else {
         final context = navigatorKey.currentState!.overlay!.context;
         // ignore: use_build_context_synchronously
@@ -342,7 +530,7 @@ class ApiService {
   }
 
   Future postRequest(String api, dynamic toJson, {bool? isStart}) async {
-    String? token = html.window.sessionStorage['jwt'];
+    String? token = await storage.read(key: 'jwt');
     final context2 = navigatorKey.currentState!.overlay!.context;
     var requestUrl = "";
 
@@ -366,40 +554,94 @@ class ApiService {
       print("responseCode ${response.statusCode}");
       if (response.statusCode == 417 || response.statusCode == 401) {
         final context = navigatorKey.currentState!.overlay!.context;
-        html.window.sessionStorage.remove('jwt');
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (builder) {
-            return ErrorDialog(
-              icon: Icons.error_outline,
-              errorDetails:
-                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
-              errorTitle: AppLocalizations.of(context)!.error,
-              color: Colors.red,
-              statusCode: 401,
-            );
-          },
-        );
-        // });
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
+        // ErrorController.openErrorDialog(
+        //   response.statusCode,
+        //   response.body,
+        // );
       } else if (response.statusCode == 417 || response.statusCode == 401) {
         final context = navigatorKey.currentState!.overlay!.context;
-        html.window.sessionStorage.remove('jwt');
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (builder) {
-            return ErrorDialog(
-              icon: Icons.error_outline,
-              errorDetails:
-                  AppLocalizations.of(context)!.expiredSessionLoginDialog,
-              errorTitle: AppLocalizations.of(context)!.error,
-              color: Colors.red,
-              statusCode: 401,
-            );
-          },
-        );
-        // });
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return const LoginDialog();
+          //   },
+          // ).then((value) async {
+          //   if (value) {
+          //     var response = await http.post(
+          //       Uri.parse(requestUrl),
+          //       headers: {
+          //         "Accept": "application/json",
+          //         "Content-type": "application/json",
+          //         "Authorization": "Bearer $token"
+          //       },
+          //       body: json.encode(toJson),
+          //     );
+          //     return response;
+          //   }
+          //   print("object  ${value}");
+          // });
+          // if (kIsWeb) {
+          //   GoRouter.of(context).go(loginScreenRoute);
+          // } else {
+          //   Navigator.pushReplacementNamed(context, loginScreenRoute);
+          // }
+        });
         // ErrorController.openErrorDialog(
         //   response.statusCode,
         //   response.body,
@@ -431,6 +673,22 @@ class ApiService {
         final context = navigatorKey.currentState!.overlay!.context;
         // ignore: use_build_context_synchronously
         Navigator.pop(context);
+        // ignore: use_build_context_synchronously
+
+        // ignore: use_build_context_synchronously
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return ErrorDialog(
+        //         icon: Icons.error_sharp,
+        //         errorDetails: AppLocalizations.of(context)!.error500,
+        //         errorTitle: AppLocalizations.of(context)!.error,
+        //         color: Colors.red,
+        //         statusCode: 500);
+        //   },
+        // );
+        // ignore: use_build_context_synchronously
+        // Navigator.pop(context);
       } else {
         final context = navigatorKey.currentState!.overlay!.context;
         // ignore: use_build_context_synchronously

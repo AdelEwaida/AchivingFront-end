@@ -96,17 +96,16 @@ class MyApp extends StatelessWidget {
         const storage = FlutterSecureStorage();
         String userCode = storage.read(key: "userName").toString();
 
-        html.window.sessionStorage.remove('jwt');
+        await storage.delete(key: "jwt").then((value) {
+          // isLoginDialog = true;
 
-        // isLoginDialog = true;
-
-        showDialog(
-            context: context2,
-            barrierDismissible: false,
-            builder: (builder) {
-              return const LoginDialog();
-            });
-        // });
+          showDialog(
+              context: context2,
+              barrierDismissible: false,
+              builder: (builder) {
+                return const LoginDialog();
+              });
+        });
 
         // const storage = FlutterSecureStorage();
         // String userCode = storage.read(key: "userName").toString();
@@ -146,8 +145,7 @@ class MyApp extends StatelessWidget {
 
         if (kIsWeb) {
           storage.deleteAll();
-          // storage.delete(key: "jwt");
-          html.window.sessionStorage.remove('jwt');
+          storage.delete(key: "jwt");
 
           // GoRouter.of(context).pushReplacementNamed(loginScreenRoute);
           GoRouter.of(context2).go(loginScreenRoute);
@@ -263,7 +261,6 @@ class MyApp extends StatelessWidget {
     //
     //    // await storage.write(key: 'logOutApi', value: logOutApi);
   }
-
 
   void checkReferrer() {
     String referrer = html.document.referrer;
