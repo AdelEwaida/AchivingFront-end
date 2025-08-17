@@ -253,7 +253,9 @@
     "copied": "Copied",
     "noFileAvailableToPreview": "No file available to preview.",
     "noFileContentReturned": "No file content returned.",
-    "sucessScanFile": "File Scaned"
+    "sucessScanFile": "File Scaned",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All"
 
 
 

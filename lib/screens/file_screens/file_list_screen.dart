@@ -1249,7 +1249,7 @@ class _FileListScreenState extends State<FileListScreen> {
 
     DocumentModel documentModel =
         DocumentModel.fromPlutoRow(selectedRow!, _locale);
-
+    print("documentModeldocumentModel :${documentModel.toJson()}");
     if (limitAction != 1) {
       showUploadDialog(documentModel);
       return;

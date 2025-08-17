@@ -2,13 +2,13 @@
 
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../utils/func/responsive.dart';
 
 class TestDropdown extends StatefulWidget {
   final List<dynamic>? list;
   final List<dynamic>? selectedList;
-
   String? stringValue;
   bool? alwaysShownBorderText;
   final Function()? onPressed;
@@ -23,6 +23,8 @@ class TestDropdown extends StatefulWidget {
   final Icon? icon;
   final bool cleanPrevSelectedItem;
   final bool? isEnabled;
+  final Function(List<dynamic>)? onSelectAll;
+  final bool? isSelectAll;
 
   TestDropdown(
       {super.key,
@@ -41,6 +43,8 @@ class TestDropdown extends StatefulWidget {
       this.onBeforeChange,
       required this.borderText,
       this.showSearchBox,
+      this.onSelectAll,
+      this.isSelectAll,
       this.onSearch});
 
   @override
@@ -59,6 +63,9 @@ class _TestDropdownState extends State<TestDropdown> {
     super.initState();
   }
 
+  List<dynamic> selectedItem = [];
+  List<dynamic> list = [];
+  String specialItem = "";
   @override
   void didChangeDependencies() {
     if (widget.selectedList != null) {
@@ -76,6 +83,10 @@ class _TestDropdownState extends State<TestDropdown> {
     isDesktop = Responsive.isDesktop(context);
     isMobile = Responsive.isMobile(context);
     bool alwaysShownBorderText = widget.alwaysShownBorderText ?? false;
+    if (widget.stringValue == null || widget.stringValue!.isEmpty) {
+      items = []; // Ensure no pre-selected items are displayed
+    }
+
     if (widget.stringValue != null && widget.stringValue!.isNotEmpty) {
       items = [''];
     } else if (widget.stringValue != null && widget.stringValue!.isEmpty) {
@@ -87,7 +98,18 @@ class _TestDropdownState extends State<TestDropdown> {
       child: SizedBox(
         child: DropdownSearch<dynamic>.multiSelection(
             key: _fieldKey,
-            asyncItems: widget.onSearch,
+            asyncItems: widget.isSelectAll == true
+                ? (String filter) async {
+                    final apiItems = await widget.onSearch!(filter);
+                    if (apiItems.isEmpty) {
+                      specialItem = AppLocalizations.of(context)!.deselectAll;
+                    } else {
+                      specialItem = AppLocalizations.of(context)!.selectAll;
+                    }
+                    list = [specialItem, ...apiItems];
+                    return list;
+                  }
+                : widget.onSearch,
             enabled: widget.isEnabled ?? true,
             dropdownDecoratorProps: alwaysShownBorderText == false &&
                     (items.isNotEmpty ||
@@ -105,7 +127,7 @@ class _TestDropdownState extends State<TestDropdown> {
                       ),
                       labelText: widget.borderText,
                       labelStyle: const TextStyle(
-                        fontSize: 14.0,
+                        fontSize: 12.0,
                         color: Color.fromARGB(235, 158, 158, 158),
                       ),
                       alignLabelWithHint: true,
@@ -129,17 +151,19 @@ class _TestDropdownState extends State<TestDropdown> {
               onItemRemoved: (selectedItems, removedItem) {
                 items = selectedItems;
               },
-              itemBuilder: (context, item, isSelected) {
-                return ListTile(
-                  title: Text(
-                    item.toString(),
-                    style: TextStyle(
-                      fontSize: 12, // Set your desired font size here
-                      color: isSelected ? Colors.white : Colors.black,
-                    ),
-                  ),
-                );
-              },
+              itemBuilder: widget.isSelectAll == true
+                  ? _customItemBuilder
+                  : (context, item, isSelected) {
+                      return ListTile(
+                        title: Text(
+                          item.toString(),
+                          style: TextStyle(
+                            fontSize: 12, // Set your desired font size here
+                            color: isSelected ? Colors.white : Colors.black,
+                          ),
+                        ),
+                      );
+                    },
               menuProps: const MenuProps(
                 animationDuration: Duration(milliseconds: 100),
               ),
@@ -206,14 +230,52 @@ class _TestDropdownState extends State<TestDropdown> {
     );
   }
 
+  Widget _customItemBuilder(
+      BuildContext context, dynamic item, bool isSelected) {
+    if (item == AppLocalizations.of(context)!.selectAll ||
+        item == AppLocalizations.of(context)!.deselectAll) {
+      return ListTile(
+        title: Text(
+          item,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+        ),
+        onTap: () {
+          if (widget.onSelectAll != null) {
+            widget.onSelectAll!(widget.list!); // Trigger Select All callback
+          }
+          setState(() {
+            selectedItem = widget.list ?? [];
+          });
+          widget.onChanged(widget.list); // Call onChanged with all items
+        },
+      );
+    }
+    return ListTile(
+      title: Text(
+        item.toString(),
+        style: TextStyle(
+          fontSize: 12,
+          color: isSelected ? Colors.white : Colors.black,
+        ),
+      ),
+    );
+  }
+
   Widget _customDropDownPrograms(BuildContext context, dynamic item) {
     double height = MediaQuery.of(context).size.height;
     bool alwaysShownBorderText = widget.alwaysShownBorderText ?? false;
     if (items.isEmpty) {
       item = [];
     }
+
     if (items.isNotEmpty && !isChange) {
       if (widget.selectedList != null && widget.selectedList!.isNotEmpty) {
+        items = [];
+
         for (int i = 0; i < widget.selectedList!.length; i++) {
           items.add(widget.selectedList![i]);
         }
@@ -222,7 +284,15 @@ class _TestDropdownState extends State<TestDropdown> {
         items = [];
         isChange = false;
       }
+    } else {
+      if (widget.selectedList != null && widget.selectedList!.isNotEmpty) {
+        items = [];
+        for (int i = 0; i < widget.selectedList!.length; i++) {
+          items.add(widget.selectedList![i]);
+        }
+      }
     }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -244,7 +314,7 @@ class _TestDropdownState extends State<TestDropdown> {
                               .replaceAll("]", ""),
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontSize: height * .02, color: Colors.black)),
+                          fontSize: height * .018, color: Colors.black)),
                 ),
               )
             : Padding(
@@ -271,9 +341,9 @@ class _TestDropdownState extends State<TestDropdown> {
                       if (widget.onClearIconPressed != null) {
                         items = [];
 
-                        // if (widget.stringValue != null) {
-                        //   widget.stringValue = "";
-                        // }
+                        if (widget.stringValue != null) {
+                          widget.stringValue = "";
+                        }
 
                         widget.onClearIconPressed!();
                       }

@@ -333,11 +333,13 @@ class _DepartmentDialogState extends State<AddUserDialog> {
                 Checkbox(
                     activeColor: primary2,
                     value: isLimitAction,
-                    onChanged: (value) {
-                      setState(() {
-                        isLimitAction = value!;
-                      });
-                    }),
+                    onChanged: !widget.isChangePassword
+                        ? (value) {
+                            setState(() {
+                              isLimitAction = value!;
+                            });
+                          }
+                        : null),
                 Text(_locale.isLimitAction),
               ],
             ),
@@ -828,21 +830,20 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       child: Tooltip(
         message: hintUsers,
         child: TestDropdown(
-          cleanPrevSelectedItem: false, // Keep previous selections
-          isEnabled: true,
+          cleanPrevSelectedItem: false, 
+          isEnabled: !widget.isChangePassword ? true : false,
+          showSearchBox: true,
           icon: const Icon(Icons.search),
           onClearIconPressed: () {
             setState(() {
-              userDeptsList = []; // Initialize to an empty list instead of null
+              userDeptsList = []; 
               hintUsers = "";
             });
           },
           onChanged: (value) {
             setState(() {
-              // Ensure userDeptsList is initialized
               userDeptsList ??= [];
 
-              // Check for null value in selection
               if (value == null || value.isEmpty) return;
 
               for (var user in value) {
@@ -852,7 +853,6 @@ class _DepartmentDialogState extends State<AddUserDialog> {
                 }
               }
 
-              // Update tooltip/hint text
               hintUsers = userDeptsList!.isNotEmpty
                   ? userDeptsList!.map((e) => e.txtDescription).join(", ")
                   : "";
@@ -861,7 +861,8 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           stringValue: hintUsers,
           borderText: _locale.department,
           onSearch: (text) async {
-            return DepartmentController().getDep(SearchModel(page: 1));
+            return DepartmentController()
+                .getDep(SearchModel(page: 1, searchField: text));
           },
         ),
       ),

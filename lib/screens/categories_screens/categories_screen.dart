@@ -318,7 +318,7 @@ class DealClassificationTreeScreenState
   }
 
   void searchTree(String query) {
-    final normalizedQuery = query.toLowerCase(); // normalize here
+    final normalizedQuery = query.toLowerCase();
 
     if (normalizedQuery.isEmpty) {
       selectedCamp.value = "";

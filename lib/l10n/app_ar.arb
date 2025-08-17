@@ -239,7 +239,9 @@
   "copied": "تم نسخ",
   "noFileAvailableToPreview": "لا توجد ملفات للعرض.",
   "noFileContentReturned": "لا توجد بيانات للملف.",
-  "sucessScanFile": "تم مسح الملف"
+  "sucessScanFile": "تم مسح الملف",
+  "selectAll": "اختيار الكل",
+  "deselectAll": "إلغاء تحديد الكل"
 
 
 

@@ -121,26 +121,21 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // الشجرة (نفس كودك الحالي)
                   Expanded(
                     flex: 1,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ⬇️ Search sits on top of the tree
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: CustomSearchField(
                             label: _locale.search,
-                            width: double.infinity, // fills the left pane
+                            width: double.infinity,
                             padding: 8,
                             controller: searchController,
-                            onChanged: (value) =>
-                                searchTree(value), // tree-only search
+                            onChanged: (value) => searchTree(value),
                           ),
                         ),
-
-                        // ⬇️ TreeView with the same loading overlay
                         Expanded(
                           child: Stack(
                             children: [
@@ -190,9 +185,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                       ],
                     ),
                   ),
-
                   const SizedBox(width: 16),
-
                   Expanded(
                     flex: 1,
                     child: ValueListenableBuilder(
@@ -209,7 +202,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                           );
                         }
                         return UserSelectionCards(
-                          key: ValueKey(id), //     
+                          key: ValueKey(id), //
                           selectedCategoryId: id,
                           listHeight: screenHeight * 0.68,
                           listWidth: screenWidth * 0.42,
@@ -315,9 +308,8 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
           color: Colors.green,
           statusCode: 200,
         ),
-      ).then((_) {
-        context.read<UserProvider>().clearUsers(); // نظّف الاختيارات
-        // لا داعي لـ hintUsers/listOfUsersCode/...
+      ).then((_) async {
+        await resetPageAfterSave();
       });
     }
   }
@@ -329,6 +321,14 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
     treeController.collapseAll();
 
     await reloadData();
+  }
+
+  Future<void> resetPageAfterSave() async {
+    selectedCamp.value = "";
+    selectedValue.value = "";
+    selectedKey.value = "";
+
+    // await reloadData();
   }
 
   Future<void> reloadData() async {
@@ -386,7 +386,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   }
 
   void searchTree(String query) {
-    final q = query.trim().toLowerCase(); // 👈 توحيد الحروف
+    final q = query.trim().toLowerCase();
 
     if (q.isEmpty) {
       selectedCamp.value = "";
@@ -394,6 +394,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
       selectedKey.value = "";
       treeController.roots = [];
       treeNodes = [];
+      context.read<UserProvider>().clearUsers();
       treeController.collapseAll();
       convertToTreeList(campClassificationList);
       final root =
@@ -406,13 +407,10 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
 
     for (final node in treeNodes) {
       if (searchNode(node, q)) {
-        // 👈 مرّر q الصغيرة
-        // عند أول تطابق
         selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
         selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
         selectedKey.value = selectedCategory!.docCatParent!.txtKey ?? "";
-
-        // أعد بناء الجذر مع توسيع الشجرة
+        getUsersForCategory(selectedKey.value);
         treeController.roots = [];
         treeNodes = [];
         convertToTreeList(campClassificationList);
@@ -427,7 +425,6 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
   }
 
   bool searchNode(MyNode node, String q) {
-    // 👇 وحّد حالة الحروف في العنوان وفي الحقول نفسها لزيادة الدقّة
     final title = node.title.toLowerCase();
     final extra = node.extra as DocumentCategory?;
     final shortCode = extra?.docCatParent?.txtShortcode?.toLowerCase() ?? '';

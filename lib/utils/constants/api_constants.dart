@@ -8,7 +8,7 @@ const updateCategoryApi = "docCat/update";
 const deleteCategoryApi = "docCat/delete";
 
 ////departemnt api's
-const getDepPageApi = "docDept/page";
+const getDepPageApi = "docDept/searchCrit";
 const searchDepPageApi = "docDept/searchCrit";
 
 const getDepCountApi = "docDept/count";
