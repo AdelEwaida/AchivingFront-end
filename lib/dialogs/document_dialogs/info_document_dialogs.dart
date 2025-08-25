@@ -130,7 +130,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                             onPressed: () {
                               updateDocument();
                             },
-                            style: customButtonStyle(
+                            style: customButtonStyle(    context,
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
                                 14,
@@ -145,7 +145,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                             onPressed: () {
                               Navigator.pop(context, false);
                             },
-                            style: customButtonStyle(
+                            style: customButtonStyle(    context,
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
                                 14,
@@ -162,7 +162,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                           onPressed: () {
                             Navigator.pop(context, false);
                           },
-                          style: customButtonStyle(
+                          style: customButtonStyle(    context,
                               Size(isDesktop ? width * 0.1 : width * 0.4,
                                   height * 0.045),
                               14,
@@ -181,7 +181,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                         children: [
                           ElevatedButton(
                             onPressed: () {},
-                            style: customButtonStyle(
+                            style: customButtonStyle(    context,
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
                                 14,
@@ -196,7 +196,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                             onPressed: () {
                               Navigator.pop(context, false);
                             },
-                            style: customButtonStyle(
+                            style: customButtonStyle(    context,
                                 Size(isDesktop ? width * 0.1 : width * 0.4,
                                     height * 0.045),
                                 14,

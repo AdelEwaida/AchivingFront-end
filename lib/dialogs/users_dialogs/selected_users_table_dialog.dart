@@ -223,9 +223,9 @@ class _UserSelectionDialogState extends State<UserSelectionDialog> {
                       filterProvider.addUsers(selectedUsersModel);
                       Navigator.pop(context);
                     },
-                    style: customButtonStyle(
+                    style: customButtonStyle(    context,
                       Size(width * 0.09, height * 0.045),
-                      18,
+                      16,
                       const Color(0xff1F6E8C),
                     ),
                     child: Text(

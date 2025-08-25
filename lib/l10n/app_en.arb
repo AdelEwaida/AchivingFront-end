@@ -255,7 +255,19 @@
     "noFileContentReturned": "No file content returned.",
     "sucessScanFile": "File Scaned",
     "selectAll": "Select All",
-    "deselectAll": "Deselect All"
+    "deselectAll": "Deselect All",
+    "downloadReady": "Download Ready",
+    "downloadFailed": "Download Failed",
+    "noFilesFoundForThisDocument": "No files were found for this document.",
+    "noValidFilesToZip": "No valid files to include in the ZIP.",
+    "zippingError": "An error occurred while preparing the ZIP.",
+    "filesPackedIntoZip": "{count, plural, =0 {No files were packed.} one {1 file has been packed into {zipName}.} other {{count} files have been packed into {zipName}.}}",
+    "@filesPackedIntoZip": {
+      "placeholders": {
+        "count": { "type": "int" },
+        "zipName": { "type": "String" }
+      }
+    }
 
 
 

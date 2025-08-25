@@ -288,7 +288,7 @@ class _FillterFileSectionState extends State<FillterFileSectionSearch> {
                   onPressed: () {
                     search();
                   },
-                  style: customButtonStyle(
+                  style: customButtonStyle(    context,
                       Size(isDesktop ? width * 0.19 : width * 0.4,
                           height * 0.043),
                       14,
@@ -305,7 +305,7 @@ class _FillterFileSectionState extends State<FillterFileSectionSearch> {
                   onPressed: () {
                     resetForm();
                   },
-                  style: customButtonStyle(
+                  style: customButtonStyle(    context,
                       Size(isDesktop ? width * 0.192 : width * 0.4,
                           height * 0.043),
                       14,

@@ -109,28 +109,6 @@ class MyApp extends StatelessWidget {
 
         // const storage = FlutterSecureStorage();
         // String userCode = storage.read(key: "userName").toString();
-
-        // String key = "scope@e2024A/key@team.CT";
-        // final iv = [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1];
-        // final byteArray = Uint8List.fromList(
-        //     iv.map((bit) => bit == 1 ? 0x01 : 0x00).toList());
-        // String userCodeEnc =
-        //     Encryption.performAesEncryption(userCode, key, byteArray);
-        // await LoginController()
-        //     .logOutPost(LogoutModel(txtCode: userCodeEnc),
-        //         AppLocalizations.of(context2)!)
-        //     .then((value) {
-        //   if (value.statusCode == 200) {
-        //     if (kIsWeb) {
-        //       storage.deleteAll();
-        //       storage.delete(key: "jwt");
-        //       // GoRouter.of(context).pushReplacementNamed(loginScreenRoute);
-        //       GoRouter.of(context2).go(loginScreenRoute);
-        //     } else {
-        //       Navigator.pushReplacementNamed(context, loginScreenRoute);
-        //     }
-        //   }
-        // });
       } else if (timeoutEvent == SessionTimeoutState.appFocusTimeout) {
         // SharedPreferences prefs = await SharedPreferences.getInstance();
         const storage = FlutterSecureStorage();
@@ -178,12 +156,12 @@ class MyApp extends StatelessWidget {
         theme: baseTheme.copyWith(
           textTheme: customTheme.textTheme,
           dialogBackgroundColor: customTheme.dialogBackgroundColor,
-          // appBarTheme: customTheme.appBarTheme,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Color.fromARGB(249, 255, 255, 255),
-            foregroundColor: Colors.black,
-          ),
+          elevatedButtonTheme: customTheme.elevatedButtonTheme,
+          textButtonTheme: customTheme.textButtonTheme,
+          outlinedButtonTheme: customTheme.outlinedButtonTheme,
+          appBarTheme: customTheme.appBarTheme,
         ),
+
         routerConfig: AppRoutes.routes,
 
         // home: const LoginScreen(),
@@ -191,29 +169,30 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  // ThemeData _buildTheme(BuildContext context, Locale? locale) {
-  //   if (locale != null && locale.languageCode == 'ar') {
-  //     return ThemeData(
-  //       dialogBackgroundColor: Colors.white,
-  //       textTheme: GoogleFonts.almaraiTextTheme(
-  //         Theme.of(context).textTheme,
-  //       ),
-  //     );
-  //   } else {
-  //     return ThemeData(
-  //       dialogBackgroundColor: Colors.white,
-  //       textTheme: GoogleFonts.nunitoTextTheme(
-  //         Theme.of(context).textTheme,
-  //       ),
-  //     );
-  //   }
-  // }
   ThemeData _buildTheme(BuildContext context, Locale? locale) {
     if (locale != null && locale.languageCode == 'ar') {
       return ThemeData(
         dialogBackgroundColor: Colors.white,
         textTheme: GoogleFonts.almaraiTextTheme(
           Theme.of(context).textTheme,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            textStyle: GoogleFonts.almarai(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            textStyle: GoogleFonts.almarai(fontSize: 14),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            textStyle: GoogleFonts.almarai(),
+          ),
         ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color.fromARGB(239, 255, 255, 255),
@@ -225,6 +204,24 @@ class MyApp extends StatelessWidget {
         dialogBackgroundColor: Colors.white,
         textTheme: GoogleFonts.nunitoTextTheme(
           Theme.of(context).textTheme,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            textStyle: GoogleFonts.nunito(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            textStyle: GoogleFonts.nunito(fontSize: 14),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            textStyle: GoogleFonts.nunito(),
+          ),
         ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color.fromARGB(249, 255, 255, 255),

@@ -140,7 +140,7 @@ class _ImportExcelDialogState extends State<ImportExcelDialog> {
                             }
                           });
                         },
-                        style: customButtonStyle(
+                        style: customButtonStyle(    context,
                           Size(isDesktop ? width * 0.1 : width * 0.4,
                               height * 0.045),
                           14,
@@ -194,7 +194,7 @@ class _ImportExcelDialogState extends State<ImportExcelDialog> {
             onPressed: () {
               pickAndReadExcel();
             },
-            style: customButtonStyle(
+            style: customButtonStyle(    context,
                 Size(isDesktop ? width * 0.14 : width * 0.4, height * 0.045),
                 16,
                 primary3),

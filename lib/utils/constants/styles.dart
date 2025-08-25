@@ -3,16 +3,31 @@ import 'dart:ui';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 
-ButtonStyle customButtonStyle(Size size, double fontSize, Color color) {
+import 'package:google_fonts/google_fonts.dart';
+
+ButtonStyle customButtonStyle(
+    BuildContext context, Size size, double fontSize, Color color) {
+  final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
   return ElevatedButton.styleFrom(
-      backgroundColor: color,
-      fixedSize: size,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-      textStyle: TextStyle(fontSize: fontSize, fontWeight: FontWeight.normal),
-      alignment: Alignment.center);
+    backgroundColor: color,
+    fixedSize: size,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(5),
+    ),
+    textStyle: isArabic
+        ? GoogleFonts.almarai(
+            fontSize: fontSize,
+            fontWeight: FontWeight.w600,
+          )
+        : GoogleFonts.nunito(
+            fontSize: fontSize,
+            fontWeight: FontWeight.w600,
+          ),
+    alignment: Alignment.center,
+  );
 }
+
 
 ButtonStyle customButtonStyle1(Size size, double fontSize, Color color) {
   return ElevatedButton.styleFrom(

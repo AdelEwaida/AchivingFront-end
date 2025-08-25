@@ -220,7 +220,7 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                 children: [
                   ElevatedButton(
                     onPressed: save,
-                    style: customButtonStyle(
+                    style: customButtonStyle(    context,
                       Size(
                         isDesktop ? screenWidth * 0.1 : screenWidth * 0.4,
                         screenHeight * 0.045,

@@ -329,7 +329,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 onPressed: () {
                   search();
                 },
-                style: customButtonStyle(
+                style: customButtonStyle(    context,
                     Size(
                         isDesktop
                             ? context.read<DocumentListProvider>().isViewFile ==
@@ -352,7 +352,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                 onPressed: () {
                   resetForm();
                 },
-                style: customButtonStyle(
+                style: customButtonStyle(    context,
                     Size(
                         isDesktop
                             ? context.read<DocumentListProvider>().isViewFile ==

@@ -99,7 +99,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
                     children: [
                       ElevatedButton(
                         onPressed: saveDocument,
-                        style: customButtonStyle(
+                        style: customButtonStyle(    context,
                           Size(isDesktop ? width * 0.1 : width * 0.4,
                               height * 0.045),
                           14,
@@ -153,7 +153,7 @@ class _AddFileDialogState extends State<AddFileDialog> {
             onPressed: () {
               pickFile();
             },
-            style: customButtonStyle(
+            style: customButtonStyle(    context,
                 Size(isDesktop ? width * 0.14 : width * 0.4, height * 0.045),
                 14,
                 primary3),

@@ -241,7 +241,19 @@
   "noFileContentReturned": "لا توجد بيانات للملف.",
   "sucessScanFile": "تم مسح الملف",
   "selectAll": "اختيار الكل",
-  "deselectAll": "إلغاء تحديد الكل"
+  "deselectAll": "إلغاء تحديد الكل",
+  "downloadReady": "التنزيل جاهز",
+  "downloadFailed": "فشل التنزيل",
+  "noFilesFoundForThisDocument": "لا توجد ملفات لهذا المستند.",
+  "noValidFilesToZip": "لا توجد ملفات صالحة لإدراجها في الملف المضغوط.",
+  "zippingError": "حدث خطأ أثناء تجهيز الملف المضغوط.",
+  "filesPackedIntoZip": "{count, plural, =0 {لم يتم تجميع أي ملفات.} one {تم تجميع ملف واحد داخل {zipName}.} other {تم تجميع {count} ملفًا داخل {zipName}.}}",
+  "@filesPackedIntoZip": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "zipName": { "type": "String" }
+    }
+  }
 
 
 

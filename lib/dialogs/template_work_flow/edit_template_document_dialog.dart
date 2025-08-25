@@ -168,7 +168,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
                   //   onPressed: () {
                   //     addTemplateAndSteps();
                   //   },
-                  //   style: customButtonStyle(
+                  //   style: customButtonStyle(    context,
                   //       Size(isDesktop ? width * 0.1 : width * 0.4,
                   //           height * 0.045),
                   //       18,
@@ -185,7 +185,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
-                    style: customButtonStyle(
+                    style: customButtonStyle(    context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         16,
@@ -207,7 +207,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
                       //   onPressed: () {
                       //     addTemplateAndSteps();
                       //   },
-                      //   style: customButtonStyle(
+                      //   style: customButtonStyle(    context,
                       //       Size(isDesktop ? width * 0.1 : width * 0.4,
                       //           height * 0.045),
                       //       18,
@@ -222,10 +222,10 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
                         onPressed: () {
                           Navigator.pop(context, false);
                         },
-                        style: customButtonStyle(
+                        style: customButtonStyle(    context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
-                            18,
+                            16,
                             redColor),
                         child: Text(
                           _locale.cancel,

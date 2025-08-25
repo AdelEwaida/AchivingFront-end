@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:archive/archive_io.dart';
 import 'package:archiving_flutter_project/dialogs/actions_dialogs/add_edit_action_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/add_file_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
@@ -51,7 +51,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 import 'dart:html' as html;
-
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
 import '../../models/db/categories_models/doc_cat_parent.dart';
 import '../../models/db/user_models/department_user_model.dart';
@@ -126,9 +125,44 @@ class _FileListScreenState extends State<FileListScreen> {
   // String? userName = "";
   var storage = FlutterSecureStorage();
   ValueNotifier totalDocCount = ValueNotifier(0);
-  getCount() {
+
+  getCountOnLoaded() {
     documentsController
         .getTotalSearchDocCountFile(SearchDocumentCriteria(page: -1))
+        .then((value) {
+      totalDocCount.value = value;
+    });
+  }
+
+  getCount() {
+    documentListProvider.searchDocumentCriteria.page = -1;
+    documentListProvider.searchDocumentCriteria.fromIssueDate =
+        documentListProvider.issueNumber != null
+            ? null
+            : fromDateController.text;
+    documentListProvider.searchDocumentCriteria.toIssueDate =
+        documentListProvider.issueNumber != null ? null : toDateController.text;
+    documentListProvider.searchDocumentCriteria.desc =
+        descreptionController.text;
+    documentListProvider.searchDocumentCriteria.issueNo =
+        issueNoController.text;
+    documentListProvider.searchDocumentCriteria.dept = selectedDep;
+    documentListProvider.searchDocumentCriteria.keywords =
+        keyWordController.text;
+    documentListProvider.searchDocumentCriteria.ref1 = ref1Controller.text;
+    documentListProvider.searchDocumentCriteria.ref2 = ref2Controller.text;
+    documentListProvider.searchDocumentCriteria.otherRef =
+        otherRefController.text;
+    documentListProvider.searchDocumentCriteria.cat =
+        calssificatonNameAndCodeProvider.classificatonKey;
+    documentListProvider.searchDocumentCriteria.organization =
+        organizationController.text;
+    documentListProvider.searchDocumentCriteria.following =
+        followingController.text;
+    documentListProvider.searchDocumentCriteria.sortedBy = selectedSortedType;
+
+    documentsController
+        .getTotalSearchDocCountFile(documentListProvider.searchDocumentCriteria)
         .then((value) {
       totalDocCount.value = value;
     });
@@ -183,23 +217,13 @@ class _FileListScreenState extends State<FileListScreen> {
             toIssueDate: "",
             page: -1));
       }
-
-      // stateManager.notifyListeners(true);
-
-      // setState(() async {
-      // String? activeValue = await storage.read(key: StorageKeys.bolActive);
-      // setState(() {
-      //   active = activeValue ?? "0";
-      // });
       await SetupController().getSetupList().then((value) async {
         setState(() {
           active = value!.first.bolActive.toString()!;
         });
       });
 
-      // });
-
-      isFetchExecuted = true; // Mark fetch as executed
+      isFetchExecuted = true;
     }
 
     polCols = [];
@@ -286,15 +310,6 @@ class _FileListScreenState extends State<FileListScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // CustomSearchField(
-                                    //   label: _locale.search,
-                                    //   width: width * 0.3,
-                                    //   padding: 8,
-                                    //   controller: searchController,
-                                    //   onChanged: (value) {
-                                    //     searchTreeOld(value);
-                                    //   },
-                                    // ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: NewCustomDropDown(
@@ -361,6 +376,7 @@ class _FileListScreenState extends State<FileListScreen> {
                                           }
                                         },
                                         style: customButtonStyle(
+                                            context,
                                             Size(
                                                 isDesktop
                                                     ? width * 0.13
@@ -427,6 +443,7 @@ class _FileListScreenState extends State<FileListScreen> {
                                       }
                                     },
                                     style: customButtonStyle(
+                                        context,
                                         Size(
                                             isDesktop
                                                 ? width * 0.1
@@ -453,6 +470,155 @@ class _FileListScreenState extends State<FileListScreen> {
         ));
   }
 
+  void explorFiels() {
+    if (selectedRow != null) {
+      openLoadinDialog(context);
+      documentsController
+          .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
+          .then((value) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return FileExplorDialog(listOfFiles: value);
+          },
+        );
+      }).then((value) {
+        // log("valuevaluevaluevaluevaluevaluevalue:${value}");
+        // if (value != null) {
+        //   // log("DONE");
+        //   documentListProvider.setDocumentSearchCriterea(
+        //       documentListProvider.searchDocumentCriteria);
+        //   Navigator.pop(context);
+        //   Navigator.pop(context);
+        // }
+      });
+    }
+  }
+
+  Future<void> download() async {
+    if (selectedRow == null) return;
+
+    openLoadinDialog(context);
+    try {
+      final files = await documentsController
+          .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value);
+
+      if (files.isEmpty) {
+        Navigator.pop(context);
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          builder: (_) => ErrorDialog(
+            icon: Icons.error_outline,
+            errorDetails: _locale.noFilesFoundForThisDocument,
+            errorTitle: _locale.downloadFailed,
+            color: Colors.red,
+            statusCode: 400,
+          ),
+        );
+        return;
+      }
+
+      // Build the archive
+      final archive = Archive();
+      final seen = <String, int>{};
+      int added = 0;
+
+      for (final f in files) {
+        try {
+          final bytes = base64Decode(f.imgBlob ?? '');
+          var name = (f.txtFilename ?? 'file').trim();
+          if (name.isEmpty) name = 'file_${added + 1}';
+          name = _uniqueName(name, seen);
+
+          archive.addFile(ArchiveFile(name, bytes.length, bytes));
+          added++;
+        } catch (e) {
+          log("Skipping a file due to decode error: $e");
+        }
+      }
+
+      if (added == 0) {
+        Navigator.pop(context);
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          builder: (_) => ErrorDialog(
+            icon: Icons.error_outline,
+            errorDetails: _locale.noValidFilesToZip,
+            errorTitle: _locale.downloadFailed,
+            color: Colors.red,
+            statusCode: 400,
+          ),
+        );
+        return;
+      }
+
+      // Encode ZIP
+      final zipBytes = ZipEncoder().encode(archive)!;
+
+      // Name the zip
+      final zipName =
+          "${Converters.formatDate(DateTime.now().toString())}_files.zip";
+
+      // Download
+      _saveZip(zipBytes, zipName);
+
+      Navigator.pop(context);
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        builder: (_) => ErrorDialog(
+          icon: Icons.done_all,
+          errorDetails: _locale.filesPackedIntoZip(added, zipName),
+          errorTitle: _locale.downloadReady,
+          color: Colors.green,
+          statusCode: 200,
+        ),
+      );
+    } catch (e) {
+      log("Error zipping/downloading files: $e");
+      Navigator.pop(context);
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (_) => ErrorDialog(
+          icon: Icons.error_outline,
+          errorDetails: _locale.zippingError,
+          errorTitle: _locale.downloadFailed,
+          color: Colors.red,
+          statusCode: 400,
+        ),
+      );
+    }
+  }
+
+// Ensure unique filenames inside the zip (avoid overwrites)
+  String _uniqueName(String name, Map<String, int> seen) {
+    final dot = name.lastIndexOf('.');
+    final base = dot > 0 ? name.substring(0, dot) : name;
+    final ext = dot > 0 ? name.substring(dot) : '';
+    if (!seen.containsKey(name)) {
+      seen[name] = 1;
+      return name;
+    }
+    final n = (seen[name]! + 1);
+    seen[name] = n;
+    return '$base ($n)$ext';
+  }
+
+  void _saveZip(List<int> bytes, String fileName) {
+    final blob = html.Blob([Uint8List.fromList(bytes)], 'application/zip');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final a = html.AnchorElement(href: url)
+      ..target = 'blank'
+      ..download = fileName
+      ..click();
+    html.Url.revokeObjectUrl(url);
+  }
+
   Widget tableSection() {
     return Column(
       children: [
@@ -477,8 +643,6 @@ class _FileListScreenState extends State<FileListScreen> {
               ? null
               : editDocumentInfo,
 
-          // add: addAction,
-          // genranlEdit: editAction,
           plCols: polCols,
           mode: PlutoGridMode.selectWithOneTap,
           polRows: [],
@@ -494,15 +658,11 @@ class _FileListScreenState extends State<FileListScreen> {
           exportToExcel: exportToExecl,
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
-
-            // stateManager.setShowColumnFilter(true);
-            // pageLis.value = pageLis.value > 1 ? 0 : 1;
-            // totalActionsCount.value = 0;
             if (isLoading.value) {
-              stateManager!.setShowLoading(true);
+              stateManager.setShowLoading(true);
             }
-            stateManager!.setShowColumnFilter(true);
-            getCount();
+            stateManager.setShowColumnFilter(true);
+            getCountOnLoaded();
           },
           doubleTab: (event) async {
             PlutoRow? tappedRow = event.row;
@@ -539,7 +699,7 @@ class _FileListScreenState extends State<FileListScreen> {
           },
         ),
         // pageLis.value = pageLis.value > 1 ? 0 : 1;
-        Container(
+        SizedBox(
           width: isDesktop ? width * 0.8 : width * 0.9,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -676,10 +836,10 @@ class _FileListScreenState extends State<FileListScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => AlertDialog(
+      builder: (_) => const AlertDialog(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        content: const SizedBox(
+        content: SizedBox(
           width: 100,
           height: 100,
           child: Center(
@@ -767,6 +927,117 @@ class _FileListScreenState extends State<FileListScreen> {
       // Close loading dialog
       // ignore: use_build_context_synchronously
       Navigator.pop(context);
+    }
+  }
+
+  Widget space(double width1) {
+    return SizedBox(
+      width: width * width1,
+    );
+  }
+
+  void fileViewScreen() {
+    if (selectedRow == null) return;
+
+    openLoadinDialog(context);
+
+    documentsController
+        .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
+        .then((files) {
+      // close loader
+      if (Navigator.canPop(context)) Navigator.pop(context);
+
+      // 1) 200 but empty (or null) -> show message
+      if (files == null || files.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (_) => ErrorDialog(
+            icon: Icons.info_outline,
+            errorDetails: _locale.noFileAvailableToPreview,
+            errorTitle: _locale.error,
+            color: Colors.orange,
+            statusCode: 200,
+          ),
+        );
+        return;
+      }
+
+      final file = files.first;
+
+      if ((file.imgBlob ?? '').isEmpty) {
+        showDialog(
+          context: context,
+          builder: (_) => ErrorDialog(
+            icon: Icons.info_outline,
+            errorDetails: _locale.noFileContentReturned,
+            errorTitle: _locale.error,
+            color: Colors.orange,
+            statusCode: 200,
+          ),
+        );
+        return;
+      }
+
+      // decode
+      final bytes = Uint8List.fromList(base64Decode(file.imgBlob!));
+      final name = (file.txtFilename ?? '').toLowerCase();
+
+      // 3) preview
+      if (name.endsWith('.pdf') ||
+          name.endsWith('.jpeg') ||
+          name.endsWith('.png') ||
+          name.endsWith('.jpg')) {
+        showDialog(
+          context: context,
+          builder: (_) => PdfPreview1(
+            pdfFile: bytes,
+            fileName: file.txtFilename ?? 'file',
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (_) => ErrorDialog(
+            icon: Icons.error_outlined,
+            errorDetails: _locale.previewNotAvilable,
+            errorTitle: _locale.error,
+            color: Colors.red,
+            statusCode: 500,
+          ),
+        );
+      }
+    }).catchError((e) {
+      // close loader if still open
+      if (Navigator.canPop(context)) Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (_) => ErrorDialog(
+          icon: Icons.error_outline,
+          errorDetails: _locale.previewNotAvilable,
+          errorTitle: _locale.error,
+          color: Colors.red,
+          statusCode: 500,
+        ),
+      );
+    });
+  }
+
+  void addRemider() {
+    if (selectedRow != null) {
+      ActionModel actionModel = ActionModel();
+      actionModel.txtDescription = selectedRow!.cells['txtDescription']!.value;
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AddEditActionDialog(
+            title: _locale.addReminder,
+            actionModel: actionModel,
+            isFromList: true,
+          );
+        },
+      ).then((value) {
+        selectedRow = null;
+      });
     }
   }
 
@@ -1015,9 +1286,12 @@ class _FileListScreenState extends State<FileListScreen> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  search();
+                  search().then((value) {
+                    getCount();
+                  });
                 },
                 style: customButtonStyle(
+                    context,
                     Size(
                         isDesktop
                             ? context.read<DocumentListProvider>().isViewFile ==
@@ -1039,12 +1313,9 @@ class _FileListScreenState extends State<FileListScreen> {
               ElevatedButton(
                 onPressed: () async {
                   resetForm();
-                  // await search();
-
-                  // documentListProvider.setIsSearch(false);
-                  // documentListProvider.searchDocumentCriteria.page = -1;
                 },
                 style: customButtonStyle(
+                    context,
                     Size(
                         isDesktop
                             ? context.read<DocumentListProvider>().isViewFile ==
@@ -1138,30 +1409,6 @@ class _FileListScreenState extends State<FileListScreen> {
     setState(() {});
   }
 
-  Future<void> resetFormOld() async {
-    fromDateController.text = Converters.startOfCurrentYearAsString();
-    toDateController.text = Converters.formatDate2(DateTime.now().toString());
-    descreptionController.clear();
-    issueNoController.clear();
-    classificationController.clear();
-    keyWordController.clear();
-    ref1Controller.clear();
-    ref2Controller.clear();
-    otherRefController.clear();
-    organizationController.clear();
-    followingController.clear();
-    selectedDep = "";
-    documentListProvider.setIssueNumber(null);
-    selectedSortedType = -1;
-    calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
-    calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
-    documentListProvider.setIsSearch(false);
-    documentListProvider.setPage(1);
-
-    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
-    setState(() {});
-  }
-
   Future<void> search() async {
     stateManager.setShowLoading(true);
 
@@ -1207,38 +1454,6 @@ class _FileListScreenState extends State<FileListScreen> {
     documentListProvider.setPage(2);
 
     stateManager.setShowLoading(false);
-  }
-
-  Widget space(double width1) {
-    return SizedBox(
-      width: width * width1,
-    );
-  }
-
-  void explorFiels() {
-    if (selectedRow != null) {
-      openLoadinDialog(context);
-      documentsController
-          .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
-          .then((value) {
-        Navigator.pop(context);
-        showDialog(
-          context: context,
-          builder: (context) {
-            return FileExplorDialog(listOfFiles: value);
-          },
-        );
-      }).then((value) {
-        // log("valuevaluevaluevaluevaluevaluevalue:${value}");
-        // if (value != null) {
-        //   // log("DONE");
-        //   documentListProvider.setDocumentSearchCriterea(
-        //       documentListProvider.searchDocumentCriteria);
-        //   Navigator.pop(context);
-        //   Navigator.pop(context);
-        // }
-      });
-    }
   }
 
   void uploadFile() async {
@@ -1300,131 +1515,6 @@ class _FileListScreenState extends State<FileListScreen> {
     });
   }
 
-  void fileViewScreen() {
-    if (selectedRow == null) return;
-
-    openLoadinDialog(context);
-
-    documentsController
-        .getFilesByHdrKey(selectedRow!.cells['txtKey']!.value)
-        .then((files) {
-      // close loader
-      if (Navigator.canPop(context)) Navigator.pop(context);
-
-      // 1) 200 but empty (or null) -> show message
-      if (files == null || files.isEmpty) {
-        showDialog(
-          context: context,
-          builder: (_) => ErrorDialog(
-            icon: Icons.info_outline,
-            errorDetails: _locale.noFileAvailableToPreview,
-            errorTitle: _locale.error,
-            color: Colors.orange,
-            statusCode: 200,
-          ),
-        );
-        return;
-      }
-
-      final file = files.first;
-
-      if ((file.imgBlob ?? '').isEmpty) {
-        showDialog(
-          context: context,
-          builder: (_) => ErrorDialog(
-            icon: Icons.info_outline,
-            errorDetails: _locale.noFileContentReturned,
-            errorTitle: _locale.error,
-            color: Colors.orange,
-            statusCode: 200,
-          ),
-        );
-        return;
-      }
-
-      // decode
-      final bytes = Uint8List.fromList(base64Decode(file.imgBlob!));
-      final name = (file.txtFilename ?? '').toLowerCase();
-
-      // 3) preview
-      if (name.endsWith('.pdf') ||
-          name.endsWith('.jpeg') ||
-          name.endsWith('.png') ||
-          name.endsWith('.jpg')) {
-        showDialog(
-          context: context,
-          builder: (_) => PdfPreview1(
-            pdfFile: bytes,
-            fileName: file.txtFilename ?? 'file',
-          ),
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (_) => ErrorDialog(
-            icon: Icons.error_outlined,
-            errorDetails: _locale.previewNotAvilable,
-            errorTitle: _locale.error,
-            color: Colors.red,
-            statusCode: 500,
-          ),
-        );
-      }
-    }).catchError((e) {
-      // close loader if still open
-      if (Navigator.canPop(context)) Navigator.pop(context);
-      showDialog(
-        context: context,
-        builder: (_) => ErrorDialog(
-          icon: Icons.error_outline,
-          errorDetails: _locale.previewNotAvilable,
-          errorTitle: _locale.error,
-          color: Colors.red,
-          statusCode: 500,
-        ),
-      );
-    });
-  }
-
-  void addRemider() {
-    if (selectedRow != null) {
-      ActionModel actionModel = ActionModel();
-      actionModel.txtDescription = selectedRow!.cells['txtDescription']!.value;
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AddEditActionDialog(
-            title: _locale.addReminder,
-            actionModel: actionModel,
-            isFromList: true,
-          );
-        },
-      ).then((value) {
-        selectedRow = null;
-      });
-    }
-  }
-
-  Future<void> download() async {
-    if (selectedRow != null) {
-      try {
-        FileUploadModel? file = await documentsController
-            .getLatestFileMethod(selectedRow!.cells['txtKey']!.value);
-
-        // Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
-
-        // String fileName = selectedRow!.cells['fileName']!.value;
-        Uint8List bytes = base64Decode(file!.imgBlob!);
-
-        String? fileName = file.txtFilename;
-        saveExcelFile(bytes, fileName!);
-      } catch (e) {
-        log("Error downloading file: $e");
-        // Handle error here
-      }
-    }
-  }
-
   viewDocumentInfo() {
     if (selectedRow != null) {
       DocumentModel documentModel =
@@ -1479,8 +1569,6 @@ class _FileListScreenState extends State<FileListScreen> {
         // log("DONE");
         documentListProvider.searchDocumentCriteria.page = 0;
         setState(() {});
-        // documentListProvider.setDocumentSearchCriterea(
-        //     documentListProvider.searchDocumentCriteria);
       }
     }
   }
@@ -1508,13 +1596,6 @@ class _FileListScreenState extends State<FileListScreen> {
         enableFilterMenuItem: true,
         readOnly: true,
       ),
-      // PlutoColumn(
-      //   title: _locale.dateCreated,
-      //   field: "datCreationdate",
-      //   type: PlutoColumnType.text(),
-      //   width: isDesktop ? width * 0.35 : width * 0.2,
-      //   backgroundColor: columnColors,
-      // ),
       PlutoColumn(
         title: _locale.issueNo,
         field: "txtIssueno",
@@ -1603,28 +1684,6 @@ class _FileListScreenState extends State<FileListScreen> {
         backgroundColor: columnColors,
         readOnly: true,
       ),
-
-      // PlutoColumn(
-      //   title: _locale.ref1,
-      //   field: "ref1",
-      //   type: PlutoColumnType.text(),
-      //   width: isDesktop ? width * 0.35 : width * 0.2,
-      //   backgroundColor: columnColors,
-      // ),
-      // PlutoColumn(
-      //   title: _locale.ref2,
-      //   field: "ref2",
-      //   type: PlutoColumnType.text(),
-      //   width: isDesktop ? width * 0.35 : width * 0.2,
-      //   backgroundColor: columnColors,
-      // ),
-      // PlutoColumn(
-      //   title: _locale.active,
-      //   field: "imgBlob",
-      //   type: PlutoColumnType.text(),
-      //   width: isDesktop ? width * 0.35 : width * 0.2,
-      //   backgroundColor: columnColors,
-      // ),
     ]);
   }
 
@@ -1850,42 +1909,6 @@ class _FileListScreenState extends State<FileListScreen> {
       expandSelectedNode(child);
     }
   }
-
-  // void searchTreeOld(String query) {
-  //   if (query == "") {
-  //     selectedCamp.value = "";
-  //     selectedValue.value = "";
-
-  //     treeController.roots = [];
-  //     treeNodes = [];
-  //     treeController.collapseAll();
-  //     convertToTreeList(campClassificationList);
-  //     MyNode node =
-  //         MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
-  //     treeController.toggleExpansion(node);
-  //     treeController.roots = <MyNode>[node];
-  //     treeController.notifyListeners();
-  //   } else {
-  //     for (final node in treeNodes) {
-  //       if (searchNode(node, query)) {
-  //         selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
-  //         selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-
-  //         treeController.roots = [];
-  //         treeNodes = [];
-
-  //         convertToTreeList(campClassificationList);
-  //         MyNode node = MyNode(
-  //             title: '/', children: treeNodes, extra: null, isRoot: true);
-  //         treeController.toggleExpansion(node);
-  //         treeController.roots = <MyNode>[node];
-  //         treeController.notifyListeners();
-
-  //         break;
-  //       }
-  //     }
-  //   }
-  // }
 
   bool searchNode(MyNode node, String query) {
     if (node.title.contains(query)) {

@@ -136,10 +136,10 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                     onPressed: () {
                       addTemplateAndSteps();
                     },
-                    style: customButtonStyle(
+                    style: customButtonStyle(    context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        16,
                         primary),
                     child: Text(
                       _locale.save,
@@ -153,10 +153,10 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
-                    style: customButtonStyle(
+                    style: customButtonStyle(    context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        16,
                         redColor),
                     child: Text(
                       _locale.cancel,
@@ -175,10 +175,10 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                         onPressed: () {
                           addTemplateAndSteps();
                         },
-                        style: customButtonStyle(
+                        style: customButtonStyle(    context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
-                            18,
+                            16,
                             greenColor),
                         child: Text(
                           _locale.save,
@@ -190,10 +190,10 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                         onPressed: () {
                           Navigator.pop(context, false);
                         },
-                        style: customButtonStyle(
+                        style: customButtonStyle(    context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
-                            18,
+                            16,
                             redColor),
                         child: Text(
                           _locale.cancel,
@@ -248,7 +248,7 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
               onPressed: () {
                 addStep();
               },
-              style: customButtonStyle(
+              style: customButtonStyle(    context,
                   Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.036),
                   14,
                   primary),

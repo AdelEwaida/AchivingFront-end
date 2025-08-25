@@ -84,7 +84,7 @@ class _WhatsAppDialogState extends State<WhatsAppDialog> {
               onPressed: () {
                 sendAction();
               },
-              style: customButtonStyle(
+              style: customButtonStyle(    context,
                   Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
                   14,
                   primary),
@@ -98,7 +98,7 @@ class _WhatsAppDialogState extends State<WhatsAppDialog> {
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              style: customButtonStyle(
+              style: customButtonStyle(    context,
                   Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
                   14,
                   redColor),

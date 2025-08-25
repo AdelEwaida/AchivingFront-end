@@ -85,7 +85,7 @@ class _SendEmailDialogState extends State<SendEmailDialog> {
               onPressed: () {
                 sendAction();
               },
-              style: customButtonStyle(
+              style: customButtonStyle(    context,
                   Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
                   14,
                   primary),
@@ -99,7 +99,7 @@ class _SendEmailDialogState extends State<SendEmailDialog> {
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              style: customButtonStyle(
+              style: customButtonStyle(    context,
                   Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.045),
                   14,
                   redColor),

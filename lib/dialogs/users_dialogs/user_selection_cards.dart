@@ -11,7 +11,7 @@ import '../../service/controller/users_controller/user_controller.dart';
 import '../../widget/text_field_widgets/custom_searchField.dart';
 
 class UserSelectionCards extends StatefulWidget {
-  final String selectedCategoryId; //     
+  final String selectedCategoryId; //
   final double? listHeight;
   final double? listWidth;
 
@@ -160,14 +160,7 @@ class _UserSelectionCardsState extends State<UserSelectionCards> {
   Widget build(BuildContext context) {
     final provider = context.watch<UserProvider>();
     final selectedCodes = provider.selectedCodes.toSet();
-
-    // Pin selected first (visual)
-    final itemsSorted = [..._items]..sort((a, b) {
-        final aSel = selectedCodes.contains(a.txtCode ?? '');
-        final bSel = selectedCodes.contains(b.txtCode ?? '');
-        if (aSel == bSel) return 0;
-        return aSel ? -1 : 1;
-      });
+    final itemsSorted = _items;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

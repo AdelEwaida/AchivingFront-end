@@ -79,7 +79,9 @@ dependencies:
   webview_flutter_web: ^0.2.2+4
   webview_flutter_wkwebview: ^3.10.2
   open_filex: ^3.4.0
-  timelines: ^0.1.0 
+  timelines: ^0.1.0
+  archive: ^3.4.0
+ 
 
   # flutter_inappwebview: ^6.0.0
   # flutter_web_plugins:

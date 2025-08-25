@@ -100,6 +100,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
                       addAction();
                     },
                     style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         14,
@@ -115,6 +116,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
                       Navigator.pop(context, false);
                     },
                     style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         14,
@@ -137,6 +139,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
                           addAction();
                         },
                         style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,
@@ -152,6 +155,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
                           Navigator.pop(context, false);
                         },
                         style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,

@@ -126,10 +126,10 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                     onPressed: () {
                       addDep();
                     },
-                    style: customButtonStyle(
+                    style: customButtonStyle(    context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        16,
                         primary),
                     child: Text(
                       _locale.save,
@@ -143,10 +143,10 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
-                    style: customButtonStyle(
+                    style: customButtonStyle(    context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        16,
                         redColor),
                     child: Text(
                       _locale.cancel,
@@ -165,10 +165,10 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                         onPressed: () {
                           addDep();
                         },
-                        style: customButtonStyle(
+                        style: customButtonStyle(    context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
-                            18,
+                            16,
                             greenColor),
                         child: Text(
                           _locale.save,
@@ -180,10 +180,10 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
                         onPressed: () {
                           Navigator.pop(context, false);
                         },
-                        style: customButtonStyle(
+                        style: customButtonStyle(    context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
-                            18,
+                            16,
                             redColor),
                         child: Text(
                           _locale.cancel,
@@ -309,7 +309,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
 
   Widget dropDownUsers() {
     return SizedBox(
-      width: width * 0.18,
+      width: width * 0.16,
       height: height * 0.045,
       child: Consumer<UserProvider>(
         builder: (context, value, child) {

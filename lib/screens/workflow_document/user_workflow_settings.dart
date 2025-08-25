@@ -283,7 +283,7 @@ class _UserWorkFlowSettings extends State<UserWorkFlowSettings> {
                   onPressed: () {
                     Navigator.pop(context, false);
                   },
-                  style: customButtonStyle(
+                  style: customButtonStyle(    context,
                     Size(
                         isDesktop ? width * 0.1 : width * 0.35, height * 0.042),
                     16,

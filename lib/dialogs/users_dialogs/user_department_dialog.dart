@@ -89,9 +89,10 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
                       saveDep();
                     },
                     style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        16,
                         primary),
                     child: Text(
                       _locale.save,
@@ -106,9 +107,10 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
                       Navigator.pop(context, false);
                     },
                     style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
-                        18,
+                        16,
                         redColor),
                     child: Text(
                       _locale.cancel,
@@ -128,9 +130,10 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
                           saveDep();
                         },
                         style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
-                            18,
+                            16,
                             greenColor),
                         child: Text(
                           _locale.save,
@@ -143,9 +146,10 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
                           Navigator.pop(context, false);
                         },
                         style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
-                            18,
+                            16,
                             redColor),
                         child: Text(
                           _locale.cancel,

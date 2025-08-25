@@ -86,7 +86,7 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
                     onPressed: () {
                       addAction();
                     },
-                    style: customButtonStyle(
+                    style: customButtonStyle(    context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         14,
@@ -101,7 +101,7 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
-                    style: customButtonStyle(
+                    style: customButtonStyle(    context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         14,
@@ -123,7 +123,7 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
                         onPressed: () {
                           addAction();
                         },
-                        style: customButtonStyle(
+                        style: customButtonStyle(    context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,
@@ -138,7 +138,7 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
                         onPressed: () {
                           Navigator.pop(context, false);
                         },
-                        style: customButtonStyle(
+                        style: customButtonStyle(    context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,

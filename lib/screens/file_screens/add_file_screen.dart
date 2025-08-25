@@ -412,15 +412,13 @@ class _AddFileScreenState extends State<AddFileScreen> {
                   ElevatedButton(
                     onPressed: saveDocument,
                     style: customButtonStyle(
+                      context,
                       Size(isDesktop ? width * 0.1 : width * 0.4,
                           height * 0.055),
-                      18,
+                      16,
                       primary,
                     ),
-                    child: Text(
-                      _locale.save,
-                      style: const TextStyle(color: whiteColor),
-                    ),
+                    child: Text(_locale.save),
                   ),
                   SizedBox(
                     width: width * 0.01,
@@ -430,9 +428,10 @@ class _AddFileScreenState extends State<AddFileScreen> {
                       resetForm();
                     },
                     style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.055),
-                        18,
+                        16,
                         redColor),
                     child: Text(
                       _locale.resetFilter,
@@ -487,8 +486,9 @@ class _AddFileScreenState extends State<AddFileScreen> {
               pickFile();
             },
             style: customButtonStyle(
+                context,
                 Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.055),
-                18,
+                16,
                 primary3),
             child: Text(
               _locale.uploadFile,
@@ -767,6 +767,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                   });
                 },
                 style: customButtonStyle(
+                    context,
                     Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.055),
                     14,
                     primary3),
