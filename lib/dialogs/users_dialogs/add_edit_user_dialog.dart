@@ -195,6 +195,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
                       addUser();
                     },
                     style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         18,
@@ -212,6 +213,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
                       Navigator.pop(context, false);
                     },
                     style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         18,
@@ -234,6 +236,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
                           addUser();
                         },
                         style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,
@@ -249,6 +252,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
                           Navigator.pop(context, false);
                         },
                         style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,
@@ -830,13 +834,13 @@ class _DepartmentDialogState extends State<AddUserDialog> {
       child: Tooltip(
         message: hintUsers,
         child: TestDropdown(
-          cleanPrevSelectedItem: false, 
+          cleanPrevSelectedItem: false,
           isEnabled: !widget.isChangePassword ? true : false,
           showSearchBox: true,
           icon: const Icon(Icons.search),
           onClearIconPressed: () {
             setState(() {
-              userDeptsList = []; 
+              userDeptsList = [];
               hintUsers = "";
             });
           },
