@@ -111,7 +111,9 @@ class _AddFileScreenState extends State<AddFileScreen> {
     catList = await DocumentsController().getDocCategoryList();
     userName = await storage.read(key: "userName");
 
+    print("test 1111111111111111111111111111111111111111111111111111111111111");
     departmetList = await UserController().getDepartmentSelectedUser(userName!);
+    print("test 2222222222222222222222222222222222222222222222222222222222222");
 
     setState(() {});
     if (documentListProvider.description != null) {

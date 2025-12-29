@@ -147,9 +147,12 @@ class _UserScreenState extends State<UserScreen> {
                           );
                         },
                       ).then((value) {
+                        print("111111111111111111111111111 value");
                         if (value == true) {
+                          print("222222222222222222222 value");
                           refreshTable();
                         }
+                        print("3333333333333333333333333 value");
                       });
                     },
                     onSelected: (event) async {
@@ -251,17 +254,23 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void addUser() {
-    showDialog(
+    print("first oneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+    showDialog<bool>(
       barrierDismissible: false,
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AddUserDialog(
           isChangePassword: false,
         );
       },
     ).then((value) {
+      print("🔹 showDialog completed, value = $value");
       if (value == true) {
+        print("✅ value == true, refreshing table...");
         refreshTable();
+        print("✅ refreshTable done");
+      } else {
+        print("ℹ️ dialog closed without success (value != true)");
       }
     });
   }
@@ -288,14 +297,20 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void refreshTable() async {
+    // ⬅️ مهم: نخرج من وضع البحث
+    isSearch.value = false;
+    pageLis.value = 1;
+
     stateManager!.setShowLoading(true);
     stateManager!.removeAllRows();
     stateManager!.notifyListeners(true);
+
     selectedRow = null;
     rowList.clear();
-    pageLis.value = 1;
+
     var response = await fetch(PlutoInfinityScrollRowsRequest());
     stateManager!.appendRows(response.rows);
+
     stateManager!.notifyListeners(true);
     stateManager!.resetCurrentState();
     stateManager!.setShowLoading(false);
