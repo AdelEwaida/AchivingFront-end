@@ -197,6 +197,10 @@ class _UserScreenState extends State<UserScreen> {
           );
         },
       ).then((value) {
+        stateManager?.clearCurrentCell();
+        stateManager?.setCurrentCell(null, -1);
+        stateManager?.notifyListeners();
+
         selectedRow = null;
       });
     }
@@ -234,6 +238,9 @@ class _UserScreenState extends State<UserScreen> {
           );
         },
       ).then((value) {
+        stateManager?.clearCurrentCell();
+        stateManager?.setCurrentCell(null, -1);
+        stateManager?.notifyListeners();
         selectedRow = null;
 
         if (value == true) {

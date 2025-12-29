@@ -648,6 +648,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     }
 
     await documentsController.addDocument(documentFileRequest).then((value) {
+      print("value.statusCode :${value.statusCode} :${value.toString()}");
       if (value.statusCode == 200) {
         showDialog(
           context: context,

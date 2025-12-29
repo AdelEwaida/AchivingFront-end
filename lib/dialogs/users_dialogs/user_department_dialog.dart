@@ -72,7 +72,7 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
           Container(
             padding: EdgeInsets.all(0),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
-            width: isDesktop ? width * 0.31 : width * 0.8,
+            width: isDesktop ? width * 0.45 : width * 0.8,
             height: isDesktop ? height * 0.5 : height * 0.5,
             child: formSection(),
           ),
@@ -166,13 +166,13 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
 
   Widget formSection() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         TableComponent(
           plCols: polCol,
           polRows: [],
-          tableWidth: isDesktop ? width * 0.31 : width * 0.8,
+          tableWidth: isDesktop ? width * 0.4 : width * 0.8,
           tableHeigt: isDesktop ? height * 0.4 : height * 0.5,
           onLoaded: (event) {
             stateManager = event.stateManager;
@@ -211,19 +211,58 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
         title: _locale.status,
         field: "bolSelected",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.16 : width * 0.4,
+        width: isDesktop ? width * 0.11 : width * 0.4,
         backgroundColor: columnColors,
-        renderer: (rendererContext) {
+    renderer: (rendererContext) {
           return Center(
             child: Checkbox(
-              value: rendererContext.cell.value == 1 ? true : false,
+              value: rendererContext.cell.value == 1,
               onChanged: (bool? value) {
-                rendererContext.cell.value = value! ? 1 : 0;
+                final selected = (value ?? false) ? 1 : 0;
+                rendererContext.cell.value = selected;
+
+                if (selected == 0) {
+                  rendererContext.row.cells['canWrite']?.value = 0;
+                } else {
+                  final cw = rendererContext.row.cells['canWrite']?.value;
+                  if (cw == null)
+                    rendererContext.row.cells['canWrite']?.value = 0;
+                }
+
                 setState(() {});
               },
             ),
           );
         },
+
+      ),
+      PlutoColumn(
+        enableFilterMenuItem: false,
+        title: _locale.canWrite,
+        field: "canWrite",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.13 : width * 0.4,
+        backgroundColor: columnColors,
+       renderer: (ctx) {
+          final isSelected = (ctx.row.cells['bolSelected']?.value ?? 0) == 1;
+
+          if (ctx.cell.value == null) ctx.cell.value = 0;
+
+          final canWriteVal = ctx.cell.value == 1;
+
+          return Center(
+            child: Checkbox(
+              value: canWriteVal,
+              onChanged: isSelected
+                  ? (bool? value) {
+                      ctx.cell.value = (value ?? false) ? 1 : 0;
+                      setState(() {});
+                    }
+                  : null,
+            ),
+          );
+        },
+
       ),
     ]);
   }

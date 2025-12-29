@@ -261,6 +261,7 @@
     "noFilesFoundForThisDocument": "No files were found for this document.",
     "noValidFilesToZip": "No valid files to include in the ZIP.",
     "zippingError": "An error occurred while preparing the ZIP.",
+    "canWrite":"can Write",
     "filesPackedIntoZip": "{count, plural, =0 {No files were packed.} one {1 file has been packed into {zipName}.} other {{count} files have been packed into {zipName}.}}",
     "@filesPackedIntoZip": {
       "placeholders": {

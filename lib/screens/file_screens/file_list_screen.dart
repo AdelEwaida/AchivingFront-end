@@ -107,6 +107,8 @@ class _FileListScreenState extends State<FileListScreen> {
   TextEditingController otherRefController = TextEditingController();
   TextEditingController organizationController = TextEditingController();
   TextEditingController followingController = TextEditingController();
+  TextEditingController userCodeController = TextEditingController();
+
   TextEditingController sortedByController = TextEditingController();
   String selectedDep = "";
   int selectedSortedType = -1;
@@ -624,7 +626,7 @@ class _FileListScreenState extends State<FileListScreen> {
       children: [
         TableComponent(
           // key: UniqueKey(),
-          tableHeigt: height * 0.45,
+          tableHeigt: height * 0.42,
           tableWidth: width * 0.81,
           addReminder: context.read<DocumentListProvider>().isViewFile == true
               ? null
@@ -1271,7 +1273,17 @@ class _FileListScreenState extends State<FileListScreen> {
                       height: height * 0.04,
                       text: Text(_locale.issueNo),
                       controller: issueNoController,
-                    )
+                    ),
+                    space(0.01),
+                    CustomTextField2(
+                      text: Text(_locale.userCode),
+                      controller: userCodeController,
+                      width: context.read<DocumentListProvider>().isViewFile ==
+                              true
+                          ? width * 0.19
+                          : width * 0.1,
+                      height: height * 0.04,
+                    ),
                   ],
                 ),
               ),
@@ -1379,6 +1391,7 @@ class _FileListScreenState extends State<FileListScreen> {
     keyWordController.clear();
     ref1Controller.clear();
     ref2Controller.clear();
+    userCodeController.clear();
     otherRefController.clear();
     organizationController.clear();
     followingController.clear();
@@ -1426,6 +1439,8 @@ class _FileListScreenState extends State<FileListScreen> {
         descreptionController.text;
     documentListProvider.searchDocumentCriteria.issueNo =
         issueNoController.text;
+    documentListProvider.searchDocumentCriteria.usercode =
+        userCodeController.text;
     documentListProvider.searchDocumentCriteria.dept = selectedDep;
     documentListProvider.searchDocumentCriteria.keywords =
         keyWordController.text;
@@ -1549,11 +1564,9 @@ class _FileListScreenState extends State<FileListScreen> {
           var response =
               await documentsController.deleteDocument(documentModel);
           if (response.statusCode == 200) {
-            // log("DONE");
-            documentListProvider.searchDocumentCriteria.page = 0;
-            setState(() {});
-            // documentListProvider.setDocumentSearchCriterea(
-            //     documentListProvider.searchDocumentCriteria);
+            await search();
+            getCount();
+            selectedRow = null;
           }
         }
       });

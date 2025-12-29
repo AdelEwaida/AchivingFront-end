@@ -29,6 +29,7 @@ class UserController {
 
   Future<List<DepartmentUserModel>> getDepartmentUser(String userCode) async {
     List<DepartmentUserModel> list = [];
+    print("testttttttttttttttttttttttttttttttttttttt");
     var response = await ApiService()
         .postRequest(getUserDepartmentApi, {"user": userCode});
     if (response.statusCode == 200) {

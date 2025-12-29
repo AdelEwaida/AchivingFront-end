@@ -140,6 +140,7 @@
   "addReminder": "إضافة تذكير",
   "download": "تنزيل",
   "status": "الحالة",
+   "canWrite":"إمكانية التعديل",
   "active": "فعال",
   "notActive": "غير فعال",
   "yearly": "سنوي",
