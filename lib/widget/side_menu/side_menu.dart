@@ -68,7 +68,9 @@ class _SideMenuState extends State<SideMenu> {
         await storage.write(
             key: StorageKeys.bolActive, value: value!.bolActive.toString());
       } else {
-        Navigator.pop(context);
+        if (context.mounted && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
       }
 
       // String? intRank = await storage.read(key: StorageKeys.bolActive);
