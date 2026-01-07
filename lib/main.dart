@@ -41,8 +41,11 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart'; // Fo
 
 import 'providers/user_provider.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized(); 
   HttpOverrides.global = MyHttpOverrides();
+
+  await loadApiConfig();
 
   runApp(
     MultiProvider(providers: [
@@ -55,6 +58,33 @@ void main() {
       ChangeNotifierProvider(create: (create) => UserProvider())
     ], child: MyApp()),
   );
+}
+
+Future<void> loadApiConfig() async {
+  const storage = FlutterSecureStorage();
+
+  await rootBundle.loadString(centralApiPathConstant).then((value) async {
+    ApiService.urlServer = value.trim();
+    print("✅ ApiService.urlServer loaded: ${ApiService.urlServer}");
+    await storage.write(key: 'url', value: ApiService.urlServer);
+  });
+
+  await rootBundle.loadString(centralApiPDFPathConstant).then((value) async {
+    await storage.write(key: 'urlPdf', value: value.trim());
+  });
+
+  await rootBundle
+      .loadString(centralApiWhatsAppPathConstant)
+      .then((value) async {
+    ApiService.whatsAppServer = value.trim();
+    print("✅ ApiService.whatsAppServer loaded: ${ApiService.whatsAppServer}");
+    await storage.write(key: 'whatsAppService', value: value.trim());
+  });
+
+  await rootBundle.loadString(centralApiEmailPathConstant).then((value) async {
+    ApiService.emailServer = value.trim();
+    await storage.write(key: 'email', value: value.trim());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -135,7 +165,7 @@ class MyApp extends StatelessWidget {
 
     // Merge the base theme with the custom theme
     final customTheme = _buildTheme(context, provider.locale);
-    loadApi();
+    // loadApi();
     // checkUrlParameters();
 
     return SessionTimeoutManager(

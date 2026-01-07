@@ -137,35 +137,31 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   getCount() {
-    documentListProvider.searchDocumentCriteria.page = -1;
-    documentListProvider.searchDocumentCriteria.fromIssueDate =
-        documentListProvider.issueNumber != null
-            ? null
-            : fromDateController.text;
-    documentListProvider.searchDocumentCriteria.toIssueDate =
-        documentListProvider.issueNumber != null ? null : toDateController.text;
-    documentListProvider.searchDocumentCriteria.desc =
-        descreptionController.text;
-    documentListProvider.searchDocumentCriteria.issueNo =
-        issueNoController.text;
-    documentListProvider.searchDocumentCriteria.dept = selectedDep;
-    documentListProvider.searchDocumentCriteria.keywords =
-        keyWordController.text;
-    documentListProvider.searchDocumentCriteria.ref1 = ref1Controller.text;
-    documentListProvider.searchDocumentCriteria.ref2 = ref2Controller.text;
-    documentListProvider.searchDocumentCriteria.otherRef =
-        otherRefController.text;
-    documentListProvider.searchDocumentCriteria.cat =
-        calssificatonNameAndCodeProvider.classificatonKey;
-    documentListProvider.searchDocumentCriteria.organization =
-        organizationController.text;
-    documentListProvider.searchDocumentCriteria.following =
-        followingController.text;
-    documentListProvider.searchDocumentCriteria.sortedBy = selectedSortedType;
+    final baseJson = documentListProvider.searchDocumentCriteria
+        .toJson(); // Map<String, dynamic>
+    final countCriteria = SearchDocumentCriteria.fromJson(baseJson);
 
-    documentsController
-        .getTotalSearchDocCountFile(documentListProvider.searchDocumentCriteria)
-        .then((value) {
+    countCriteria.page = -1;
+    // documentListProvider.searchDocumentCriteria.page = -1;
+
+    countCriteria.fromIssueDate = documentListProvider.issueNumber != null
+        ? null
+        : fromDateController.text;
+    countCriteria.toIssueDate =
+        documentListProvider.issueNumber != null ? null : toDateController.text;
+    countCriteria.desc = descreptionController.text;
+    countCriteria.issueNo = issueNoController.text;
+    countCriteria.dept = selectedDep;
+    countCriteria.keywords = keyWordController.text;
+    countCriteria.ref1 = ref1Controller.text;
+    countCriteria.ref2 = ref2Controller.text;
+    countCriteria.otherRef = otherRefController.text;
+    countCriteria.cat = calssificatonNameAndCodeProvider.classificatonKey;
+    countCriteria.organization = organizationController.text;
+    countCriteria.following = followingController.text;
+    countCriteria.sortedBy = selectedSortedType;
+
+    documentsController.getTotalSearchDocCountFile(countCriteria).then((value) {
       totalDocCount.value = value;
     });
   }
@@ -657,14 +653,14 @@ class _FileListScreenState extends State<FileListScreen> {
           filesList: context.read<DocumentListProvider>().isViewFile == true
               ? fileViewScreen
               : null,
-          exportToExcel: exportToExecl,
+          exportToExcel: exportExcel,
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
             if (isLoading.value) {
               stateManager.setShowLoading(true);
             }
             stateManager.setShowColumnFilter(true);
-            getCountOnLoaded();
+            getCount();
           },
           doubleTab: (event) async {
             PlutoRow? tappedRow = event.row;
@@ -832,9 +828,28 @@ class _FileListScreenState extends State<FileListScreen> {
     }
   }
 
-  bool _isExportingExcel = false; // <— add this
+  Future<void> exportExcel() async {
+    openLoadinDialog(context);
 
-  Future<void> exportToExecl() async {
+    try {
+      documentListProvider.searchDocumentCriteria.page = -1;
+      print(
+          "searchDocumentCriteria for excel: ${documentListProvider.searchDocumentCriteria.toJson()}");
+      Uint8List excelData = await documentsController.exportToExcel(
+          documentListProvider.searchDocumentCriteria!, context);
+
+      saveExcelFile(excelData,
+          "${"Finance  - Report"} ${Converters.formatDate(DateTime.now().toString())}.xlsx");
+
+      Navigator.of(context, rootNavigator: true).pop(true);
+    } catch (e) {
+      Navigator.of(context, rootNavigator: true).pop(true);
+    }
+  }
+
+  bool _isExportingExcel = false;
+
+  Future<void> exportToExec111l() async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -847,7 +862,7 @@ class _FileListScreenState extends State<FileListScreen> {
           child: Center(
             child: CircularProgressIndicator(
               strokeWidth: 4,
-              color: Colors.white, // Adjust for your theme
+              color: Colors.white,
             ),
           ),
         ),
@@ -867,38 +882,38 @@ class _FileListScreenState extends State<FileListScreen> {
       sheet.appendRow(headers);
       List<PlutoRow> temp = [];
 
-      SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
-      if (documentListProvider.isSearch ||
-          documentListProvider.issueNumber != null) {
-        searchDocumentCriteria.fromIssueDate =
-            documentListProvider.issueNumber != null
-                ? null
-                : fromDateController.text;
-        searchDocumentCriteria.toIssueDate =
-            documentListProvider.issueNumber != null
-                ? null
-                : toDateController.text;
-      } else {
-        searchDocumentCriteria.fromIssueDate = null;
-        searchDocumentCriteria.toIssueDate = null;
-      }
+      // SearchDocumentCriteria searchDocumentCriteria = SearchDocumentCriteria();
+      // if (documentListProvider.issueNumber != null) {
+      //   searchDocumentCriteria.fromIssueDate =
+      //       documentListProvider.issueNumber != null
+      //           ? null
+      //           : fromDateController.text;
+      //   searchDocumentCriteria.toIssueDate =
+      //       documentListProvider.issueNumber != null
+      //           ? null
+      //           : toDateController.text;
+      // } else {
+      //   searchDocumentCriteria.fromIssueDate = null;
+      //   searchDocumentCriteria.toIssueDate = null;
+      // }
 
-      searchDocumentCriteria.desc = descreptionController.text;
-      searchDocumentCriteria.issueNo = issueNoController.text;
-      searchDocumentCriteria.dept = selectedDep;
-      searchDocumentCriteria.keywords = keyWordController.text;
-      searchDocumentCriteria.ref1 = ref1Controller.text;
-      searchDocumentCriteria.ref2 = ref2Controller.text;
-      searchDocumentCriteria.otherRef = otherRefController.text;
-      searchDocumentCriteria.cat =
-          calssificatonNameAndCodeProvider.classificatonKey;
-      searchDocumentCriteria.organization = organizationController.text;
-      searchDocumentCriteria.following = followingController.text;
-      searchDocumentCriteria.sortedBy = selectedSortedType;
-      searchDocumentCriteria.page = -1;
-
-      List<DocumentModel> result =
-          await documentsController.searchDocCriterea(searchDocumentCriteria);
+      // searchDocumentCriteria.desc = descreptionController.text;
+      // searchDocumentCriteria.issueNo = issueNoController.text;
+      // searchDocumentCriteria.dept = selectedDep;
+      // searchDocumentCriteria.keywords = keyWordController.text;
+      // searchDocumentCriteria.ref1 = ref1Controller.text;
+      // searchDocumentCriteria.ref2 = ref2Controller.text;
+      // searchDocumentCriteria.otherRef = otherRefController.text;
+      // searchDocumentCriteria.cat =
+      //     calssificatonNameAndCodeProvider.classificatonKey;
+      // searchDocumentCriteria.organization = organizationController.text;
+      // searchDocumentCriteria.following = followingController.text;
+      // searchDocumentCriteria.sortedBy = selectedSortedType;
+      documentListProvider.searchDocumentCriteria.page = -1;
+      print(
+          "searchDocumentCriteria for excel: ${documentListProvider.searchDocumentCriteria.toJson()}");
+      List<DocumentModel> result = await documentsController
+          .searchDocCriterea(documentListProvider.searchDocumentCriteria);
 
       for (int i = 0; i < result.length; i++) {
         temp.add(result[i].toPlutoRow(i, _locale));
@@ -1350,41 +1365,43 @@ class _FileListScreenState extends State<FileListScreen> {
     );
   }
 
-  Future<void> initializePage() async {
-    // Reset tree state
-    isFetchExecuted = false;
-    treeNodes.clear();
-    roots = <MyNode>[
-      MyNode(title: '/', children: treeNodes, extra: null, isRoot: true),
-    ];
-    treeController.roots = roots;
-    treeController.notifyListeners();
+  // Future<void> initializePage() async {
+  //   // Reset tree state
+  //   isFetchExecuted = false;
+  //   treeNodes.clear();
+  //   roots = <MyNode>[
+  //     MyNode(title: '/', children: treeNodes, extra: null, isRoot: true),
+  //   ];
+  //   treeController.roots = roots;
+  //   treeController.notifyListeners();
 
-    // Reset filters
-    documentListProvider.setPage(1);
-    documentListProvider.setIsSearch(false);
-    documentListProvider.setIssueNumber(null);
-    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
+  //   // Reset filters
+  //   documentListProvider.setPage(1);
+  //   documentListProvider.setIsSearch(false);
+  //   documentListProvider.setIssueNumber(null);
+  //   documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
 
-    // Fetch initial data
-    await fetchDropDownTree();
-    await fetchData();
+  //   // Fetch initial data
+  //   await fetchDropDownTree();
+  //   await fetchData();
 
-    // Fetch initial document list
-    stateManager.setShowLoading(true);
-    stateManager.removeAllRows();
-    List<DocumentModel> result = await documentsController
-        .searchDocCriterea(SearchDocumentCriteria(page: 1));
-    for (int i = 0; i < result.length; i++) {
-      stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
-    }
-    stateManager.setShowLoading(false);
-    getCount();
-  }
+  //   // Fetch initial document list
+  //   stateManager.setShowLoading(true);
+  //   stateManager.removeAllRows();
+  //   List<DocumentModel> result = await documentsController
+  //       .searchDocCriterea(SearchDocumentCriteria(page: 1));
+  //   for (int i = 0; i < result.length; i++) {
+  //     stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
+  //   }
+  //   stateManager.setShowLoading(false);
+  //   getCount();
+  // }
 
   Future<void> resetForm() async {
     fromDateController.text = Converters.startOfCurrentYearAsString();
     toDateController.text = Converters.formatDate2(DateTime.now().toString());
+    print(
+        "fromDateController.textfromDateController.textfromDateController.text:${fromDateController.text}");
     descreptionController.clear();
     issueNoController.clear();
     classificationController.clear();
@@ -1403,13 +1420,20 @@ class _FileListScreenState extends State<FileListScreen> {
     documentListProvider.setPage(1);
     calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
     calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
-    documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
+    final initialCriteria = SearchDocumentCriteria(
+      page: 1,
+      fromIssueDate: fromDateController.text,
+      toIssueDate: toDateController.text,
+    );
+    print(initialCriteria.toJson());
+
+    documentListProvider.setDocumentSearchCriterea(initialCriteria);
 
     stateManager.removeAllRows();
     stateManager.setShowLoading(true);
 
     List<DocumentModel> result = await documentsController
-        .searchDocCriterea(SearchDocumentCriteria(page: 1));
+        .searchDocCriterea(documentListProvider.searchDocumentCriteria);
 
     for (int i = 0; i < result.length; i++) {
       stateManager.appendRows([result[i].toPlutoRow(i + 1, _locale)]);
@@ -1766,9 +1790,17 @@ class _FileListScreenState extends State<FileListScreen> {
           rows: resultRows,
         );
       } else {
+        print("tkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
         documentListProvider.searchDocumentCriteria.page =
-            documentListProvider.page ?? 1;
-
+            documentListProvider.page ?? -1;
+        documentListProvider.searchDocumentCriteria.fromIssueDate =
+            documentListProvider.issueNumber != null
+                ? null
+                : fromDateController.text;
+        documentListProvider.searchDocumentCriteria.toIssueDate =
+            documentListProvider.issueNumber != null
+                ? null
+                : toDateController.text;
         List<DocumentModel> result = await documentsController
             .searchDocCriterea(documentListProvider.searchDocumentCriteria);
 

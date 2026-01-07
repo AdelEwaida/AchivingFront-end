@@ -95,3 +95,4 @@ const updateWorkFlowStep = "workflowDocumentSteps/updateStep";
 const allUserWorkFlowSteps = "workflowDocumentSteps/searchCrit";
 const importIssuesApi = "excel/issuesArchivedReport";
 const findUserByUrl = "users/findByUrl";
+const exportExcel = "excel/docInfo";

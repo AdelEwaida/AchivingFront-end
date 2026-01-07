@@ -180,6 +180,35 @@ class AppRoutes {
     });
   }
 
+  Future<void> loadApiConfig() async {
+    const storage = FlutterSecureStorage();
+
+    await rootBundle.loadString(centralApiPathConstant).then((value) async {
+      ApiService.urlServer = value.trim();
+      print("✅ ApiService.urlServer loaded: ${ApiService.urlServer}");
+      await storage.write(key: 'url', value: ApiService.urlServer);
+    });
+
+    await rootBundle.loadString(centralApiPDFPathConstant).then((value) async {
+      await storage.write(key: 'urlPdf', value: value.trim());
+    });
+
+    await rootBundle
+        .loadString(centralApiWhatsAppPathConstant)
+        .then((value) async {
+      ApiService.whatsAppServer = value.trim();
+      print("✅ ApiService.whatsAppServer loaded: ${ApiService.whatsAppServer}");
+      await storage.write(key: 'whatsAppService', value: value.trim());
+    });
+
+    await rootBundle
+        .loadString(centralApiEmailPathConstant)
+        .then((value) async {
+      ApiService.emailServer = value.trim();
+      await storage.write(key: 'email', value: value.trim());
+    });
+  }
+
   static Future<String?> _redirect2(BuildContext context, String path) async {
     const storage = FlutterSecureStorage();
     String? token = await storage.read(key: 'jwt');

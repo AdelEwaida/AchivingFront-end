@@ -706,6 +706,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
 
     final result = await DocumentsController().getAllScannersMethod(url);
 
+
     if (filter.isEmpty) {
       _cachedScanners = result;
       _loadedScanners = true;

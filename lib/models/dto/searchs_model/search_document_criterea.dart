@@ -74,7 +74,7 @@ class SearchDocumentCriteria {
       maintenance: json['maintenance'] ?? "",
       fromIssueDate: json['fromIssueDate'] ?? "",
       toIssueDate: json['toIssueDate'] ?? "",
-      page: json['page'] ?? 1,
+      page: json['page'] ?? -1,
       searchField: json['searchField'] ?? "",
       sortedBy: json['sortedBy'] ?? -1,
     );

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:archiving_flutter_project/models/db/scaners_model.dart';
 import 'package:archiving_flutter_project/models/db/scanned_image.dart';
@@ -67,6 +68,32 @@ class DocumentsController {
       }
     }
     return list;
+  }
+
+  Future<Uint8List> exportToExcel(
+      SearchDocumentCriteria criteria, var context) async {
+    Uint8List excelByteData = Uint8List.fromList([
+      0x48,
+      0x65,
+      0x6C,
+      0x6C,
+      0x6F,
+    ]);
+    // var endPoint = exportExcel;
+    // var api = ApiPaths.financeReport;
+    // var url = "$endPoint";
+
+    var response = await ApiService().postRequest(exportExcel, criteria);
+
+    int statusCode = response.statusCode;
+
+    if (statusCode == 200) {
+      excelByteData = response.bodyBytes;
+      return excelByteData;
+    } else {
+      throw Exception(
+          'Failed to export patients to Excel. Status code: $statusCode');
+    }
   }
 
   Future<int> getTotalSearchDocCountFile(
@@ -139,19 +166,19 @@ class DocumentsController {
     return list;
   }
 
-  Future<List<String>> getAllScannersMethodOld(String ip) async {
-    List<String> list = [];
-    var response = await ApiService().getRequest(getAllScanners);
-    if (response.statusCode == 200) {
-      var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
-      for (var scanner in jsonData['scanners']) {
-        list.add(scanner);
-      }
-    }
-    return list;
-  }
+  // Future<List<String>> getAllScannersMethodOld(String ip) async {
+  //   List<String> list = [];
+  //   var response = await ApiService().getRequest(getAllScanners);
+  //   if (response.statusCode == 200) {
+  //     var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+  //     for (var scanner in jsonData['scanners']) {
+  //       list.add(scanner);
+  //     }
+  //   }
+  //   return list;
+  // }
 
-  Future<List<String>> getAllScannersMethod(String ip) async {
+Future<List<String>> getAllScannersMethod(String ip) async {
     List<String> list = [];
 
     try {
@@ -162,16 +189,28 @@ class DocumentsController {
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
 
-        if (jsonData is List) {
-          for (var scanner in jsonData) {
-            list.add(scanner.toString());
+        print("jsonData: $jsonData");
+
+        // Case 1: API returns as a Map with key "scanners"
+        if (jsonData is Map && jsonData.containsKey("scanners")) {
+          var scanners = jsonData["scanners"];
+          if (scanners is List) {
+            list = scanners.map((e) => e.toString()).toList();
           }
         }
-      } else {}
-    } catch (e) {}
+
+        // Case 2: API returns a pure List
+        else if (jsonData is List) {
+          list = jsonData.map((e) => e.toString()).toList();
+        }
+      }
+    } catch (e) {
+      print("Error in getAllScannersMethod: $e");
+    }
 
     return list;
   }
+
 
   Future<ScannedImage> getSccanedImageMethod(String ip, int index) async {
     var response = await ApiService().getRequest("$getScanedImageApi/$index");
