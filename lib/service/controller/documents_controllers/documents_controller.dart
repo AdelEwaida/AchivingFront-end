@@ -166,51 +166,17 @@ class DocumentsController {
     return list;
   }
 
-  // Future<List<String>> getAllScannersMethodOld(String ip) async {
-  //   List<String> list = [];
-  //   var response = await ApiService().getRequest(getAllScanners);
-  //   if (response.statusCode == 200) {
-  //     var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
-  //     for (var scanner in jsonData['scanners']) {
-  //       list.add(scanner);
-  //     }
-  //   }
-  //   return list;
-  // }
-
-Future<List<String>> getAllScannersMethod(String ip) async {
+  Future<List<String>> getAllScannersMethod(String ip) async {
     List<String> list = [];
-
-    try {
-      var response = await ApiService()
-          .getRequest(getAllScanners)
-          .timeout(const Duration(seconds: 90));
-
-      if (response.statusCode == 200) {
-        var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
-
-        print("jsonData: $jsonData");
-
-        // Case 1: API returns as a Map with key "scanners"
-        if (jsonData is Map && jsonData.containsKey("scanners")) {
-          var scanners = jsonData["scanners"];
-          if (scanners is List) {
-            list = scanners.map((e) => e.toString()).toList();
-          }
-        }
-
-        // Case 2: API returns a pure List
-        else if (jsonData is List) {
-          list = jsonData.map((e) => e.toString()).toList();
-        }
+    var response = await ApiService().getRequest(getAllScanners);
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+      for (var scanner in jsonData['scanners']) {
+        list.add(scanner);
       }
-    } catch (e) {
-      print("Error in getAllScannersMethod: $e");
     }
-
     return list;
   }
-
 
   Future<ScannedImage> getSccanedImageMethod(String ip, int index) async {
     var response = await ApiService().getRequest("$getScanedImageApi/$index");

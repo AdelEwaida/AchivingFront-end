@@ -706,7 +706,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
 
     final result = await DocumentsController().getAllScannersMethod(url);
 
-
     if (filter.isEmpty) {
       _cachedScanners = result;
       _loadedScanners = true;
@@ -726,10 +725,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
               DropDown(
                 isMandatory: true,
                 onChanged: (value) {
-                  for (int i = 0; i < scanners.length; i++) {
-                    if (scanners[i] == value) {
-                      scannerIndex = i;
-                    }
+                  if (value != null) {
+                    scannerIndex = _cachedScanners.indexOf(value as String);
                   }
                 },
                 noDataString: "⚠️ No scanners found",

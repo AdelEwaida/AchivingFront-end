@@ -248,6 +248,8 @@
   "noFilesFoundForThisDocument": "لا توجد ملفات لهذا المستند.",
   "noValidFilesToZip": "لا توجد ملفات صالحة لإدراجها في الملف المضغوط.",
   "zippingError": "حدث خطأ أثناء تجهيز الملف المضغوط.",
+  "pleaseUploadExcelWithOneColumn":"الرجاء رفع ملف إكسل يحتوي على عمود واحد فقط",
+  "invalidFile": "ملف غير صالح",
   "filesPackedIntoZip": "{count, plural, =0 {لم يتم تجميع أي ملفات.} one {تم تجميع ملف واحد داخل {zipName}.} other {تم تجميع {count} ملفًا داخل {zipName}.}}",
   "@filesPackedIntoZip": {
     "placeholders": {
