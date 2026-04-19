@@ -250,6 +250,7 @@
   "zippingError": "حدث خطأ أثناء تجهيز الملف المضغوط.",
   "pleaseUploadExcelWithOneColumn":"الرجاء رفع ملف إكسل يحتوي على عمود واحد فقط",
   "invalidFile": "ملف غير صالح",
+  "nodataSelected": "لا توجد بيانات للفترة المحددة",
   "filesPackedIntoZip": "{count, plural, =0 {لم يتم تجميع أي ملفات.} one {تم تجميع ملف واحد داخل {zipName}.} other {تم تجميع {count} ملفًا داخل {zipName}.}}",
   "@filesPackedIntoZip": {
     "placeholders": {
