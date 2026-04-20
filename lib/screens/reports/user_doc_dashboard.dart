@@ -13,7 +13,9 @@ import '../../service/controller/reports_controller.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/charts.dart';
+import '../../widget/dashboard_components/DashboardActionButton.dart';
 import '../../widget/dashboard_components/bar_dashboard_chart.dart';
+import '../../widget/dashboard_components/dashboard_header.dart';
 import '../../widget/dashboard_components/line_dasboard_chart.dart';
 import '../../widget/dashboard_components/pie_dashboard_chart.dart';
 import '../../widget/pie_chart_model.dart';
@@ -107,70 +109,76 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Padding(
-            padding:
-                const EdgeInsets.only(left: 5, right: 5, bottom: 3, top: 0),
-            child: Container(
-              height: isDesktop ? height * 0.44 : height * 0.48,
-              padding: const EdgeInsets.only(left: 5, right: 5, top: 0),
-              decoration: BoxDecoration(
-                color: whiteColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _locale.userDocs,
-                        style: TextStyle(fontSize: isDesktop ? 15 : 18),
-                      ),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width < 800
-                              ? MediaQuery.of(context).size.width * 0.06
-                              : MediaQuery.of(context).size.width * 0.03,
-                          child: blueButton1(
-                            icon: Icon(
-                              Icons.filter_list_sharp,
-                              color: whiteColor,
-                              size: isDesktop ? height * 0.035 : height * 0.03,
-                            ),
-                            textColor: const Color.fromARGB(255, 255, 255, 255),
-                            height: isDesktop ? height * .01 : height * .039,
-                            fontSize: isDesktop ? height * .018 : height * .017,
-                            width: isDesktop ? width * 0.08 : width * 0.27,
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) {
-                                  return FromDateToDateDialog(
-                                      searchCriteria: searchCriteria);
-                                },
-                              ).then((value) {
-                                if (value != null && value is ReportsCriteria) {
-                                  searchCriteria = value;
-                                  listOfBalances.clear();
-                                  listOfPeriods.clear();
-                                  userDocList.clear();
-                                  getUserDocs();
-                                }
-                              });
-                            },
-                          )),
-                    ],
-                  ),
-                  SizedBox(
-                    height: height * .33,
-                    child: LineDashboardChart(
-                        isMax: false,
-                        balances: listOfBalances,
-                        periods: listOfPeriods),
-                  )
-                ],
-              ),
+          Container(
+            height: isDesktop ? height * 0.44 : height * 0.48,
+            padding: const EdgeInsets.only(left: 5, right: 5, top: 0),
+            decoration: BoxDecoration(
+              color: whiteColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                DashboardHeader(
+                  title: _locale.userDocs,
+                  subtitle:
+                      '${searchCriteria?.fromDate ?? ''} - ${searchCriteria?.toDate ?? ''}',
+                  accentColor: const Color(0xFF185FA5),
+                  actions: [
+                    DashboardActionButton(
+                      icon: Icons.filter_list_sharp,
+                      color: const Color(0xFF185FA5),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => FromDateToDateDialog(
+                            searchCriteria: searchCriteria,
+                          ),
+                        ).then((value) {
+                          if (value != null && value is ReportsCriteria) {
+                            searchCriteria = value;
+                            listOfBalances.clear();
+                            listOfPeriods.clear();
+                            userDocList.clear();
+                            getUserDocs();
+                          }
+                        });
+                      },
+                    ),
+                    DashboardActionButton(
+                      icon: Icons.table_chart_outlined, // excel-like icon
+                      color: const Color(
+                          0xFF1A7A4A), // green like the excel button
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return FromDateToDateDialog(
+                                searchCriteria: searchCriteria);
+                          },
+                        ).then((value) {
+                          if (value != null && value is ReportsCriteria) {
+                            searchCriteria = value;
+                            listOfBalances.clear();
+                            listOfPeriods.clear();
+                            userDocList.clear();
+                            getUserDocs();
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: height * .33,
+                  child: LineDashboardChart(
+                      isMax: false,
+                      balances: listOfBalances,
+                      periods: listOfPeriods),
+                )
+              ],
             ),
           ),
         ],

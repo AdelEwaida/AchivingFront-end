@@ -77,16 +77,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Expanded(
                                 child: CustomCards(
                                   height: height * 0.144,
+                                  accentColor: const Color(0xFF185FA5), // blue
                                   content: ValueListenableBuilder(
                                     valueListenable: totalUserCat,
-                                    builder: (context, value, child) {
-                                      return CardContent(
-                                        title: _locale.totalCat,
-                                        value: value.toString(),
-                                        icon: Icons
-                                            .supervised_user_circle_outlined,
-                                      );
-                                    },
+                                    builder: (context, value, child) =>
+                                        CardContent(
+                                      title: _locale.totalCat,
+                                      value: value.toString(),
+                                      icon:
+                                          Icons.supervised_user_circle_outlined,
+                                      accentColor: const Color(0xFF185FA5),
+                                      trendUp: true,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -100,15 +102,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Expanded(
                                 child: CustomCards(
                                   height: height * 0.144,
+                                  accentColor: const Color(0xFF3B6D11), // green
                                   content: ValueListenableBuilder(
                                     valueListenable: totalDocumnetsCount,
-                                    builder: (context, value, child) {
-                                      return CardContent(
-                                        title: _locale.totalDocs,
-                                        value: value.toString(),
-                                        icon: Icons.document_scanner,
-                                      );
-                                    },
+                                    builder: (context, value, child) =>
+                                        CardContent(
+                                      title: _locale.totalDocs,
+                                      value: value.toString(),
+                                      icon: Icons.document_scanner,
+                                      accentColor: const Color(0xFF3B6D11),
+                                      trendUp: true,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -122,15 +126,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Expanded(
                                 child: CustomCards(
                                   height: height * 0.144,
+                                  accentColor:
+                                      const Color(0xFF534AB7), // purple
                                   content: ValueListenableBuilder(
                                     valueListenable: totalDepartmentsCount,
-                                    builder: (context, value, child) {
-                                      return CardContent(
-                                        title: _locale.totalDepts,
-                                        value: value.toString(),
-                                        icon: Icons.category,
-                                      );
-                                    },
+                                    builder: (context, value, child) =>
+                                        CardContent(
+                                      title: _locale.totalDepts,
+                                      value: value.toString(),
+                                      icon: Icons.category,
+                                      accentColor: const Color(0xFF534AB7),
+                                      trendUp: true,
+                                    ),
                                   ),
                                 ),
                               ),
