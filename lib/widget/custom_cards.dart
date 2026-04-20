@@ -1,61 +1,115 @@
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class CustomCards extends StatefulWidget {
-  // double width;
-  double height;
-  Widget? content;
-  CustomCards({
+  final double height;
+  final Widget? content;
+  final Color accentColor;
+
+  const CustomCards({
     super.key,
-    // required this.width,
     required this.height,
     this.content,
+    this.accentColor = Colors.white,
   });
 
   @override
   State<CustomCards> createState() => _CustomCardsState();
 }
 
-class _CustomCardsState extends State<CustomCards> {
-  double spreadRadius = 1;
-  double blurRadius = 10;
+class _CustomCardsState extends State<CustomCards>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _elevationAnim;
+  late Animation<double> _scaleAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _elevationAnim = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+    _scaleAnim = Tween<double>(begin: 1.0, end: 1.015).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // double width = widget.width;
-    double height = widget.height;
-
-    Widget content = widget.content ??
-        const Center(
-          child: const Text("NO DATA"),
+    final Widget content = widget.content ??
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.inbox_outlined, size: 32, color: Colors.grey.shade300),
+              const SizedBox(height: 8),
+              Text(
+                "No data available",
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey.shade400,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          ),
         );
 
     return MouseRegion(
-      onEnter: (event) {
-        setState(() {
-          spreadRadius = 6;
-        });
-      },
-      onExit: (event) {
-        setState(() {
-          spreadRadius = 1;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-          boxShadow: [
-            BoxShadow(
-              spreadRadius: spreadRadius,
-              offset: const Offset(0, 8),
-              blurRadius: blurRadius,
-              color: Colors.grey.withOpacity(0.3),
-            )
-          ],
-        ),
-        width: 100,
-        height: height,
+      onEnter: (_) => _controller.forward(),
+      onExit: (_) => _controller.reverse(),
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnim.value,
+            child: Container(
+              height: widget.height,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.accentColor
+                        .withOpacity(0.08 + 0.1 * _elevationAnim.value),
+                    blurRadius: 16 + 8 * _elevationAnim.value,
+                    spreadRadius: _elevationAnim.value * 2,
+                    offset: Offset(0, 4 + 2 * _elevationAnim.value),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Row(
+                  children: [
+                    // Accent stripe — no Border needed, just a Container
+                    Container(
+                      width: 4,
+                      color: widget.accentColor,
+                    ),
+                    // Card content
+                    Expanded(child: child!),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
         child: content,
       ),
     );
