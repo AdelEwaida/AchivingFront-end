@@ -1,27 +1,15 @@
 import 'dart:typed_data';
-
 import 'package:archiving_flutter_project/dialogs/app_dialog.dart';
-import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
-import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
-import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/dto/reports_criteria.dart';
 import 'package:archiving_flutter_project/service/controller/actions_controllers/action_controller.dart';
-import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
-import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
-import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
-
-import '../../utils/constants/sorted_by_constant.dart';
-import '../../widget/custom_drop_down.dart';
 import '../../widget/date_time_component.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
+import '../widget/dashboard_components/custom_elevated_button.dart';
 
 class FromDateToDateDialog extends StatefulWidget {
   ReportsCriteria? searchCriteria;
@@ -78,36 +66,25 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      addAction();
-                    },
-                    style: customButtonStyle(
-                        context,
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
-                        14,
-                        primary),
-                    child: Text(
-                      _locale.save,
-                      style: const TextStyle(color: whiteColor),
-                    ),
+                  CustomElevatedButton(
+                    text: _locale.save,
+                    color: primary,
+                    // icon: Icons.check_rounded,
+                    width: isDesktop ? width * 0.1 : width * 0.4,
+                    height: height * 0.045,
+                    fontSize: isDesktop ? 14 : 18,
+                    onPressed: () => addAction(),
                   ),
-                  SizedBox(width: width * 0.01),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context, false);
-                    },
-                    style: customButtonStyle(
-                        context,
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
-                        14,
-                        redColor),
-                    child: Text(
-                      _locale.cancel,
-                      style: const TextStyle(color: whiteColor),
-                    ),
+                  SizedBox(width: isDesktop ? width * 0.01 : 0),
+                  SizedBox(height: isDesktop ? 0 : height * 0.01),
+                  CustomElevatedButton(
+                    text: _locale.cancel,
+                    color: redColor,
+                    // icon: Icons.close_rounded,
+                    width: isDesktop ? width * 0.1 : width * 0.4,
+                    height: height * 0.045,
+                    fontSize: isDesktop ? 14 : 18,
+                    onPressed: () => Navigator.pop(context, false),
                   ),
                 ],
               )

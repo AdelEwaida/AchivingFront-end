@@ -29,7 +29,7 @@ import '../app_dialog.dart';
 
 class EditTemplateDocumentDialog extends StatefulWidget {
   final dynamic workFlowTemplateBody;
-  EditTemplateDocumentDialog({
+  const EditTemplateDocumentDialog({
     super.key,
     this.workFlowTemplateBody,
   });

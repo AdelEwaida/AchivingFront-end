@@ -454,7 +454,7 @@ class _ImportExcelDialogState extends State<ImportExcelDialog> {
 
         setState(() => excelProgress = 0.7 + (0.3 * (end / totalRows)));
         await Future.delayed(
-            const Duration(milliseconds: 1)); // ✅ تقليل التأخير
+            const Duration(milliseconds: 1)); 
       }
 
       setState(() {
