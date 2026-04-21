@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../service/controller/reports_controller.dart';
 import '../../service/controller/users_controller/user_controller.dart';
-import '../../utils/func/converters.dart';
 import '../../widget/charts.dart';
 import '../../widget/custom_cards.dart';
-import '../../widget/dashboard_components/bar_dashboard_chart.dart';
+import '../../widget/dashboard_components/app_bar_title.dart';
 import '../../widget/dashboard_components/card_content.dart';
+import '../../widget/dashboard_components/chart_cards.dart';
 import 'docs_by_cat_dashboard.dart';
 import 'docs_by_dept.dart';
 import 'user_doc_dashboard.dart';
@@ -58,7 +58,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
-          title: Text(_locale.dashboard),
+          elevation: 0,
+          backgroundColor: const Color(0xFFF4F6FA), 
+          surfaceTintColor: Colors.transparent,
+          title: AppBarTitle(
+            title: _locale.dashboard,
+            icon: Icons.dashboard_outlined,
+            accentColor: const Color(0xFF185FA5),
+          ),
         ),
         body: Padding(
           padding: EdgeInsets.all(8.0),
@@ -77,7 +84,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Expanded(
                                 child: CustomCards(
                                   height: height * 0.144,
-                                  accentColor: const Color(0xFF185FA5), // blue
+                                  accentColor: const Color(0xFF185FA5), 
                                   content: ValueListenableBuilder(
                                     valueListenable: totalUserCat,
                                     builder: (context, value, child) =>
@@ -102,7 +109,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Expanded(
                                 child: CustomCards(
                                   height: height * 0.144,
-                                  accentColor: const Color(0xFF3B6D11), // green
+                                  accentColor: const Color(0xFF3B6D11), 
                                   content: ValueListenableBuilder(
                                     valueListenable: totalDocumnetsCount,
                                     builder: (context, value, child) =>
@@ -127,7 +134,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 child: CustomCards(
                                   height: height * 0.144,
                                   accentColor:
-                                      const Color(0xFF534AB7), // purple
+                                      const Color(0xFF534AB7), 
                                   content: ValueListenableBuilder(
                                     valueListenable: totalDepartmentsCount,
                                     builder: (context, value, child) =>
@@ -151,8 +158,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     Expanded(
                       flex: 3,
-                      child: CustomCards(
+                      child: ChartCards(
                         height: height * 0.45,
+                        accentColor: const Color(0xFF185FA5),
                         content: const UserDocDashboard(),
                       ),
                     ),
@@ -165,8 +173,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Expanded(
                       flex: 2,
-                      child: CustomCards(
+                      child: ChartCards(
                         height: height * 0.45,
+                        accentColor: const Color(0xFF185FA5),
                         content: const DocsByCatDashboard(),
                       ),
                     ),
@@ -175,8 +184,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     Expanded(
                       flex: 2,
-                      child: CustomCards(
+                      child: ChartCards(
                         height: height * 0.45,
+                        accentColor: const Color(0xFF185FA5),
                         content: const DocsByDeptDashboard(),
                       ),
                     ),

@@ -7,17 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../utils/constants/colors.dart';
-import '../../../utils/func/dates_controller.dart';
 import '../../models/dto/reports_criteria.dart';
 import '../../service/controller/reports_controller.dart';
-import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
-import '../../widget/charts.dart';
 import '../../widget/dashboard_components/DashboardActionButton.dart';
-import '../../widget/dashboard_components/bar_dashboard_chart.dart';
 import '../../widget/dashboard_components/dashboard_header.dart';
 import '../../widget/dashboard_components/line_dasboard_chart.dart';
-import '../../widget/dashboard_components/pie_dashboard_chart.dart';
 import '../../widget/pie_chart_model.dart';
 
 class UserDocDashboard extends StatefulWidget {
@@ -99,90 +94,53 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
     width = MediaQuery.of(context).size.width;
     isDesktop = Responsive.isDesktop(context);
 
-    // // Only render the chart if the data has been loaded
-    // if (userDocList.isEmpty) {
-    //   return const Center(child: CircularProgressIndicator());
-    // }
-
-    return Container(
-      decoration: const BoxDecoration(),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            height: isDesktop ? height * 0.44 : height * 0.48,
-            padding: const EdgeInsets.only(left: 5, right: 5, top: 0),
-            decoration: BoxDecoration(
-              color: whiteColor,
-              borderRadius: BorderRadius.circular(10),
+    return Column(
+      children: [
+        DashboardHeader(
+          title: _locale.userDocs,
+          subtitle:
+              '${searchCriteria?.fromDate ?? ''} - ${searchCriteria?.toDate ?? ''}',
+          accentColor: const Color(0xFF185FA5),
+          actions: [
+            DashboardActionButton(
+              icon: Icons.filter_list_sharp,
+              color: const Color(0xFF185FA5),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => FromDateToDateDialog(
+                    searchCriteria: searchCriteria,
+                  ),
+                ).then((value) {
+                  if (value != null && value is ReportsCriteria) {
+                    searchCriteria = value;
+                    listOfBalances.clear();
+                    listOfPeriods.clear();
+                    userDocList.clear();
+                    getUserDocs();
+                  }
+                });
+              },
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                DashboardHeader(
-                  title: _locale.userDocs,
-                  subtitle:
-                      '${searchCriteria?.fromDate ?? ''} - ${searchCriteria?.toDate ?? ''}',
-                  accentColor: const Color(0xFF185FA5),
-                  actions: [
-                    DashboardActionButton(
-                      icon: Icons.filter_list_sharp,
-                      color: const Color(0xFF185FA5),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => FromDateToDateDialog(
-                            searchCriteria: searchCriteria,
-                          ),
-                        ).then((value) {
-                          if (value != null && value is ReportsCriteria) {
-                            searchCriteria = value;
-                            listOfBalances.clear();
-                            listOfPeriods.clear();
-                            userDocList.clear();
-                            getUserDocs();
-                          }
-                        });
-                      },
-                    ),
-                    DashboardActionButton(
-                      icon: Icons.table_chart_outlined, // excel-like icon
-                      color: const Color(
-                          0xFF1A7A4A), // green like the excel button
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) {
-                            return FromDateToDateDialog(
-                                searchCriteria: searchCriteria);
-                          },
-                        ).then((value) {
-                          if (value != null && value is ReportsCriteria) {
-                            searchCriteria = value;
-                            listOfBalances.clear();
-                            listOfPeriods.clear();
-                            userDocList.clear();
-                            getUserDocs();
-                          }
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: height * .33,
-                  child: LineDashboardChart(
-                      isMax: false,
-                      balances: listOfBalances,
-                      periods: listOfPeriods),
-                )
-              ],
+            DashboardActionButton(
+              icon: Icons.table_chart_outlined,
+              color: const Color(0xFF1A7A4A),
+              onPressed: () {},
+            ),
+          ],
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: LineDashboardChart(
+              isMax: false,
+              balances: listOfBalances,
+              periods: listOfPeriods,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -217,11 +175,11 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
 
   Color getRandomColor(List<Color> colorList) {
     final random = Random();
-    int r = random.nextInt(256); // 0 to 255
-    int g = random.nextInt(256); // 0 to 255
-    int b = random.nextInt(256); // 0 to 255
+    int r = random.nextInt(256); 
+    int g = random.nextInt(256); 
+    int b = random.nextInt(256);
 
-    // Create Color object from RGB values
+
     return Color.fromRGBO(r, g, b, 1.0);
   }
 }
