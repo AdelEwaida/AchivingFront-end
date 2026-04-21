@@ -75,68 +75,66 @@ class _AppDialogState extends State<AppDialog>
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppDialog._radius),
               child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // HEADER
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 123, 93, 48),
-                      Color(0xFF8A6528),
-                      Color(0xFFB3873D),
-                      Color(0xFFC9A24F),
-                      Color(0xFFd5b166),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // HEADER
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFF3A7CA5),
+                          Color(0xFF1C5179),
+                          Color(0xFF163B59),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.info_outline,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildTitle(),
+                        ),
+                        _HoverCloseButton(
+                          onTap: () => Navigator.pop(context),
+                          tooltip: local?.cancel ?? "",
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.info_outline,
-                      color: Colors.white,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildTitle(),
-                    ),
-                    _HoverCloseButton(
-                      onTap: () => Navigator.pop(context),
-                      tooltip: local?.cancel ?? "",
-                    ),
-                  ],
-                ),
-              ),
 
-              // CONTENT
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: widget.content,
-                ),
-              ),
+                  // CONTENT
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: widget.content,
+                    ),
+                  ),
 
-              // ACTIONS
-              if (widget.actions != null)
-                Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 12,
-                    left: 12,
-                    right: 12,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: widget.actions!,
-                  ),
-                ),
-            ],
+                  // ACTIONS
+                  if (widget.actions != null)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 12,
+                        left: 12,
+                        right: 12,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: widget.actions!,
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
