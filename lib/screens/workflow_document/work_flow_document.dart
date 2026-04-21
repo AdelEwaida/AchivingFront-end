@@ -51,7 +51,9 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
   String selctedDepDesc = "";
   List<DepartmentUserModel> departmetList = [];
   int selectedStatus = -2;
-
+// Add these as state fields at the top of _WorkFlowDocumentScreenState
+  final Key _statusDropdownKey = const ValueKey('status_dropdown');
+  final Key _departmentDropdownKey = const ValueKey('department_dropdown');
   @override
   void didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
@@ -93,81 +95,92 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
     stateManager!.notifyListeners(true);
     userName = await storage.read(key: "userName");
     departmetList = await UserController().getDepartmentSelectedUser(userName!);
-    setState(() {});
+    if (mounted) setState(() {});
     super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDepartments();
+  }
+
+  Future<void> _loadDepartments() async {
+    userName = await storage.read(key: "userName");
+    departmetList = await UserController().getDepartmentSelectedUser(userName!);
+    if (mounted) setState(() {});
   }
 
   PlutoRow? selectedRow;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: TableComponent(
-                      hasDropdown: true,
-                      isworkFlow: true,
-                      delete: deleteWorkFlow,
-                      dropdown: departmentDropdown(),
-                      tableHeigt: height * 0.68,
-                      tableWidth: isDesktop ? width * 0.98 : width * 0.94,
-                      search: searchField,
-                      statusDropDown: statusDropDown(),
-                      plCols: polCols,
-                      mode: PlutoGridMode.selectWithOneTap,
-                      polRows: [],
-                      footerBuilder: (stateManager) {
-                        return lazyLoadingfooter(stateManager);
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                width: double.infinity,
+                child: TableComponent(
+                  hasDropdown: true,
+                  isworkFlow: true,
+                  delete: deleteWorkFlow,
+                  dropdown: departmentDropdown(),
+                  tableHeigt: height * 0.68,
+                  tableWidth: isDesktop ? width * 0.98 : width * 0.94,
+                  search: searchField,
+                  statusDropDown: statusDropDown(),
+                  plCols: polCols,
+                  mode: PlutoGridMode.selectWithOneTap,
+                  polRows: [],
+                  footerBuilder: (stateManager) {
+                    return lazyLoadingfooter(stateManager);
+                  },
+                  view: editTemplate,
+                  refresh: refreshTable,
+                  explor: explorFiels,
+                  onLoaded: (PlutoGridOnLoadedEvent event) {
+                    stateManager = event.stateManager;
+                    stateManager!.setShowColumnFilter(true);
+                  },
+                  doubleTab: (event) async {
+                    PlutoRow? tappedRow = event.row;
+                    workFlowTemplateBody =
+                        WorkFlowDocumentInfo.fromPluto(tappedRow!, _locale);
+                    showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        return EditTemplateDocumentDialog(
+                          workFlowTemplateBody: workFlowTemplateBody,
+                        );
                       },
-                      view: editTemplate,
-                      refresh: refreshTable,
-                      explor: explorFiels,
-                      onLoaded: (PlutoGridOnLoadedEvent event) {
-                        stateManager = event.stateManager;
-                        stateManager!.setShowColumnFilter(true);
-                      },
-                      doubleTab: (event) async {
-                        PlutoRow? tappedRow = event.row;
-                        workFlowTemplateBody =
-                            WorkFlowDocumentInfo.fromPluto(tappedRow!, _locale);
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return EditTemplateDocumentDialog(
-                              workFlowTemplateBody: workFlowTemplateBody,
-                            );
-                          },
-                        ).then((value) {
-                          if (value == true) {
-                            refreshTable();
-                          }
-                        });
-                      },
-                      onSelected: (event) async {
-                        PlutoRow? tappedRow = event.row;
-                        selectedRow = tappedRow;
-                        workFlowTemplateBody = WorkFlowDocumentInfo.fromPluto(
-                            selectedRow!, _locale);
-                      },
-                    ),
-                  ),
+                    ).then((value) {
+                      if (value == true) {
+                        refreshTable();
+                      }
+                    });
+                  },
+                  onSelected: (event) async {
+                    PlutoRow? tappedRow = event.row;
+                    selectedRow = tappedRow;
+                    workFlowTemplateBody =
+                        WorkFlowDocumentInfo.fromPluto(selectedRow!, _locale);
+                  },
                 ),
               ),
-            ],
+            ),
           ),
-        ));
+        ],
+      ),
+    ));
   }
 
   DropDown statusDropDown() {
     return DropDown(
-      key: UniqueKey(),
+      key: _statusDropdownKey,
       isMandatory: true,
       onChanged: (value) {
         selectedStatus =
@@ -208,11 +221,11 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
 
   DropDown departmentDropdown() {
     return DropDown(
+      key: _departmentDropdownKey,
       onClearIconPressed: () {
         selctedDepDesc = "";
         setState(() {});
       },
-      key: UniqueKey(),
       isMandatory: true,
       onChanged: (value) {
         selectedDep = value.txtDeptkey;

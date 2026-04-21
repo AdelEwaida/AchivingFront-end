@@ -99,90 +99,89 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Column(
-              children: [
-                Container(
-                    width: isDesktop ? width * 0.78 : width * 0.9,
-                    child: TableComponent(
-                      hasDropdown: true,
-                      dropdown: departmentDropdown(),
-                      tableHeigt: height * 0.78,
-                      tableWidth: width * 0.85,
-                      add: addTemplate,
-                      search: (s) {},
-                      delete: deleteTemplate,
-                      // explor: explorFiels,
-                      plCols: polCols,
-                      mode: PlutoGridMode.selectWithOneTap,
-                      polRows: [],
-                      footerBuilder: (stateManager) {
-                        return lazyLoadingfooter(stateManager);
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: Column(
+          children: [
+            Container(
+                width: isDesktop ? width * 0.78 : width * 0.9,
+                child: TableComponent(
+                  hasDropdown: true,
+                  dropdown: departmentDropdown(),
+                  tableHeigt: height * 0.78,
+                  tableWidth: width * 0.85,
+                  add: addTemplate,
+                  search: (s) {},
+                  delete: deleteTemplate,
+                  // explor: explorFiels,
+                  plCols: polCols,
+                  mode: PlutoGridMode.selectWithOneTap,
+                  polRows: [],
+                  footerBuilder: (stateManager) {
+                    return lazyLoadingfooter(stateManager);
+                  },
+                  genranlEdit: editTemplate,
+                  refresh: refreshTable,
+                  onLoaded: (PlutoGridOnLoadedEvent event) {
+                    stateManager = event.stateManager;
+                    stateManager!.setShowColumnFilter(true);
+                  },
+                  doubleTab: (event) async {
+                    PlutoRow? tappedRow = event.row;
+                    workFlowTemplateBody =
+                        WorkFlowTemplateBody.fromPluto(tappedRow!);
+                    showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        return AddEditTemplateDialog(
+                          isEditDialog: true,
+                          workFlowTemplateBody: workFlowTemplateBody,
+                        );
                       },
-                      genranlEdit: editTemplate,
-                      refresh: refreshTable,
-                      onLoaded: (PlutoGridOnLoadedEvent event) {
-                        stateManager = event.stateManager;
-                        stateManager!.setShowColumnFilter(true);
-                      },
-                      doubleTab: (event) async {
-                        PlutoRow? tappedRow = event.row;
-                        workFlowTemplateBody =
-                            WorkFlowTemplateBody.fromPluto(tappedRow!);
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return AddEditTemplateDialog(
-                              isEditDialog: true,
-                              workFlowTemplateBody: workFlowTemplateBody,
-                            );
-                          },
-                        ).then((value) {
-                          if (value == true) {
-                            refreshTable();
-                          }
-                        });
-                      },
-                      onSelected: (event) async {
-                        PlutoRow? tappedRow = event.row;
-                        selectedRow = tappedRow;
-                        workFlowTemplateBody =
-                            WorkFlowTemplateBody.fromPluto(selectedRow!);
-                      },
-                    )),
-                // Container(
-                //   width: isDesktop ? width * 0.8 : width * 0.9,
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.end,
-                //       children: [
-                //         Text(
-                //           "${_locale.totalCount}: ",
-                //           style: const TextStyle(fontWeight: FontWeight.bold),
-                //         ),
-                //         ValueListenableBuilder(
-                //           valueListenable: totalUsersCount,
-                //           builder: ((context, value, child) {
-                //             return Text(
-                //               "${totalUsersCount.value}",
-                //               style:
-                //                   const TextStyle(fontWeight: FontWeight.bold),
-                //             );
-                //           }),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-              ],
-            ),
-          ),
-        ));
+                    ).then((value) {
+                      if (value == true) {
+                        refreshTable();
+                      }
+                    });
+                  },
+                  onSelected: (event) async {
+                    PlutoRow? tappedRow = event.row;
+                    selectedRow = tappedRow;
+                    workFlowTemplateBody =
+                        WorkFlowTemplateBody.fromPluto(selectedRow!);
+                  },
+                )),
+            // Container(
+            //   width: isDesktop ? width * 0.8 : width * 0.9,
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(8.0),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.end,
+            //       children: [
+            //         Text(
+            //           "${_locale.totalCount}: ",
+            //           style: const TextStyle(fontWeight: FontWeight.bold),
+            //         ),
+            //         ValueListenableBuilder(
+            //           valueListenable: totalUsersCount,
+            //           builder: ((context, value, child) {
+            //             return Text(
+            //               "${totalUsersCount.value}",
+            //               style:
+            //                   const TextStyle(fontWeight: FontWeight.bold),
+            //             );
+            //           }),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+    ));
   }
 
   void explorFiels() {
