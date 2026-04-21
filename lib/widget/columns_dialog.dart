@@ -84,22 +84,42 @@ class _ColumnAttributesDialogState extends State<ColumnAttributesDialog> {
   @override
   Widget build(BuildContext context) {
     return AppDialog(
-       
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      title: Row(
         children: [
           Text(
             _locale.setFilter,
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          const SizedBox(width: 12),
           SizedBox(
-            height: 40,
+            width: 220,
+            height: 38,
             child: TextField(
               controller: widget.searchController,
+              style: const TextStyle(fontSize: 13, color: Color(0xFF0F172A)),
               decoration: InputDecoration(
-                labelText: _locale.search,
-                border: OutlineInputBorder(),
+                hintText: _locale.search,
+                prefixIcon: const Icon(Icons.search, size: 18),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.white70),
+                ),
               ),
               onChanged: (query) {
                 if (query.isEmpty) {
@@ -121,9 +141,14 @@ class _ColumnAttributesDialogState extends State<ColumnAttributesDialog> {
       content: ValueListenableBuilder<bool>(
         valueListenable: isloading,
         builder: (context, isLoadingValue, child) {
-          return SizedBox(
+          return Container(
             height: widget.height * 0.5,
             width: widget.width * 0.28,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
             child: isLoadingValue
                 ? const Center(
                     child: CircularProgressIndicator(strokeWidth: 2),
@@ -133,23 +158,54 @@ class _ColumnAttributesDialogState extends State<ColumnAttributesDialog> {
                       ValueListenableBuilder<List<PlutoRow>>(
                         valueListenable: widget.displayedItems,
                         builder: (context, items, child) {
-                          return ListView.builder(
+                          return ListView.separated(
                             controller: widget.scrollController,
+                            padding: const EdgeInsets.all(10),
                             itemCount: items.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 6),
                             itemBuilder: (context, index) {
                               final row = items[index];
                               return ValueListenableBuilder<bool>(
                                 valueListenable: widget.isDisplayed[row]!,
                                 builder: (context, isChecked, child) {
-                                  return CheckboxListTile(
-                                    title: Text(
-                                      '${row.cells[widget.column.field]!.value ?? ''}',
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: isChecked
+                                          ? const Color(0xFFE0F2FE)
+                                          : Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: isChecked
+                                            ? const Color(0xFF38BDF8)
+                                            : const Color(0xFFE2E8F0),
+                                      ),
                                     ),
-                                    value: isChecked,
-                                    onChanged: (value) {
-                                      widget.toggleAttributeVisibility(
-                                          row, value, widget.column);
-                                    },
+                                    child: CheckboxListTile(
+                                      dense: true,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      activeColor: const Color(0xFF2563EB),
+                                      checkColor: Colors.white,
+                                      title: Text(
+                                        '${row.cells[widget.column.field]!.value ?? ''}',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: isChecked
+                                              ? FontWeight.w600
+                                              : FontWeight.w400,
+                                          color: const Color(0xFF0F172A),
+                                        ),
+                                      ),
+                                      value: isChecked,
+                                      onChanged: (value) {
+                                        widget.toggleAttributeVisibility(
+                                            row, value, widget.column);
+                                      },
+                                    ),
                                   );
                                 },
                               );
@@ -165,7 +221,7 @@ class _ColumnAttributesDialogState extends State<ColumnAttributesDialog> {
                                   alignment: Alignment.bottomCenter,
                                   child: Padding(
                                     padding: EdgeInsets.all(8.0),
-                                    child: CircularProgressIndicator(),
+                                    child: CircularProgressIndicator(strokeWidth: 2),
                                   ),
                                 )
                               : const SizedBox.shrink();

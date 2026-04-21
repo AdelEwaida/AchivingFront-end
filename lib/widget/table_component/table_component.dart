@@ -404,7 +404,7 @@ class _TableComponentState extends State<TableComponent> {
           filterColumn: locale.tableColumn,
           filterType: locale.type,
           filterValue: locale.value,
-          filterContains: locale.contains,
+          filterContains: locale.search,
           filterEquals: locale.equals,
           filterEndsWith: locale.endsWith,
           filterLessThan: locale.lessThan,
@@ -416,8 +416,8 @@ class _TableComponentState extends State<TableComponent> {
       enterKeyAction:
           widget.moveAfterEditng ?? PlutoGridEnterKeyAction.editingAndMoveDown,
       // tabKeyAction: PlutoGridTabKeyAction.normal,
-      columnSize:
-          const PlutoGridColumnSizeConfig(autoSizeMode: PlutoAutoSizeMode.none),
+      columnSize: const PlutoGridColumnSizeConfig(
+          autoSizeMode: PlutoAutoSizeMode.scale),
 //localeText: PlutoGridLocaleText(filterContains: locale.contains),
       scrollbar: PlutoGridScrollbarConfig(
         onlyDraggingThumb: false,
@@ -429,34 +429,37 @@ class _TableComponentState extends State<TableComponent> {
         scrollbarRadius: Radius.circular(scrollRadius),
       ),
       style: PlutoGridStyleConfig(
-        evenRowColor: Colors.grey[100],
+        gridBackgroundColor: const Color(0xFFFCFDFF),
+        evenRowColor: Color.fromARGB(255, 223, 234, 249),
         oddRowColor: Colors.white,
-        activatedBorderColor:
-            const Color.fromARGB(255, 37, 171, 233).withOpacity(0.5),
-        activatedColor:
-            const Color.fromARGB(255, 37, 171, 233).withOpacity(0.5),
+        activatedBorderColor: const Color(0xFF38BDF8),
+        activatedColor: const Color(0xFFE0F2FE),
         enableCellBorderVertical: false,
         enableGridBorderShadow: true,
         gridBorderColor: widget.borderColor == null
-            ? const Color(0xFFA1A5AE)
+            ? const Color(0xFFE2E8F0)
             : widget.borderColor!,
         menuBackgroundColor: Colors.white,
+        iconColor: Colors.white,
         // columnHeight: maxNumber == 2
         //     ? 40
         //     : maxNumber == 3
         //         ? 55
         //         : 70,
-        columnHeight: widget.columnHeight ?? 45,
+        columnHeight: widget.columnHeight ?? 48,
         columnFilterHeight: 30,
 
         columnTextStyle: TextStyle(
             fontSize: 14,
-            color: widget.isWhiteText ?? false ? Colors.white : Colors.black,
-            letterSpacing: 1),
-        rowHeight: widget.rowsHeight ?? 30,
+            fontWeight: FontWeight.w600,
+            color: widget.isWhiteText ?? false
+                ? Colors.white
+                : const Color(0xFF0F172A),
+            letterSpacing: 0.3),
+        rowHeight: widget.rowsHeight ?? 34,
         cellTextStyle: const TextStyle(
-          fontSize: 14,
-          color: Colors.black,
+          fontSize: 13,
+          color: Color(0xFF111827),
         ),
       ),
     );
@@ -467,6 +470,7 @@ class _TableComponentState extends State<TableComponent> {
           const PlutoGridActionMoveCellFocus(PlutoMoveDirection.down),
     });
     for (int i = 0; i < polCols.length; i++) {
+      polCols[i].backgroundColor = Color(0xff1c5179);
       int length = polCols[i].title.split(" ").length;
       if (length > maxNumber) {
         maxNumber = length;
@@ -494,30 +498,44 @@ class _TableComponentState extends State<TableComponent> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  polCols[i].title,
-                  style: const TextStyle(fontSize: 16),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      polCols[i].title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
                 polCols[i].title == "#"
                     ? SizedBox.shrink()
-                    :
-                    // const SizedBox(width: 4), // Add spacing between title and icon
-                    Row(
+                    : Row(
                         children: [
                           const SizedBox(width: 2),
-                          IconButton(
-                            icon: const Icon(
-                                Icons.arrow_drop_down_circle_outlined,
-                                size: 18,
-                                color: primary2),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              if (stateManager != null) {
+                          Container(
+                            width: 22,
+                            height: 22,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEFF6FF),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.filter_alt_outlined,
+                                size: 14,
+                                color: primary2,
+                              ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () {
                                 showColumnAttributesPopup(
                                     context, polCols[i], stateManager);
-                              } else {}
-                            },
+                              },
+                            ),
                           ),
                           const SizedBox(width: 2),
                         ],
@@ -540,67 +558,91 @@ class _TableComponentState extends State<TableComponent> {
         SizedBox(
             height: widget.tableHeigt,
             width: widget.tableWidth,
-            child: PlutoGrid(
-              // key: UniqueKey(),
-              columnMenuDelegate: _CustomColumnMenu(rows: tempRow),
-              // columnMenuDelegate: PlutoColumnMenuDelegateDefault(),
-              configuration: configuration,
-              createFooter: (stateManager) {
-                if (widget.footerBuilder != null) {
-                  return widget.footerBuilder!(stateManager);
-                }
-                return const SizedBox();
-              },
-              columns: polCols,
-              rows: polRows,
-              mode: widget.mode != null
-                  ? widget.mode!
-                  : PlutoGridMode.selectWithOneTap,
-              onRowDoubleTap: widget.doubleTab != null
-                  ? (event) {
-                      widget.doubleTab!(event);
-                    }
-                  : null,
-              // onLoaded: (PlutoGridOnLoadedEvent event) {
-              //   if (widget.onLoaded != null) {
-              //     widget.onLoaded!(event);
-              //   }
-              // },
-              onLoaded: (event) {
-                // Initialize stateManager when PlutoGrid is loaded
-                stateManager = event.stateManager;
-                if (widget.onLoaded != null) {
-                  widget.onLoaded!(
-                      event); // Call additional onLoaded logic if provided
-                }
-              },
-              onChanged: (PlutoGridOnChangedEvent event) {
-                if (widget.onChange != null) {
-                  widget.onChange!(event);
-                }
-              },
-              onSelected: (event) {
-                if (widget.onSelected != null) {
-                  widget.onSelected!(event);
-                }
-              },
-              rowColorCallback: widget.rowColor,
-              // rowColorCallback: widget.rowColor,
-              noRowsWidget: const Center(
-                child: Text("No data available."),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFCFDFF),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: widget.borderColor ?? const Color(0xFFE2E8F0),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF334155).withOpacity(0.08),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
-              onRowSecondaryTap: (event) {
-                if (widget.rightClickTap != null) {
-                  widget.rightClickTap!(event);
-                }
-              },
-              createHeader: (stateManager) {
-                if (widget.headerBuilder != null) {
-                  return widget.headerBuilder!(stateManager);
-                }
-                return const SizedBox();
-              },
-              onRowChecked: widget.handleOnRowChecked,
+              clipBehavior: Clip.antiAlias,
+              child: PlutoGrid(
+                columnMenuDelegate: _CustomColumnMenu(rows: tempRow),
+                configuration: configuration,
+                createFooter: (stateManager) {
+                  if (widget.footerBuilder != null) {
+                    return widget.footerBuilder!(stateManager);
+                  }
+                  return const SizedBox();
+                },
+                columns: polCols,
+                rows: polRows,
+                mode: widget.mode ?? PlutoGridMode.selectWithOneTap,
+                onRowDoubleTap: widget.doubleTab != null
+                    ? (event) => widget.doubleTab!(event)
+                    : null,
+                onLoaded: (event) {
+                  stateManager = event.stateManager;
+                  if (widget.onLoaded != null) {
+                    widget.onLoaded!(event);
+                  }
+                },
+                onChanged: (event) {
+                  if (widget.onChange != null) {
+                    widget.onChange!(event);
+                  }
+                },
+                onSelected: (event) {
+                  if (widget.onSelected != null) {
+                    widget.onSelected!(event);
+                  }
+                },
+                rowColorCallback: widget.rowColor,
+                noRowsWidget: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(Icons.inbox_outlined, color: Color(0xFF64748B)),
+                        SizedBox(width: 8),
+                        Text(
+                          "No data available.",
+                          style: TextStyle(color: Color(0xFF64748B)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                onRowSecondaryTap: (event) {
+                  if (widget.rightClickTap != null) {
+                    widget.rightClickTap!(event);
+                  }
+                },
+                createHeader: (stateManager) {
+                  if (widget.headerBuilder != null) {
+                    return widget.headerBuilder!(stateManager);
+                  }
+                  return const SizedBox();
+                },
+                onRowChecked: widget.handleOnRowChecked,
+              ),
             )),
       ],
     );
