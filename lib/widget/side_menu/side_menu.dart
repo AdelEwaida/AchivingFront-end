@@ -1,27 +1,24 @@
 import 'package:archiving_flutter_project/data/side_menu_data.dart';
 import 'package:archiving_flutter_project/models/dto/side_menu/menu_model.dart';
-import 'package:archiving_flutter_project/providers/local_provider.dart';
+import 'package:archiving_flutter_project/models/dto/side_menu/sub_menu_model.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
+import 'package:archiving_flutter_project/service/controller/work_flow_controllers/setup_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
+import 'package:archiving_flutter_project/utils/constants/storage_keys.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
-import 'package:archiving_flutter_project/widget/language_widget/language_widget.dart';
-import 'package:archiving_flutter_project/widget/side_menu/logout_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../dialogs/issues_excel/import_excel_dialog.dart';
-import '../../models/dto/side_menu/sub_menu_model.dart';
-import '../../service/controller/work_flow_controllers/setup_controller.dart';
-import '../../utils/constants/storage_keys.dart';
-import '../../utils/constants/user_types_constant/user_types_constant.dart';
-import '../notification_icon_widget.dart';
+import 'menu_item_widget.dart';
+import 'menu_section.dart';
+import 'trailing_actions_widget.dart';
 
 class SideMenu extends StatefulWidget {
-  String? name;
-  SideMenu({super.key, this.name});
+  final String? name;
+  const SideMenu({super.key, this.name});
 
   @override
   State<SideMenu> createState() => _SideMenuState();
@@ -29,402 +26,239 @@ class SideMenu extends StatefulWidget {
 
 class _SideMenuState extends State<SideMenu> {
   double width = 0;
-  double height = 0;
-
-  Color shadowColor = Colors.grey.withOpacity(0.3);
-
-  bool isEnteredCollapseIcon = false;
-  double fontSize = 0;
-
-  Color selectedColor =
-      const Color.fromARGB(255, 169, 168, 168).withOpacity(0.3);
-
+  final ScrollController _menuScrollController = ScrollController();
   int selectedMenuHover = -1;
   int selectedSubMenuHover = -1;
   int selectedMenuIndex = -1;
   int selectedSubMenuIndex = -1;
   int selectedSubMenuParentIndex = -1;
 
-  bool isCollapsed = false;
-
-  bool isDesktop = false;
-
   late AppLocalizations _locale;
-  FlutterSecureStorage storage = FlutterSecureStorage();
-
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
+  PackageInfo? packageInfo;
   late ScreenContentProvider screenProvider;
-  int openedMenuIndex = -1;
   List<MenuModel> menuList = [];
   String? active;
   String? userRole;
+
+  @override
+  void dispose() {
+    _menuScrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Future<void> didChangeDependencies() async {
-    _locale = AppLocalizations.of(context)!;
-
-    SetupController().getSetup().then((value) async {
-      // print("in side menu :${value!.bolActive.toString()}");
-      if (value != null) {
-        const storage = FlutterSecureStorage();
-        await storage.write(
-            key: StorageKeys.bolActive, value: value!.bolActive.toString());
-      } else {
-        if (context.mounted && Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-        }
-      }
-
-      // String? intRank = await storage.read(key: StorageKeys.bolActive);
-    }).then((value) async {
-      active = await storage.read(key: StorageKeys.bolActive);
-      storage.read(key: "roles").then((value) {
-        print("vaaaaaaaaaaal ${value}");
-        print("active is :${active}");
-        userRole = value;
-        menuList = getMenus(_locale, value!, active!);
-        setState(() {});
-      });
-    });
-
     super.didChangeDependencies();
+    _locale = AppLocalizations.of(context)!;
+    packageInfo = await PackageInfo.fromPlatform();
+
+    final setup = await SetupController().getSetup();
+    if (setup != null) {
+      await storage.write(
+        key: StorageKeys.bolActive,
+        value: setup.bolActive.toString(),
+      );
+    } else {
+      if (context.mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+      return;
+    }
+
+    active = await storage.read(key: StorageKeys.bolActive);
+    userRole = await storage.read(key: "roles");
+
+    if (userRole != null && active != null) {
+      menuList = getMenus(_locale, userRole!, active!);
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
-    height = MediaQuery.of(context).size.height;
-
-    fontSize = width * 0.009;
-    isDesktop = Responsive.isDesktop(context);
-
+    final bool isDesktop = Responsive.isDesktop(context);
     screenProvider = context.read<ScreenContentProvider>();
     return Container(
-      height: height,
-      width: drawerWidth(),
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(7, 8, 7, 8),
       decoration: BoxDecoration(
         color: secondary,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(14)),
         boxShadow: [
           BoxShadow(
-            color: shadowColor,
-            spreadRadius: 1,
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.16),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0),
-            child: titleSection(),
-          ),
-          SizedBox(
-            height: height * 0.71,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  for (int i = 0; i < menuList.length; i++)
-                    createMenuItem(menuList[i], i),
-                ],
-              ),
-            ),
-          ),
-          accountSection(),
-
-          // const Divider(), // Add a line before the logout button
-          // const Padding(padding: EdgeInsets.all(5)),
-          LogoutTab(isCollapse: isCollapsed), // Pass the isCollapsed state
-        ],
-      ),
-    );
-  }
-
-  accountSection() {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-              height: 50,
-              decoration: const BoxDecoration(
-                color: secondary,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.account_circle_rounded,
-                    color: Colors.white,
+      child: isDesktop
+          ? Row(
+              children: [
+                Expanded(
+                  child: MenuSection(
+                    width: width,
+                    menuList: menuList,
+                    scrollController: _menuScrollController,
+                    logoPath: "assets/images/logo-white.png",
+                    itemBuilder: (menu, index) {
+                      final menuItem = menuList[index];
+                      return _buildMenuItem(menuItem, index);
+                    },
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        widget.name!,
-                        overflow: TextOverflow.fade,
-                        softWrap: false,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
-              )),
-        ],
-      ),
-    );
-  }
-
-  Container titleSection() {
-    return Container(
-      decoration: const BoxDecoration(),
-      child: Row(
-        mainAxisAlignment: !isCollapsed
-            ? MainAxisAlignment.spaceBetween
-            : MainAxisAlignment.center,
-        children: [
-          !isCollapsed
-              ? Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/images/logo-white.png",
-                          width: isDesktop ? width * 0.073 : width * 0.5,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        LanguageWidget(
-                          color: Colors.white,
-                          onLocaleChanged: (locale) {
-                            context.read<LocaleProvider>().setLocale(locale);
-                            setState(() {});
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              : Container(),
-          isDesktop
-              ? Row(
-                  children: [
-                    active == "1" ? NotificationIcon() : SizedBox.shrink(),
-                    MouseRegion(
-                      onEnter: (event) {
-                        setState(() {
-                          isEnteredCollapseIcon = true;
-                        });
-                      },
-                      onExit: (event) {
-                        setState(() {
-                          isEnteredCollapseIcon = false;
-                        });
-                      },
-                      child: IconButton(
-                        splashRadius: 1,
-                        iconSize: width * 0.0135,
-                        onPressed: () {
-                          setState(() {
-                            isCollapsed = !isCollapsed;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.flip_to_back_rounded,
-                          color: isEnteredCollapseIcon ? primary : Colors.white,
-                        ),
-                      ),
-                    ),
-                    userRole == USERTYPEADMIN
-                        ? IconButton(
-                            splashRadius: 1,
-                            iconSize: width * 0.0135,
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return ImportExcelDialog();
-                                },
-                              ).then((value) {
-                                if (value) {}
-                              });
-                            },
-                            icon: Icon(
-                              Icons.file_copy_outlined,
-                              color: Colors.white,
-                            ),
-                          )
-                        : SizedBox.shrink()
-                  ],
-                )
-              : Container(),
-        ],
-      ),
-    );
-  }
-
-  Widget createMenuItem(MenuModel menu, int index) {
-    Radius radius = const Radius.circular(100);
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(
-              width: 6,
-            ),
-            menuWidget(index, menu),
-          ],
-        ));
-  }
-
-  Container createSelecter(Radius radius) {
-    return Container(
-      width: isDesktop ? width * 0.002 : width * 0.004,
-      height: 38,
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(96, 87, 83, 83),
-        borderRadius: BorderRadius.only(
-          topRight: radius,
-          bottomRight: radius,
-        ),
-      ),
-    );
-  }
-
-  Widget menuWidget(int index, MenuModel menu) {
-    Color activeColor = getActiveColor(index);
-    String title = menu.title;
-    bool isParent = menu.isParent;
-    IconData icon = menu.icon;
-    bool isOpened = menuList[index].isOpened;
-    return MouseRegion(
-      onEnter: (event) {
-        setState(() {
-          selectedMenuHover = index;
-        });
-      },
-      onExit: (event) {
-        setState(() {
-          selectedMenuHover = -1;
-        });
-      },
-      child: Container(
-          width: menuWidth(),
-          decoration: BoxDecoration(
-            color: activeColor,
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Column(
-            children: [
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    if (selectedMenuIndex == index) {
-                      menuList[index].isOpened = !isOpened;
-                    } else {
-                      closeAllMenus(index);
-                      menuList[index].isOpened = true;
-                      selectedMenuIndex = index;
-                    }
-                    if (!menuList[index].isParent) {
-                      screenProvider.setPage1(menu.pageNumber);
-                    }
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+                const SizedBox(width: 12),
+                _buildTrailingActions(),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: _buildTrailingActions(),
+                ),
+                const SizedBox(height: 12),
+                Image.asset(
+                  "assets/images/logo-white.png",
+                  width: width * 0.32,
+                  alignment: Alignment.centerLeft,
+                ),
+                const SizedBox(height: 10),
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              icon,
-                              size: isDesktop ? width * 0.011 : width * 0.05,
-                              color: Colors.white,
-                            ),
-                            !isCollapsed
-                                ? const SizedBox(
-                                    width: 5,
-                                  )
-                                : Container(),
-                            !isCollapsed
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ...splitTitle(title).map((line) => Text(
-                                            line,
-                                            style: TextStyle(
-                                              fontSize: isDesktop
-                                                  ? fontSize
-                                                  : width * 0.04,
-                                              color: Colors.white,
-                                            ),
-                                            softWrap: true,
-                                          )),
-                                    ],
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      ),
-                      !isCollapsed
-                          ? isParent
-                              ? Icon(
-                                  selectedMenuIndex == index
-                                      ? isOpened
-                                          ? Icons.arrow_drop_down_rounded
-                                          : Icons.arrow_right_rounded
-                                      : Icons.arrow_right_rounded,
-                                  size:
-                                      isDesktop ? width * 0.011 : width * 0.05,
-                                  color: Colors.white,
-                                )
-                              : Container()
-                          : Container(),
+                      for (int i = 0; i < menuList.length; i++) ...[
+                        _buildMenuItem(menuList[i], i, closeDrawerOnTap: true),
+                        if (i != menuList.length - 1) const SizedBox(height: 8),
+                      ],
                     ],
                   ),
                 ),
-              ),
-              !isCollapsed
-                  ? isParent
-                      ? isOpened
-                          ? Column(
-                              children: [
-                                for (int i = 0;
-                                    i < menu.subMenuList.length;
-                                    i++)
-                                  createSubMenu(menu.subMenuList[i], index, i)
-                              ],
-                            )
-                          : Container()
-                      : Container()
-                  : Container()
-            ],
-          )),
+              ],
+            ),
     );
   }
 
-  List<String> splitTitle(String title) {
-    List<String> words = title.split(' ');
-    List<String> lines = [];
-    String line = '';
-    for (int i = 0; i < words.length; i++) {
-      line += '${words[i]} ';
-      if ((i + 1) % 3 == 0 || i == words.length - 1) {
-        lines.add(line.trim());
-        line = '';
-      }
+  Widget _buildTrailingActions() {
+    return TrailingActions(
+      userRole: userRole ?? "-1",
+      active: active ?? "0",
+      onExportExcel: () {
+        showDialog(
+          context: context,
+          builder: (context) => ImportExcelDialog(),
+        );
+      },
+    );
+  }
+
+  Widget _buildMenuItem(
+    MenuModel menuItem,
+    int index, {
+    bool closeDrawerOnTap = false,
+  }) {
+    return MenuItemWidget(
+      menu: menuItem,
+      isSelected: selectedMenuIndex == index,
+      isOpened: menuItem.isOpened,
+      isHovered: selectedMenuHover == index,
+      onHover: () {
+        setState(() => selectedMenuHover = index);
+      },
+      onExit: () {
+        setState(() => selectedMenuHover = -1);
+      },
+      onTap: () {
+        if (!menuItem.isParent) {
+          setState(() {
+            closeAllMenus(index);
+            selectedMenuIndex = index;
+            screenProvider.setPage1(menuItem.pageNumber);
+          });
+          if (closeDrawerOnTap) {
+            Navigator.of(context).maybePop();
+          }
+        }
+      },
+      onTapDown: (details) async {
+        if (!menuItem.isParent) return;
+        setState(() {
+          closeAllMenus(index);
+          menuItem.isOpened = true;
+          selectedMenuIndex = index;
+        });
+        await _openSubMenuPopup(menuItem, index, details);
+      },
+    );
+  }
+
+  Future<void> _openSubMenuPopup(
+    MenuModel menu,
+    int parentIndex,
+    TapDownDetails details,
+  ) async {
+    if (!menu.isParent || menu.subMenuList.isEmpty) {
+      return;
     }
-    return lines;
+
+    final overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox?;
+    if (overlay == null) {
+      return;
+    }
+
+    final selectedIndex = await showMenu<int>(
+      context: context,
+      color: secondary,
+      elevation: 10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: Colors.white.withOpacity(0.15),
+          width: 0.8,
+        ),
+      ),
+      position: RelativeRect.fromLTRB(
+        details.globalPosition.dx,
+        details.globalPosition.dy + 24,
+        overlay.size.width - details.globalPosition.dx,
+        overlay.size.height - details.globalPosition.dy,
+      ),
+      items: [
+        for (int i = 0; i < menu.subMenuList.length; i++)
+          PopupMenuItem<int>(
+            value: i,
+            child: Text(
+              menu.subMenuList[i].title,
+              style: TextStyle(
+                color: getActiveSubColor(i, parentIndex),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+      ],
+    );
+
+    if (selectedIndex == null) {
+      setState(() {
+        menuList[parentIndex].isOpened = false;
+      });
+      return;
+    }
+
+    final SubMenuModel selectedSub = menu.subMenuList[selectedIndex];
+    setState(() {
+      selectedSubMenuParentIndex = parentIndex;
+      selectedSubMenuIndex = selectedIndex;
+      menuList[parentIndex].isOpened = false;
+      screenProvider.setPage1(selectedSub.pageNumber);
+    });
   }
 
   void closeAllMenus(int index) {
@@ -435,147 +269,21 @@ class _SideMenuState extends State<SideMenu> {
     }
   }
 
-  Widget createSubMenu(
-      SubMenuModel subMenu, int parentIndex, int subMenuIndex) {
-    String title = subMenu.title;
-    return InkWell(
-      onTap: () {
-        setState(() {
-          selectedSubMenuParentIndex = parentIndex;
-          selectedSubMenuIndex = subMenuIndex;
-          screenProvider.setPage1(subMenu.pageNumber);
-        });
-      },
-      child: MouseRegion(
-        onEnter: (event) {
-          setState(() {
-            selectedSubMenuHover = subMenuIndex;
-          });
-        },
-        onExit: (event) {
-          setState(() {
-            selectedSubMenuHover = -1;
-          });
-        },
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: isDesktop ? width * 0.018 : width * 0.1,
-              vertical: 15),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                width: isDesktop ? width * 0.09 : width * 0.3,
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: getActiveSubColor(
-                      subMenuIndex,
-                      parentIndex,
-                    ),
-                    fontSize: isDesktop ? fontSize : width * 0.03,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget createSubMenu1(
-      SubMenuModel subMenu, int parentIndex, int subMenuIndex) {
-    String title = subMenu.title;
-    return InkWell(
-      onTap: () {
-        setState(() {
-          selectedSubMenuParentIndex = parentIndex;
-
-          selectedSubMenuIndex = subMenuIndex;
-          screenProvider.setPage1(subMenu.pageNumber);
-        });
-      },
-      child: MouseRegion(
-        onEnter: (event) {
-          setState(() {
-            selectedSubMenuHover = subMenuIndex;
-          });
-        },
-        onExit: (event) {
-          setState(() {
-            selectedSubMenuHover = -1;
-          });
-        },
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: isDesktop ? width * 0.018 : width * 0.1,
-              vertical: 15),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                width: isDesktop ? width * 0.09 : width * 0.3,
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: getActiveSubColor(parentIndex, subMenuIndex),
-                    fontSize: isDesktop ? fontSize : width * 0.03,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Color getActiveColor(int index) {
     if (selectedMenuIndex == index) {
-      return selectedColor;
+      return const Color.fromARGB(255, 169, 168, 168).withOpacity(0.3);
     }
     return selectedMenuHover == index
         ? Colors.grey.withOpacity(0.3)
         : Colors.transparent;
   }
 
-  // Color getActiveSubColor(int parentIndex, int subMenuIndex) {
-  //   if (selectedMenuIndex == parentIndex &&
-  //       selectedSubMenuIndex == subMenuIndex) {
-  //     return textSecondary; // Active color for the selected submenu
-  //   }
-  //   if (selectedSubMenuHover == subMenuIndex) {
-  //     return Colors.grey; // Hover color for the submenu
-  //   }
-  //   return Colors.white;
-  // }
   Color? getActiveSubColor(int subMenuIndex, int parentIndex) {
     if ((selectedSubMenuIndex == subMenuIndex &&
             selectedSubMenuParentIndex == parentIndex) ||
         selectedSubMenuHover == subMenuIndex) {
       return textSecondary;
     }
-    return Colors.white;
-  }
-
-  double drawerWidth() {
-    if (isDesktop) {
-      return !isCollapsed ? width * 0.179 : 70;
-    } else {
-      return width * 0.6;
-    }
-  }
-
-  double menuWidth() {
-    if (isDesktop) {
-      return !isCollapsed ? width * 0.14 : 35;
-    } else {
-      return width * 0.55;
-    }
+    return Colors.white.withOpacity(0.85);
   }
 }

@@ -2,9 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/db/work_flow/user_step_request_body.dart';
 import '../models/db/work_flow/user_work_flow_steps.dart';
-import '../models/db/work_flow/work_flow_document_info.dart';
 import '../service/controller/work_flow_controllers/work_flow_template_controller.dart';
-import '../utils/constants/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../utils/func/lists.dart';
@@ -22,6 +20,7 @@ class _NotificationIconState extends State<NotificationIcon> {
   List<dynamic> tipsList = [];
   OverlayEntry? _overlayEntry;
   Timer? _timer;
+  
 
   @override
   void initState() {
@@ -214,26 +213,43 @@ class _NotificationIconState extends State<NotificationIcon> {
     return GestureDetector(
       onTap: _toggleNotificationList,
       child: Stack(
+        clipBehavior: Clip.none,
         children: <Widget>[
           Tooltip(
             message: _locale.approvals,
-            child: const Icon(
-              Icons.notifications_active_rounded,
-              size: 25.0,
-              color: Colors.yellow,
+            child: Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.22),
+                  width: 0.8,
+                ),
+              ),
+              child: const Icon(
+                Icons.notifications_none_rounded,
+                size: 18,
+                color: Color(0xFFFFF176),
+              ),
             ),
           ),
           if (notificationCount > 0)
             Positioned(
-              right: 1,
-              // top: -5,
+              right: -2,
+              top: -3,
               child: Container(
-                padding: EdgeInsets.all(2),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(10),
+                  color: const Color(0xFFFF6F00),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.9),
+                    width: 0.8,
+                  ),
                 ),
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 16,
                   minHeight: 16,
                 ),
@@ -242,6 +258,7 @@ class _NotificationIconState extends State<NotificationIcon> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10,
+                    fontWeight: FontWeight.w700,
                   ),
                   textAlign: TextAlign.center,
                 ),

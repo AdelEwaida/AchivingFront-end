@@ -25,6 +25,7 @@ import '../models/db/work_flow/setup_model.dart';
 import '../service/controller/work_flow_controllers/setup_controller.dart';
 import '../utils/constants/storage_keys.dart';
 import '../widget/curve_clipper.dart';
+import '../widget/side_menu/version_badge_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -164,7 +165,12 @@ class _LogInScreenState extends State<LoginScreen>
             customTextField(_locale.password, _passwordController,
                 passwordFocus, true, isDesktop),
             space(),
-            customSubmitButton()
+            customSubmitButton(),
+            space(),
+            space(),
+            const VersionBadge(
+              baseColor: Color(0xFFFFB300),
+            ),
           ],
         ),
       ),
@@ -347,7 +353,6 @@ class _LogInScreenState extends State<LoginScreen>
         .logInPost(userModel, AppLocalizations.of(context)!)
         .then((value) async {
       if (value) {
-
         await SetupController().getSetupList().then((value) async {
           int bolActive = value!.first.bolActive!;
           await storage.write(key: "bolActive", value: bolActive.toString());

@@ -1,22 +1,13 @@
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/utils/constants/routes_constant.dart';
-import 'package:archiving_flutter_project/utils/constants/user_types_constant/user_types_constant.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-
-import 'package:flutter/foundation.dart';
-import 'dart:html' as html;
-
-import '../../providers/screen_content_provider.dart';
-
-// ignore: must_be_immutable
 class LogoutTab extends StatefulWidget {
-  bool isCollapse;
-  LogoutTab({super.key, required this.isCollapse});
+  final bool isCollapse;
+  const LogoutTab({super.key, required this.isCollapse});
 
   @override
   State<LogoutTab> createState() => _LogoutTabState();
@@ -28,9 +19,8 @@ class _LogoutTabState extends State<LogoutTab> {
   bool isHovered = false;
   late AppLocalizations locale;
   double fontSize = 0;
-  bool isDesktop = false;
   Color selectedColor = const Color.fromARGB(255, 14, 1, 1).withOpacity(0.3);
-  FlutterSecureStorage storage = FlutterSecureStorage();
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
   @override
   void didChangeDependencies() {
     locale = AppLocalizations.of(context)!;
@@ -41,8 +31,7 @@ class _LogoutTabState extends State<LogoutTab> {
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
-    height = MediaQuery.of(context).size.height;
-    isDesktop = Responsive.isDesktop(context);
+    final isDesktop = Responsive.isDesktop(context);
 
     bool isTablet = Responsive.isTablet(context);
     fontSize = width * 0.008;
@@ -63,51 +52,65 @@ class _LogoutTabState extends State<LogoutTab> {
   }
 
   Widget logoutTab(bool isDesktop, bool isTablet) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Divider(),
-        InkWell(
-          onTap: () async {
-            confirmDialog();
-
-            //   tabsProvider.deleteAllTabsExceptFirst();
-          },
-          child: Container(
+    if (widget.isCollapse) {
+      return Tooltip(
+        message: locale.logout,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: confirmDialog,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 140),
+            curve: Curves.easeOut,
+            width: 34,
+            height: 34,
             decoration: BoxDecoration(
               color: getActiveColor(),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            width: menuWidth(isDesktop),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Icon(Icons.logout,
-                      size: isDesktop ? width * 0.011 : width * 0.05,
-                      color: Colors.white),
-                  !widget.isCollapse
-                      ? const SizedBox(
-                          width: 5,
-                        )
-                      : Container(),
-                  !widget.isCollapse
-                      ? Text(
-                          locale.logout,
-                          style: TextStyle(
-                              fontSize: isDesktop ? fontSize : width * 0.04,
-                              color: Colors.white),
-                        )
-                      : Container(),
-                ],
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.25),
+                width: 0.8,
               ),
+            ),
+            child: const Icon(
+              Icons.logout_rounded,
+              size: 18,
+              color: Colors.white,
             ),
           ),
         ),
-      ],
+      );
+    }
+
+    return InkWell(
+      onTap: confirmDialog,
+      child: Container(
+        decoration: BoxDecoration(
+          color: getActiveColor(),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        width: menuWidth(isDesktop),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.logout_rounded,
+                size: isDesktop ? width * 0.011 : width * 0.05,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                locale.logout,
+                style: TextStyle(
+                  fontSize: isDesktop ? fontSize : width * 0.04,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

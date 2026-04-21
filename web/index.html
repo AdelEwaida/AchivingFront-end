@@ -50,8 +50,9 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = null;
+    const serviceWorkerVersion = Date.now().toString();
   </script>
+  <script src="flutter_service_worker.js" defer></script>
   <script>
     async function convertDocxToPdf(base64Docx) {
       try {
