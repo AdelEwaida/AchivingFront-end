@@ -1,87 +1,42 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:archiving_flutter_project/dialogs/fromDate_toDate_dialog.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../../utils/constants/colors.dart';
-import '../../../utils/func/dates_controller.dart';
 import '../../models/dto/reports_criteria.dart';
 import '../../service/controller/reports_controller.dart';
-import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/charts.dart';
-import '../../widget/dashboard_components/bar_dashboard_chart.dart';
+import '../../widget/dashboard_components/DashboardActionButton.dart';
+import '../../widget/dashboard_components/dashboard_header.dart';
 import '../../widget/dashboard_components/pie_dashboard_chart.dart';
 import '../../widget/pie_chart_model.dart';
 
 class DocsByDeptDashboard extends StatefulWidget {
-  const DocsByDeptDashboard({
-    Key? key,
-  }) : super(key: key);
+  const DocsByDeptDashboard({Key? key}) : super(key: key);
 
   @override
   State<DocsByDeptDashboard> createState() => _DocsByDeptDashboardState();
 }
 
 class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
-  double width = 0;
-  double height = 0;
-  final dropdownKey = GlobalKey<DropdownButton2State>();
   bool isDesktop = false;
-  final storage = const FlutterSecureStorage();
   late AppLocalizations _locale;
   ReportsController reportsController = ReportsController();
   List<PieChartModel> barDataDailySales = [];
-
-  List<String> status = [];
-
-  List<String> charts = [];
-
-  bool accountsActive = false;
-
-  TextEditingController fromDateController = TextEditingController();
-  int statusVar = 0;
-
-  String todayDate = "";
-
-  int selectedStatus = 0;
-  int selectedChart = 0;
-  List<double> listOfBalances = [];
-  List<String> listOfPeriods = [];
-  final dataMap = <String, double>{};
-  bool boolTemp = false;
   List<BarData> barData = [];
 
-  String lastBranchCode = "";
-
-  // List<PieChartModel> pieData = [];
-  String accountNameString = "";
-  String lastFromDate = "";
-  String lastStatus = "";
-
-  String startSearchCriteria = "";
-  String currentPageName = "";
-  String currentPageCode = "";
-
-  String txtKey = "";
-  int counter = 0;
-  bool isLoading = true;
-  List<String> branches = [];
+  ReportsCriteria? searchCriteria = ReportsCriteria(
+    fromDate: Converters.getDateBeforeMonth(),
+    toDate: Converters.formatDate2(DateTime.now().toString()),
+  );
 
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
-
     super.didChangeDependencies();
   }
 
-  bool dataLoaded = false;
-  ReportsCriteria? searchCriteria = ReportsCriteria(
-      fromDate: Converters.getDateBeforeMonth(),
-      toDate: Converters.formatDate2(DateTime.now().toString()));
   @override
   void initState() {
     docByCat();
@@ -90,120 +45,169 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    height = MediaQuery.of(context).size.height;
-    width = MediaQuery.of(context).size.width;
     isDesktop = Responsive.isDesktop(context);
 
-    // Only render the chart if the data has been loaded
-    // if (barData.isEmpty) {
-    //   return const Center(child: CircularProgressIndicator());
-    // }
-
-    return Container(
-      decoration: const BoxDecoration(),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.only(left: 5, right: 5, bottom: 3, top: 0),
-            child: Container(
-              height: isDesktop ? height * 0.44 : height * 0.48,
-              padding: const EdgeInsets.only(left: 5, right: 5, top: 0),
-              decoration: BoxDecoration(
-                color: whiteColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      children: [
+        DashboardHeader(
+          title: _locale.docByDep,
+          subtitle:
+              '${searchCriteria?.fromDate ?? ''} - ${searchCriteria?.toDate ?? ''}',
+          accentColor: const Color(0xFF185FA5),
+          actions: [
+            DashboardActionButton(
+              icon: Icons.filter_list_sharp,
+              color: const Color(0xFF185FA5),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => FromDateToDateDialog(
+                    searchCriteria: searchCriteria,
+                  ),
+                ).then((value) {
+                  if (value != null && value is ReportsCriteria) {
+                    searchCriteria = value;
+                    barData.clear();
+                    barDataDailySales.clear();
+                    docByCat();
+                  }
+                });
+              },
+            ),
+          ],
+        ),
+        Expanded(
+          child: barDataDailySales.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
+                      Icon(Icons.pie_chart_outline,
+                          size: 40, color: Colors.grey.shade300),
+                      const SizedBox(height: 8),
                       Text(
-                        _locale.docByDep,
-                        style: TextStyle(fontSize: isDesktop ? 15 : 18),
+                        _locale.nodataSelected,
+                        style: TextStyle(
+                            fontSize: 13, color: Colors.grey.shade400),
                       ),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width < 800
-                              ? MediaQuery.of(context).size.width * 0.06
-                              : MediaQuery.of(context).size.width * 0.03,
-                          child: blueButton1(
-                            icon: Icon(
-                              Icons.filter_list_sharp,
-                              color: whiteColor,
-                              size: isDesktop ? height * 0.035 : height * 0.03,
-                            ),
-                            textColor: const Color.fromARGB(255, 255, 255, 255),
-                            height: isDesktop ? height * .01 : height * .039,
-                            fontSize: isDesktop ? height * .018 : height * .017,
-                            width: isDesktop ? width * 0.08 : width * 0.27,
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return FromDateToDateDialog(
-                                    searchCriteria: searchCriteria,
-                                  );
-                                },
-                              ).then((value) {
-                                if (value != null && value is ReportsCriteria) {
-                                  searchCriteria = value;
-                                  listOfBalances.clear();
-                                  listOfPeriods.clear();
-                                  barData.clear();
-                                  barDataDailySales.clear();
-                                  // userDocList.clear();
-                                  docByCat();
-                                }
-                              });
-                            },
-                          )),
                     ],
                   ),
-                  Center(
-                    child: PieDashboardChart(
-                      dataList: barDataDailySales,
+                )
+              : Row(
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: PieDashboardChart(
+                        dataList: barDataDailySales,
+                      ),
                     ),
-                  )
-                ],
+                    Expanded(
+                      flex: 4,
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+                        child: _buildLegend(),
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLegend() {
+    final double total =
+        barDataDailySales.fold(0.0, (sum, e) => sum + (e.value ?? 0));
+
+    return ListView.builder(
+      itemCount: barDataDailySales.length,
+      itemBuilder: (context, index) {
+        final item = barDataDailySales[index];
+        final double val = item.value ?? 0;
+        final double pct = total > 0 ? (val / total * 100) : 0;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 3),
+          child: Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: item.color,
+                  shape: BoxShape.circle,
+                ),
               ),
-            ),
+              const SizedBox(width: 6),
+
+ 
+              Expanded(
+                child: Text(
+                  item.title ?? '',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF3D3D3A),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 4),
+
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: item.color?.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(99),
+                ),
+                child: Text(
+                  '${pct.toStringAsFixed(1)}%',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: item.color,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Future<void> docByCat() async {
-    // ReportsCriteria searchCriteria =
-    //     ReportsCriteria(fromDate: "2024-07-02", toDate: "2024-08-22");
-
     barData = [];
-
     await reportsController.getDocByDept(searchCriteria!).then((response) {
       for (var element in response) {
         String temp = element.dept ?? "NO DATE";
         double countFiles = double.parse(element.countFiles.toString());
-
         barData.add(BarData(name: temp, percent: countFiles));
         barDataDailySales.add(PieChartModel(
-            title: temp,
-            value: double.parse(element.countFiles.toString()),
-            color: getRandomColor(colorNewList)));
+          title: temp,
+          value: countFiles,
+          color: getRandomColor(),
+        ));
       }
     });
-
     setState(() {});
   }
 
-  Color getRandomColor(List<Color> colorList) {
+  Color getRandomColor() {
+    const List<Color> palette = [
+      Color(0xFF185FA5),
+      Color(0xFF0D9B8A),
+      Color(0xFF534AB7),
+      Color(0xFFBA7517),
+      Color(0xFFA32D2D),
+      Color(0xFF3B6D11),
+      Color(0xFF0F6E56),
+      Color(0xFF993556),
+      Color(0xFF5F5E5A),
+      Color(0xFF185FA5),
+    ];
     final random = Random();
-    int r = random.nextInt(256); // 0 to 255
-    int g = random.nextInt(256); // 0 to 255
-    int b = random.nextInt(256); // 0 to 255
-
-    // Create Color object from RGB values
-    return Color.fromRGBO(r, g, b, 1.0);
+    return palette[random.nextInt(palette.length)];
   }
 }

@@ -1,204 +1,236 @@
-import 'dart:math';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../utils/func/responsive.dart';
 import '../charts.dart';
-import 'dashboard_bar_data.dart';
 
 class BarDashboardChart extends StatefulWidget {
   final List<BarData> barChartData;
   final bool isMax;
+  final Color accentColor;
 
-  const BarDashboardChart(
-      {super.key, required this.barChartData, required this.isMax});
+  const BarDashboardChart({
+    super.key,
+    required this.barChartData,
+    required this.isMax,
+    this.accentColor = const Color(0xFF185FA5),
+  });
 
   @override
   State<BarDashboardChart> createState() => _BarDashboardChartState();
 }
 
-class _BarDashboardChartState extends State<BarDashboardChart> {
-  List<DashboardBarData> dataList = [];
-  List<Color> usedColors = [];
-  int touchedGroupIndex = -1;
-  double width = 0;
-  double height = 0;
-  bool isFilter = true;
-  final ScrollController _scrollController = ScrollController();
-  bool isLoading = false;
-  Widget buildWidget = const Row();
+class _BarDashboardChartState extends State<BarDashboardChart>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+  late Animation<double> _animation;
+  int? _hoveredIndex;
 
   @override
-  void didChangeDependencies() {
-    setState(() {
-      isLoading = true;
-    });
-    getBuildWidget();
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _animation = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+    );
+    _animController.forward();
   }
 
-  void convertBarDataToDashboardBarData() {
-    dataList = [];
-    List<BarData> barDat = widget.barChartData;
-    for (int i = 0; i < barDat.length; i++) {
-      DashboardBarData dashboardBarData = DashboardBarData(
-          getRandomColor(), barDat[i].percent!, barDat[i].percent!);
-      dataList.add(dashboardBarData);
+  @override
+  void didUpdateWidget(BarDashboardChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.barChartData != widget.barChartData) {
+      _animController.forward(from: 0);
     }
   }
 
-  BarChartGroupData generateBarGroup(
-    int x,
-    Color color,
-    double value,
-  ) {
-    return BarChartGroupData(
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: value,
-          color: color,
-          width: 10, // Increase width for better visibility
-          borderRadius: BorderRadius.circular(4),
-        ),
-      ],
-      showingTooltipIndicators: touchedGroupIndex == x ? [0] : [],
-    );
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
   }
 
-  getBuildWidget() {
-    convertBarDataToDashboardBarData();
+  // ── Medal colors for top 3 ───────────────────────────────────
+  Color _rankColor(int index) {
+    if (index == 0) return const Color(0xFFFFD700); // gold
+    if (index == 1) return const Color(0xFFB0B7C3); // silver
+    if (index == 2) return const Color(0xFFCD7F32); // bronze
+    return widget.accentColor;
+  }
 
-    width = MediaQuery.of(context).size.width;
-    height = MediaQuery.of(context).size.height;
-    bool isMobile = Responsive.isMobile(context);
+  @override
+  Widget build(BuildContext context) {
+    final bool isMobile = Responsive.isMobile(context);
+    late AppLocalizations locale = AppLocalizations.of(context)!;
 
-    buildWidget = Directionality(
-      textDirection: TextDirection.ltr,
-      child: Scrollbar(
-        controller: _scrollController,
-        thumbVisibility: true,
-        thickness: 8,
-        trackVisibility: true,
-        radius: const Radius.circular(4),
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          scrollDirection: Axis.horizontal,
-          child: Padding(
-            padding:
-                const EdgeInsets.only(right: 50, bottom: 15, top: 15, left: 0),
-            child: SizedBox(
-              width: max(width * 0.6, dataList.length * 60.0),
-              height: height * 0.35,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    if (widget.barChartData.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.bar_chart_outlined,
+                size: 40, color: Colors.grey.shade300),
+            const SizedBox(height: 8),
+            Text(
+              locale.nodataSelected,
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final sorted = [...widget.barChartData]
+      ..sort((a, b) => (b.percent ?? 0).compareTo(a.percent ?? 0));
+    final double maxVal = sorted.first.percent ?? 1;
+    final double total = sorted.fold(0.0, (sum, e) => sum + (e.percent ?? 0));
+
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) => Opacity(
+        opacity: _animation.value,
+        child: child,
+      ),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        itemCount: sorted.length,
+        itemBuilder: (context, index) {
+          final item = sorted[index];
+          final double val = item.percent ?? 0;
+          final double percentage = total > 0 ? (val / total * 100) : 0;
+          final double barRatio = maxVal > 0 ? val / maxVal : 0;
+          final Color rankColor = _rankColor(index);
+          final bool isHovered = _hoveredIndex == index;
+
+          return MouseRegion(
+            onEnter: (_) => setState(() => _hoveredIndex = index),
+            onExit: (_) => setState(() => _hoveredIndex = null),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              margin: const EdgeInsets.symmetric(vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              decoration: BoxDecoration(
+                color: isHovered
+                    ? widget.accentColor.withOpacity(0.04)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5.0),
-                  ),
-                  Expanded(
-                    child: BarChart(
-                      BarChartData(
-                        alignment: BarChartAlignment.spaceEvenly,
-                        borderData: FlBorderData(
-                          show: true,
-                          border: Border.symmetric(
-                            horizontal: BorderSide(
-                              color: Colors.grey.withOpacity(0.2),
-                            ),
-                          ),
+                  // ── Rank badge ───────────────────────────────
+                  Container(
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      color: rankColor.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: rankColor, width: 1.5),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: rankColor,
                         ),
-                        titlesData: FlTitlesData(
-                          show: true,
-                          leftTitles: AxisTitles(
-                            drawBelowEverything: true,
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 40,
-                              getTitlesWidget: (value, meta) {
-                                return Text(
-                                  value.toInt().toString(),
-                                  textAlign: TextAlign.left,
-                                );
-                              },
-                            ),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 32,
-                              interval: 1,
-                              getTitlesWidget: (value, meta) {
-                                return SideTitleWidget(
-                                  axisSide: meta.axisSide,
-                                  child: Text(
-                                    widget.barChartData.length > value.toInt()
-                                        ? widget.barChartData[value.toInt()]
-                                                .name ??
-                                            ""
-                                        : "",
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          rightTitles: const AxisTitles(),
-                          topTitles: const AxisTitles(),
-                        ),
-                        gridData: FlGridData(
-                          show: true,
-                          drawVerticalLine: false,
-                          getDrawingHorizontalLine: (value) => FlLine(
-                            color: Colors.grey.withOpacity(0.2),
-                            strokeWidth: 1,
-                          ),
-                        ),
-                        barGroups: dataList.asMap().entries.map((e) {
-                          final index = e.key;
-                          final data = e.value;
-                          return generateBarGroup(
-                            index,
-                            data.color,
-                            data.value,
-                          );
-                        }).toList(),
                       ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // ── Category name ────────────────────────────
+                  SizedBox(
+                    width: isMobile ? 60 : 100,
+                    child: Text(
+                      item.name ?? '',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: isHovered
+                            ? widget.accentColor
+                            : const Color(0xFF3D3D3A),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // ── Animated progress bar ────────────────────
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        // Track
+                        Container(
+                          height: 22,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                        // Fill
+                        LayoutBuilder(
+                          builder: (context, bc) => AnimatedContainer(
+                            duration:
+                                Duration(milliseconds: 500 + (index * 80)),
+                            curve: Curves.easeOutCubic,
+                            height: 22,
+                            width: bc.maxWidth * barRatio * _animation.value,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  widget.accentColor.withOpacity(0.6),
+                                  widget.accentColor,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                        ),
+                        // Percentage label inside bar
+                        Positioned.fill(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '${percentage.toStringAsFixed(1)}%',
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Color(0xFFB0B7C3),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // ── Value ────────────────────────────────────
+                  SizedBox(
+                    width: isMobile ? 36 : 48,
+                    child: Text(
+                      val.toInt().toString(),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: widget.accentColor,
+                      ),
+                      textAlign: TextAlign.end,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : buildWidget;
-  }
-
-  Color getRandomColor() {
-    final random = Random();
-    Color color;
-    do {
-      int r = random.nextInt(256);
-      int g = random.nextInt(256);
-      int b = random.nextInt(256);
-
-      color = Color.fromRGBO(r, g, b, 1.0); // Ensure alpha is 1.0
-    } while (usedColors.contains(color));
-
-    usedColors.add(color);
-    return color;
   }
 }

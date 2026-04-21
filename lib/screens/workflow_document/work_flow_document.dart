@@ -1,9 +1,5 @@
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
-import 'package:archiving_flutter_project/dialogs/users_dialogs/add_edit_user_dialog.dart';
-import 'package:archiving_flutter_project/dialogs/users_dialogs/user_department_dialog.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
-import 'package:archiving_flutter_project/models/db/work_flow/template_model.dart';
-import 'package:archiving_flutter_project/providers/classification_name_and_code_provider.dart';
 import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/service/controller/users_controller/user_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
@@ -14,12 +10,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../dialogs/document_dialogs/file_explor_dialog.dart';
-import '../../dialogs/template_work_flow/add_edit_template_dialog.dart';
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
 import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/work_flow/work_flow_doc_model.dart';
 import '../../models/db/work_flow/work_flow_document_info.dart';
-import '../../models/db/work_flow/work_flow_template_body.dart';
 import '../../service/controller/documents_controllers/documents_controller.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import '../../utils/constants/loading.dart';
@@ -40,7 +34,6 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
   double width = 0;
   double height = 0;
   bool isDesktop = false;
-  // late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
   WorkFlowTemplateContoller userController = WorkFlowTemplateContoller();
   late DocumentListProvider documentListProvider;
 
@@ -93,8 +86,6 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
       }
     }
     for (int i = 0; i < stateManager!.rows.length; i++) {
-      print(
-          "stateManager!.rows[i].cells['intStatus']!.value :${stateManager!.rows[i].cells['intStatus']!.value}");
       stateManager!.rows[i].cells['intStatus']!.value =
           getStatusNameDependsLang(
               stateManager!.rows[i].cells['intStatus']!.value, _locale);
@@ -103,7 +94,6 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
     userName = await storage.read(key: "userName");
     departmetList = await UserController().getDepartmentSelectedUser(userName!);
     setState(() {});
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
@@ -130,7 +120,6 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
                       tableWidth: width * 0.85,
                       search: searchField,
                       statusDropDown: statusDropDown(),
-                      // delete: deleteTemplate,
                       plCols: polCols,
                       mode: PlutoGridMode.selectWithOneTap,
                       polRows: [],
@@ -169,31 +158,6 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
                             selectedRow!, _locale);
                       },
                     )),
-                // Container(
-                //   width: isDesktop ? width * 0.8 : width * 0.9,
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.end,
-                //       children: [
-                //         Text(
-                //           "${_locale.totalCount}: ",
-                //           style: const TextStyle(fontWeight: FontWeight.bold),
-                //         ),
-                //         ValueListenableBuilder(
-                //           valueListenable: totalUsersCount,
-                //           builder: ((context, value, child) {
-                //             return Text(
-                //               "${totalUsersCount.value}",
-                //               style:
-                //                   const TextStyle(fontWeight: FontWeight.bold),
-                //             );
-                //           }),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -385,49 +349,41 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
 
   search() async {
     isSearch.value = true;
-    print("insidee search :${isSearch.value}");
-    stateManager!.setShowLoading(true); // Show loading indicator
+
+    stateManager!.setShowLoading(true);
 
     if (selectedDep.isEmpty && selectedStatus == -2) {
-      print("insidee search1111 :${isSearch.value}");
-
       isSearch.value = false;
       stateManager!.removeAllRows();
-      stateManager!.appendRows(
-          rowList); // Use existing rows if no department is selected
+      stateManager!.appendRows(rowList);
     } else if (isSearch.value) {
-      print("insidee search333 :${isSearch.value}");
-
       List<WorkFlowDocumentInfo> result = [];
       List<PlutoRow> topList = [];
       pageLis.value = 1;
 
-      // Fetch templates based on department
       result = await workFlowTemplateContoller.getWorkFlowDocumentInfo(
           WorkFlowDocumentModel(
               dept: selectedDep,
               document: searchValue,
               stepStatus: selectedStatus));
 
-      // Update PlutoRows
       for (int i = 0; i < result.length; i++) {
         topList.add(result[i].toPlutoRow(rowList.length, _locale));
       }
 
-      // Refresh the table with new data
-      stateManager!.removeAllRows(); // Clear existing rows
-      stateManager!.appendRows(topList); // Add new rows
-      stateManager!.notifyListeners(true); // Ensure UI updates
+      stateManager!.removeAllRows();
+      stateManager!.appendRows(topList);
+      stateManager!.notifyListeners(true);
     }
 
-    stateManager!.setShowLoading(false); // Hide loading indicator
-    setState(() {}); // Trigger rebuild of dropdown or other elements
+    stateManager!.setShowLoading(false);
+    setState(() {});
   }
 
   searchField(String text) async {
     isSearch.value = true;
     print("insidee search");
-    stateManager!.setShowLoading(true); // Show loading indicator
+    stateManager!.setShowLoading(true);
 
     if (text.isEmpty) {
       isSearch.value = false;
@@ -435,7 +391,7 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
       List<PlutoRow> topList = [];
       pageLis.value = 1;
       searchValue = text;
-      // Fetch templates based on department
+
       result = await workFlowTemplateContoller
           .getWorkFlowDocumentInfo(WorkFlowDocumentModel(
         stepStatus: selectedStatus,
@@ -443,40 +399,35 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
         document: text.trim(),
       ));
 
-      // Update PlutoRows
       for (int i = 0; i < result.length; i++) {
         topList.add(result[i].toPlutoRow(rowList.length, _locale));
       }
 
-      // Refresh the table with new data
-      stateManager!.removeAllRows(); // Clear existing rows
-      stateManager!.appendRows(topList); // Add new rows
-      stateManager!.notifyListeners(true); // Ensure UI updates
+      stateManager!.removeAllRows();
+      stateManager!.appendRows(topList);
+      stateManager!.notifyListeners(true);
     } else if (isSearch.value) {
       List<WorkFlowDocumentInfo> result = [];
       List<PlutoRow> topList = [];
       pageLis.value = 1;
       searchValue = text;
-      // Fetch templates based on department
       result = await workFlowTemplateContoller.getWorkFlowDocumentInfo(
           WorkFlowDocumentModel(
               dept: selectedDep,
               document: text.trim(),
               stepStatus: selectedStatus));
 
-      // Update PlutoRows
       for (int i = 0; i < result.length; i++) {
         topList.add(result[i].toPlutoRow(rowList.length, _locale));
       }
 
-      // Refresh the table with new data
-      stateManager!.removeAllRows(); // Clear existing rows
-      stateManager!.appendRows(topList); // Add new rows
-      stateManager!.notifyListeners(true); // Ensure UI updates
+      stateManager!.removeAllRows();
+      stateManager!.appendRows(topList);
+      stateManager!.notifyListeners(true);
     }
 
-    stateManager!.setShowLoading(false); // Hide loading indicator
-    setState(() {}); // Trigger rebuild of dropdown or other elements
+    stateManager!.setShowLoading(false);
+    setState(() {});
   }
 
   List<PlutoRow> rowList = [];
@@ -496,14 +447,13 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
             WorkFlowDocumentModel(txtDept: "", stepStatus: 0));
 
         for (int i = pageLis.value == -1 ? 50 : 0; i < result.length; i++) {
-          rowList.add(result[i].toPlutoRow(i + 1, _locale)); // Updated here
-          topList.add(
-              result[i].toPlutoRow(rowList.length, _locale)); // Updated here
+          rowList.add(result[i].toPlutoRow(i + 1, _locale));
+          topList.add(result[i].toPlutoRow(rowList.length, _locale));
         }
 
         isLast = topList.isEmpty;
         if (pageLis.value == 1) {
-          pageLis.value++; // Increment the page number for next fetch
+          pageLis.value++;
         }
         return Future.value(
             PlutoInfinityScrollRowsResponse(isLast: false, rows: topList));
