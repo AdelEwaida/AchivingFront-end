@@ -101,9 +101,7 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_locale.approvals),
-        ),
+      
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
           child: Column(

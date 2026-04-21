@@ -265,9 +265,7 @@ class _FileListScreenState extends State<FileListScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_locale.documentExplorer),
-        ),
+    
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(

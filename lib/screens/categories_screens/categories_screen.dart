@@ -99,20 +99,7 @@ class DealClassificationTreeScreenState
     bool isDesktop = Responsive.isDesktop(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_locale.listOfCategories),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //     icon: const Icon(
-        //       Icons.close_rounded,
-        //       color: Colors.white,
-        //     ),
-        //   ),
-        // ],
-      ),
+   
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(

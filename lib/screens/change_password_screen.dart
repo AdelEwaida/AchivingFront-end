@@ -48,9 +48,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_locale.changePassword),
-      ),
+
       body: Center(
         child: Container(
           width: isDesktop ? width * 0.5 : width * 0.9,

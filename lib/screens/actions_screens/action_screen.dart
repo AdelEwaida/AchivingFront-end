@@ -123,9 +123,7 @@ class _OfficeScreenState extends State<ActionScreen> {
     height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_locale.listOfReminders),
-        ),
+   
         body: buildMainContent());
   }
 

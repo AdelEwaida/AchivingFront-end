@@ -108,9 +108,7 @@ class _UserWorkFlowSettings extends State<UserWorkFlowSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_locale.workFlowSettings),
-        ),
+    
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(

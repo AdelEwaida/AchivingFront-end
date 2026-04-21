@@ -67,6 +67,16 @@ class Converters {
     return formatDate2(dateBeforeOneMonth.toString());
   }
 
+  static String getSameDayLastYear() {
+    DateTime currentDate = DateTime.now();
+    DateTime samedayLastYear = DateTime(
+      currentDate.year - 1,
+      currentDate.month,
+      currentDate.day,
+    );
+    return formatDate2(samedayLastYear.toString());
+  }
+
   static String getYesterdayDate() {
     // Get the current date and time
     DateTime currentDate = DateTime.now();

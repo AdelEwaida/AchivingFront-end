@@ -68,7 +68,7 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
   bool isLoading = true;
   List<String> branches = [];
   ReportsCriteria? searchCriteria = ReportsCriteria(
-      fromDate: Converters.getDateBeforeMonth(),
+      fromDate: Converters.getSameDayLastYear(),
       toDate: Converters.formatDate2(DateTime.now().toString()));
 
   @override

@@ -153,9 +153,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_locale.fileName),
-      ),
+    
       //https://arch2.asdnova.com:7002//users/getScanners
       body: Stack(
         children: [

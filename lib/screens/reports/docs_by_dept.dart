@@ -27,7 +27,7 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
   List<BarData> barData = [];
 
   ReportsCriteria? searchCriteria = ReportsCriteria(
-    fromDate: Converters.getDateBeforeMonth(),
+    fromDate: Converters.getSameDayLastYear(),
     toDate: Converters.formatDate2(DateTime.now().toString()),
   );
 
@@ -140,8 +140,6 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
                 ),
               ),
               const SizedBox(width: 6),
-
- 
               Expanded(
                 child: Text(
                   item.title ?? '',
@@ -154,7 +152,6 @@ class _DocsByDeptDashboardState extends State<DocsByDeptDashboard> {
                 ),
               ),
               const SizedBox(width: 4),
-
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(

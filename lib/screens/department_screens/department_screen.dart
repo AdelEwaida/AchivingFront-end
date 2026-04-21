@@ -124,9 +124,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
     height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_locale.listOfDepartment),
-        ),
+      
         body: buildMainContent());
   }
 
