@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
+import '../app_dialog.dart';
 
 class DepartmentDialog extends StatefulWidget {
   DepartmentModel? departmentModel;
@@ -58,17 +59,15 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
 
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: dBackground,
-      title: TitleDialogWidget(
-        title: widget.departmentModel == null
-            ? _locale.addDepartment
-            : _locale.editDep,
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: height * 0.07,
-      ),
+    return AppDialog(
+      width: isDesktop ? width * 0.3 : width * 0.8,
+      height: height * 0.8,
+      // titlePadding: EdgeInsets.all(0),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      // backgroundColor: dBackground,
+      title: widget.departmentModel == null
+          ? _locale.addDepartment
+          : _locale.editDep,
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
@@ -87,7 +86,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
                     onPressed: () {
                       addDep();
                     },
-                    style: customButtonStyle(    context,
+                    style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         18,
@@ -104,7 +104,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
-                    style: customButtonStyle(    context,
+                    style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         18,
@@ -126,7 +127,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
                         onPressed: () {
                           addDep();
                         },
-                        style: customButtonStyle(    context,
+                        style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,
@@ -141,7 +143,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
                         onPressed: () {
                           Navigator.pop(context, false);
                         },
-                        style: customButtonStyle(    context,
+                        style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,

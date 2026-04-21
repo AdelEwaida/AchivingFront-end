@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../dialogs/app_dialog.dart';
+
 class ColumnAttributesDialog extends StatefulWidget {
   final TextEditingController searchController;
   // final ValueNotifier<bool> isLoading;
@@ -81,7 +83,8 @@ class _ColumnAttributesDialogState extends State<ColumnAttributesDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AppDialog(
+       
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

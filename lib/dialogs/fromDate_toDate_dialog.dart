@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:archiving_flutter_project/dialogs/app_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
@@ -59,15 +60,10 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
 
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: dBackground,
-      title: TitleDialogWidget(
-        title: _locale.search,
-        width: isDesktop ? width * 0.2 : width * 0.8,
-        height: height * 0.07,
-      ),
+    return AppDialog(
+      title: _locale.search,
+      width: isDesktop ? width * 0.3 : width * 0.8,
+      height: height * 0.8,
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
@@ -86,7 +82,8 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
                     onPressed: () {
                       addAction();
                     },
-                    style: customButtonStyle(    context,
+                    style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         14,
@@ -101,7 +98,8 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
-                    style: customButtonStyle(    context,
+                    style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         14,
@@ -123,7 +121,8 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
                         onPressed: () {
                           addAction();
                         },
-                        style: customButtonStyle(    context,
+                        style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,
@@ -138,7 +137,8 @@ class _FromDateToDateDialogState extends State<FromDateToDateDialog> {
                         onPressed: () {
                           Navigator.pop(context, false);
                         },
-                        style: customButtonStyle(    context,
+                        style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             18,

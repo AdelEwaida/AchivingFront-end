@@ -1,11 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class MenuSection extends StatelessWidget {
   final double width;
   final List<dynamic> menuList;
   final Widget Function(dynamic menu, int index) itemBuilder;
-  final ScrollController scrollController;
   final String logoPath;
   final double logoWidthFactor;
 
@@ -14,7 +12,6 @@ class MenuSection extends StatelessWidget {
     required this.width,
     required this.menuList,
     required this.itemBuilder,
-    required this.scrollController,
     required this.logoPath,
     this.logoWidthFactor = 0.075,
   });
@@ -43,29 +40,33 @@ class MenuSection extends StatelessWidget {
         ),
         const SizedBox(width: 9),
         Expanded(
-          child: Listener(
-            onPointerSignal: (pointerSignal) {
-              if (pointerSignal is PointerScrollEvent &&
-                  scrollController.hasClients) {
-                final current = scrollController.offset;
-                final max = scrollController.position.maxScrollExtent;
-                final next = (current + pointerSignal.scrollDelta.dy)
-                    .clamp(0.0, max)
-                    .toDouble();
-                scrollController.jumpTo(next);
-              }
-            },
-            child: SingleChildScrollView(
-              controller: scrollController,
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (int i = 0; i < menuList.length; i++) ...[
-                    itemBuilder(menuList[i], i),
-                    if (i != menuList.length - 1) const SizedBox(width: 8),
-                  ],
-                ],
-              ),
+          child: SizedBox(
+            height: 46,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return ClipRect(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: ConstrainedBox(
+                        constraints:
+                            BoxConstraints(minWidth: constraints.maxWidth),
+                        child: Row(
+                          children: [
+                            for (int i = 0; i < menuList.length; i++) ...[
+                              itemBuilder(menuList[i], i),
+                              if (i != menuList.length - 1)
+                                const SizedBox(width: 8),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:archiving_flutter_project/dialogs/app_dialog.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/key.dart';
@@ -1849,8 +1850,8 @@ class _CustomColumnMenu extends StatelessWidget
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.setFilter),
+        return AppDialog(
+          title: AppLocalizations.of(context)!.setFilter,
           content: ValueListenableBuilder(
             valueListenable: loading,
             builder: (context, value, child) {

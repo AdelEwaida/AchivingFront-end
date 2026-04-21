@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../app_dialog.dart';
+
 class WhatsAppDialog extends StatefulWidget {
   String base64String;
 
@@ -55,13 +57,11 @@ class _WhatsAppDialogState extends State<WhatsAppDialog> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      title: TitleDialogWidget(
-        title: _locale.sendViaWhatsApp,
-        width: isDesktop ? width * 0.2 : width * 0.8,
-        height: height * 0.09,
-      ),
+    return AppDialog(
+       width: isDesktop ? width * 0.3 : width * 0.8,
+      height: height * 0.8,
+      // titlePadding: EdgeInsets.all(0),
+      title: _locale.sendViaWhatsApp,
       content: Container(
         height: height * 0.15,
         child: Column(

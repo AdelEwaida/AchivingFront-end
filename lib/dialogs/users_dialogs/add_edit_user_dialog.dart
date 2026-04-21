@@ -25,6 +25,7 @@ import '../../models/db/user_models/user_dept_model.dart';
 import '../../models/dto/searchs_model/search_model.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
+import '../app_dialog.dart';
 import '../error_dialgos/confirm_dialog.dart';
 
 class AddUserDialog extends StatefulWidget {
@@ -165,19 +166,16 @@ class _DepartmentDialogState extends State<AddUserDialog> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
 
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: dBackground,
-      title: TitleDialogWidget(
-        title: userModel != null && widget.isChangePassword
-            ? _locale.changePassword
-            : userModel != null && !widget.isChangePassword
-                ? _locale.editUser
-                : _locale.addUser,
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: height * 0.07,
-      ),
+    return AppDialog(
+      height: height * 0.8,
+      // titlePadding: EdgeInsets.all(0),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      // backgroundColor: dBackground,
+      title: userModel != null && widget.isChangePassword
+          ? _locale.changePassword
+          : userModel != null && !widget.isChangePassword
+              ? _locale.editUser
+              : _locale.addUser,
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,

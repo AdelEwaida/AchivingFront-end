@@ -14,6 +14,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/dto/searchs_model/search_model.dart';
 import '../../service/controller/department_controller/department_cotnroller.dart';
 import '../../widget/custom_drop_down.dart';
+import '../app_dialog.dart';
 
 class InfoDocumentDialog extends StatefulWidget {
   DocumentModel documentModel;
@@ -100,20 +101,18 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: Theme.of(context).dialogBackgroundColor,
-      title: TitleDialogWidget(
-        title: widget.isEdit
+    return AppDialog(
+      width: isDesktop ? width * 0.5 : width * 0.8,
+      height: height * 0.8,
+      // titlePadding: EdgeInsets.all(0),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      // backgroundColor: Theme.of(context).dialogBackgroundColor,
+      title: widget.isEdit
             ? _locale.editDocumentDetails
             : _locale.documentDetails,
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: height * 0.07,
-      ),
       content: Container(
         color: Theme.of(context).dialogBackgroundColor,
-        width: width * 0.45,
+        width: width * 0.50,
         height: height * 0.45,
         child: formSection(),
       ),

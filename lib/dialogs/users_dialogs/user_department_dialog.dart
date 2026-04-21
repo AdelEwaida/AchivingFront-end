@@ -20,6 +20,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
+import '../app_dialog.dart';
 
 class UserDepartmentDialog extends StatefulWidget {
   UserModel? userModel;
@@ -56,15 +57,13 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
 
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: dBackground,
-      title: TitleDialogWidget(
-        title: _locale.chooseListOfDepartment,
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: height * 0.07,
-      ),
+    return AppDialog(
+      width: isDesktop ? width * 0.49 : width * 0.8,
+      height: height * 0.70,
+      // titlePadding: EdgeInsets.all(0),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      // backgroundColor: dBackground,
+      title: _locale.chooseListOfDepartment,
       content: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +171,7 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
         TableComponent(
           plCols: polCol,
           polRows: [],
-          tableWidth: isDesktop ? width * 0.4 : width * 0.8,
+          tableWidth: isDesktop ? width * 0.45 : width * 0.8,
           tableHeigt: isDesktop ? height * 0.4 : height * 0.5,
           onLoaded: (event) {
             stateManager = event.stateManager;
@@ -211,9 +210,9 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
         title: _locale.status,
         field: "bolSelected",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.11 : width * 0.4,
+        width: isDesktop ? width * 0.138 : width * 0.4,
         backgroundColor: columnColors,
-    renderer: (rendererContext) {
+        renderer: (rendererContext) {
           return Center(
             child: Checkbox(
               value: rendererContext.cell.value == 1,
@@ -234,16 +233,15 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
             ),
           );
         },
-
       ),
       PlutoColumn(
         enableFilterMenuItem: false,
         title: _locale.canWrite,
         field: "canWrite",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.13 : width * 0.4,
+        width: isDesktop ? width * 0.152 : width * 0.4,
         backgroundColor: columnColors,
-       renderer: (ctx) {
+        renderer: (ctx) {
           final isSelected = (ctx.row.cells['bolSelected']?.value ?? 0) == 1;
 
           if (ctx.cell.value == null) ctx.cell.value = 0;
@@ -262,7 +260,6 @@ class _DepartmentDialogState extends State<UserDepartmentDialog> {
             ),
           );
         },
-
       ),
     ]);
   }

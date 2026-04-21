@@ -17,6 +17,7 @@ import '../../models/db/work_flow/work_flow_template_body.dart';
 import '../../models/dto/searchs_model/search_model.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
+import '../app_dialog.dart';
 
 class AddEditTemplateDialog extends StatefulWidget {
   WorkFlowTemplateBody? workFlowTemplateBody;
@@ -107,17 +108,13 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
         child: CircularProgressIndicator(),
       );
     }
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: Colors.white,
-      title: TitleDialogWidget(
-        title: workFlowTemplateBody != null && widget.isEditDialog
-            ? _locale.editWorkFlow
-            : _locale.addWorkFlow,
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: height * 0.07,
-      ),
+    return AppDialog(
+      // titlePadding: EdgeInsets.all(0),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      // backgroundColor: Colors.white,
+      title: workFlowTemplateBody != null && widget.isEditDialog
+          ? _locale.editWorkFlow
+          : _locale.addWorkFlow,
       content: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5.0),

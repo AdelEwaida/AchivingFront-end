@@ -10,6 +10,7 @@ import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/dialog_widgets/title_dialog_widget.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
+import '../app_dialog.dart';
 
 class EditCategoryDialog extends StatefulWidget {
   DocumentCategory? category;
@@ -62,16 +63,11 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
 
     final double dialogWidth = width * 0.3;
     final double dialogheight = height * 0.13;
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: Theme.of(context).dialogBackgroundColor,
-      title: TitleDialogWidget(
-        title: _locale.editCategory,
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: height * 0.07,
-      ),
-      contentPadding: EdgeInsets.zero,
+    return AppDialog(
+      width: isDesktop ? width * 0.3 : width * 0.8,
+      height: height * 0.8,
+      title: _locale.editCategory,
+      // contentPadding: EdgeInsets.zero,
       content: Container(
         color: Colors.white,
         padding: const EdgeInsets.all(20),

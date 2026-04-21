@@ -17,6 +17,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:timelines/timelines.dart';
+import '../../dialogs/app_dialog.dart';
 import '../../dialogs/document_dialogs/file_explor_dialog.dart';
 import '../../dialogs/template_work_flow/add_edit_template_dialog.dart';
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
@@ -658,20 +659,9 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          titlePadding: EdgeInsets.all(0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-          backgroundColor: Colors.white,
-          title: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(_locale.approvalFlowDetails),
-              ],
-            ),
-          ),
+        return AppDialog(
+          height: height * 0.8,
+          title: _locale.approvalFlowDetails,
           content: SingleChildScrollView(
             child: Column(
               children: List.generate(steps.length, (index) {

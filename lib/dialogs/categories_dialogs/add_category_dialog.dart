@@ -1,3 +1,4 @@
+import 'package:archiving_flutter_project/dialogs/app_dialog.dart';
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
 import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
@@ -60,16 +61,10 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
 
     final double dialogWidth = width * 0.3;
     final double dialogheight = height * 0.13;
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: Theme.of(context).dialogBackgroundColor,
-      title: TitleDialogWidget(
-        title: _locale.addCategory,
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: height * 0.07,
-      ),
-      contentPadding: EdgeInsets.zero,
+    return AppDialog(
+       width: isDesktop ? width * 0.3 : width * 0.8,
+      height: height * 0.8,
+      title: _locale.addCategory,
       content: Container(
         color: Colors.white,
         padding: const EdgeInsets.all(20),

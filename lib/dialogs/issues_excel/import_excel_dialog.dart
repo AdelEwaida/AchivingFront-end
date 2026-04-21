@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:archive/archive.dart';
+import 'package:archiving_flutter_project/dialogs/app_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/dialog_helper.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
-import 'package:archiving_flutter_project/utils/func/converters.dart';
-import 'package:cool_alert/cool_alert.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +19,10 @@ import '../../service/controller/department_controller/department_cotnroller.dar
 import '../../service/controller/documents_controllers/documents_controller.dart';
 import '../../service/controller/import_excel_controller/import_excel_controller.dart';
 import '../../utils/constants/colors.dart';
-import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/custom_drop_down.dart';
 import '../../widget/custom_drop_down2.dart';
 import '../../widget/date_time_component.dart';
-import '../../widget/dialog_widgets/title_dialog_widget.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import 'dart:html' as html;
 import 'package:xml/xml.dart' as xml;
@@ -65,146 +62,132 @@ class _ImportExcelDialogState extends State<ImportExcelDialog> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
-    return AlertDialog(
-        titlePadding: EdgeInsets.all(0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-        backgroundColor: dBackground,
-        title: TitleDialogWidget(
-          title: _locale.verifyDocuments,
-          width: isDesktop ? width * 0.4 : width * 0.8,
-          height: height * 0.07,
-        ),
-        content: SizedBox(
+    return AppDialog(
+      title: _locale.verifyDocuments,
+      width: isDesktop ? width * 0.4 : width * 0.8,
+      height: height * 0.6,
+      content: _buildVerifyDialogContent(),
+    );
+  }
+
+  Widget _buildVerifyDialogContent() {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return SizedBox(
           width: width * 0.25,
           height: height * 0.35,
           child: Stack(
             children: [
               Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              buildFileUpload(),
-                            ],
-                          ),
-                        )
-                      ]),
-                  SizedBox(
-                    height: height * 0.05,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          openLoadinDialog(context);
-                          await importExcelController
-                              .importIssues(issuesList)
-                              .then((value) async {
-                            if (value.statusCode == 200 &&
-                                issuesList.isNotEmpty) {
-                              final blob = html.Blob([value.bodyBytes]);
-                              final url =
-                                  html.Url.createObjectUrlFromBlob(blob);
-                              final anchor = html.AnchorElement(href: url)
-                                ..setAttribute(
-                                    "download", "ImportedIssues.xlsx")
-                                ..click();
-                              html.Url.revokeObjectUrl(url);
-
-                              Navigator.pop(context);
-
-                              await showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return ErrorDialog(
-                                    icon: Icons.done_all,
-                                    errorDetails: _locale.done,
-                                    errorTitle: _locale.addDoneSucess,
-                                    color: Colors.green,
-                                    statusCode: 200,
-                                  );
-                                },
-                              );
-
-                              // ignore: use_build_context_synchronously
-                              Navigator.pop(context, true);
-                            } else {
-                              Navigator.pop(context);
-                            }
-                          });
-                        },
-                        style: customButtonStyle(
-                          context,
-                          Size(isDesktop ? width * 0.1 : width * 0.4,
-                              height * 0.045),
-                          14,
-                          primary,
-                        ),
-                        child: Text(
-                          _locale.save,
-                          style: const TextStyle(color: whiteColor),
-                        ),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(10, 12, 10, 8),
+                      decoration: BoxDecoration(
+                        // color: Colors.white.withOpacity(0.06),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ],
-                  )
-                ],
-              ),
-              if (saving)
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
-              Center(
-                child: Visibility(
-                  visible: isFileLoading,
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                        sigmaX: 2.0,
-                        sigmaY: 2.0), // Adjust the blur amount as needed
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          SizedBox(height: 16),
-                        ],
+                      child: SingleChildScrollView(
+                        child: Center(
+                          child: buildFileUpload(),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 14),
+                  Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        openLoadinDialog(context);
+
+                        final value = await importExcelController
+                            .importIssues(issuesList);
+
+                        if (value.statusCode == 200 && issuesList.isNotEmpty) {
+                          final blob = html.Blob([value.bodyBytes]);
+                          final url = html.Url.createObjectUrlFromBlob(blob);
+
+                          html.AnchorElement(href: url)
+                            ..setAttribute("download", "ImportedIssues.xlsx")
+                            ..click();
+
+                          html.Url.revokeObjectUrl(url);
+
+                          Navigator.pop(context);
+
+                          await DialogHelper.showAppDialog(
+                            context: context,
+                            child: ErrorDialog(
+                              icon: Icons.done_all,
+                              errorDetails: _locale.done,
+                              errorTitle: _locale.addDoneSucess,
+                              color: Colors.green,
+                              statusCode: 200,
+                            ),
+                          );
+
+                          Navigator.pop(context, true);
+                        } else {
+                          Navigator.pop(context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.all(14),
+                        backgroundColor: primary,
+                        foregroundColor: whiteColor,
+                        minimumSize: Size(
+                          isDesktop ? width * 0.1 : width * 0.4,
+                          height * 0.045,
+                        ),
+                        elevation: 2,
+                      ),
+                      child: Text(
+                        _locale.save,
+                        style: const TextStyle(color: whiteColor),
+                      ),
+                    ),
+                  ),
+                ],
               ),
+              if (saving) const Center(child: CircularProgressIndicator()),
+              if (isFileLoading)
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
             ],
           ),
-        ));
+        );
+      },
+    );
   }
 
   Widget buildFileUpload() {
     return Padding(
-      padding: const EdgeInsets.only(top: 10, left: 10),
+      padding: const EdgeInsets.only(top: 14, left: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton(
-            onPressed: () {
-              pickAndReadExcel();
-            },
-            style: customButtonStyle(
-                context,
-                Size(isDesktop ? width * 0.14 : width * 0.4, height * 0.045),
-                16,
-                primary3),
-            child: Text(
+          ElevatedButton.icon(
+            onPressed: pickAndReadExcel,
+            icon: const Icon(
+              Icons.upload_file,
+              size: 18,
+              color: whiteColor,
+            ),
+            label: Text(
               _locale.uploadExcelFile,
               style: const TextStyle(color: whiteColor),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFCFAB61),
+              minimumSize: Size(
+                isDesktop ? width * 0.14 : width * 0.4,
+                height * 0.045,
+              ),
+              elevation: 2,
             ),
           ),
           const SizedBox(height: 8),
@@ -213,8 +196,9 @@ class _ImportExcelDialogState extends State<ImportExcelDialog> {
             child: Text(
               _locale.pleaseAddExcel,
               style: const TextStyle(
-                color: Colors.redAccent,
+                color: Color(0xFFCC8D00),
                 fontSize: 14,
+                fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
             ),

@@ -21,6 +21,7 @@ import '../../models/db/user_models/user_update_req.dart';
 import '../../providers/user_provider.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
+import '../app_dialog.dart';
 import '../error_dialgos/confirm_dialog.dart';
 import 'selected_users_table_dialog.dart';
 import 'user_selection_cards.dart';
@@ -101,15 +102,13 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
 
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: dBackground,
-      title: TitleDialogWidget(
-        title: _locale.updateUserCat,
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: height * 0.07,
-      ),
+    return AppDialog(
+       width: isDesktop ? width * 0.3 : width * 0.8,
+      height: height * 0.8,
+      // titlePadding: EdgeInsets.all(0),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      // backgroundColor: dBackground,
+      title: _locale.updateUserCat,
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.45 : width * 0.8,

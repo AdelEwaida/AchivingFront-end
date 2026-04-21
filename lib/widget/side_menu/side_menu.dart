@@ -26,7 +26,6 @@ class SideMenu extends StatefulWidget {
 
 class _SideMenuState extends State<SideMenu> {
   double width = 0;
-  final ScrollController _menuScrollController = ScrollController();
   int selectedMenuHover = -1;
   int selectedSubMenuHover = -1;
   int selectedMenuIndex = -1;
@@ -40,12 +39,6 @@ class _SideMenuState extends State<SideMenu> {
   List<MenuModel> menuList = [];
   String? active;
   String? userRole;
-
-  @override
-  void dispose() {
-    _menuScrollController.dispose();
-    super.dispose();
-  }
 
   @override
   Future<void> didChangeDependencies() async {
@@ -103,7 +96,6 @@ class _SideMenuState extends State<SideMenu> {
                   child: MenuSection(
                     width: width,
                     menuList: menuList,
-                    scrollController: _menuScrollController,
                     logoPath: "assets/images/logo-white.png",
                     itemBuilder: (menu, index) {
                       final menuItem = menuList[index];

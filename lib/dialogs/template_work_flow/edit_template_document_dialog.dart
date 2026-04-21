@@ -25,6 +25,7 @@ import '../../utils/func/converters.dart';
 import '../../widget/date_time_component.dart';
 import '../../widget/table_component/table_component.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
+import '../app_dialog.dart';
 
 class EditTemplateDocumentDialog extends StatefulWidget {
   final dynamic workFlowTemplateBody;
@@ -141,15 +142,13 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
         child: CircularProgressIndicator(),
       );
     }
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: Colors.white,
-      title: TitleDialogWidget(
-        title: _locale.approvals,
-        width: isDesktop ? width * 0.25 : width * 0.8,
-        height: height * 0.07,
-      ),
+    return AppDialog(
+      width: isDesktop ? width * 0.54 : width * 0.8,
+      height: height * 0.82,
+      // titlePadding: EdgeInsets.all(0),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      // backgroundColor: Colors.white,
+      title: _locale.approvals,
       content: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5.0),
@@ -185,7 +184,8 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
                     onPressed: () {
                       Navigator.pop(context, false);
                     },
-                    style: customButtonStyle(    context,
+                    style: customButtonStyle(
+                        context,
                         Size(isDesktop ? width * 0.1 : width * 0.4,
                             height * 0.045),
                         16,
@@ -222,7 +222,8 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
                         onPressed: () {
                           Navigator.pop(context, false);
                         },
-                        style: customButtonStyle(    context,
+                        style: customButtonStyle(
+                            context,
                             Size(isDesktop ? width * 0.1 : width * 0.4,
                                 height * 0.045),
                             16,
@@ -299,7 +300,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
               hasDropdown: true,
               isworkFlow: true,
 
-              tableHeigt: height * 0.33,
+              tableHeigt: height * 0.30,
               tableWidth: width * 0.49,
               // delete: deleteTemplate,
               plCols: polCols,

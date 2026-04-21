@@ -27,6 +27,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:printing/printing.dart';
 
+import '../app_dialog.dart';
+
 class FileExplorDialog extends StatefulWidget {
   List<FileUploadModel> listOfFiles;
   bool? isWorkFlowScreen;
@@ -58,17 +60,15 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
-    return AlertDialog(
-      titlePadding: EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      backgroundColor: dBackground,
-      title: TitleDialogWidget(
-        title: _locale.documents,
-        width: isDesktop ? width * 0.4 : width * 0.8,
-        height: height * 0.07,
-      ),
+    return AppDialog(
+      height: height * 0.8,
+      width: isDesktop ? width * 0.64 : width * 0.9,
+      // titlePadding: EdgeInsets.all(0),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+      // backgroundColor: dBackground,
+      title: _locale.documents,
       content: Container(
-        width: width * 0.5,
+        width: width * 0.68,
         height: height * 0.5,
         child: formSection(),
       ),
@@ -84,7 +84,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         Row(
           children: [
             TableComponent(
-              tableWidth: width * 0.5,
+              tableWidth: width * 0.61,
               tableHeigt: height * 0.4,
               rowsHeight: 50,
               sendEmail: widget.isWorkFlowScreen == true ? null : sendEmail,
@@ -173,7 +173,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         title: "#",
         field: "countNumber",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.03 : width * 0.15,
+        width: isDesktop ? width * 0.06 : width * 0.15,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
@@ -193,21 +193,21 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         title: _locale.userName,
         field: "txtUsercode",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.1 : width * 0.2,
+        width: isDesktop ? width * 0.15 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
         title: _locale.category,
         field: "categoryName",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.08 : width * 0.2,
+        width: isDesktop ? width * 0.10 : width * 0.2,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
         title: _locale.dateCreated,
         field: "datDate",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.1 : width * 0.2,
+        width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
       ),
     ]);

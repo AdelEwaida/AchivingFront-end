@@ -36,10 +36,11 @@ class TrailingActions extends StatelessWidget {
           const SizedBox(width: actionGap),
           if (isAdmin)
             GlassActionButton(
-                tooltip: 'Export Excel',
-                icon: Icons.upload_file_rounded,
-                iconColor: const Color(0xFFFFF176),
-                onPressed: onExportExcel),
+              tooltip: 'Export Excel',
+              icon: Icons.upload_file_rounded,
+              iconColor: const Color(0xFFFFF176),
+              onPressed: onExportExcel,
+            ),
           if (isAdmin && active == "1") const SizedBox(width: actionGap),
           if (active == "1") NotificationIcon(),
         ],

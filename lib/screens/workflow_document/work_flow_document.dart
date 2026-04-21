@@ -105,19 +105,20 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
           title: Text(_locale.approvals),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Column(
-              children: [
-                Container(
-                    width: isDesktop ? width * 0.78 : width * 0.9,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    width: double.infinity,
                     child: TableComponent(
                       hasDropdown: true,
                       isworkFlow: true,
                       delete: deleteWorkFlow,
                       dropdown: departmentDropdown(),
-                      tableHeigt: height * 0.78,
-                      tableWidth: width * 0.85,
+                      tableHeigt: height * 0.68,
+                      tableWidth: isDesktop ? width * 0.98 : width * 0.94,
                       search: searchField,
                       statusDropDown: statusDropDown(),
                       plCols: polCols,
@@ -157,9 +158,11 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
                         workFlowTemplateBody = WorkFlowDocumentInfo.fromPluto(
                             selectedRow!, _locale);
                       },
-                    )),
-              ],
-            ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ));
   }

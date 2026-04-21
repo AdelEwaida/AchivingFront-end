@@ -22,6 +22,7 @@ import '../../models/db/user_models/user_category.dart';
 import '../../models/db/user_models/user_update_req.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
+import 'app_dialog.dart';
 
 class PdfPreview1 extends StatefulWidget {
   Uint8List pdfFile;
@@ -75,10 +76,10 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
-    return AlertDialog(
+    return AppDialog(
       title: Container(
         width: isDesktop ? width * 0.4 : width * 0.8,
-        height: height * 0.065,
+         height: height * 0.07,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
