@@ -26,7 +26,7 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
   List<BarData> barData = [];
 
   ReportsCriteria? searchCriteria = ReportsCriteria(
-    fromDate: Converters.getDateBeforeMonth(),
+    fromDate: Converters.getSameDayLastYear(),
     toDate: Converters.formatDate2(DateTime.now().toString()),
   );
 
@@ -69,7 +69,6 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
             ),
           ],
         ),
-
         Expanded(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),

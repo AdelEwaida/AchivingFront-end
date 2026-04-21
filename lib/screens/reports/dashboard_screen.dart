@@ -57,16 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: const Color(0xFFF4F6FA), 
-          surfaceTintColor: Colors.transparent,
-          title: AppBarTitle(
-            title: _locale.dashboard,
-            icon: Icons.dashboard_outlined,
-            accentColor: const Color(0xFF185FA5),
-          ),
-        ),
+   
         body: Padding(
           padding: EdgeInsets.all(8.0),
           child: SingleChildScrollView(

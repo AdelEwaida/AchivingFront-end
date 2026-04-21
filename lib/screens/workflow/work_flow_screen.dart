@@ -99,9 +99,7 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_locale.workFlow),
-        ),
+
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(

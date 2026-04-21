@@ -101,9 +101,7 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_locale.users),
-        ),
+   
         body: Center(
           child: Column(
             children: [

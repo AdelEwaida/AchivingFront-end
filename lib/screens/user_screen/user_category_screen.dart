@@ -112,9 +112,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
     height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_locale.viewUserCategories),
-        ),
+   
         body: buildMainContent());
   }
 

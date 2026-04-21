@@ -93,9 +93,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_locale.searchByContnet),
-      ),
+   
       body: Center(
         child: Column(
           children: [

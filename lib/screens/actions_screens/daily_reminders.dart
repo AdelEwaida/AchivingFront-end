@@ -81,11 +81,7 @@ class _DailyRemindersState extends State<DailyReminders> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _locale.dailyReminders,
-        ),
-      ),
+   
       body: Center(
         child: Container(
           width: isDesktop ? width * 0.8 : width * 0.9,

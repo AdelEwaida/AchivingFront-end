@@ -110,9 +110,6 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
     bool isDesktop = Responsive.isDesktop(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_locale.addUserCategories),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -220,7 +217,8 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
                 children: [
                   ElevatedButton(
                     onPressed: save,
-                    style: customButtonStyle(    context,
+                    style: customButtonStyle(
+                      context,
                       Size(
                         isDesktop ? screenWidth * 0.1 : screenWidth * 0.4,
                         screenHeight * 0.045,
