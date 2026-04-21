@@ -32,6 +32,7 @@ import '../../service/controller/work_flow_controllers/work_flow_template_contro
 import '../../utils/constants/loading.dart';
 import '../../utils/constants/styles.dart';
 import '../../widget/custom_drop_down.dart';
+import '../../widget/dashboard_components/custom_elevated_button.dart';
 import '../../widget/dialog_widgets/title_dialog_widget.dart';
 
 class UserWorkFlow extends StatefulWidget {
@@ -116,194 +117,172 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Column(
-              children: [
-                SizedBox(
-                  width: isDesktop ? width * 0.78 : width * 0.9,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: Column(
+          children: [
+            SizedBox(
+              width: isDesktop ? width * 0.78 : width * 0.9,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            statusDropDown(),
-                          ],
+                        statusDropDown(),
+                      ],
+                    ),
+                    SizedBox(),
+                    Row(
+                      children: [
+                        CustomElevatedButton(
+                          text: _locale.attachments,
+                          color: primary,
+                          icon: Icons.attach_file_rounded,
+                          width: isDesktop ? width * 0.07 : width * 0.19,
+                          height: height * 0.043,
+                          fontSize: 14,
+                          onPressed: () async {
+                            if (selectedRow != null) {
+                              openLoadinDialog(context);
+                              DocumentsController()
+                                  .getFilesByHdrKey(selectedRow!
+                                      .cells['txtDocumentcode']!.value)
+                                  .then((value) {
+                                Navigator.pop(context);
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return FileExplorDialog(
+                                      listOfFiles: value,
+                                      isWorkFlowScreen: true,
+                                    );
+                                  },
+                                );
+                              });
+                            }
+                          },
                         ),
-                        SizedBox(),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () async {
-                                if (selectedRow != null) {
-                                  openLoadinDialog(context);
-                                  DocumentsController()
-                                      .getFilesByHdrKey(selectedRow!
-                                          .cells['txtDocumentcode']!.value)
-                                      .then((value) {
-                                    Navigator.pop(context);
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return FileExplorDialog(
-                                          listOfFiles: value,
-                                          isWorkFlowScreen: true,
-                                        );
-                                      },
-                                    );
-                                  }).then((value) {});
-                                }
-                              },
-                              style: customButtonStyle(    context,
-                                  Size(isDesktop ? width * 0.07 : width * 0.19,
-                                      height * 0.043),
-                                  14,
-                                  primary),
-                              child: Text(
-                                _locale.attachments,
-                                style: const TextStyle(color: whiteColor),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                if (workFlowTemplateBody != null) {
-                                  if (workFlowTemplateBody!.intStatus == 1) {
-                                    CoolAlert.show(
-                                      width: width * 0.4,
-                                      // ignore: use_build_context_synchronously
-                                      context: context,
-                                      type: CoolAlertType.error,
-                                      title: _locale.error,
-                                      text: _locale.cannotEdit,
-                                      confirmBtnText: _locale.ok,
-                                      onConfirmBtnTap: () {},
-                                    );
-                                  } else {
-                                    if (workFlowTemplateBody!.intCurrStep !=
-                                        1) {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        // ignore: use_build_context_synchronously
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomConfirmDialog(
-                                            confirmMessage:
-                                                _locale.notAuthorized,
-                                          );
-                                        },
+                        const SizedBox(width: 5),
+                        CustomElevatedButton(
+                          text: _locale.approve,
+                          color: greenColor,
+                          icon: Icons.check_circle_outline_rounded,
+                          width: isDesktop ? width * 0.07 : width * 0.19,
+                          height: height * 0.043,
+                          fontSize: 14,
+                          onPressed: () async {
+                            if (workFlowTemplateBody != null) {
+                              if (workFlowTemplateBody!.intStatus == 1) {
+                                CoolAlert.show(
+                                  width: width * 0.4,
+                                  context: context,
+                                  type: CoolAlertType.error,
+                                  title: _locale.error,
+                                  text: _locale.cannotEdit,
+                                  confirmBtnText: _locale.ok,
+                                  onConfirmBtnTap: () {},
+                                );
+                              } else {
+                                if (workFlowTemplateBody!.intCurrStep != 1) {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomConfirmDialog(
+                                        confirmMessage: _locale.notAuthorized,
                                       );
-                                    } else {
-                                      updateApproved(context);
-                                    }
-                                  }
+                                    },
+                                  );
+                                } else {
+                                  updateApproved(context);
                                 }
-                              },
-                              style: customButtonStyle(    context,
-                                  Size(isDesktop ? width * 0.07 : width * 0.19,
-                                      height * 0.043),
-                                  14,
-                                  greenColor),
-                              child: Text(
-                                _locale.approve,
-                                style: const TextStyle(color: whiteColor),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                if (workFlowTemplateBody != null) {
-                                  if (workFlowTemplateBody!.intStatus == 1) {
-                                    CoolAlert.show(
-                                      width: width * 0.4,
-                                      // ignore: use_build_context_synchronously
-                                      context: context,
-                                      type: CoolAlertType.error,
-                                      title: _locale.error,
-                                      text: _locale.cannotEdit,
-                                      confirmBtnText: _locale.ok,
-                                      onConfirmBtnTap: () {},
-                                    );
-                                  } else {
-                                    if (workFlowTemplateBody!.intCurrStep !=
-                                        1) {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        // ignore: use_build_context_synchronously
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CustomConfirmDialog(
-                                            confirmMessage:
-                                                _locale.notAuthorized,
-                                          );
-                                        },
+                              }
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        CustomElevatedButton(
+                          text: _locale.reject,
+                          color: Colors.red,
+                          icon: Icons.cancel_outlined,
+                          width: isDesktop ? width * 0.07 : width * 0.19,
+                          height: height * 0.043,
+                          fontSize: 14,
+                          onPressed: () async {
+                            if (workFlowTemplateBody != null) {
+                              if (workFlowTemplateBody!.intStatus == 1) {
+                                CoolAlert.show(
+                                  width: width * 0.4,
+                                  context: context,
+                                  type: CoolAlertType.error,
+                                  title: _locale.error,
+                                  text: _locale.cannotEdit,
+                                  confirmBtnText: _locale.ok,
+                                  onConfirmBtnTap: () {},
+                                );
+                              } else {
+                                if (workFlowTemplateBody!.intCurrStep != 1) {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomConfirmDialog(
+                                        confirmMessage: _locale.notAuthorized,
                                       );
-                                    } else {
-                                      updateRejectedBody(context);
-                                    }
-                                  }
+                                    },
+                                  );
+                                } else {
+                                  updateRejectedBody(context);
                                 }
-                              },
-                              style: customButtonStyle(    context,
-                                  Size(isDesktop ? width * 0.07 : width * 0.19,
-                                      height * 0.043),
-                                  14,
-                                  Colors.red),
-                              child: Text(
-                                _locale.reject,
-                                style: const TextStyle(color: whiteColor),
-                              ),
-                            ),
-                          ],
+                              }
+                            }
+                          },
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-                Container(
-                    width: isDesktop ? width * 0.78 : width * 0.9,
-                    child: TableComponent(
-                      hasDropdown: true,
-                      noHeader: true,
-                      isworkFlow: true,
-                      // dropdown: statusDropDown(),
-                      tableHeigt: height * 0.78,
-                      tableWidth: width * 0.85,
-                      plCols: polCols,
-                      mode: PlutoGridMode.selectWithOneTap,
-                      polRows: [],
-                      footerBuilder: (stateManager) {
-                        return lazyLoadingfooter(stateManager);
-                      },
-                      onLoaded: (PlutoGridOnLoadedEvent event) {
-                        stateManager = event.stateManager;
-                        stateManager!.setShowColumnFilter(true);
-                      },
-                      doubleTab: (event) async {
-                        PlutoRow? tappedRow = event.row;
-                        workFlowTemplateBody =
-                            UserWorkflowSteps.fromPluto(tappedRow!, _locale);
-                      },
-                      onSelected: (event) async {
-                        PlutoRow? tappedRow = event.row;
-                        selectedRow = tappedRow;
-                        workFlowTemplateBody =
-                            UserWorkflowSteps.fromPluto(selectedRow!, _locale);
-                      },
-                    )),
-              ],
+              ),
             ),
-          ),
-        ));
+            Container(
+                width: isDesktop ? width * 0.78 : width * 0.9,
+                child: TableComponent(
+                  hasDropdown: true,
+                  noHeader: true,
+                  isworkFlow: true,
+                  // dropdown: statusDropDown(),
+                  tableHeigt: height * 0.78,
+                  tableWidth: width * 0.85,
+                  plCols: polCols,
+                  mode: PlutoGridMode.selectWithOneTap,
+                  polRows: [],
+                  footerBuilder: (stateManager) {
+                    return lazyLoadingfooter(stateManager);
+                  },
+                  onLoaded: (PlutoGridOnLoadedEvent event) {
+                    stateManager = event.stateManager;
+                    stateManager!.setShowColumnFilter(true);
+                  },
+                  doubleTab: (event) async {
+                    PlutoRow? tappedRow = event.row;
+                    workFlowTemplateBody =
+                        UserWorkflowSteps.fromPluto(tappedRow!, _locale);
+                  },
+                  onSelected: (event) async {
+                    PlutoRow? tappedRow = event.row;
+                    selectedRow = tappedRow;
+                    workFlowTemplateBody =
+                        UserWorkflowSteps.fromPluto(selectedRow!, _locale);
+                  },
+                )),
+          ],
+        ),
+      ),
+    ));
   }
 
   void updateApproved(BuildContext context) {
@@ -423,7 +402,7 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
         field: "txtTemplateName",
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.1 : width * 0.4,
+        width: isDesktop ? width * 0.17 : width * 0.4,
       ),
       PlutoColumn(
         readOnly: true,
@@ -480,29 +459,19 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
 
           return GestureDetector(
             onTap: () async {
-              // Example: Pass necessary data to the dialog
-              final rowData = rendererContext.row.cells;
-              final userName = rowData['txtUsercode']?.value ?? "";
-              // if (currentStep != 1) {
               final PlutoRow row = rendererContext.row;
-
-              List<UserWorkflowSteps> result = [];
               final Map<String, PlutoCell> cells = row.cells;
-
-              // Retrieve the workFlowCode value
               final String workFlowCode = cells['txtWorkflowcode']?.value ?? "";
 
-              // print("Current workFlowCode: $workFlowCode");
-              result = await workFlowTemplateContoller.getAllUsersWorkFlowSteps(
+              List<UserWorkflowSteps> result =
+                  await workFlowTemplateContoller.getAllUsersWorkFlowSteps(
                 UserStepRequestBody(
                     stepStatus: -1, curStep: -1, workflowCode: workFlowCode),
               );
 
-              // Populate steps dynamically using localized statuses
               List<Map<String, String>> steps = result.map((step) {
                 String? status =
                     ListConstants.getStatusName(step.intStatus ?? -1, _locale);
-
                 return {
                   "name": step.txtUsercode ?? "Unknown User",
                   "status": status == _locale.readyToApprove
@@ -512,21 +481,68 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
               }).toList();
 
               showApprovalFlowDialog(context, steps, currentStep);
-              // }
             },
-            child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: backgroundColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                statusText,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+            child: Center(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  // ── Gradient pill ──────────────────────────────
+                  gradient: LinearGradient(
+                    colors: [
+                      backgroundColor,
+                      backgroundColor == Colors.grey
+                          ? Colors.grey.shade600
+                          : backgroundColor == Colors.green
+                              ? Colors.green.shade700
+                              : backgroundColor == Colors.red
+                                  ? Colors.red.shade700
+                                  : Colors.orange.shade700,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(99),
+                  boxShadow: [
+                    BoxShadow(
+                      color: backgroundColor.withOpacity(0.35),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // ── Status icon ────────────────────────────
+                    Icon(
+                      statusText == _locale.approved
+                          ? Icons.check_circle_rounded
+                          : statusText == _locale.rejected
+                              ? Icons.cancel_rounded
+                              : statusText == _locale.readyToApprove
+                                  ? Icons.pending_actions_rounded
+                                  : Icons.hourglass_top_rounded,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                    const SizedBox(width: 4),
+                    // ── Status text ────────────────────────────
+                    Flexible(
+                      child: Text(
+                        statusText,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -683,7 +699,8 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
                   onPressed: () {
                     Navigator.pop(context, false);
                   },
-                  style: customButtonStyle(    context,
+                  style: customButtonStyle(
+                    context,
                     Size(
                         isDesktop ? width * 0.1 : width * 0.35, height * 0.042),
                     16,

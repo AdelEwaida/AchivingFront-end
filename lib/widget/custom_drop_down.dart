@@ -165,7 +165,6 @@ class _CustomDropDownState extends State<DropDown>
             items: widget.items ?? [],
             asyncItems: widget.onSearch,
 
-            // ── Dropdown arrow ──────────────────────────
             dropdownButtonProps: DropdownButtonProps(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               icon: AnimatedRotation(
@@ -180,13 +179,11 @@ class _CustomDropDownState extends State<DropDown>
               onPressed: widget.onPressed ?? () {},
             ),
 
-            // ── 2. Fix floatingLabelBehavior ─────────────────────────────
             dropdownDecoratorProps: DropDownDecoratorProps(
               dropdownSearchDecoration: InputDecoration(
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
 
-                // ← no label at all — bordeText is shown inside by dropdownBuilder
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 labelText: null,
 
@@ -223,7 +220,6 @@ class _CustomDropDownState extends State<DropDown>
             ),
             dropdownBuilder: _customDropDownPrograms,
 
-            // ── Popup ───────────────────────────────────
             popupProps: PopupProps.menu(
               searchDelay: const Duration(milliseconds: 200),
               showSearchBox: widget.searchBox ?? true,
@@ -243,7 +239,6 @@ class _CustomDropDownState extends State<DropDown>
                 ),
               ),
 
-              // ── Search field ─────────────────────────
               searchFieldProps: TextFieldProps(
                 autofocus: true,
                 style: TextStyle(fontSize: _fontSize),
@@ -275,7 +270,6 @@ class _CustomDropDownState extends State<DropDown>
                 ),
               ),
 
-              // ── List item ────────────────────────────
               itemBuilder: (context, item, isSelected) {
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 120),
@@ -336,9 +330,7 @@ class _CustomDropDownState extends State<DropDown>
     );
   }
 
-  // ── Selected item builder ──────────────────────────────────────
   Widget _customDropDownPrograms(BuildContext context, dynamic item) {
-    // ── No value selected → show bordeText as inline placeholder ──
     if (item == null && widget.selectedVal == null) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -354,7 +346,7 @@ class _CustomDropDownState extends State<DropDown>
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: _fontSize,
-                  color: _textSecondary, // ← muted grey like a hint
+                  color: _textSecondary, 
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -364,7 +356,6 @@ class _CustomDropDownState extends State<DropDown>
       );
     }
 
-    // ── Value selected → show the selected value ──────────────────
     final String displayText = widget.selectedVal ?? item.toString();
 
     return Padding(
