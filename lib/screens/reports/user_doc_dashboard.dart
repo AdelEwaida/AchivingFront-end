@@ -175,10 +175,9 @@ class _UserDocDashboardState extends State<UserDocDashboard> {
 
   Color getRandomColor(List<Color> colorList) {
     final random = Random();
-    int r = random.nextInt(256); 
-    int g = random.nextInt(256); 
+    int r = random.nextInt(256);
+    int g = random.nextInt(256);
     int b = random.nextInt(256);
-
 
     return Color.fromRGBO(r, g, b, 1.0);
   }

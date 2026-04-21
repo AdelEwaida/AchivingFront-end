@@ -51,7 +51,7 @@ class VersionBadge extends StatelessWidget {
               Text(
                 local.version + " ${info.version}",
                 style: const TextStyle(
-                  color: Colors.grey,
+                  color: Colors.white, // ← was Colors.grey, invisible on amber
                   fontWeight: FontWeight.bold,
                   fontSize: 10,
                 ),

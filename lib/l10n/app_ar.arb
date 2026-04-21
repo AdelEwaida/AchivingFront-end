@@ -140,7 +140,7 @@
   "addReminder": "إضافة تذكير",
   "download": "تنزيل",
   "status": "الحالة",
-   "canWrite":"إمكانية التعديل",
+  "canWrite": "إمكانية التعديل",
   "active": "فعال",
   "notActive": "غير فعال",
   "yearly": "سنوي",
@@ -194,49 +194,49 @@
   "totalCat": "إجمالي  التصنيفات",
   "sendViaWhatsApp": "إرسال من خلال الواتس اب",
   "send": "إرسال",
-  "sentDone":"تم الارسال بنجاح",
-  "templateName":"الاسم",
-  "searchByDep":"البحث حسب الدائرة",
-  "workFlow":"مخطط سير العمل",
-  "docName":"اسم المخطط",
-  "docDesc":"وصف المخطط",
-  "addWorkFlow":"إضافة مخطط سير عمل",
-  "editWorkFlow":"تعديل مخطط سير العمل",
-  "addStep":"إضافة خطوة",
-  "optional":"اختياري",
-  "approvals":"تقرير الموافقات",
-  "myApprovals":"موافقاتي",
-  "viewApprovals":"عرض الموافقات",
-  "submitforWorkflowApproval":"الإدراج ضمن الموافقات",
-    "stepNo":"رقم الخطوة",
-    "pending":"قيد الانتظار",
-  "approved":"موافق",
-  "rejected":"مرفوض",
-  "approve":"موافقة",
-  "reject":"رفض",
-  "notAuthorized":"لا يمكنك الموافقة على هذه الخطوة في الوقت الحالي",
+  "sentDone": "تم الارسال بنجاح",
+  "templateName": "الاسم",
+  "searchByDep": "البحث حسب الدائرة",
+  "workFlow": "مخطط سير العمل",
+  "docName": "اسم المخطط",
+  "docDesc": "وصف المخطط",
+  "addWorkFlow": "إضافة مخطط سير عمل",
+  "editWorkFlow": "تعديل مخطط سير العمل",
+  "addStep": "إضافة خطوة",
+  "optional": "اختياري",
+  "approvals": "تقرير الموافقات",
+  "myApprovals": "موافقاتي",
+  "viewApprovals": "عرض الموافقات",
+  "submitforWorkflowApproval": "الإدراج ضمن الموافقات",
+  "stepNo": "رقم الخطوة",
+  "pending": "قيد الانتظار",
+  "approved": "موافق",
+  "rejected": "مرفوض",
+  "approve": "موافقة",
+  "reject": "رفض",
+  "notAuthorized": "لا يمكنك الموافقة على هذه الخطوة في الوقت الحالي",
   "updatedSuccess": "تم التعديل بنجاح!",
   "success": "تم بنجاح",
-  "sureToApproveStep":"هل أنت متأكد من الموافقة على هذه الخطوة؟",
-  "sureToRejectStep":"هل أنت متأكد من رفض هذه الخطوة؟",
-  "searchByStatus":"البحث حسب الحالة",
-  "cannotEdit":"لا يمكن تعديل خطوة موافق عليها",
-  "stuckAprrovals":"الموافقات العالقة",
-  "readyToApprove":"جاهز للتصديق",
-  "readyToApprovePending":"جاهز للتصديق / قيد الانتظار",
-  "approvalFlowDetails":"تفاصيل الموافقات",
-  "attachments":"الملحقات",
-  "stepDescription":"وصف الخطوة",
-  "workFlowSettings":"إعدادات مخطط سير العمل",
-  "arDescription":"الوصف بالعربية",
-  "verifyDocuments":"التحقق",
-  "pleaseAddExcel":"الرجاء إدخال ملف إكسل يتكون من عمود واحد لرقم الإشارة, سيقوم النظام بفحص الأرقام وإرجاع ملف إكسل",
-  "uploadExcelFile":"تحميل ملف اكسل",
-  "isLimitAction":"منع تعديل الدوائر الأخرى",
-  "notAllowedToEditDept":"غير مصرح لك التعديل على هذه الدائرة",
+  "sureToApproveStep": "هل أنت متأكد من الموافقة على هذه الخطوة؟",
+  "sureToRejectStep": "هل أنت متأكد من رفض هذه الخطوة؟",
+  "searchByStatus": "البحث حسب الحالة",
+  "cannotEdit": "لا يمكن تعديل خطوة موافق عليها",
+  "stuckAprrovals": "الموافقات العالقة",
+  "readyToApprove": "جاهز للتصديق",
+  "readyToApprovePending": "جاهز للتصديق / قيد الانتظار",
+  "approvalFlowDetails": "تفاصيل الموافقات",
+  "attachments": "الملحقات",
+  "stepDescription": "وصف الخطوة",
+  "workFlowSettings": "إعدادات مخطط سير العمل",
+  "arDescription": "الوصف بالعربية",
+  "verifyDocuments": "التحقق",
+  "pleaseAddExcel": "الرجاء إدخال ملف إكسل يتكون من عمود واحد لرقم الإشارة, سيقوم النظام بفحص الأرقام وإرجاع ملف إكسل",
+  "uploadExcelFile": "تحميل ملف اكسل",
+  "isLimitAction": "منع تعديل الدوائر الأخرى",
+  "notAllowedToEditDept": "غير مصرح لك التعديل على هذه الدائرة",
   "noScannersFound": "لم يتم العثور على أجهزة ماسح ضوئي",
   "urlError": "يوجد مستخدم بالفعل بهذا الرابط. هل تريد إضافته مرة أخرى؟",
-  "numOfFilesNum":"عدد الملفات المعروضة",
+  "numOfFilesNum": "عدد الملفات المعروضة",
   "copied": "تم نسخ",
   "noFileAvailableToPreview": "لا توجد ملفات للعرض.",
   "noFileContentReturned": "لا توجد بيانات للملف.",
@@ -248,36 +248,21 @@
   "noFilesFoundForThisDocument": "لا توجد ملفات لهذا المستند.",
   "noValidFilesToZip": "لا توجد ملفات صالحة لإدراجها في الملف المضغوط.",
   "zippingError": "حدث خطأ أثناء تجهيز الملف المضغوط.",
-  "pleaseUploadExcelWithOneColumn":"الرجاء رفع ملف إكسل يحتوي على عمود واحد فقط",
+  "pleaseUploadExcelWithOneColumn": "الرجاء رفع ملف إكسل يحتوي على عمود واحد فقط",
   "invalidFile": "ملف غير صالح",
   "version": "الإصدار",
+  "welcomeBack": "مرحباً بعودتك",
+  "signInToContinue": "سجّل دخولك للمتابعة",
   "nodataSelected": "لا توجد بيانات للفترة المحددة",
   "filesPackedIntoZip": "{count, plural, =0 {لم يتم تجميع أي ملفات.} one {تم تجميع ملف واحد داخل {zipName}.} other {تم تجميع {count} ملفًا داخل {zipName}.}}",
   "@filesPackedIntoZip": {
     "placeholders": {
-      "count": { "type": "int" },
-      "zipName": { "type": "String" }
+      "count": {
+        "type": "int"
+      },
+      "zipName": {
+        "type": "String"
+      }
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
