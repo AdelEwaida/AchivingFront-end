@@ -10,7 +10,6 @@ import '../utils/encrypt/encryption.dart';
 import '../utils/func/responsive.dart';
 import '../widget/dashboard_components/custom_elevated_button.dart';
 
-// ── Design tokens ─────────────────────────────────────────────────
 const Color _cpPrimary = Color(0xFF185FA5);
 const Color _cpPrimaryDark = Color(0xFF0D3F73);
 const Color _cpBorder = Color(0xFFDDE3EE);
@@ -150,7 +149,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ),
                     ),
 
-                    // ── Fields ──────────────────────────────────────
                     Padding(
                       padding: const EdgeInsets.all(24),
                       child: Column(
@@ -181,7 +179,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           ),
                           const SizedBox(height: 28),
 
-                          // ── Submit ─────────────────────────────────
                           CustomElevatedButton(
                             text: _locale.save,
                             color: _cpPrimary,
@@ -205,7 +202,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     );
   }
 
-  // ── Password field ───────────────────────────────────────────────
   Widget _passwordField({
     required String hint,
     required TextEditingController controller,
@@ -222,7 +218,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     );
   }
 
-  // ── Validation ───────────────────────────────────────────────────
   void _validate() {
     if (oldPasswordController.text.isEmpty ||
         newPasswordController.text.isEmpty ||
@@ -296,7 +291,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 }
 
-// ── Styled password field widget ─────────────────────────────────
 class _StyledPasswordField extends StatefulWidget {
   final String hint;
   final TextEditingController controller;
