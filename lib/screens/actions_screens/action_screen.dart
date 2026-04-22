@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../dialogs/actions_dialogs/add_edit_action_dialog.dart';
 import '../../dialogs/error_dialgos/confirm_dialog.dart';
 import '../../models/db/actions_models/action_model.dart';
+import '../../widget/dashboard_components/app_bar_title.dart';
 
 class ActionScreen extends StatefulWidget {
   const ActionScreen({super.key});
@@ -122,9 +123,7 @@ class _OfficeScreenState extends State<ActionScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-   
-        body: buildMainContent());
+    return Scaffold(body: buildMainContent());
   }
 
   Widget mobileView() {
@@ -171,78 +170,79 @@ class _OfficeScreenState extends State<ActionScreen> {
     return Column(
       children: [
         Center(
-          child: Container(
-            width: isDesktop ? width * 0.8 : width * 0.9,
-            child: TableComponent(
-              // key: UniqueKey(),
-              tableHeigt: height * 0.75,
-              tableWidth: width,
-              delete: deleteAction,
-              add: addAction,
-              genranlEdit: editAction,
-              plCols: polCols,
-              mode: PlutoGridMode.selectWithOneTap,
-              polRows: [],
-              footerBuilder: (stateManager) {
-                return lazyLoadingfooter(stateManager);
-              },
-              onLoaded: (PlutoGridOnLoadedEvent event) {
-                stateManager = event.stateManager;
-                pageLis.value = pageLis.value > 1 ? 0 : 1;
-                totalActionsCount.value = 0;
-                stateManager!.setShowColumnFilter(true);
-                getCount();
-              },
-              doubleTab: (event) async {
-                PlutoRow? tappedRow = event.row;
-
-                ActionModel actionModel = ActionModel.fromPlutoRow(tappedRow!);
-                print(
-                    "actionModelactionModelactionModelactionModel:${actionModel.toJson()}");
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AddEditActionDialog(
-                      title: _locale.editAction,
-                      isFromList: false,
-                      actionModel: actionModel,
-                    );
-                  },
-                ).then((value) {
-                  if (value) {
-                    reloadData();
-                  }
-                });
-              },
-              onSelected: (event) async {
-                PlutoRow? tappedRow = event.row;
-                selectedRow = tappedRow;
-              },
+          child: TableComponent(
+            // key: UniqueKey(),
+            appBarTitleWidget: Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: AppBarTitle(
+                title: _locale.listOfReminders,
+                icon: Icons.notification_important,
+              ),
             ),
+            tableHeigt: height * 0.75,
+            tableWidth: width,
+            delete: deleteAction,
+            add: addAction,
+            genranlEdit: editAction,
+            plCols: polCols,
+            mode: PlutoGridMode.selectWithOneTap,
+            polRows: [],
+            footerBuilder: (stateManager) {
+              return lazyLoadingfooter(stateManager);
+            },
+            onLoaded: (PlutoGridOnLoadedEvent event) {
+              stateManager = event.stateManager;
+              pageLis.value = pageLis.value > 1 ? 0 : 1;
+              totalActionsCount.value = 0;
+              stateManager!.setShowColumnFilter(true);
+              getCount();
+            },
+            doubleTab: (event) async {
+              PlutoRow? tappedRow = event.row;
+
+              ActionModel actionModel = ActionModel.fromPlutoRow(tappedRow!);
+              print(
+                  "actionModelactionModelactionModelactionModel:${actionModel.toJson()}");
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AddEditActionDialog(
+                    title: _locale.editAction,
+                    isFromList: false,
+                    actionModel: actionModel,
+                  );
+                },
+              ).then((value) {
+                if (value) {
+                  reloadData();
+                }
+              });
+            },
+            onSelected: (event) async {
+              PlutoRow? tappedRow = event.row;
+              selectedRow = tappedRow;
+            },
           ),
         ),
-        Container(
-          width: isDesktop ? width * 0.8 : width * 0.9,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  "${_locale.totalCount}: ",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: totalActionsCount,
-                  builder: ((context, value, child) {
-                    return Text(
-                      "${totalActionsCount.value}",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    );
-                  }),
-                ),
-              ],
-            ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                "${_locale.totalCount}: ",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              ValueListenableBuilder(
+                valueListenable: totalActionsCount,
+                builder: ((context, value, child) {
+                  return Text(
+                    "${totalActionsCount.value}",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  );
+                }),
+              ),
+            ],
           ),
         ),
       ],

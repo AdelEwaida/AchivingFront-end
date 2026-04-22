@@ -2,6 +2,7 @@ import 'package:archiving_flutter_project/models/db/categories_models/document_c
 import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
 import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
+import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -93,44 +94,29 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
               onSubmitted: (text) {},
               onChanged: (value) {},
             ),
-            // CustomDropDown(
-            //   width: width * 0.25,
-            //   onChanged: (value) {},
-            //   searchBox: true,
-            //   valSelected: true,
-            //   bordeText: _locale.department,
-            //   // width: width * 0.21,
-            //   heightVal: height * 0.3,
-            // ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    save();
-                  },
-                  style: customButtonStyle1(Size(width * 0.08, height * 0.045),
-                      16, const Color(0xff1F6E8C)),
-                  child: Text(
-                    _locale.save,
-                    style: const TextStyle(color: whiteColor),
-                  ),
-                ),
+                CustomElevatedButton(
+                    height: height * 0.045,
+                    width: isDesktop ? width * 0.1 : width * 0.4,
+                    text: _locale.save,
+                    color: primary,
+                    onPressed: () {
+                      save();
+                    }),
                 SizedBox(
                   width: width * 0.01,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: customButtonStyle1(
-                      Size(width * 0.1, height * 0.045), 16, redColor),
-                  child: Text(
-                    _locale.cancel,
-                    style: const TextStyle(color: whiteColor),
-                  ),
-                )
+                CustomElevatedButton(
+                    height: height * 0.045,
+                    width: isDesktop ? width * 0.1 : width * 0.4,
+                    text: _locale.cancel,
+                    color: redColor,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }), 
               ],
             ),
           ],

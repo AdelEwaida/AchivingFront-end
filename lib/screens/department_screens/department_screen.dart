@@ -8,6 +8,7 @@ import 'package:archiving_flutter_project/providers/screen_content_provider.dart
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
+import 'package:archiving_flutter_project/widget/dashboard_components/app_bar_title.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -123,28 +124,20 @@ class _OfficeScreenState extends State<DepartemntScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      
-        body: buildMainContent());
+    return Scaffold(body: buildMainContent());
   }
 
   Widget mobileView() {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: constraints.minHeight,
-              maxHeight: constraints.maxHeight,
-            ),
-            child: IntrinsicHeight(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: buildMainContent(),
-                  ),
-                ],
-              ),
+          child: IntrinsicHeight(
+            child: Column(
+              children: [
+                Expanded(
+                  child: buildMainContent(),
+                ),
+              ],
             ),
           ),
         );
@@ -153,109 +146,102 @@ class _OfficeScreenState extends State<DepartemntScreen> {
   }
 
   Widget tabletView() {
-    return Container(
-      width: width,
-      height: height,
-      child: buildMainContent(),
-    );
+    return buildMainContent();
   }
 
   Widget desktopView() {
-    return Container(
-      width: width,
-      height: height,
-      child: buildMainContent(),
-    );
+    return buildMainContent();
   }
 
   Widget buildMainContent() {
     return Column(
       children: [
         Center(
-          child: Container(
-            width: isDesktop ? width * 0.8 : width * 0.9,
-            child: TableComponent(
-              // key: UniqueKey(),
-              tableHeigt: height * 0.75,
-              tableWidth: width,
-              delete: deleteDep,
-              add: addDep,
-              genranlEdit: editDep,
-              plCols: polCols,
-              mode: PlutoGridMode.selectWithOneTap,
-              polRows: [],
-              footerBuilder: (stateManager) {
-                return lazyLoadingfooter(stateManager);
-              },
-              onLoaded: (PlutoGridOnLoadedEvent event) {
-                stateManager = event.stateManager;
-                pageLis.value = pageLis.value > 1 ? 0 : 1;
-                totalDepCount.value = 0;
-                stateManager!.setShowColumnFilter(true);
-                getCount();
-              },
-              doubleTab: (event) async {
-                PlutoRow? tappedRow = event.row;
-                DepartmentModel departmentModel =
-                    DepartmentModel.fromPlutoRow(tappedRow!);
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return DepartmentDialog(
-                      departmentModel: departmentModel,
-                    );
-                  },
-                ).then((value) {
-                  if (value) {
-                    reloadData();
-                  }
-                });
-              },
-              onSelected: (event) async {
-                PlutoRow? tappedRow = event.row;
-                selectedRow = tappedRow;
-              },
+          child: TableComponent(
+            // key: UniqueKey(),
+            tableHeigt: height * 0.75,
+            tableWidth: width * 1,
+            appBarTitleWidget: Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: AppBarTitle(
+                title: _locale.listOfDepartment,
+                icon: Icons.account_balance,
+              ),
             ),
+            delete: deleteDep,
+            add: addDep,
+            genranlEdit: editDep,
+            plCols: polCols,
+            mode: PlutoGridMode.selectWithOneTap,
+            polRows: [],
+            footerBuilder: (stateManager) {
+              return lazyLoadingfooter(stateManager);
+            },
+            onLoaded: (PlutoGridOnLoadedEvent event) {
+              stateManager = event.stateManager;
+              pageLis.value = pageLis.value > 1 ? 0 : 1;
+              totalDepCount.value = 0;
+              stateManager!.setShowColumnFilter(true);
+              getCount();
+            },
+            doubleTab: (event) async {
+              PlutoRow? tappedRow = event.row;
+              DepartmentModel departmentModel =
+                  DepartmentModel.fromPlutoRow(tappedRow!);
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return DepartmentDialog(
+                    departmentModel: departmentModel,
+                  );
+                },
+              ).then((value) {
+                if (value) {
+                  reloadData();
+                }
+              });
+            },
+            onSelected: (event) async {
+              PlutoRow? tappedRow = event.row;
+              selectedRow = tappedRow;
+            },
           ),
         ),
-        Container(
-          width: isDesktop ? width * 0.8 : width * 0.9,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // Text(
-                //   "${_locale.officeNumberDisplayed}: ",
-                //   style: const TextStyle(fontWeight: FontWeight.bold),
-                // ),
-                // ValueListenableBuilder(
-                //   valueListenable: officeNumberDisplayed,
-                //   builder: ((context, value, child) {
-                //     return Text(
-                //       "${officeNumberDisplayed.value}",
-                //       style: const TextStyle(fontWeight: FontWeight.bold),
-                //     );
-                //   }),
-                // ),
-                // SizedBox(
-                //   width: width * 0.05,
-                // ),
-                Text(
-                  "${_locale.totalCount}: ",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: totalDepCount,
-                  builder: ((context, value, child) {
-                    return Text(
-                      "${totalDepCount.value}",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    );
-                  }),
-                ),
-              ],
-            ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Text(
+              //   "${_locale.officeNumberDisplayed}: ",
+              //   style: const TextStyle(fontWeight: FontWeight.bold),
+              // ),
+              // ValueListenableBuilder(
+              //   valueListenable: officeNumberDisplayed,
+              //   builder: ((context, value, child) {
+              //     return Text(
+              //       "${officeNumberDisplayed.value}",
+              //       style: const TextStyle(fontWeight: FontWeight.bold),
+              //     );
+              //   }),
+              // ),
+              // SizedBox(
+              //   width: width * 0.05,
+              // ),
+              Text(
+                "${_locale.totalCount}: ",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              ValueListenableBuilder(
+                valueListenable: totalDepCount,
+                builder: ((context, value, child) {
+                  return Text(
+                    "${totalDepCount.value}",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  );
+                }),
+              ),
+            ],
           ),
         ),
       ],

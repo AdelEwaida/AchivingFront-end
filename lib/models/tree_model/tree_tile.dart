@@ -23,27 +23,33 @@ class MyTreeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TreeIndentation(
-
       entry: entry,
-      guide: const IndentGuide.connectingLines(indent: 48),
+      guide: const IndentGuide.connectingLines(
+        indent: 38,
+        color: Color(0xFFCBD5E1),
+        thickness: 1,
+      ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(4, 0, 8, 0),
+        padding: const EdgeInsets.fromLTRB(6, 3, 8, 3),
         child: Row(
           children: [
             InkWell(
               onTap: folderOnTap,
               // onDoubleTap: folderOnDoubleTap,
               child: Listener(
-
                   onPointerDown: onPointerDown,
                   child: FolderButton(
-                    
                     isOpen: entry.hasChildren ? entry.isExpanded : null,
                     onPressed: entry.hasChildren ? folderOnTap : null,
-                    color: Colors.amber,
-                    icon: const Icon(
-                      Icons.article,
-                      color: Color(0xFF6895D2),
+                    color: const Color(0xFF2563EB),
+                    icon: Icon(
+                      entry.hasChildren
+                          ? (entry.isExpanded
+                              ? Icons.folder_open_rounded
+                              : Icons.folder_rounded)
+                          : Icons.article_rounded,
+                      color: const Color(0xFF2563EB),
+                      size: 18,
                     ),
                   )),
             ),

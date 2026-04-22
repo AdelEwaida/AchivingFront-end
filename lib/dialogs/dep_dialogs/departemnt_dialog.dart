@@ -6,6 +6,7 @@ import 'package:archiving_flutter_project/service/controller/department_controll
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
+import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -82,39 +83,26 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      addDep();
-                    },
-                    style: customButtonStyle(
-                        context,
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
-                        18,
-                        primary),
-                    child: Text(
-                      _locale.save,
-                      style: const TextStyle(color: whiteColor),
-                    ),
-                  ),
+                  CustomElevatedButton(
+                      height: height * 0.045,
+                      width: isDesktop ? width * 0.1 : width * 0.4,
+                      text: _locale.save,
+                      color: primary,
+                      onPressed: () {
+                        addDep();
+                      }),
                   SizedBox(
                     width: width * 0.01,
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context, false);
-                    },
-                    style: customButtonStyle(
-                        context,
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
-                        18,
-                        redColor),
-                    child: Text(
-                      _locale.cancel,
-                      style: const TextStyle(color: whiteColor),
-                    ),
-                  ),
+                  CustomElevatedButton(
+                      height: height * 0.045,
+                      width: isDesktop ? width * 0.1 : width * 0.4,
+                      text: _locale.cancel,
+                      color: redColor,
+                      onPressed: () {
+                        Navigator.pop(context, false);
+                      })
+
                 ],
               )
             : Row(
@@ -139,21 +127,27 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
                         ),
                       ),
                       SizedBox(height: height * 0.01),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context, false);
-                        },
-                        style: customButtonStyle(
-                            context,
-                            Size(isDesktop ? width * 0.1 : width * 0.4,
-                                height * 0.045),
-                            18,
-                            redColor),
-                        child: Text(
-                          _locale.cancel,
-                          style: const TextStyle(color: whiteColor),
-                        ),
-                      ),
+                      CustomElevatedButton(
+                          text: _locale.cancel,
+                          color: redColor,
+                          onPressed: () {
+                            Navigator.pop(context, false);
+                          })
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     Navigator.pop(context, false);
+                      //   },
+                      //   style: customButtonStyle(
+                      //       context,
+                      //       Size(isDesktop ? width * 0.1 : width * 0.4,
+                      //           height * 0.045),
+                      //       18,
+                      //       redColor),
+                      //   child: Text(
+                      //     _locale.cancel,
+                      //     style: const TextStyle(color: whiteColor),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],

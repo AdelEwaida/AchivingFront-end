@@ -124,163 +124,158 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
       child: Center(
         child: Column(
           children: [
-            SizedBox(
-              width: isDesktop ? width * 0.78 : width * 0.9,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        statusDropDown(),
-                      ],
-                    ),
-                    SizedBox(),
-                    Row(
-                      children: [
-                        CustomElevatedButton(
-                          text: _locale.attachments,
-                          color: primary,
-                          icon: Icons.attach_file_rounded,
-                          width: isDesktop ? width * 0.07 : width * 0.19,
-                          height: height * 0.043,
-                          fontSize: 14,
-                          onPressed: () async {
-                            if (selectedRow != null) {
-                              openLoadinDialog(context);
-                              DocumentsController()
-                                  .getFilesByHdrKey(selectedRow!
-                                      .cells['txtDocumentcode']!.value)
-                                  .then((value) {
-                                Navigator.pop(context);
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      statusDropDown(),
+                    ],
+                  ),
+                  SizedBox(),
+                  Row(
+                    children: [
+                      CustomElevatedButton(
+                        text: _locale.attachments,
+                        color: primary,
+                        icon: Icons.attach_file_rounded,
+                        width: isDesktop ? width * 0.07 : width * 0.19,
+                        height: height * 0.043,
+                        fontSize: 14,
+                        onPressed: () async {
+                          if (selectedRow != null) {
+                            openLoadinDialog(context);
+                            DocumentsController()
+                                .getFilesByHdrKey(selectedRow!
+                                    .cells['txtDocumentcode']!.value)
+                                .then((value) {
+                              Navigator.pop(context);
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return FileExplorDialog(
+                                    listOfFiles: value,
+                                    isWorkFlowScreen: true,
+                                  );
+                                },
+                              );
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 5),
+                      CustomElevatedButton(
+                        text: _locale.approve,
+                        color: greenColor,
+                        icon: Icons.check_circle_outline_rounded,
+                        width: isDesktop ? width * 0.07 : width * 0.19,
+                        height: height * 0.043,
+                        fontSize: 14,
+                        onPressed: () async {
+                          if (workFlowTemplateBody != null) {
+                            if (workFlowTemplateBody!.intStatus == 1) {
+                              CoolAlert.show(
+                                width: width * 0.4,
+                                context: context,
+                                type: CoolAlertType.error,
+                                title: _locale.error,
+                                text: _locale.cannotEdit,
+                                confirmBtnText: _locale.ok,
+                                onConfirmBtnTap: () {},
+                              );
+                            } else {
+                              if (workFlowTemplateBody!.intCurrStep != 1) {
                                 showDialog(
+                                  barrierDismissible: false,
                                   context: context,
-                                  builder: (context) {
-                                    return FileExplorDialog(
-                                      listOfFiles: value,
-                                      isWorkFlowScreen: true,
+                                  builder: (BuildContext context) {
+                                    return CustomConfirmDialog(
+                                      confirmMessage: _locale.notAuthorized,
                                     );
                                   },
                                 );
-                              });
-                            }
-                          },
-                        ),
-                        const SizedBox(width: 5),
-                        CustomElevatedButton(
-                          text: _locale.approve,
-                          color: greenColor,
-                          icon: Icons.check_circle_outline_rounded,
-                          width: isDesktop ? width * 0.07 : width * 0.19,
-                          height: height * 0.043,
-                          fontSize: 14,
-                          onPressed: () async {
-                            if (workFlowTemplateBody != null) {
-                              if (workFlowTemplateBody!.intStatus == 1) {
-                                CoolAlert.show(
-                                  width: width * 0.4,
-                                  context: context,
-                                  type: CoolAlertType.error,
-                                  title: _locale.error,
-                                  text: _locale.cannotEdit,
-                                  confirmBtnText: _locale.ok,
-                                  onConfirmBtnTap: () {},
-                                );
                               } else {
-                                if (workFlowTemplateBody!.intCurrStep != 1) {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomConfirmDialog(
-                                        confirmMessage: _locale.notAuthorized,
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  updateApproved(context);
-                                }
+                                updateApproved(context);
                               }
                             }
-                          },
-                        ),
-                        const SizedBox(width: 5),
-                        CustomElevatedButton(
-                          text: _locale.reject,
-                          color: Colors.red,
-                          icon: Icons.cancel_outlined,
-                          width: isDesktop ? width * 0.07 : width * 0.19,
-                          height: height * 0.043,
-                          fontSize: 14,
-                          onPressed: () async {
-                            if (workFlowTemplateBody != null) {
-                              if (workFlowTemplateBody!.intStatus == 1) {
-                                CoolAlert.show(
-                                  width: width * 0.4,
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 5),
+                      CustomElevatedButton(
+                        text: _locale.reject,
+                        color: Colors.red,
+                        icon: Icons.cancel_outlined,
+                        width: isDesktop ? width * 0.07 : width * 0.19,
+                        height: height * 0.043,
+                        fontSize: 14,
+                        onPressed: () async {
+                          if (workFlowTemplateBody != null) {
+                            if (workFlowTemplateBody!.intStatus == 1) {
+                              CoolAlert.show(
+                                width: width * 0.4,
+                                context: context,
+                                type: CoolAlertType.error,
+                                title: _locale.error,
+                                text: _locale.cannotEdit,
+                                confirmBtnText: _locale.ok,
+                                onConfirmBtnTap: () {},
+                              );
+                            } else {
+                              if (workFlowTemplateBody!.intCurrStep != 1) {
+                                showDialog(
+                                  barrierDismissible: false,
                                   context: context,
-                                  type: CoolAlertType.error,
-                                  title: _locale.error,
-                                  text: _locale.cannotEdit,
-                                  confirmBtnText: _locale.ok,
-                                  onConfirmBtnTap: () {},
+                                  builder: (BuildContext context) {
+                                    return CustomConfirmDialog(
+                                      confirmMessage: _locale.notAuthorized,
+                                    );
+                                  },
                                 );
                               } else {
-                                if (workFlowTemplateBody!.intCurrStep != 1) {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return CustomConfirmDialog(
-                                        confirmMessage: _locale.notAuthorized,
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  updateRejectedBody(context);
-                                }
+                                updateRejectedBody(context);
                               }
                             }
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            Container(
-                width: isDesktop ? width * 0.78 : width * 0.9,
-                child: TableComponent(
-                  hasDropdown: true,
-                  noHeader: true,
-                  isworkFlow: true,
-                  // dropdown: statusDropDown(),
-                  tableHeigt: height * 0.78,
-                  tableWidth: width * 0.85,
-                  plCols: polCols,
-                  mode: PlutoGridMode.selectWithOneTap,
-                  polRows: [],
-                  footerBuilder: (stateManager) {
-                    return lazyLoadingfooter(stateManager);
-                  },
-                  onLoaded: (PlutoGridOnLoadedEvent event) {
-                    stateManager = event.stateManager;
-                    stateManager!.setShowColumnFilter(true);
-                  },
-                  doubleTab: (event) async {
-                    PlutoRow? tappedRow = event.row;
-                    workFlowTemplateBody =
-                        UserWorkflowSteps.fromPluto(tappedRow!, _locale);
-                  },
-                  onSelected: (event) async {
-                    PlutoRow? tappedRow = event.row;
-                    selectedRow = tappedRow;
-                    workFlowTemplateBody =
-                        UserWorkflowSteps.fromPluto(selectedRow!, _locale);
-                  },
-                )),
+            TableComponent(
+              hasDropdown: true,
+              noHeader: true,
+              isworkFlow: true,
+              // dropdown: statusDropDown(),
+              tableHeigt: height * 0.78,
+              tableWidth: width * 1,
+              plCols: polCols,
+              mode: PlutoGridMode.selectWithOneTap,
+              polRows: [],
+              footerBuilder: (stateManager) {
+                return lazyLoadingfooter(stateManager);
+              },
+              onLoaded: (PlutoGridOnLoadedEvent event) {
+                stateManager = event.stateManager;
+                stateManager!.setShowColumnFilter(true);
+              },
+              doubleTab: (event) async {
+                PlutoRow? tappedRow = event.row;
+                workFlowTemplateBody =
+                    UserWorkflowSteps.fromPluto(tappedRow!, _locale);
+              },
+              onSelected: (event) async {
+                PlutoRow? tappedRow = event.row;
+                selectedRow = tappedRow;
+                workFlowTemplateBody =
+                    UserWorkflowSteps.fromPluto(selectedRow!, _locale);
+              },
+            ),
           ],
         ),
       ),
@@ -697,21 +692,15 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ElevatedButton(
+                CustomElevatedButton(
+                  text: _locale.close,
+                  color: redColor,
+                  width: isDesktop ? width * 0.1 : width * 0.35,
+                  height: height * 0.042,
+                  fontSize: 16,
                   onPressed: () {
-                    Navigator.pop(context, false);
+                    Navigator.pop(context);
                   },
-                  style: customButtonStyle(
-                    context,
-                    Size(
-                        isDesktop ? width * 0.1 : width * 0.35, height * 0.042),
-                    16,
-                    redColor,
-                  ),
-                  child: Text(
-                    _locale.close,
-                    style: const TextStyle(color: Colors.white),
-                  ),
                 ),
               ],
             ),
@@ -750,7 +739,7 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
                       : Colors.orange,
                   // size: 35, // Adjust icon size as needed
                 ),
-                SizedBox(width: 16), // Space between icon and text
+                const SizedBox(width: 16), // Space between icon and text
                 Column(
                   mainAxisAlignment:
                       MainAxisAlignment.center, // Center vertically

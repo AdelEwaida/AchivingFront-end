@@ -121,55 +121,52 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              child: SizedBox(
-                width: double.infinity,
-                child: TableComponent(
-                  hasDropdown: true,
-                  isworkFlow: true,
-                  delete: deleteWorkFlow,
-                  dropdown: departmentDropdown(),
-                  tableHeigt: height * 0.68,
-                  tableWidth: isDesktop ? width * 0.98 : width * 0.94,
-                  search: searchField,
-                  statusDropDown: statusDropDown(),
-                  plCols: polCols,
-                  mode: PlutoGridMode.selectWithOneTap,
-                  polRows: [],
-                  footerBuilder: (stateManager) {
-                    return lazyLoadingfooter(stateManager);
-                  },
-                  view: editTemplate,
-                  refresh: refreshTable,
-                  explor: explorFiels,
-                  onLoaded: (PlutoGridOnLoadedEvent event) {
-                    stateManager = event.stateManager;
-                    stateManager!.setShowColumnFilter(true);
-                  },
-                  doubleTab: (event) async {
-                    PlutoRow? tappedRow = event.row;
-                    workFlowTemplateBody =
-                        WorkFlowDocumentInfo.fromPluto(tappedRow!, _locale);
-                    showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (context) {
-                        return EditTemplateDocumentDialog(
-                          workFlowTemplateBody: workFlowTemplateBody,
-                        );
-                      },
-                    ).then((value) {
-                      if (value == true) {
-                        refreshTable();
-                      }
-                    });
-                  },
-                  onSelected: (event) async {
-                    PlutoRow? tappedRow = event.row;
-                    selectedRow = tappedRow;
-                    workFlowTemplateBody =
-                        WorkFlowDocumentInfo.fromPluto(selectedRow!, _locale);
-                  },
-                ),
+              child: TableComponent(
+                hasDropdown: true,
+                isworkFlow: true,
+                delete: deleteWorkFlow,
+                dropdown: departmentDropdown(),
+                tableHeigt: height * 0.8,
+                tableWidth: isDesktop ? width * 1 : width * 0.94,
+                search: searchField,
+                statusDropDown: statusDropDown(),
+                plCols: polCols,
+                mode: PlutoGridMode.selectWithOneTap,
+                polRows: [],
+                footerBuilder: (stateManager) {
+                  return lazyLoadingfooter(stateManager);
+                },
+                view: editTemplate,
+                refresh: refreshTable,
+                explor: explorFiels,
+                onLoaded: (PlutoGridOnLoadedEvent event) {
+                  stateManager = event.stateManager;
+                  stateManager!.setShowColumnFilter(true);
+                },
+                doubleTab: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                  workFlowTemplateBody =
+                      WorkFlowDocumentInfo.fromPluto(tappedRow!, _locale);
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return EditTemplateDocumentDialog(
+                        workFlowTemplateBody: workFlowTemplateBody,
+                      );
+                    },
+                  ).then((value) {
+                    if (value == true) {
+                      refreshTable();
+                    }
+                  });
+                },
+                onSelected: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                  selectedRow = tappedRow;
+                  workFlowTemplateBody =
+                      WorkFlowDocumentInfo.fromPluto(selectedRow!, _locale);
+                },
               ),
             ),
           ),

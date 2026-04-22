@@ -3,6 +3,7 @@ import 'package:archiving_flutter_project/providers/screen_content_provider.dart
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/key.dart';
 import 'package:archiving_flutter_project/utils/func/text_and_number_inputFormater.dart';
+import 'package:archiving_flutter_project/widget/empty_widget.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,7 @@ class TableComponent extends StatefulWidget {
   final Function()? generalDownload;
   final Function()? filesList;
   bool? isFileScreen = false;
+  final Widget? appBarTitleWidget;
 
   final Function(PlutoGridOnLoadedEvent event)? onLoaded;
   final Function(PlutoGridOnRowDoubleTapEvent event)? doubleTab;
@@ -72,55 +74,56 @@ class TableComponent extends StatefulWidget {
   Key? key;
   TableComponent(
       {this.key,
-      this.viewLocation,
-      this.sendWhatspp,
-      this.download,
-      this.explor,
-      this.chooseDep,
-      this.sendEmail,
-      this.copy,
-      this.tableHeigt,
-      this.upload,
-      this.tableWidth,
-      this.pollScreen,
-      this.addReminder,
-      this.exportToExcel,
-      this.advanceSearch,
-      this.genranlEdit,
-      this.view,
-      this.editPassword,
-      this.add,
-      this.delete,
-      this.noHeader,
-      this.count,
-      this.search,
-      required this.plCols,
-      required this.polRows,
-      this.onSelected,
-      this.columnHeight,
-      this.footerBuilder,
-      this.isWhiteText,
-      this.doubleTab,
-      this.rightClickTap,
-      this.headerBuilder,
-      this.onLoaded,
-      this.mode,
-      this.onChange,
-      this.handleOnRowChecked,
-      this.borderColor,
-      this.rowsHeight,
-      this.moveAfterEditng,
-      this.rowColor,
-      this.generalDownload,
-      this.filesList,
-      this.dropdown,
-      this.hasDropdown,
-      this.isworkFlow,
-      this.refresh,
-      this.isFileScreen,
-      this.statusDropDown,
-      this.excelButton
-      // required this.stateManger
+        this.viewLocation,
+        this.sendWhatspp,
+        this.download,
+        this.explor,
+        this.chooseDep,
+        this.sendEmail,
+        this.copy,
+        this.tableHeigt,
+        this.upload,
+        this.tableWidth,
+        this.pollScreen,
+        this.addReminder,
+        this.exportToExcel,
+        this.advanceSearch,
+        this.genranlEdit,
+        this.view,
+        this.editPassword,
+        this.add,
+        this.delete,
+        this.noHeader,
+        this.count,
+        this.search,
+        required this.plCols,
+        required this.polRows,
+        this.onSelected,
+        this.columnHeight,
+        this.footerBuilder,
+        this.isWhiteText,
+        this.doubleTab,
+        this.rightClickTap,
+        this.headerBuilder,
+        this.onLoaded,
+        this.mode,
+        this.onChange,
+        this.handleOnRowChecked,
+        this.borderColor,
+        this.rowsHeight,
+        this.moveAfterEditng,
+        this.rowColor,
+        this.generalDownload,
+        this.filesList,
+        this.appBarTitleWidget,
+        this.dropdown,
+        this.hasDropdown,
+        this.isworkFlow,
+        this.refresh,
+        this.isFileScreen,
+        this.statusDropDown,
+        this.excelButton
+        // required this.stateManger
       });
   @override
   State<TableComponent> createState() => _TableComponentState();
@@ -172,7 +175,7 @@ class _TableComponentState extends State<TableComponent> {
       isLoadingMore.value = true;
 
       final List<PlutoRow> nextBatch =
-          isDisplayed.keys.skip(currentOffset).take(batchSize).toList();
+      isDisplayed.keys.skip(currentOffset).take(batchSize).toList();
 
       await Future.delayed(const Duration(milliseconds: 100));
 
@@ -239,16 +242,16 @@ class _TableComponentState extends State<TableComponent> {
 
   Map<String, List<PlutoRow>> rowGroup = {};
   Future<List<PlutoRow>> getColumnAttributesAsync(
-    PlutoColumn column,
-    List<PlutoRow> rows,
-  ) async {
+      PlutoColumn column,
+      List<PlutoRow> rows,
+      ) async {
     return compute(_processAttributes, {'column': column.field, 'rows': rows});
   }
 
   List<PlutoRow> getColumnAttributes(
-    PlutoColumn column,
-    PlutoGridStateManager stateManager,
-  ) {
+      PlutoColumn column,
+      PlutoGridStateManager stateManager,
+      ) {
     final Set<String> uniqueValues = {};
     List<PlutoRow> attributes = [];
 
@@ -292,11 +295,11 @@ class _TableComponentState extends State<TableComponent> {
     // Update "All" option with the count
     isDisplayed.forEach((key, notifier) {
       if (key.cells[column.field]?.value
-              .toString()
-              .startsWith(AppLocalizations.of(context)!.all) ==
+          .toString()
+          .startsWith(AppLocalizations.of(context)!.all) ==
           true) {
         key.cells[column.field]!.value =
-            "${AppLocalizations.of(context)!.all} (${uniqueValues.length})";
+        "${AppLocalizations.of(context)!.all} (${uniqueValues.length})";
       }
     });
 
@@ -318,8 +321,8 @@ class _TableComponentState extends State<TableComponent> {
     if (value == null) return;
 
     if (attribute.cells[column.field]?.value
-            .toString()
-            .contains(AppLocalizations.of(context)!.all) ==
+        .toString()
+        .contains(AppLocalizations.of(context)!.all) ==
         true) {
       // "All" checkbox logic
       isDisplayed.forEach((key, notifier) {
@@ -344,7 +347,7 @@ class _TableComponentState extends State<TableComponent> {
       } else {
         // Remove rows from the filter
         filterRows.removeWhere((row) =>
-            rowGroup[attribute.cells[column.field]?.value]?.contains(row) ??
+        rowGroup[attribute.cells[column.field]?.value]?.contains(row) ??
             false);
       }
 
@@ -352,8 +355,8 @@ class _TableComponentState extends State<TableComponent> {
       if (isDisplayed[attribute]!.value == false) {
         isDisplayed.forEach((key, notifier) {
           if (key.cells[column.field]?.value
-                  .toString()
-                  .contains(AppLocalizations.of(context)!.all) ==
+              .toString()
+              .contains(AppLocalizations.of(context)!.all) ==
               true) {
             notifier.value = false; // Uncheck "All"
           }
@@ -388,9 +391,9 @@ class _TableComponentState extends State<TableComponent> {
         actions: {
           ...PlutoGridShortcut.defaultActions,
           LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyC):
-              CopyWithSnack(context),
+          CopyWithSnack(context),
           LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyC):
-              CopyWithSnack(context),
+          CopyWithSnack(context),
         },
       ),
       localeText: PlutoGridLocaleText(
@@ -414,7 +417,7 @@ class _TableComponentState extends State<TableComponent> {
           filterLessThanOrEqualTo: locale.lessThanOrEqual),
       enableMoveHorizontalInEditing: true,
       enterKeyAction:
-          widget.moveAfterEditng ?? PlutoGridEnterKeyAction.editingAndMoveDown,
+      widget.moveAfterEditng ?? PlutoGridEnterKeyAction.editingAndMoveDown,
       // tabKeyAction: PlutoGridTabKeyAction.normal,
       columnSize: const PlutoGridColumnSizeConfig(
           autoSizeMode: PlutoAutoSizeMode.scale),
@@ -449,25 +452,23 @@ class _TableComponentState extends State<TableComponent> {
         columnHeight: widget.columnHeight ?? 48,
         columnFilterHeight: 30,
 
-        columnTextStyle: TextStyle(
+        columnTextStyle: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: widget.isWhiteText ?? false
-                ? Colors.white
-                : const Color(0xFF0F172A),
+            color: Colors.white,
             letterSpacing: 0.3),
-        rowHeight: widget.rowsHeight ?? 34,
+        rowHeight: widget.rowsHeight ?? 52,
         cellTextStyle: const TextStyle(
           fontSize: 13,
-          color: Color(0xFF111827),
+          color: Colors.white,
         ),
       ),
     );
     configuration.shortcut.actions.addAll({
       LogicalKeySet(LogicalKeyboardKey.arrowUp):
-          const PlutoGridActionMoveCellFocus(PlutoMoveDirection.up),
+      const PlutoGridActionMoveCellFocus(PlutoMoveDirection.up),
       LogicalKeySet(LogicalKeyboardKey.arrowDown):
-          const PlutoGridActionMoveCellFocus(PlutoMoveDirection.down),
+      const PlutoGridActionMoveCellFocus(PlutoMoveDirection.down),
     });
     for (int i = 0; i < polCols.length; i++) {
       polCols[i].backgroundColor = Color(0xff1c5179);
@@ -512,34 +513,34 @@ class _TableComponentState extends State<TableComponent> {
                   ),
                 ),
                 polCols[i].title == "#"
-                    ? SizedBox.shrink()
+                    ? const SizedBox.shrink()
                     : Row(
-                        children: [
-                          const SizedBox(width: 2),
-                          Container(
-                            width: 22,
-                            height: 22,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEFF6FF),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.filter_alt_outlined,
-                                size: 14,
-                                color: primary2,
-                              ),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              onPressed: () {
-                                showColumnAttributesPopup(
-                                    context, polCols[i], stateManager);
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 2),
-                        ],
-                      )
+                  children: [
+                    const SizedBox(width: 2),
+                    Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEFF6FF),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.filter_alt_outlined,
+                          size: 14,
+                          color: primary2,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () {
+                          showColumnAttributesPopup(
+                              context, polCols[i], stateManager);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                  ],
+                )
               ],
             ),
           ),
@@ -547,14 +548,31 @@ class _TableComponentState extends State<TableComponent> {
       );
       polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
       polCols[i].textAlign = PlutoColumnTextAlign.center;
+      polCols[i].renderer = polCols[i].renderer ??
+              (rendererContext) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Align(
+              alignment: Alignment.center,
+              child: SelectableText(
+                rendererContext.cell.value?.toString() ?? '',
+                textAlign: TextAlign.center,
+                maxLines: null,
+                style: const TextStyle(
+                  fontSize: 13,
+                  height: 1.25,
+                  color: Color(0xFF111827),
+                ),
+              ),
+            ),
+          );
     }
     return Column(
       children: [
         widget.noHeader == true
             ? SizedBox.shrink()
             : widget.isFileScreen == true
-                ? headerTableFiles()
-                : headerTable(),
+            ? headerTableFiles()
+            : headerTable(),
         SizedBox(
             height: widget.tableHeigt,
             width: widget.tableWidth,
@@ -617,17 +635,7 @@ class _TableComponentState extends State<TableComponent> {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: const Color(0xFFE2E8F0)),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.inbox_outlined, color: Color(0xFF64748B)),
-                        SizedBox(width: 8),
-                        Text(
-                          "No data available.",
-                          style: TextStyle(color: Color(0xFF64748B)),
-                        ),
-                      ],
-                    ),
+                    child: EmptyWidget(message: locale.error406),
                   ),
                 ),
                 onRowSecondaryTap: (event) {
@@ -656,470 +664,485 @@ class _TableComponentState extends State<TableComponent> {
         children: [
           widget.search != null
               ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (widget.appBarTitleWidget != null) ...[
+                widget.appBarTitleWidget!,
+                const SizedBox(width: 10),
+              ],
+              widget.hasDropdown == true && widget.isworkFlow == true
+                  ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CustomSearchField(
+                    horizontalPadding: 0,
+                    width: width * .28,
+                    label: locale.search,
+                    padding: 7,
+                    inputFormatters: [MyInputFormatter()],
+                    onChanged: (value) {
+                      //If input is white-space
+                      if (value.isNotEmpty &&
+                          value[value.length - 1] == " ") {
+                        widget.search!(value);
+                      }
+
+                      if (value == " " ||
+                          value.trim().isEmpty ||
+                          value.isEmpty) {
+                        widget.search!(value);
+                      } else if (value.isNotEmpty &&
+                          value.length > 1 &&
+                          value[value.length - 1] == " ") {
+                        widget.search!(value);
+                      } else if (value.isEmpty) {
+                        widget.search!(value);
+
+                        // isFirstSpace = true;
+                      } else {
+                        // isFirstSpace = true;
+                      }
+                    },
+                    onSubmitted: ((value) {
+                      widget.search!(value);
+                      // searchItem().then((value) {
+                      //   isSearching = false;
+                      // });
+                    }),
+                    controller: TextEditingController(),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: widget.dropdown!,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: widget.statusDropDown!,
+                  ),
+                ],
+              )
+                  : widget.hasDropdown == true &&
+                  widget.isworkFlow == false
+                  ? Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                 widget.hasDropdown == true && widget.isworkFlow == true
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment:
-                                CrossAxisAlignment.center, 
-                            children: [
-                              CustomSearchField(
-                                horizontalPadding: 0,
-                                width: width * .28,
-                                label: locale.search,
-                                padding: 0, 
-                                inputFormatters: [MyInputFormatter()],
-                                onChanged: (value) {
-                                  if (value.isNotEmpty &&
-                                      value[value.length - 1] == " ") {
-                                    widget.search!(value);
-                                  }
-                                  if (value == " " ||
-                                      value.trim().isEmpty ||
-                                      value.isEmpty) {
-                                    widget.search!(value);
-                                  } else if (value.isNotEmpty &&
-                                      value.length > 1 &&
-                                      value[value.length - 1] == " ") {
-                                    widget.search!(value);
-                                  } else if (value.isEmpty) {
-                                    widget.search!(value);
-                                  }
-                                },
-                                onSubmitted: (value) {
-                                  widget.search!(value);
-                                },
-                                controller: TextEditingController(),
-                              ),
-                              const SizedBox(width: 8),
-                              // ── Wrap dropdown in fixed height SizedBox ──────
-                              SizedBox(
-                                height: 40,
-                                child: widget.dropdown!,
-                              ),
-                              const SizedBox(width: 8),
-                              SizedBox(
-                                height: 40,
-                                child: widget.statusDropDown!,
-                              ),
-                            ],
-                          )
-                        : widget.hasDropdown == true &&
-                                widget.isworkFlow == false
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [widget.dropdown!])
-                            : CustomSearchField(
-                                horizontalPadding: 0,
-                                width: width * .35,
-                                label: locale.search,
-                                padding: 7,
-                                inputFormatters: [MyInputFormatter()],
-                                onChanged: (value) {
-                                  //If input is white-space
-                                  if (value.isNotEmpty &&
-                                      value[value.length - 1] == " ") {
-                                    // isSearching = true;
-                                    // isEnteredSearch = true;
-                                    // isLoadingData.value = true;
-                                    widget.search!(value);
-                                  }
+                  children: [widget.dropdown!])
+                  : CustomSearchField(
+                horizontalPadding: 0,
+                width: width * .35,
+                label: locale.search,
+                padding: 7,
+                inputFormatters: [MyInputFormatter()],
+                onChanged: (value) {
+                  //If input is white-space
+                  if (value.isNotEmpty &&
+                      value[value.length - 1] == " ") {
+                    // isSearching = true;
+                    // isEnteredSearch = true;
+                    // isLoadingData.value = true;
+                    widget.search!(value);
+                  }
 
-                                  /*If searched previously and delete the inputs in the search field will called
+                  /*If searched previously and delete the inputs in the search field will called
                           the search method  but if enter inputs in the search field and delete it without searching for,
                            there is no change in the table occur
                          */
-                                  // if (value.isEmpty && isEnteredSearch) {
-                                  //   isSearching = true;
-                                  //   isEnteredSearch = false;
-                                  //   isLoadingData.value = true;
+                  // if (value.isEmpty && isEnteredSearch) {
+                  //   isSearching = true;
+                  //   isEnteredSearch = false;
+                  //   isLoadingData.value = true;
 
-                                  //   searchItem().then((value) {
-                                  //     isSearching = false;
-                                  //   });
-                                  // }
-                                  // if (value == " " || value.trim().isEmpty) {
-                                  //   isFirstSpace = false;
+                  //   searchItem().then((value) {
+                  //     isSearching = false;
+                  //   });
+                  // }
+                  // if (value == " " || value.trim().isEmpty) {
+                  //   isFirstSpace = false;
 
-                                  //   stateManager!.removeAllRows();
-                                  //   stateManager!.appendRows(rowList);
+                  //   stateManager!.removeAllRows();
+                  //   stateManager!.appendRows(rowList);
 
-                                  //   itemsNumberDisplayed.value = stateManager!.rows.length;
-                                  // }
-                                  if (value == " " ||
-                                      value.trim().isEmpty ||
-                                      value.isEmpty) {
-                                    // if (isFirstSpace) {
-                                    //   isFirstSpace = false;
-                                    //   isSearching = true;
-                                    //   isEnteredSearch = true;
-                                    //   isLoadingData.value = true;
+                  //   itemsNumberDisplayed.value = stateManager!.rows.length;
+                  // }
+                  if (value == " " ||
+                      value.trim().isEmpty ||
+                      value.isEmpty) {
+                    // if (isFirstSpace) {
+                    //   isFirstSpace = false;
+                    //   isSearching = true;
+                    //   isEnteredSearch = true;
+                    //   isLoadingData.value = true;
 
-                                    //   searchItem().then((value) {
-                                    //     isSearching = false;
-                                    //   });
-                                    // }
-                                    widget.search!(value);
-                                  } else if (value.isNotEmpty &&
-                                      value.length > 1 &&
-                                      value[value.length - 1] == " ") {
-                                    widget.search!(value);
+                    //   searchItem().then((value) {
+                    //     isSearching = false;
+                    //   });
+                    // }
+                    widget.search!(value);
+                  } else if (value.isNotEmpty &&
+                      value.length > 1 &&
+                      value[value.length - 1] == " ") {
+                    widget.search!(value);
 
-                                    // if (isFirstSpace) {
-                                    //   final arabicNumbers = [
-                                    //     '٠',
-                                    //     '١',
-                                    //     '٢',
-                                    //     '٣',
-                                    //     '٤',
-                                    //     '٥',
-                                    //     '٦',
-                                    //     '٧',
-                                    //     '٨',
-                                    //     '٩'
-                                    //   ];
-                                    //   if (value.isNotEmpty &&
-                                    //       arabicNumbers.any((numeral) => value.contains(numeral))) {
-                                    //     value = Converters.replaceArabicNumbers(value);
-                                    //     textEditingControllerSearch.value =
-                                    //         textEditingControllerSearch.value.copyWith(
-                                    //       text: value,
-                                    //       selection: TextSelection.collapsed(offset: value.length),
-                                    //       composing: TextRange.empty,
-                                    //     );
-                                    //   }
-                                    //   isFirstSpace = false;
-                                    //   isSearching = true;
-                                    //   isEnteredSearch = true;
-                                    //   isLoadingData.value = true;
+                    // if (isFirstSpace) {
+                    //   final arabicNumbers = [
+                    //     '٠',
+                    //     '١',
+                    //     '٢',
+                    //     '٣',
+                    //     '٤',
+                    //     '٥',
+                    //     '٦',
+                    //     '٧',
+                    //     '٨',
+                    //     '٩'
+                    //   ];
+                    //   if (value.isNotEmpty &&
+                    //       arabicNumbers.any((numeral) => value.contains(numeral))) {
+                    //     value = Converters.replaceArabicNumbers(value);
+                    //     textEditingControllerSearch.value =
+                    //         textEditingControllerSearch.value.copyWith(
+                    //       text: value,
+                    //       selection: TextSelection.collapsed(offset: value.length),
+                    //       composing: TextRange.empty,
+                    //     );
+                    //   }
+                    //   isFirstSpace = false;
+                    //   isSearching = true;
+                    //   isEnteredSearch = true;
+                    //   isLoadingData.value = true;
 
-                                    //   searchItem().then((value) {
-                                    //     isSearching = false;
-                                    //   });
-                                    // }
-                                  } else if (value.isEmpty) {
-                                    widget.search!(value);
+                    //   searchItem().then((value) {
+                    //     isSearching = false;
+                    //   });
+                    // }
+                  } else if (value.isEmpty) {
+                    widget.search!(value);
 
-                                    // isFirstSpace = true;
-                                  } else {
-                                    // isFirstSpace = true;
-                                  }
-                                },
-                                onSubmitted: ((value) {
-                                  // value = Converters.replaceArabicNumbers(value);
-                                  // textEditingControllerSearch.text = value;
-                                  // isSearching = true;
-                                  // isEnteredSearch = true;
-                                  // isLoadingData.value = true;
-                                  widget.search!(value);
-                                  // searchItem().then((value) {
-                                  //   isSearching = false;
-                                  // });
-                                }),
-                                controller: TextEditingController(),
-                              ),
-                    // Text(rowsLength.value.toString()),
-                  ],
-                )
-              : SizedBox.shrink(),
+                    // isFirstSpace = true;
+                  } else {
+                    // isFirstSpace = true;
+                  }
+                },
+                onSubmitted: ((value) {
+                  // value = Converters.replaceArabicNumbers(value);
+                  // textEditingControllerSearch.text = value;
+                  // isSearching = true;
+                  // isEnteredSearch = true;
+                  // isLoadingData.value = true;
+                  widget.search!(value);
+                  // searchItem().then((value) {
+                  //   isSearching = false;
+                  // });
+                }),
+                controller: TextEditingController(),
+              ),
+              // Text(rowsLength.value.toString()),
+            ],
+          )
+              : (widget.appBarTitleWidget ?? SizedBox.shrink()),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               widget.sendEmail != null
                   ? Tooltip(
-                      message: locale.sendViaEmail,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.sendEmail!();
-                          },
-                          icon: const Icon(
-                            Icons.email,
-                            size: 20,
-                          )))
+                  message: locale.sendViaEmail,
+                  child: IconButton(
+                      onPressed: () {
+                        widget.sendEmail!();
+                      },
+                      icon: const Icon(
+                        Icons.email,
+                        size: 20,
+                      )))
                   : SizedBox.shrink(),
               widget.sendWhatspp != null
                   ? Tooltip(
-                      message: locale.sendViaWhatsApp,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.sendWhatspp!();
-                          },
-                          icon: const Icon(
-                            Icons.send_to_mobile,
-                            size: 20,
-                          )),
-                    )
+                message: locale.sendViaWhatsApp,
+                child: IconButton(
+                    onPressed: () {
+                      widget.sendWhatspp!();
+                    },
+                    icon: const Icon(
+                      Icons.send_to_mobile,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.add != null && widget.viewLocation == null
                   ? Tooltip(
-                      message: locale.add,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.add!();
-                          },
-                          icon: const Icon(
-                            Icons.add,
-                            size: 20,
-                          )),
-                    )
+                message: locale.add,
+                child: IconButton(
+                    onPressed: () {
+                      widget.add!();
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      size: 20,
+                    )),
+              )
                   : const SizedBox.shrink(),
               widget.genranlEdit != null
                   ? Tooltip(
-                      message: locale.edit,
-                      child: IconButton(
-                          onPressed: () {
-                            // dealsProvider.clearProvider();
-                            // dealsProvider.clearCampModel();
-                            widget.genranlEdit!();
-                            // dealsProvider.loadedList = rowList;
-                            // dealsProvider.pageNum = pageLis.value;
-                            // // screenProvider.setPage(32);
-                            // tabsProvider.changeActiveWidget(32, locale);
-                          },
-                          icon: const Icon(
-                            Icons.edit,
-                            size: 20,
-                          )),
-                    )
+                message: locale.edit,
+                child: IconButton(
+                    onPressed: () {
+                      // dealsProvider.clearProvider();
+                      // dealsProvider.clearCampModel();
+                      widget.genranlEdit!();
+                      // dealsProvider.loadedList = rowList;
+                      // dealsProvider.pageNum = pageLis.value;
+                      // // screenProvider.setPage(32);
+                      // tabsProvider.changeActiveWidget(32, locale);
+                    },
+                    icon: const Icon(
+                      Icons.edit,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.refresh != null
                   ? Tooltip(
-                      message: locale.refresh,
-                      child: IconButton(
-                          onPressed: () {
-                            // dealsProvider.clearProvider();
-                            // dealsProvider.clearCampModel();
-                            widget.refresh!();
-                            // dealsProvider.loadedList = rowList;
-                            // dealsProvider.pageNum = pageLis.value;
-                            // // screenProvider.setPage(32);
-                            // tabsProvider.changeActiveWidget(32, locale);
-                          },
-                          icon: const Icon(
-                            Icons.refresh,
-                            size: 20,
-                          )),
-                    )
+                message: locale.refresh,
+                child: IconButton(
+                    onPressed: () {
+                      // dealsProvider.clearProvider();
+                      // dealsProvider.clearCampModel();
+                      widget.refresh!();
+                      // dealsProvider.loadedList = rowList;
+                      // dealsProvider.pageNum = pageLis.value;
+                      // // screenProvider.setPage(32);
+                      // tabsProvider.changeActiveWidget(32, locale);
+                    },
+                    icon: const Icon(
+                      Icons.refresh,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.generalDownload != null
                   ? Tooltip(
-                      message: locale.download,
-                      child: IconButton(
-                          onPressed: () {
-                            // dealsProvider.clearProvider();
-                            // dealsProvider.clearCampModel();
-                            widget.generalDownload!();
-                            // dealsProvider.loadedList = rowList;
-                            // dealsProvider.pageNum = pageLis.value;
-                            // // screenProvider.setPage(32);
-                            // tabsProvider.changeActiveWidget(32, locale);
-                          },
-                          icon: const Icon(
-                            Icons.download,
-                            size: 20,
-                          )),
-                    )
+                message: locale.download,
+                child: IconButton(
+                    onPressed: () {
+                      // dealsProvider.clearProvider();
+                      // dealsProvider.clearCampModel();
+                      widget.generalDownload!();
+                      // dealsProvider.loadedList = rowList;
+                      // dealsProvider.pageNum = pageLis.value;
+                      // // screenProvider.setPage(32);
+                      // tabsProvider.changeActiveWidget(32, locale);
+                    },
+                    icon: const Icon(
+                      Icons.download,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.filesList != null
                   ? Tooltip(
-                      message: locale.previewFile,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.filesList!();
-                          },
-                          icon: const Icon(
-                            Icons.file_copy,
-                            color: Colors.green,
-                            size: 20,
-                          )),
-                    )
+                message: locale.previewFile,
+                child: IconButton(
+                    onPressed: () {
+                      widget.filesList!();
+                    },
+                    icon: const Icon(
+                      Icons.file_copy,
+                      color: Colors.green,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.chooseDep != null
                   ? Tooltip(
-                      message: locale.chooseListOfDepartment,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.chooseDep!();
-                            // dealsProvider.clearProvider();
-                            // dealsProvider.clearCampModel();
+                message: locale.chooseListOfDepartment,
+                child: IconButton(
+                    onPressed: () {
+                      widget.chooseDep!();
+                      // dealsProvider.clearProvider();
+                      // dealsProvider.clearCampModel();
 
-                            // dealsProvider.loadedList = rowList;
-                            // dealsProvider.pageNum = pageLis.value;
-                            // // screenProvider.setPage(32);
-                            // tabsProvider.changeActiveWidget(32, locale);
-                          },
-                          icon: const Icon(
-                            Icons.store_mall_directory_outlined,
-                            size: 20,
-                          )),
-                    )
+                      // dealsProvider.loadedList = rowList;
+                      // dealsProvider.pageNum = pageLis.value;
+                      // // screenProvider.setPage(32);
+                      // tabsProvider.changeActiveWidget(32, locale);
+                    },
+                    icon: const Icon(
+                      Icons.store_mall_directory_outlined,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.explor != null
                   ? Tooltip(
-                      message: locale.documentExplorer,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.explor!();
-                            // dealsProvider.clearProvider();
-                            // dealsProvider.clearCampModel();
+                message: locale.documentExplorer,
+                child: IconButton(
+                    onPressed: () {
+                      widget.explor!();
+                      // dealsProvider.clearProvider();
+                      // dealsProvider.clearCampModel();
 
-                            // dealsProvider.loadedList = rowList;
-                            // dealsProvider.pageNum = pageLis.value;
-                            // // screenProvider.setPage(32);
-                            // tabsProvider.changeActiveWidget(32, locale);
-                          },
-                          icon: const Icon(
-                            Icons.travel_explore_sharp,
-                            size: 20,
-                          )),
-                    )
+                      // dealsProvider.loadedList = rowList;
+                      // dealsProvider.pageNum = pageLis.value;
+                      // // screenProvider.setPage(32);
+                      // tabsProvider.changeActiveWidget(32, locale);
+                    },
+                    icon: const Icon(
+                      Icons.travel_explore_sharp,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.copy != null
                   ? Tooltip(
-                      message: locale.copy,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.copy!();
-                            // dealsProvider.clearProvider();
-                            // dealsProvider.clearCampModel();
+                message: locale.copy,
+                child: IconButton(
+                    onPressed: () {
+                      widget.copy!();
+                      // dealsProvider.clearProvider();
+                      // dealsProvider.clearCampModel();
 
-                            // dealsProvider.loadedList = rowList;
-                            // dealsProvider.pageNum = pageLis.value;
-                            // // screenProvider.setPage(32);
-                            // tabsProvider.changeActiveWidget(32, locale);
-                          },
-                          icon: const Icon(
-                            Icons.copy,
-                            size: 20,
-                          )),
-                    )
+                      // dealsProvider.loadedList = rowList;
+                      // dealsProvider.pageNum = pageLis.value;
+                      // // screenProvider.setPage(32);
+                      // tabsProvider.changeActiveWidget(32, locale);
+                    },
+                    icon: const Icon(
+                      Icons.copy,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.view != null
                   ? Tooltip(
-                      message: locale.view,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.view!();
-                            // dealsProvider.clearProvider();
-                            // dealsProvider.clearCampModel();
+                message: locale.view,
+                child: IconButton(
+                    onPressed: () {
+                      widget.view!();
+                      // dealsProvider.clearProvider();
+                      // dealsProvider.clearCampModel();
 
-                            // dealsProvider.loadedList = rowList;
-                            // dealsProvider.pageNum = pageLis.value;
-                            // // screenProvider.setPage(32);
-                            // tabsProvider.changeActiveWidget(32, locale);
-                          },
-                          icon: const Icon(
-                            Icons.remove_red_eye,
-                            size: 20,
-                          )),
-                    )
+                      // dealsProvider.loadedList = rowList;
+                      // dealsProvider.pageNum = pageLis.value;
+                      // // screenProvider.setPage(32);
+                      // tabsProvider.changeActiveWidget(32, locale);
+                    },
+                    icon: const Icon(
+                      Icons.remove_red_eye,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.exportToExcel != null
                   ? Tooltip(
-                      message: locale.exportToExcel,
-                      child: IconButton(
-                          onPressed: () async {
-                            widget.exportToExcel!();
-                          },
-                          icon: const Icon(
-                            Icons.description,
-                            size: 20,
-                          )),
-                    )
+                message: locale.exportToExcel,
+                child: IconButton(
+                    onPressed: () async {
+                      widget.exportToExcel!();
+                    },
+                    icon: const Icon(
+                      Icons.description,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.advanceSearch != null
                   ? Tooltip(
-                      message: locale.advanceSearch,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.advanceSearch!();
-                          },
-                          icon: const Icon(
-                            Icons.search,
-                            size: 20,
-                          )),
-                    )
+                message: locale.advanceSearch,
+                child: IconButton(
+                    onPressed: () {
+                      widget.advanceSearch!();
+                    },
+                    icon: const Icon(
+                      Icons.search,
+                      size: 20,
+                    )),
+              )
                   : SizedBox.shrink(),
               widget.editPassword != null
                   ? Tooltip(
-                      message: locale.editPassword,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.editPassword!();
-                          },
-                          icon: const Icon(
-                            // color: redColor,
-                            Icons.password_outlined,
-                            size: 20,
-                          )),
-                    )
+                message: locale.editPassword,
+                child: IconButton(
+                    onPressed: () {
+                      widget.editPassword!();
+                    },
+                    icon: const Icon(
+                      // color: redColor,
+                      Icons.password_outlined,
+                      size: 20,
+                    )),
+              )
                   : const SizedBox.shrink(),
               widget.delete != null
                   ? Tooltip(
-                      message: locale.delete,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.delete!();
-                          },
-                          icon: Icon(
-                            color: redColor,
-                            Icons.delete,
-                            size: 20,
-                          )),
-                    )
+                message: locale.delete,
+                child: IconButton(
+                    onPressed: () {
+                      widget.delete!();
+                    },
+                    icon: Icon(
+                      color: redColor,
+                      Icons.delete,
+                      size: 20,
+                    )),
+              )
                   : const SizedBox.shrink(),
               widget.upload != null
                   ? Tooltip(
-                      message: locale.uploadFile,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.upload!();
-                          },
-                          icon: const Icon(
-                            // color: redColor,
-                            Icons.upload_rounded,
-                            size: 20,
-                          )),
-                    )
+                message: locale.uploadFile,
+                child: IconButton(
+                    onPressed: () {
+                      widget.upload!();
+                    },
+                    icon: const Icon(
+                      // color: redColor,
+                      Icons.upload_rounded,
+                      size: 20,
+                    )),
+              )
                   : const SizedBox.shrink(),
               widget.addReminder != null
                   ? Tooltip(
-                      message: locale.addReminder,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.addReminder!();
-                          },
-                          icon: const Icon(
-                            Icons.remember_me_sharp,
-                            size: 20,
-                          )),
-                    )
+                message: locale.addReminder,
+                child: IconButton(
+                    onPressed: () {
+                      widget.addReminder!();
+                    },
+                    icon: const Icon(
+                      Icons.remember_me_sharp,
+                      size: 20,
+                    )),
+              )
                   : const SizedBox.shrink(),
               widget.download != null
                   ? Tooltip(
-                      message: locale.download,
-                      child: IconButton(
-                          onPressed: () {
-                            widget.download!();
-                          },
-                          icon: const Icon(
-                            Icons.download,
-                            size: 20,
-                          )),
-                    )
+                message: locale.download,
+                child: IconButton(
+                    onPressed: () {
+                      widget.download!();
+                    },
+                    icon: const Icon(
+                      Icons.download,
+                      size: 20,
+                    )),
+              )
                   : const SizedBox.shrink(),
               widget.viewLocation != null
                   ? IconButton(
-                      onPressed: () {
-                        widget.viewLocation!();
-                      },
-                      icon: const Icon(
-                        Icons.location_on,
-                        size: 20,
-                      ))
+                  onPressed: () {
+                    widget.viewLocation!();
+                  },
+                  icon: const Icon(
+                    Icons.location_on,
+                    size: 20,
+                  ))
                   : const SizedBox.shrink(),
               SizedBox(
                 width: width * .01,
@@ -1142,476 +1165,485 @@ class _TableComponentState extends State<TableComponent> {
             children: [
               widget.search != null
                   ? Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (widget.appBarTitleWidget != null) ...[
+                    widget.appBarTitleWidget!,
+                    const SizedBox(width: 10),
+                  ],
+                  widget.hasDropdown == true && widget.isworkFlow == true
+                      ? Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      CustomSearchField(
+                        horizontalPadding: 0,
+                        width: width * .28,
+                        label: locale.search,
+                        padding: 7,
+                        inputFormatters: [MyInputFormatter()],
+                        onChanged: (value) {
+                          //If input is white-space
+                          if (value.isNotEmpty &&
+                              value[value.length - 1] == " ") {
+                            widget.search!(value);
+                          }
+
+                          if (value == " " ||
+                              value.trim().isEmpty ||
+                              value.isEmpty) {
+                            widget.search!(value);
+                          } else if (value.isNotEmpty &&
+                              value.length > 1 &&
+                              value[value.length - 1] == " ") {
+                            widget.search!(value);
+                          } else if (value.isEmpty) {
+                            widget.search!(value);
+
+                            // isFirstSpace = true;
+                          } else {
+                            // isFirstSpace = true;
+                          }
+                        },
+                        onSubmitted: ((value) {
+                          widget.search!(value);
+                          // searchItem().then((value) {
+                          //   isSearching = false;
+                          // });
+                        }),
+                        controller: TextEditingController(),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: widget.dropdown!,
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: widget.statusDropDown!,
+                      ),
+                    ],
+                  )
+                      : widget.hasDropdown == true &&
+                      widget.isworkFlow == false
+                      ? Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        widget.hasDropdown == true && widget.isworkFlow == true
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomSearchField(
-                                    horizontalPadding: 0,
-                                    width: width * .28,
-                                    label: locale.search,
-                                    padding: 7,
-                                    inputFormatters: [MyInputFormatter()],
-                                    onChanged: (value) {
-                                      //If input is white-space
-                                      if (value.isNotEmpty &&
-                                          value[value.length - 1] == " ") {
-                                        widget.search!(value);
-                                      }
+                      children: [widget.dropdown!])
+                      : CustomSearchField(
+                    horizontalPadding: 0,
+                    width: width * .35,
+                    label: locale.search,
+                    padding: 7,
+                    inputFormatters: [MyInputFormatter()],
+                    onChanged: (value) {
+                      //If input is white-space
+                      if (value.isNotEmpty &&
+                          value[value.length - 1] == " ") {
+                        // isSearching = true;
+                        // isEnteredSearch = true;
+                        // isLoadingData.value = true;
+                        widget.search!(value);
+                      }
 
-                                      if (value == " " ||
-                                          value.trim().isEmpty ||
-                                          value.isEmpty) {
-                                        widget.search!(value);
-                                      } else if (value.isNotEmpty &&
-                                          value.length > 1 &&
-                                          value[value.length - 1] == " ") {
-                                        widget.search!(value);
-                                      } else if (value.isEmpty) {
-                                        widget.search!(value);
-
-                                        // isFirstSpace = true;
-                                      } else {
-                                        // isFirstSpace = true;
-                                      }
-                                    },
-                                    onSubmitted: ((value) {
-                                      widget.search!(value);
-                                      // searchItem().then((value) {
-                                      //   isSearching = false;
-                                      // });
-                                    }),
-                                    controller: TextEditingController(),
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  widget.dropdown!,
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  widget.statusDropDown!,
-                                ],
-                              )
-                            : widget.hasDropdown == true &&
-                                    widget.isworkFlow == false
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [widget.dropdown!])
-                                : CustomSearchField(
-                                    horizontalPadding: 0,
-                                    width: width * .35,
-                                    label: locale.search,
-                                    padding: 7,
-                                    inputFormatters: [MyInputFormatter()],
-                                    onChanged: (value) {
-                                      //If input is white-space
-                                      if (value.isNotEmpty &&
-                                          value[value.length - 1] == " ") {
-                                        // isSearching = true;
-                                        // isEnteredSearch = true;
-                                        // isLoadingData.value = true;
-                                        widget.search!(value);
-                                      }
-
-                                      /*If searched previously and delete the inputs in the search field will called
+                      /*If searched previously and delete the inputs in the search field will called
                               the search method  but if enter inputs in the search field and delete it without searching for,
                                there is no change in the table occur
                              */
-                                      // if (value.isEmpty && isEnteredSearch) {
-                                      //   isSearching = true;
-                                      //   isEnteredSearch = false;
-                                      //   isLoadingData.value = true;
+                      // if (value.isEmpty && isEnteredSearch) {
+                      //   isSearching = true;
+                      //   isEnteredSearch = false;
+                      //   isLoadingData.value = true;
 
-                                      //   searchItem().then((value) {
-                                      //     isSearching = false;
-                                      //   });
-                                      // }
-                                      // if (value == " " || value.trim().isEmpty) {
-                                      //   isFirstSpace = false;
+                      //   searchItem().then((value) {
+                      //     isSearching = false;
+                      //   });
+                      // }
+                      // if (value == " " || value.trim().isEmpty) {
+                      //   isFirstSpace = false;
 
-                                      //   stateManager!.removeAllRows();
-                                      //   stateManager!.appendRows(rowList);
+                      //   stateManager!.removeAllRows();
+                      //   stateManager!.appendRows(rowList);
 
-                                      //   itemsNumberDisplayed.value = stateManager!.rows.length;
-                                      // }
-                                      if (value == " " ||
-                                          value.trim().isEmpty ||
-                                          value.isEmpty) {
-                                        // if (isFirstSpace) {
-                                        //   isFirstSpace = false;
-                                        //   isSearching = true;
-                                        //   isEnteredSearch = true;
-                                        //   isLoadingData.value = true;
+                      //   itemsNumberDisplayed.value = stateManager!.rows.length;
+                      // }
+                      if (value == " " ||
+                          value.trim().isEmpty ||
+                          value.isEmpty) {
+                        // if (isFirstSpace) {
+                        //   isFirstSpace = false;
+                        //   isSearching = true;
+                        //   isEnteredSearch = true;
+                        //   isLoadingData.value = true;
 
-                                        //   searchItem().then((value) {
-                                        //     isSearching = false;
-                                        //   });
-                                        // }
-                                        widget.search!(value);
-                                      } else if (value.isNotEmpty &&
-                                          value.length > 1 &&
-                                          value[value.length - 1] == " ") {
-                                        widget.search!(value);
+                        //   searchItem().then((value) {
+                        //     isSearching = false;
+                        //   });
+                        // }
+                        widget.search!(value);
+                      } else if (value.isNotEmpty &&
+                          value.length > 1 &&
+                          value[value.length - 1] == " ") {
+                        widget.search!(value);
 
-                                        // if (isFirstSpace) {
-                                        //   final arabicNumbers = [
-                                        //     '٠',
-                                        //     '١',
-                                        //     '٢',
-                                        //     '٣',
-                                        //     '٤',
-                                        //     '٥',
-                                        //     '٦',
-                                        //     '٧',
-                                        //     '٨',
-                                        //     '٩'
-                                        //   ];
-                                        //   if (value.isNotEmpty &&
-                                        //       arabicNumbers.any((numeral) => value.contains(numeral))) {
-                                        //     value = Converters.replaceArabicNumbers(value);
-                                        //     textEditingControllerSearch.value =
-                                        //         textEditingControllerSearch.value.copyWith(
-                                        //       text: value,
-                                        //       selection: TextSelection.collapsed(offset: value.length),
-                                        //       composing: TextRange.empty,
-                                        //     );
-                                        //   }
-                                        //   isFirstSpace = false;
-                                        //   isSearching = true;
-                                        //   isEnteredSearch = true;
-                                        //   isLoadingData.value = true;
+                        // if (isFirstSpace) {
+                        //   final arabicNumbers = [
+                        //     '٠',
+                        //     '١',
+                        //     '٢',
+                        //     '٣',
+                        //     '٤',
+                        //     '٥',
+                        //     '٦',
+                        //     '٧',
+                        //     '٨',
+                        //     '٩'
+                        //   ];
+                        //   if (value.isNotEmpty &&
+                        //       arabicNumbers.any((numeral) => value.contains(numeral))) {
+                        //     value = Converters.replaceArabicNumbers(value);
+                        //     textEditingControllerSearch.value =
+                        //         textEditingControllerSearch.value.copyWith(
+                        //       text: value,
+                        //       selection: TextSelection.collapsed(offset: value.length),
+                        //       composing: TextRange.empty,
+                        //     );
+                        //   }
+                        //   isFirstSpace = false;
+                        //   isSearching = true;
+                        //   isEnteredSearch = true;
+                        //   isLoadingData.value = true;
 
-                                        //   searchItem().then((value) {
-                                        //     isSearching = false;
-                                        //   });
-                                        // }
-                                      } else if (value.isEmpty) {
-                                        widget.search!(value);
+                        //   searchItem().then((value) {
+                        //     isSearching = false;
+                        //   });
+                        // }
+                      } else if (value.isEmpty) {
+                        widget.search!(value);
 
-                                        // isFirstSpace = true;
-                                      } else {
-                                        // isFirstSpace = true;
-                                      }
-                                    },
-                                    onSubmitted: ((value) {
-                                      // value = Converters.replaceArabicNumbers(value);
-                                      // textEditingControllerSearch.text = value;
-                                      // isSearching = true;
-                                      // isEnteredSearch = true;
-                                      // isLoadingData.value = true;
-                                      widget.search!(value);
-                                      // searchItem().then((value) {
-                                      //   isSearching = false;
-                                      // });
-                                    }),
-                                    controller: TextEditingController(),
-                                  ),
-                        // Text(rowsLength.value.toString()),
-                      ],
-                    )
+                        // isFirstSpace = true;
+                      } else {
+                        // isFirstSpace = true;
+                      }
+                    },
+                    onSubmitted: ((value) {
+                      // value = Converters.replaceArabicNumbers(value);
+                      // textEditingControllerSearch.text = value;
+                      // isSearching = true;
+                      // isEnteredSearch = true;
+                      // isLoadingData.value = true;
+                      widget.search!(value);
+                      // searchItem().then((value) {
+                      //   isSearching = false;
+                      // });
+                    }),
+                    controller: TextEditingController(),
+                  ),
+                  // Text(rowsLength.value.toString()),
+                ],
+              )
                   : SizedBox.shrink(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   widget.sendEmail != null
                       ? Tooltip(
-                          message: locale.sendViaEmail,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.sendEmail!();
-                              },
-                              icon: const Icon(
-                                Icons.email,
-                                size: 20,
-                              )))
+                      message: locale.sendViaEmail,
+                      child: IconButton(
+                          onPressed: () {
+                            widget.sendEmail!();
+                          },
+                          icon: const Icon(
+                            Icons.email,
+                            size: 20,
+                          )))
                       : SizedBox.shrink(),
                   widget.sendWhatspp != null
                       ? Tooltip(
-                          message: locale.sendViaWhatsApp,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.sendWhatspp!();
-                              },
-                              icon: const Icon(
-                                Icons.send_to_mobile,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.sendViaWhatsApp,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.sendWhatspp!();
+                        },
+                        icon: const Icon(
+                          Icons.send_to_mobile,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.add != null && widget.viewLocation == null
                       ? Tooltip(
-                          message: locale.add,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.add!();
-                              },
-                              icon: const Icon(
-                                Icons.add,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.add,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.add!();
+                        },
+                        icon: const Icon(
+                          Icons.add,
+                          size: 20,
+                        )),
+                  )
                       : const SizedBox.shrink(),
                   widget.genranlEdit != null
                       ? Tooltip(
-                          message: locale.edit,
-                          child: IconButton(
-                              onPressed: () {
-                                // dealsProvider.clearProvider();
-                                // dealsProvider.clearCampModel();
-                                widget.genranlEdit!();
-                                // dealsProvider.loadedList = rowList;
-                                // dealsProvider.pageNum = pageLis.value;
-                                // // screenProvider.setPage(32);
-                                // tabsProvider.changeActiveWidget(32, locale);
-                              },
-                              icon: const Icon(
-                                Icons.edit,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.edit,
+                    child: IconButton(
+                        onPressed: () {
+                          // dealsProvider.clearProvider();
+                          // dealsProvider.clearCampModel();
+                          widget.genranlEdit!();
+                          // dealsProvider.loadedList = rowList;
+                          // dealsProvider.pageNum = pageLis.value;
+                          // // screenProvider.setPage(32);
+                          // tabsProvider.changeActiveWidget(32, locale);
+                        },
+                        icon: const Icon(
+                          Icons.edit,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.refresh != null
                       ? Tooltip(
-                          message: locale.refresh,
-                          child: IconButton(
-                              onPressed: () {
-                                // dealsProvider.clearProvider();
-                                // dealsProvider.clearCampModel();
-                                widget.refresh!();
-                                // dealsProvider.loadedList = rowList;
-                                // dealsProvider.pageNum = pageLis.value;
-                                // // screenProvider.setPage(32);
-                                // tabsProvider.changeActiveWidget(32, locale);
-                              },
-                              icon: const Icon(
-                                Icons.refresh,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.refresh,
+                    child: IconButton(
+                        onPressed: () {
+                          // dealsProvider.clearProvider();
+                          // dealsProvider.clearCampModel();
+                          widget.refresh!();
+                          // dealsProvider.loadedList = rowList;
+                          // dealsProvider.pageNum = pageLis.value;
+                          // // screenProvider.setPage(32);
+                          // tabsProvider.changeActiveWidget(32, locale);
+                        },
+                        icon: const Icon(
+                          Icons.refresh,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.generalDownload != null
                       ? Tooltip(
-                          message: locale.download,
-                          child: IconButton(
-                              onPressed: () {
-                                // dealsProvider.clearProvider();
-                                // dealsProvider.clearCampModel();
-                                widget.generalDownload!();
-                                // dealsProvider.loadedList = rowList;
-                                // dealsProvider.pageNum = pageLis.value;
-                                // // screenProvider.setPage(32);
-                                // tabsProvider.changeActiveWidget(32, locale);
-                              },
-                              icon: const Icon(
-                                Icons.download,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.download,
+                    child: IconButton(
+                        onPressed: () {
+                          // dealsProvider.clearProvider();
+                          // dealsProvider.clearCampModel();
+                          widget.generalDownload!();
+                          // dealsProvider.loadedList = rowList;
+                          // dealsProvider.pageNum = pageLis.value;
+                          // // screenProvider.setPage(32);
+                          // tabsProvider.changeActiveWidget(32, locale);
+                        },
+                        icon: const Icon(
+                          Icons.download,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.filesList != null
                       ? Tooltip(
-                          message: locale.previewFile,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.filesList!();
-                              },
-                              icon: const Icon(
-                                Icons.file_copy,
-                                color: Colors.green,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.previewFile,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.filesList!();
+                        },
+                        icon: const Icon(
+                          Icons.file_copy,
+                          color: Colors.green,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.chooseDep != null
                       ? Tooltip(
-                          message: locale.chooseListOfDepartment,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.chooseDep!();
-                                // dealsProvider.clearProvider();
-                                // dealsProvider.clearCampModel();
+                    message: locale.chooseListOfDepartment,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.chooseDep!();
+                          // dealsProvider.clearProvider();
+                          // dealsProvider.clearCampModel();
 
-                                // dealsProvider.loadedList = rowList;
-                                // dealsProvider.pageNum = pageLis.value;
-                                // // screenProvider.setPage(32);
-                                // tabsProvider.changeActiveWidget(32, locale);
-                              },
-                              icon: const Icon(
-                                Icons.store_mall_directory_outlined,
-                                size: 20,
-                              )),
-                        )
+                          // dealsProvider.loadedList = rowList;
+                          // dealsProvider.pageNum = pageLis.value;
+                          // // screenProvider.setPage(32);
+                          // tabsProvider.changeActiveWidget(32, locale);
+                        },
+                        icon: const Icon(
+                          Icons.store_mall_directory_outlined,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.explor != null
                       ? Tooltip(
-                          message: locale.documentExplorer,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.explor!();
-                                // dealsProvider.clearProvider();
-                                // dealsProvider.clearCampModel();
+                    message: locale.documentExplorer,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.explor!();
+                          // dealsProvider.clearProvider();
+                          // dealsProvider.clearCampModel();
 
-                                // dealsProvider.loadedList = rowList;
-                                // dealsProvider.pageNum = pageLis.value;
-                                // // screenProvider.setPage(32);
-                                // tabsProvider.changeActiveWidget(32, locale);
-                              },
-                              icon: const Icon(
-                                Icons.travel_explore_sharp,
-                                size: 20,
-                              )),
-                        )
+                          // dealsProvider.loadedList = rowList;
+                          // dealsProvider.pageNum = pageLis.value;
+                          // // screenProvider.setPage(32);
+                          // tabsProvider.changeActiveWidget(32, locale);
+                        },
+                        icon: const Icon(
+                          Icons.travel_explore_sharp,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.copy != null
                       ? Tooltip(
-                          message: locale.copy,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.copy!();
-                                // dealsProvider.clearProvider();
-                                // dealsProvider.clearCampModel();
+                    message: locale.copy,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.copy!();
+                          // dealsProvider.clearProvider();
+                          // dealsProvider.clearCampModel();
 
-                                // dealsProvider.loadedList = rowList;
-                                // dealsProvider.pageNum = pageLis.value;
-                                // // screenProvider.setPage(32);
-                                // tabsProvider.changeActiveWidget(32, locale);
-                              },
-                              icon: const Icon(
-                                Icons.copy,
-                                size: 20,
-                              )),
-                        )
+                          // dealsProvider.loadedList = rowList;
+                          // dealsProvider.pageNum = pageLis.value;
+                          // // screenProvider.setPage(32);
+                          // tabsProvider.changeActiveWidget(32, locale);
+                        },
+                        icon: const Icon(
+                          Icons.copy,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.view != null
                       ? Tooltip(
-                          message: locale.view,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.view!();
-                                // dealsProvider.clearProvider();
-                                // dealsProvider.clearCampModel();
+                    message: locale.view,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.view!();
+                          // dealsProvider.clearProvider();
+                          // dealsProvider.clearCampModel();
 
-                                // dealsProvider.loadedList = rowList;
-                                // dealsProvider.pageNum = pageLis.value;
-                                // // screenProvider.setPage(32);
-                                // tabsProvider.changeActiveWidget(32, locale);
-                              },
-                              icon: const Icon(
-                                Icons.remove_red_eye,
-                                size: 20,
-                              )),
-                        )
+                          // dealsProvider.loadedList = rowList;
+                          // dealsProvider.pageNum = pageLis.value;
+                          // // screenProvider.setPage(32);
+                          // tabsProvider.changeActiveWidget(32, locale);
+                        },
+                        icon: const Icon(
+                          Icons.remove_red_eye,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.exportToExcel != null
                       ? Tooltip(
-                          message: locale.exportToExcel,
-                          child: IconButton(
-                              onPressed: () async {
-                                widget.exportToExcel!();
-                              },
-                              icon: const Icon(
-                                Icons.description,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.exportToExcel,
+                    child: IconButton(
+                        onPressed: () async {
+                          widget.exportToExcel!();
+                        },
+                        icon: const Icon(
+                          Icons.description,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.advanceSearch != null
                       ? Tooltip(
-                          message: locale.advanceSearch,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.advanceSearch!();
-                              },
-                              icon: const Icon(
-                                Icons.search,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.advanceSearch,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.advanceSearch!();
+                        },
+                        icon: const Icon(
+                          Icons.search,
+                          size: 20,
+                        )),
+                  )
                       : SizedBox.shrink(),
                   widget.editPassword != null
                       ? Tooltip(
-                          message: locale.editPassword,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.editPassword!();
-                              },
-                              icon: const Icon(
-                                // color: redColor,
-                                Icons.password_outlined,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.editPassword,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.editPassword!();
+                        },
+                        icon: const Icon(
+                          // color: redColor,
+                          Icons.password_outlined,
+                          size: 20,
+                        )),
+                  )
                       : const SizedBox.shrink(),
                   widget.delete != null
                       ? Tooltip(
-                          message: locale.delete,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.delete!();
-                              },
-                              icon: Icon(
-                                color: redColor,
-                                Icons.delete,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.delete,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.delete!();
+                        },
+                        icon: Icon(
+                          color: redColor,
+                          Icons.delete,
+                          size: 20,
+                        )),
+                  )
                       : const SizedBox.shrink(),
                   widget.upload != null
                       ? Tooltip(
-                          message: locale.uploadFile,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.upload!();
-                              },
-                              icon: const Icon(
-                                // color: redColor,
-                                Icons.upload_rounded,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.uploadFile,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.upload!();
+                        },
+                        icon: const Icon(
+                          // color: redColor,
+                          Icons.upload_rounded,
+                          size: 20,
+                        )),
+                  )
                       : const SizedBox.shrink(),
                   widget.addReminder != null
                       ? Tooltip(
-                          message: locale.addReminder,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.addReminder!();
-                              },
-                              icon: const Icon(
-                                Icons.remember_me_sharp,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.addReminder,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.addReminder!();
+                        },
+                        icon: const Icon(
+                          Icons.remember_me_sharp,
+                          size: 20,
+                        )),
+                  )
                       : const SizedBox.shrink(),
                   widget.download != null
                       ? Tooltip(
-                          message: locale.download,
-                          child: IconButton(
-                              onPressed: () {
-                                widget.download!();
-                              },
-                              icon: const Icon(
-                                Icons.download,
-                                size: 20,
-                              )),
-                        )
+                    message: locale.download,
+                    child: IconButton(
+                        onPressed: () {
+                          widget.download!();
+                        },
+                        icon: const Icon(
+                          Icons.download,
+                          size: 20,
+                        )),
+                  )
                       : const SizedBox.shrink(),
                   widget.viewLocation != null
                       ? IconButton(
-                          onPressed: () {
-                            widget.viewLocation!();
-                          },
-                          icon: const Icon(
-                            Icons.location_on,
-                            size: 20,
-                          ))
+                      onPressed: () {
+                        widget.viewLocation!();
+                      },
+                      icon: const Icon(
+                        Icons.location_on,
+                        size: 20,
+                      ))
                       : const SizedBox.shrink(),
                   SizedBox(
                     width: width * .01,
@@ -1660,7 +1692,7 @@ class CopyWithSnack extends PlutoGridShortcutAction {
 
     // Optional: preview only first N chars to keep the snackbar tidy
     final preview =
-        textToCopy.length > 80 ? '${textToCopy.substring(0, 80)}…' : textToCopy;
+    textToCopy.length > 80 ? '${textToCopy.substring(0, 80)}…' : textToCopy;
 
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
@@ -1837,26 +1869,26 @@ class _CustomColumnMenu extends StatelessWidget
         break;
       case _CustomColumnMenuItem.resetFilter:
 
-        // stateManager.removeAllRows();
-        // tabsProvider.changeActiveWidget(pageNumber, name, locale)
-        // cancelFillter();
+      // stateManager.removeAllRows();
+      // tabsProvider.changeActiveWidget(pageNumber, name, locale)
+      // cancelFillter();
 
-        // stateManager.appendRows(rows);
+      // stateManager.appendRows(rows);
         stateManager.notifyListeners(true);
         // stateManager.setFilter(null);
         break;
-      // case _CustomColumnMenuItem.cancelAutoFit:
-      //   for (final col in stateManager.columns) {
-      //     stateManager.autoFitColumn(context, col);
+    // case _CustomColumnMenuItem.cancelAutoFit:
+    //   for (final col in stateManager.columns) {
+    //     stateManager.autoFitColumn(context, col);
 
-      //   }
-      //   stateManager.notifyResizingListeners();
-      //   break;
+    //   }
+    //   stateManager.notifyResizingListeners();
+    //   break;
 
       case null:
         break;
       case _CustomColumnMenuItem.cancelAutoFit:
-        // TODO: Handle this case.
+      // TODO: Handle this case.
         break;
     }
   }
@@ -1877,10 +1909,10 @@ class _CustomColumnMenu extends StatelessWidget
   ValueNotifier selectAll = ValueNotifier(true);
   ValueNotifier loading = ValueNotifier(false);
   void showColumnAttributesPopup(
-    BuildContext context,
-    PlutoColumn column,
-    PlutoGridStateManager stateManager,
-  ) async {
+      BuildContext context,
+      PlutoColumn column,
+      PlutoGridStateManager stateManager,
+      ) async {
     loading.value = true;
     getColumnAttributes(column, stateManager);
     loading.value = false;
@@ -2053,9 +2085,9 @@ class _CustomColumnMenu extends StatelessWidget
   Map<String, List<PlutoRow>> rowGroup = {};
 
   List<PlutoRow> getColumnAttributes(
-    PlutoColumn column,
-    PlutoGridStateManager stateManager,
-  ) {
+      PlutoColumn column,
+      PlutoGridStateManager stateManager,
+      ) {
     final Set<String> uniqueValues = {};
 
     List<PlutoRow> attributes = [];

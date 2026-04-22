@@ -1,14 +1,11 @@
-import 'dart:typed_data';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/steps_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/template_model.dart';
 import 'package:archiving_flutter_project/service/controller/users_controller/user_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
-import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
-import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -16,12 +13,13 @@ import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/work_flow/work_flow_template_body.dart';
 import '../../models/dto/searchs_model/search_model.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
+import '../../widget/dashboard_components/custom_elevated_button.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../app_dialog.dart';
 
 class AddEditTemplateDialog extends StatefulWidget {
-  WorkFlowTemplateBody? workFlowTemplateBody;
-  bool isEditDialog;
+  final WorkFlowTemplateBody? workFlowTemplateBody;
+  final bool isEditDialog;
   AddEditTemplateDialog(
       {super.key, this.workFlowTemplateBody, required this.isEditDialog});
 
@@ -109,6 +107,8 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       );
     }
     return AppDialog(
+      width: isDesktop ? width * 0.68 : width * 0.96,
+      height: isDesktop ? height * 0.86 : height * 0.8,
       // titlePadding: EdgeInsets.all(0),
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       // backgroundColor: Colors.white,
@@ -117,90 +117,39 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
           : _locale.addWorkFlow,
       content: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
+          borderRadius: BorderRadius.circular(12.0),
+          color: const Color(0xFFF8FAFC),
         ),
-        width: isDesktop ? width * 0.43 : width * 0.8,
-        height: isDesktop ? height * 0.65 : height * 0.5,
+        width: isDesktop ? width * 0.68 : width * 0.96,
+        height: isDesktop ? height * 0.82 : height * 0.8,
+        padding: const EdgeInsets.all(12),
         child: formSection(),
       ),
       actions: [
-        isDesktop
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      addTemplateAndSteps();
-                    },
-                    style: customButtonStyle(    context,
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
-                        16,
-                        primary),
-                    child: Text(
-                      _locale.save,
-                      style: const TextStyle(color: whiteColor),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 0.01,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context, false);
-                    },
-                    style: customButtonStyle(    context,
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
-                        16,
-                        redColor),
-                    child: Text(
-                      _locale.cancel,
-                      style: const TextStyle(color: whiteColor),
-                    ),
-                  ),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          addTemplateAndSteps();
-                        },
-                        style: customButtonStyle(    context,
-                            Size(isDesktop ? width * 0.1 : width * 0.4,
-                                height * 0.045),
-                            16,
-                            greenColor),
-                        child: Text(
-                          _locale.save,
-                          style: const TextStyle(color: whiteColor),
-                        ),
-                      ),
-                      SizedBox(height: height * 0.01),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context, false);
-                        },
-                        style: customButtonStyle(    context,
-                            Size(isDesktop ? width * 0.1 : width * 0.4,
-                                height * 0.045),
-                            16,
-                            redColor),
-                        child: Text(
-                          _locale.cancel,
-                          style: const TextStyle(color: whiteColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              )
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomElevatedButton(
+              text: _locale.save,
+              color: primary,
+              icon: Icons.save,
+              width: isDesktop ? width * 0.11 : width * 0.36,
+              height: height * 0.048,
+              fontSize: 15,
+              onPressed: addTemplateAndSteps,
+            ),
+            SizedBox(width: isDesktop ? 8 : 10),
+            CustomElevatedButton(
+              text: _locale.cancel,
+              color: redColor,
+              icon: Icons.close,
+              width: isDesktop ? width * 0.11 : width * 0.36,
+              height: height * 0.048,
+              fontSize: 15,
+              onPressed: () => Navigator.pop(context, false),
+            ),
+          ],
+        )
       ],
     );
   }
@@ -208,63 +157,95 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
   Widget formSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            customTextField(_locale.docName, templateName, isDesktop, 0.18,
-                true, widget.isEditDialog,
-                focusNode: templateNameFocusNode),
-            const SizedBox(
-              width: 5,
-            ),
-            customTextField(_locale.docDesc, templateDescription, isDesktop,
-                0.18, true, widget.isEditDialog),
-          ],
-        ),
-        Row(
-          children: [
-            DropDown(
-              key: UniqueKey(),
-              isMandatory: true,
-              onChanged: (value) {
-                selectedDep = value.txtDeptkey;
-                selctedDepDesc = value.txtDeptName;
-                // setState(() {});
-              },
-              initialValue: selctedDepDesc == "" ? null : selctedDepDesc,
-              bordeText: _locale.department,
-              width: width * 0.18,
-              items: departmetList,
-              height: height * 0.05,
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                addStep();
-              },
-              style: customButtonStyle(    context,
-                  Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.036),
-                  14,
-                  primary),
-              child: Text(
-                _locale.addStep,
-                style: TextStyle(color: whiteColor),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: customTextField(_locale.docName, templateName, isDesktop,
+                    0.18, true, widget.isEditDialog,
+                    focusNode: templateNameFocusNode),
               ),
-            ),
-          ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: customTextField(_locale.docDesc, templateDescription,
+                    isDesktop, 0.18, true, widget.isEditDialog),
+              ),
+            ],
+          ),
         ),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: DropDown(
+                  key: UniqueKey(),
+                  isMandatory: true,
+                  onChanged: (value) {
+                    selectedDep = value.txtDeptkey;
+                    selctedDepDesc = value.txtDeptName;
+                  },
+                  initialValue: selctedDepDesc == "" ? null : selctedDepDesc,
+                  bordeText: _locale.department,
+                  width: width * 0.18,
+                  items: departmetList,
+              height: height * 0.058,
+                ),
+              ),
+              const SizedBox(width: 8),
+              CustomElevatedButton(
+                text: _locale.addStep,
+                color: primary,
+                icon: Icons.add_task,
+                width: isDesktop ? width * 0.12 : width * 0.34,
+                height: height * 0.042,
+                fontSize: 13,
+                onPressed: addStep,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          _locale.stepDescription,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 13,
+            color: Color(0xFF334155),
+          ),
+        ),
+        const SizedBox(height: 6),
         Expanded(
-          child: ReorderableListView.builder(
-            itemCount: steps.length,
-            shrinkWrap: true,
-            onReorder: reorderSteps,
-            itemBuilder: (context, index) {
-              final step = steps[index];
-              return buildStepCard(step, index, Key("$index"));
-            },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: ReorderableListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: steps.length,
+              shrinkWrap: true,
+              onReorder: reorderSteps,
+              itemBuilder: (context, index) {
+                final step = steps[index];
+                return buildStepCard(step, index, Key("$index"));
+              },
+            ),
           ),
         ),
       ],
@@ -281,15 +262,30 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       key: key,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text("${index + 1}.", style: TextStyle(fontSize: 16)), // Step number
+        Container(
+          width: 26,
+          alignment: Alignment.center,
+          child: Text(
+            "${index + 1}.",
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF2563EB),
+            ),
+          ),
+        ),
 
         Expanded(
           child: Card(
-            elevation: 8,
-            shadowColor: Colors.grey.withOpacity(0.5),
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            elevation: 1.2,
+            shadowColor: Colors.black.withOpacity(0.04),
+            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: const BorderSide(color: Color(0xFFE2E8F0)),
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -299,7 +295,7 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         descriptionTextField(descriptionController, step),
-                        const SizedBox(height: 5),
+                        const SizedBox(height: 8),
                         userListDropdown(step, selectedUserCode, isOptional),
                       ],
                     ),
@@ -310,11 +306,8 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: IconButton(
                       onPressed: () {
-                        // Delete step action
                         setState(() {
-                          setState(() {
-                            steps.removeAt(index);
-                          });
+                          steps.removeAt(index);
                         });
                       },
                       icon: const Icon(
@@ -400,20 +393,23 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       StepsModel step, String? selectedUserCode, bool isOptional) {
     return Row(
       children: [
-        DropDown(
-          key: UniqueKey(),
-          isMandatory: true,
-          onChanged: (value) {
-            setState(() {
-              step.txtUsercode = value.txtCode;
-            });
-          },
-          initialValue: selectedUserCode == "" ? null : selectedUserCode,
-          bordeText: _locale.userName,
-          width: width * 0.18,
-          items: userList,
-          height: height * 0.05,
+        Expanded(
+          child: DropDown(
+            key: UniqueKey(),
+            isMandatory: true,
+            onChanged: (value) {
+              setState(() {
+                step.txtUsercode = value.txtCode;
+              });
+            },
+            initialValue: selectedUserCode == "" ? null : selectedUserCode,
+            bordeText: _locale.userName,
+            width: width * 0.18,
+            items: userList,
+            height: height * 0.058,
+          ),
         ),
+        const SizedBox(width: 8),
         Row(
           children: [
             Checkbox(
@@ -438,8 +434,8 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       readOnly: false,
       isReport: true,
       isMandetory: true,
-      width: width * 0.16,
-      height: height * 0.04,
+      width: width * 0.2,
+      height: height * 0.048,
       text: Text(_locale.stepDescription),
       controller: descriptionController,
       onSubmitted: (text) {},
@@ -496,7 +492,7 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       isReport: true,
       isMandetory: isMandetory,
       width: width * width1,
-      height: hint == _locale.notes ? height * 0.1 : height * 0.05,
+      height: hint == _locale.notes ? height * 0.11 : height * 0.058,
       text: Text(hint),
       controller: controller,
       onSubmitted: (text) {},
