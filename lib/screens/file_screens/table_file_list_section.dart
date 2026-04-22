@@ -25,6 +25,7 @@ import '../../dialogs/error_dialgos/show_error_dialog.dart';
 import '../../dialogs/pdf_preview.dart';
 import '../../models/db/document_models/upload_file_mode.dart';
 import '../../utils/func/save_excel_file.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 
 class TableFileListSection extends StatefulWidget {
   const TableFileListSection({super.key});
@@ -143,6 +144,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         // }
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void uploadFile() {
@@ -161,6 +165,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
               documentListProvider.searchDocumentCriteria);
         }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -218,6 +225,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         selectedRow = null;
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   Future<void> download() async {
@@ -238,6 +248,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         // Handle error here
       }
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   viewDocumentInfo() {
@@ -255,6 +268,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       ).then((value) {
         // selectedRow = null;
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -283,6 +299,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         }
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void copyFile() async {
@@ -296,6 +315,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         documentListProvider.setDocumentSearchCriterea(
             documentListProvider.searchDocumentCriteria);
       }
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -319,6 +341,9 @@ class _TableFileListSectionState extends State<TableFileListSection> {
               documentListProvider.searchDocumentCriteria);
         }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 

@@ -77,69 +77,66 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
     return AppDialog(
-      title: Container(
-        width: isDesktop ? width * 0.4 : width * 0.8,
-         height: height * 0.07,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // const SizedBox(),
-            Row(
-              children: [
-                IconButton(
-                    onPressed: () async {
-                      // await Printing.layoutPdf(
-                      //     onLayout: (PdfPageFormat format) async => widget.pdfFile);
-                      saveExcelFile(widget.pdfFile, widget.fileName);
-                    },
-                    icon: const Icon(
-                      Icons.download,
-                      color: Colors.black,
-                      size: 14,
-                    )),
-                widget.fileName.contains('.pdf')
-                    ? Tooltip(
-                        message: _locale.print,
-                        child: IconButton(
-                            onPressed: () async {
-                              await Printing.layoutPdf(
-                                  onLayout: (PdfPageFormat format) async =>
-                                      widget.pdfFile);
-                            },
-                            icon: const Icon(
-                              Icons.print,
-                              color: Colors.black,
-                              size: 14,
-                            )),
-                      )
-                    : SizedBox.shrink(),
-              ],
-            ),
+      width: isDesktop ? width * 0.4 : width * 0.8,
+      height: height * 0.8,
+      title: Row(
+        children: [
+          Text(
+            _locale.previewFile,
+            style: const TextStyle(
+                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          // const SizedBox(),
+          Row(
+            children: [
+              IconButton(
+                  onPressed: () async {
+                    // await Printing.layoutPdf(
+                    //     onLayout: (PdfPageFormat format) async => widget.pdfFile);
+                    saveExcelFile(widget.pdfFile, widget.fileName);
+                  },
+                  icon: const Icon(
+                    Icons.download,
+                    color: Colors.white,
+                    size: 17,
+                  )),
+              widget.fileName.contains('.pdf')
+                  ? Tooltip(
+                      message: _locale.print,
+                      child: IconButton(
+                          onPressed: () async {
+                            await Printing.layoutPdf(
+                                onLayout: (PdfPageFormat format) async =>
+                                    widget.pdfFile);
+                          },
+                          icon: const Icon(
+                            Icons.print,
+                            color: Colors.white,
+                            size: 17,
+                          )),
+                    )
+                  : SizedBox.shrink(),
+            ],
+          ),
 
-            Text(
-              _locale.previewFile,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: const BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: Color.fromARGB(255, 237, 34, 20)),
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.close_rounded,
-                      color: Colors.white,
-                      size: 14,
-                    )),
-              ),
-            ),
-          ],
-        ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Container(
+          //     decoration: const BoxDecoration(
+          //         shape: BoxShape.rectangle,
+          //         color: Color.fromARGB(255, 237, 34, 20)),
+          //     child: IconButton(
+          //         onPressed: () {
+          //           Navigator.pop(context);
+          //         },
+          //         icon: const Icon(
+          //           Icons.close_rounded,
+          //           color: Colors.white,
+          //           size: 14,
+          //         )),
+          //   ),
+          // ),
+        ],
       ),
       // title: Row(
       //   mainAxisAlignment: MainAxisAlignment.center,
@@ -195,7 +192,7 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      height: height * 0.7,
+                      height: height * 0.55,
                       width: width * 0.4, //,
                       child: SfPdfViewer.memory(widget.pdfFile,
                           initialZoomLevel: 1,

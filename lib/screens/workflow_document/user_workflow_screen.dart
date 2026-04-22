@@ -32,6 +32,7 @@ import '../../service/controller/work_flow_controllers/work_flow_template_contro
 import '../../utils/constants/loading.dart';
 import '../../utils/constants/styles.dart';
 import '../../widget/custom_drop_down.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/dashboard_components/custom_elevated_button.dart';
 import '../../widget/dialog_widgets/title_dialog_widget.dart';
 
@@ -163,6 +164,10 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
                                 },
                               );
                             });
+                          }
+                          else {
+                            CustomToastMessage.warning(
+                                context, _locale.pleaseSelectRow);
                           }
                         },
                       ),

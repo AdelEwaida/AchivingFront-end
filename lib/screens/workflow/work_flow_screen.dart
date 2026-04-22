@@ -23,6 +23,7 @@ import '../../service/controller/work_flow_controllers/work_flow_template_contro
 import '../../utils/constants/loading.dart';
 import '../../utils/func/lists.dart';
 import '../../widget/custom_drop_down.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 
 class WorkFlowScreen extends StatefulWidget {
   const WorkFlowScreen({super.key});
@@ -207,6 +208,8 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
           },
         );
       }).then((value) {});
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -249,6 +252,8 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
           refreshTable();
         }
       });
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -290,6 +295,8 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
           }
         }
       });
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 

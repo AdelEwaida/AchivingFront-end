@@ -26,6 +26,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/db/document_models/upload_file_mode.dart';
 import '../../utils/func/save_excel_file.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 
 class ViewTable extends StatefulWidget {
   const ViewTable({super.key});
@@ -162,6 +163,9 @@ class _ViewTableState extends State<ViewTable> {
         // }
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void uploadFile() {
@@ -181,6 +185,9 @@ class _ViewTableState extends State<ViewTable> {
         }
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void addRemider() {
@@ -197,6 +204,9 @@ class _ViewTableState extends State<ViewTable> {
           );
         },
       );
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -218,6 +228,9 @@ class _ViewTableState extends State<ViewTable> {
         // Handle error here
       }
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   viewDocumentInfo() {
@@ -233,6 +246,9 @@ class _ViewTableState extends State<ViewTable> {
           );
         },
       );
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -276,6 +292,9 @@ class _ViewTableState extends State<ViewTable> {
         }
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   Future<void> deleteFile() async {
@@ -303,6 +322,9 @@ class _ViewTableState extends State<ViewTable> {
         }
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void copyFile() async {
@@ -316,6 +338,9 @@ class _ViewTableState extends State<ViewTable> {
         documentListProvider.setDocumentSearchCriterea(
             documentListProvider.searchDocumentCriteria);
       }
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -339,6 +364,9 @@ class _ViewTableState extends State<ViewTable> {
               documentListProvider.searchDocumentCriteria);
         }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 

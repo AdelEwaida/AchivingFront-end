@@ -64,6 +64,7 @@ import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../../utils/func/lists.dart';
 import '../../widget/custom_drop_down_new.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 
 class FileListScreen extends StatefulWidget {
   const FileListScreen({super.key});
@@ -489,6 +490,9 @@ class _FileListScreenState extends State<FileListScreen> {
         //   Navigator.pop(context);
         // }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -1054,6 +1058,9 @@ class _FileListScreenState extends State<FileListScreen> {
         selectedRow = null;
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   Widget fillterSection() {
@@ -1568,6 +1575,9 @@ class _FileListScreenState extends State<FileListScreen> {
         // selectedRow = null;
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   Future<void> deleteFile() async {
@@ -1593,6 +1603,9 @@ class _FileListScreenState extends State<FileListScreen> {
         }
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void copyFile() async {
@@ -1605,6 +1618,9 @@ class _FileListScreenState extends State<FileListScreen> {
         documentListProvider.searchDocumentCriteria.page = 0;
         setState(() {});
       }
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 

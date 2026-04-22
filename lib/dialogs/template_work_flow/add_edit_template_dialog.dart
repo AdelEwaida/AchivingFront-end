@@ -1,4 +1,3 @@
-import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/steps_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/template_model.dart';
@@ -13,6 +12,7 @@ import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/work_flow/work_flow_template_body.dart';
 import '../../models/dto/searchs_model/search_model.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/dashboard_components/custom_elevated_button.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../app_dialog.dart';
@@ -155,44 +155,78 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
   }
 
   Widget formSection() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+    if (!isDesktop) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildGeneralInfoPanel(),
+          const SizedBox(height: 10),
+          Expanded(child: _buildStepsPanel()),
+        ],
+      );
+    }
+
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: customTextField(_locale.docName, templateName, isDesktop,
-                    0.18, true, widget.isEditDialog,
-                    focusNode: templateNameFocusNode),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: customTextField(_locale.docDesc, templateDescription,
-                    isDesktop, 0.18, true, widget.isEditDialog),
-              ),
-            ],
+        // Right section: top/general info and add step action
+        Expanded(
+          flex: 5,
+          child: _buildGeneralInfoPanel(),
+        ),
+
+        const SizedBox(width: 12),
+        // Left section: step description and steps list
+        Expanded(
+          flex: 7,
+          child: _buildStepsPanel(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGeneralInfoPanel() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _locale.addWorkFlow,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 13,
+            color: Color(0xFF334155),
           ),
         ),
-        const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: DropDown(
+        const SizedBox(height: 6),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _locale.pleaseAddAllRequiredFields,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF64748B),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                customTextField(_locale.docName, templateName, isDesktop, 0.18,
+                    true, widget.isEditDialog,
+                    focusNode: templateNameFocusNode),
+                const SizedBox(height: 8),
+                customTextField(_locale.docDesc, templateDescription, isDesktop,
+                    0.18, true, widget.isEditDialog),
+                const SizedBox(height: 8),
+                DropDown(
                   key: UniqueKey(),
                   isMandatory: true,
                   onChanged: (value) {
@@ -203,23 +237,33 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                   bordeText: _locale.department,
                   width: width * 0.18,
                   items: departmetList,
-              height: height * 0.058,
+                  height: height * 0.058,
                 ),
-              ),
-              const SizedBox(width: 8),
-              CustomElevatedButton(
-                text: _locale.addStep,
-                color: primary,
-                icon: Icons.add_task,
-                width: isDesktop ? width * 0.12 : width * 0.34,
-                height: height * 0.042,
-                fontSize: 13,
-                onPressed: addStep,
-              ),
-            ],
+                const Spacer(),
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomElevatedButton(
+                    text: _locale.addStep,
+                    color: primary,
+                    icon: Icons.add_task,
+                    width: double.infinity,
+                    height: height * 0.046,
+                    fontSize: 13,
+                    onPressed: addStep,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 10),
+      ],
+    );
+  }
+
+  Widget _buildStepsPanel() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         Text(
           _locale.stepDescription,
           style: const TextStyle(
@@ -274,7 +318,6 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
             ),
           ),
         ),
-
         Expanded(
           child: Card(
             elevation: 1.2,
@@ -491,7 +534,7 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       readOnly: readOnly,
       isReport: true,
       isMandetory: isMandetory,
-      width: width * width1,
+      width: isDesktop ? double.infinity : width * width1,
       height: hint == _locale.notes ? height * 0.11 : height * 0.058,
       text: Text(hint),
       controller: controller,
@@ -507,38 +550,43 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       StepsModel step = steps[i];
       if (step.txtStepdesc!.trim().isEmpty || step.txtUsercode == null) {
         // Show a dialog with the step number
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-              icon: Icons.error,
-              errorDetails: _locale.error,
-              errorTitle:
-                  "Please fill step number ${step.intStepno} or delete it",
-              color: Colors.red,
-              statusCode: 400,
-            );
-          },
-        );
+        CustomToastMessage.error(
+            context, "Please fill step number ${step.intStepno} or delete it");
+
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return ErrorDialog(
+        //       icon: Icons.error,
+        //       errorDetails: _locale.error,
+        //       errorTitle:
+        //           "Please fill step number ${step.intStepno} or delete it",
+        //       color: Colors.red,
+        //       statusCode: 400,
+        //     );
+        //   },
+        // );
         return;
       }
     }
 
     // Check template fields
+
     if (templateName.text.trim().isEmpty ||
         templateDescription.text.trim().isEmpty ||
         selectedDep.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return ErrorDialog(
-              icon: Icons.error,
-              errorDetails: _locale.error,
-              errorTitle: _locale.pleaseAddAllRequiredFields,
-              color: Colors.red,
-              statusCode: 400);
-        },
-      );
+      CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return ErrorDialog(
+      //         icon: Icons.error,
+      //         errorDetails: _locale.error,
+      //         errorTitle: _locale.pleaseAddAllRequiredFields,
+      //         color: Colors.red,
+      //         statusCode: 400);
+      //   },
+      // );
       return;
     } else if (workFlowTemplateBody != null && widget.isEditDialog == true) {
       editMethod();
@@ -552,17 +600,8 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
           WorkFlowTemplateBody(stepsList: steps, template: templateModel);
       await workFlowTemplateContoller.addTemplate(tempModel).then((value) {
         if (value.statusCode == 200) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialog(
-                  icon: Icons.done_all,
-                  errorDetails: _locale.done,
-                  errorTitle: _locale.addDoneSucess,
-                  color: Colors.green,
-                  statusCode: 200);
-            },
-          ).then((value) {
+          CustomToastMessage.success(context, _locale.addDoneSucess)
+              .then((value) {
             Navigator.pop(context, true);
           });
         }
@@ -574,17 +613,18 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
     if (templateName.text.trim().isEmpty ||
         templateDescription.text.trim().isEmpty ||
         selctedDepDesc.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return ErrorDialog(
-              icon: Icons.error,
-              errorDetails: _locale.error,
-              errorTitle: _locale.pleaseAddAllRequiredFields,
-              color: Colors.red,
-              statusCode: 400);
-        },
-      );
+      CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return ErrorDialog(
+      //         icon: Icons.error,
+      //         errorDetails: _locale.error,
+      //         errorTitle: _locale.pleaseAddAllRequiredFields,
+      //         color: Colors.red,
+      //         statusCode: 400);
+      //   },
+      // );
     } else if (userModel != null && widget.isEditDialog == false) {
       editMethod();
     } else {
@@ -598,19 +638,23 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
           .addTemplate(workFlowTemplateBody)
           .then((value) {
         if (value.statusCode == 200) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialog(
-                  icon: Icons.done_all,
-                  errorDetails: _locale.done,
-                  errorTitle: _locale.addDoneSucess,
-                  color: Colors.green,
-                  statusCode: 200);
-            },
-          ).then((value) {
+          CustomToastMessage.success(context, _locale.addDoneSucess)
+              .then((value) {
             Navigator.pop(context, true);
           });
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return ErrorDialog(
+          //         icon: Icons.done_all,
+          //         errorDetails: _locale.done,
+          //         errorTitle: _locale.addDoneSucess,
+          //         color: Colors.green,
+          //         statusCode: 200);
+          //   },
+          // ).then((value) {
+          //   Navigator.pop(context, true);
+          // });
         }
       });
     }
@@ -628,19 +672,23 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
         .editTemplate(workFlowTemplateBody)
         .then((value) {
       if (value.statusCode == 200) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-                icon: Icons.done_all,
-                errorDetails: _locale.done,
-                errorTitle: _locale.editDoneSucess,
-                color: Colors.green,
-                statusCode: 200);
-          },
-        ).then((value) {
+        CustomToastMessage.success(context, _locale.editDoneSucess)
+            .then((value) {
           Navigator.pop(context, true);
         });
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return ErrorDialog(
+        //         icon: Icons.done_all,
+        //         errorDetails: _locale.done,
+        //         errorTitle: _locale.editDoneSucess,
+        //         color: Colors.green,
+        //         statusCode: 200);
+        //   },
+        // ).then((value) {
+        //   Navigator.pop(context, true);
+        // });
       }
     });
   }

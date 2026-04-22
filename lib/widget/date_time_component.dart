@@ -385,16 +385,14 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
             inputFormatters: [mask],
             textAlign: TextAlign.center,
             decoration: InputDecoration(
-              filled: true,
-              fillColor: widget.readOnly == true
-                  ? const Color(0xFFE2E8F0)
-                  : const Color(0xFFF8FAFC),
+              filled: false,
+              fillColor: Colors.transparent,
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-                borderSide: BorderSide.none,
-              ),
+                  const EdgeInsets.symmetric(horizontal: 2, vertical: 11),
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
               hintText: hint,
               hintStyle: const TextStyle(
                 color: Color(0xFF94A3B8),

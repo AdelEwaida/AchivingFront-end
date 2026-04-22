@@ -19,6 +19,7 @@ import '../../service/controller/work_flow_controllers/work_flow_template_contro
 import '../../utils/constants/loading.dart';
 import '../../utils/func/lists.dart';
 import '../../widget/custom_drop_down.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 
 class WorkFlowDocumentScreen extends StatefulWidget {
   const WorkFlowDocumentScreen({super.key});
@@ -50,7 +51,7 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
   String selectedDep = "";
   String selctedDepDesc = "";
   List<DepartmentUserModel> departmetList = [];
-  int selectedStatus = -2;
+  int selectedStatus = 0;
 // Add these as state fields at the top of _WorkFlowDocumentScreenState
   final Key _statusDropdownKey = const ValueKey('status_dropdown');
   final Key _departmentDropdownKey = const ValueKey('department_dropdown');
@@ -186,9 +187,10 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
         search();
         setState(() {});
       },
-      initialValue: selectedStatus == -2
-          ? ListConstants.getStatusNameWorkFlowDoc(0, _locale)
-          : ListConstants.getStatusNameWorkFlowDoc(selectedStatus, _locale),
+      initialValue: ListConstants.getStatusNameWorkFlowDoc(
+        selectedStatus,
+        _locale,
+      ),
       bordeText: _locale.searchByStatus,
       width: width * 0.15,
       items: ListConstants.getStatusWorkFlowAllOption(_locale),
@@ -213,6 +215,8 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
           },
         );
       }).then((value) {});
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -279,6 +283,8 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
           }
         }
       });
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
+import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:archiving_flutter_project/widget/date_time_component.dart';
 import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
@@ -102,20 +103,14 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
     return AppDialog(
-      width: isDesktop ? width * 0.5 : width * 0.8,
-      height: height * 0.8,
+      width: isDesktop ? width * 0.47 : width * 0.8,
+      height: height * 0.6,
       // titlePadding: EdgeInsets.all(0),
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       // backgroundColor: Theme.of(context).dialogBackgroundColor,
-      title: widget.isEdit
-            ? _locale.editDocumentDetails
-            : _locale.documentDetails,
-      content: Container(
-        color: Theme.of(context).dialogBackgroundColor,
-        width: width * 0.50,
-        height: height * 0.45,
-        child: formSection(),
-      ),
+      title:
+          widget.isEdit ? _locale.editDocumentDetails : _locale.documentDetails,
+      content: formSection(),
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -125,52 +120,79 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              updateDocument();
-                            },
-                            style: customButtonStyle(    context,
-                                Size(isDesktop ? width * 0.1 : width * 0.4,
-                                    height * 0.045),
-                                14,
-                                primary),
-                            child: Text(
-                              _locale.save,
-                              style: const TextStyle(color: whiteColor),
-                            ),
-                          ),
+                          CustomElevatedButton(
+                              text: _locale.save,
+                              color: primary,
+                              width: isDesktop ? width * 0.1 : width * 0.4,
+                              height: height * 0.045,
+                              onPressed: () {
+                                updateDocument();
+                              }),
+                          // ElevatedButton(
+                          //   onPressed: () {
+                          //     updateDocument();
+                          //   },
+                          //   style: customButtonStyle(
+                          //       context,
+                          //       Size(isDesktop ? width * 0.1 : width * 0.4,
+                          //           height * 0.045),
+                          //       14,
+                          //       primary),
+                          //   child: Text(
+                          //     _locale.save,
+                          //     style: const TextStyle(color: whiteColor),
+                          //   ),
+                          // ),
                           spaceWidth(0.01),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context, false);
-                            },
-                            style: customButtonStyle(    context,
-                                Size(isDesktop ? width * 0.1 : width * 0.4,
-                                    height * 0.045),
-                                14,
-                                redColor),
-                            child: Text(
-                              _locale.cancel,
-                              style: const TextStyle(color: whiteColor),
-                            ),
-                          ),
+                          CustomElevatedButton(
+                              text: _locale.cancel,
+                              color: redColor,
+                              width: isDesktop ? width * 0.1 : width * 0.4,
+                              height: height * 0.045,
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              }),
+                          // ElevatedButton(
+                          //   onPressed: () {
+                          //     Navigator.pop(context, false);
+                          //   },
+                          //   style: customButtonStyle(
+                          //       context,
+                          //       Size(isDesktop ? width * 0.1 : width * 0.4,
+                          //           height * 0.045),
+                          //       14,
+                          //       redColor),
+                          //   child: Text(
+                          //     _locale.cancel,
+                          //     style: const TextStyle(color: whiteColor),
+                          //   ),
+                          // ),
                         ],
                       )
                     : Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context, false);
-                          },
-                          style: customButtonStyle(    context,
-                              Size(isDesktop ? width * 0.1 : width * 0.4,
-                                  height * 0.045),
-                              14,
-                              redColor),
-                          child: Text(
-                            _locale.cancel,
-                            style: const TextStyle(color: whiteColor),
-                          ),
-                        ),
+                        child: CustomElevatedButton(
+                            text: _locale.cancel,
+                            color: redColor,
+                            width: isDesktop ? width * 0.1 : width * 0.4,
+                            height: height * 0.045,
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                            }),
+                        // child: ElevatedButton(
+                        //   onPressed: () {
+                        //     Navigator.pop(context, false);
+                        //   },
+                        //   style: customButtonStyle(
+                        //       context,
+                        //       Size(isDesktop ? width * 0.1 : width * 0.4,
+                        //           height * 0.045),
+                        //       14,
+                        //       redColor),
+                        //   child: Text(
+                        //     _locale.cancel,
+                        //     style: const TextStyle(color: whiteColor),
+                        //   ),
+                        // ),
                       )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -178,33 +200,49 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                     children: [
                       Column(
                         children: [
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: customButtonStyle(    context,
-                                Size(isDesktop ? width * 0.1 : width * 0.4,
-                                    height * 0.045),
-                                14,
-                                primary),
-                            child: Text(
-                              _locale.save,
-                              style: const TextStyle(color: whiteColor),
-                            ),
-                          ),
+                          CustomElevatedButton(
+                              text: _locale.save,
+                              color: primary,
+                              width: isDesktop ? width * 0.1 : width * 0.4,
+                              height: height * 0.045,
+                              onPressed: () {}),
+                          // ElevatedButton(
+                          //   onPressed: () {},
+                          //   style: customButtonStyle(
+                          //       context,
+                          //       Size(isDesktop ? width * 0.1 : width * 0.4,
+                          //           height * 0.045),
+                          //       14,
+                          //       primary),
+                          //   child: Text(
+                          //     _locale.save,
+                          //     style: const TextStyle(color: whiteColor),
+                          //   ),
+                          // ),
                           SizedBox(height: height * 0.01),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context, false);
-                            },
-                            style: customButtonStyle(    context,
-                                Size(isDesktop ? width * 0.1 : width * 0.4,
-                                    height * 0.045),
-                                14,
-                                redColor),
-                            child: Text(
-                              _locale.cancel,
-                              style: const TextStyle(color: whiteColor),
-                            ),
-                          ),
+                          CustomElevatedButton(
+                              text: _locale.cancel,
+                              color: redColor,
+                              width: isDesktop ? width * 0.1 : width * 0.4,
+                              height: height * 0.045,
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              }),
+                          // ElevatedButton(
+                          //   onPressed: () {
+                          //     Navigator.pop(context, false);
+                          //   },
+                          //   style: customButtonStyle(
+                          //       context,
+                          //       Size(isDesktop ? width * 0.1 : width * 0.4,
+                          //           height * 0.045),
+                          //       14,
+                          //       redColor),
+                          //   child: Text(
+                          //     _locale.cancel,
+                          //     style: const TextStyle(color: whiteColor),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ],
@@ -258,7 +296,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               // },
               readOnly: !widget.isEdit,
               height: height * 0.05,
-              dateWidth: width * 0.135,
+              dateWidth: width * 0.144,
               dateControllerToCompareWith: null,
             ),
 
@@ -274,7 +312,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
                 }
               },
               height: height * 0.05,
-              dateWidth: width * 0.135,
+              dateWidth: width * 0.144,
               dateControllerToCompareWith: null,
               isInitiaDate: false,
               timeControllerToCompareWith: null,

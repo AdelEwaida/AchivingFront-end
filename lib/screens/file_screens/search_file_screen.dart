@@ -16,11 +16,14 @@ import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/utils/func/save_excel_file.dart';
+import 'package:archiving_flutter_project/widget/dashboard_components/app_bar_title.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+
+import '../../widget/custom_flutter_toast_message.dart';
 
 class SearchFileScreen extends StatefulWidget {
   const SearchFileScreen({super.key});
@@ -93,58 +96,51 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-   
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-                width: isDesktop ? width * 0.8 : width * 0.9,
-                // height: height * 0.5,
-                // decoration: BoxDecoration(
-                //   color: Colors.white,
-                //   borderRadius: BorderRadius.circular(30),
-                //   boxShadow: [
-                //     BoxShadow(
-                //       color: Colors.black.withOpacity(0.2),
-                //       spreadRadius: 1,
-                //       blurRadius: 5,
-                //     ),
-                //   ],
-                // ),
-                child: TableComponent(
-                  // key: UniqueKey(),
-                  tableHeigt: height * 0.75,
-                  tableWidth: width * 0.85,
-
-                  download: download,
-                  plCols: polCols,
-                  mode: PlutoGridMode.selectWithOneTap,
-                  polRows: [],
-                  footerBuilder: (stateManager) {
-                    return lazyLoadingfooter(stateManager);
-                  },
-                  search: search,
-                  // explor: explorFiels,
-                  view: viewDocumentInfo,
-                  // genranlEdit: editDocumentInfo,
-                  onLoaded: (PlutoGridOnLoadedEvent event) {
-                    stateManager = event.stateManager;
-                    stateManager!.setShowColumnFilter(true);
-                    // pageLis.value = pageLis.value > 1 ? 0 : 1;
-                    // totalActionsCount.value = 0;
-                    getCount();
-                  },
-                  doubleTab: (event) async {
-                    PlutoRow? tappedRow = event.row;
-                  },
-                  onSelected: (event) async {
-                    PlutoRow? tappedRow = event.row;
-                    selectedRow = tappedRow;
-                  },
-                )),
-            Container(
-              width: isDesktop ? width * 0.8 : width * 0.9,
-              child: Padding(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            children: [
+              TableComponent(
+                // key: UniqueKey(),
+                // tableHeigt: height * 0.75,
+                // tableWidth: width * 0.9,
+                tableHeigt: height * 0.75,
+                tableWidth: width * 1,
+                appBarTitleWidget: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: AppBarTitle(
+                    title: _locale.searchByContnet,
+                    icon: Icons.search,
+                  ),
+                ),
+                download: download,
+                plCols: polCols,
+                mode: PlutoGridMode.selectWithOneTap,
+                polRows: [],
+                footerBuilder: (stateManager) {
+                  return lazyLoadingfooter(stateManager);
+                },
+                search: search,
+                // explor: explorFiels,
+                view: viewDocumentInfo,
+                // genranlEdit: editDocumentInfo,
+                onLoaded: (PlutoGridOnLoadedEvent event) {
+                  stateManager = event.stateManager;
+                  stateManager!.setShowColumnFilter(true);
+                  // pageLis.value = pageLis.value > 1 ? 0 : 1;
+                  // totalActionsCount.value = 0;
+                  getCount();
+                },
+                doubleTab: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                },
+                onSelected: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                  selectedRow = tappedRow;
+                },
+              ),
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -165,8 +161,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -189,6 +185,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         print("Error downloading file: $e");
         // Handle error here
       }
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -208,6 +206,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
           },
         );
       });
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -221,6 +221,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
           return AddFileDialog(documentModel: documentModel);
         },
       );
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -238,6 +240,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
           );
         },
       );
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -254,11 +258,16 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
           );
         },
       );
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
   void deleteFile() {
-    if (selectedRow != null) {}
+    if (selectedRow != null) {
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void copyFile() async {
@@ -271,6 +280,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         documentListProvider.setDocumentSearchCriterea(
             documentListProvider.searchDocumentCriteria);
       }
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -292,6 +303,8 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
               documentListProvider.searchDocumentCriteria);
         }
       });
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 

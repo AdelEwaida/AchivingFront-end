@@ -254,6 +254,7 @@
   "welcomeBack": "مرحباً بعودتك",
   "signInToContinue": "سجّل دخولك للمتابعة",
   "nodataSelected": "لا توجد بيانات للفترة المحددة",
+  "pleaseSelectRow": "يرجى اختيار صف واحد على الأقل",
   "filesPackedIntoZip": "{count, plural, =0 {لم يتم تجميع أي ملفات.} one {تم تجميع ملف واحد داخل {zipName}.} other {تم تجميع {count} ملفًا داخل {zipName}.}}",
   "@filesPackedIntoZip": {
     "placeholders": {

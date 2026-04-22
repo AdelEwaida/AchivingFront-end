@@ -20,6 +20,7 @@ import '../../dialogs/users_dialogs/edit_user_cat_dialog.dart';
 import '../../models/db/user_models/user_category.dart';
 import '../../service/controller/actions_controllers/action_controller.dart';
 import '../../service/controller/users_controller/user_controller.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 
 class UserCategoryScreen extends StatefulWidget {
   const UserCategoryScreen({super.key});
@@ -269,6 +270,9 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
           });
         }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 

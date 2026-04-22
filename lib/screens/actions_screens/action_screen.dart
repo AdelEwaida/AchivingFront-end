@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../dialogs/actions_dialogs/add_edit_action_dialog.dart';
 import '../../dialogs/error_dialgos/confirm_dialog.dart';
 import '../../models/db/actions_models/action_model.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/dashboard_components/app_bar_title.dart';
 
 class ActionScreen extends StatefulWidget {
@@ -336,6 +337,9 @@ class _OfficeScreenState extends State<ActionScreen> {
         }
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void reloadData() {
@@ -371,6 +375,9 @@ class _OfficeScreenState extends State<ActionScreen> {
           reloadData();
         }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 }

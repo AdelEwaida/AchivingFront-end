@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../app_dialog.dart';
 
@@ -102,7 +103,6 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
                       onPressed: () {
                         Navigator.pop(context, false);
                       })
-
                 ],
               )
             : Row(
@@ -239,17 +239,8 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
       await departmentController.addDep(departmentModel).then((value) {
         print("statusCode ${value.statusCode}");
         if (value.statusCode == 200) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialog(
-                  icon: Icons.done_all,
-                  errorDetails: _locale.done,
-                  errorTitle: _locale.addDoneSucess,
-                  color: Colors.green,
-                  statusCode: 200);
-            },
-          ).then((value) {
+          CustomToastMessage.success(context, _locale.addDoneSucess)
+              .then((value) {
             Navigator.pop(context, true);
           });
         }
@@ -266,19 +257,23 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
         txtShortcode: codeController.text);
     await departmentController.updateDep(departmentModel).then((value) {
       if (value.statusCode == 200) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-                icon: Icons.done_all,
-                errorDetails: _locale.done,
-                errorTitle: _locale.editDoneSucess,
-                color: Colors.green,
-                statusCode: 200);
-          },
-        ).then((value) {
+        CustomToastMessage.success(context, _locale.editDoneSucess)
+            .then((value) {
           Navigator.pop(context, true);
         });
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return ErrorDialog(
+        //         icon: Icons.done_all,
+        //         errorDetails: _locale.done,
+        //         errorTitle: _locale.editDoneSucess,
+        //         color: Colors.green,
+        //         statusCode: 200);
+        //   },
+        // ).then((value) {
+        //   Navigator.pop(context, true);
+        // });
       }
     });
   }

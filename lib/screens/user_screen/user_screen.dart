@@ -23,6 +23,8 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../../widget/custom_flutter_toast_message.dart';
+
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
 
@@ -205,6 +207,9 @@ class _UserScreenState extends State<UserScreen> {
         selectedRow = null;
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void editUser() {
@@ -224,6 +229,9 @@ class _UserScreenState extends State<UserScreen> {
           refreshTable();
         }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -248,6 +256,9 @@ class _UserScreenState extends State<UserScreen> {
           refreshTable();
         }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -291,6 +302,9 @@ class _UserScreenState extends State<UserScreen> {
           }
         }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 

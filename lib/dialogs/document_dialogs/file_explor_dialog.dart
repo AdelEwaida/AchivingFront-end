@@ -1,32 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:html' as html; // Web specific
-
 import 'package:archiving_flutter_project/dialogs/document_dialogs/send_email_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/whats_app_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
-import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
-import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/utils/func/save_excel_file.dart';
-import 'package:archiving_flutter_project/widget/date_time_component.dart';
-import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
-import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:printing/printing.dart';
 
+import '../../widget/custom_flutter_toast_message.dart';
 import '../app_dialog.dart';
 
 class FileExplorDialog extends StatefulWidget {
@@ -61,17 +53,13 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
     return AppDialog(
-      height: height * 0.8,
-      width: isDesktop ? width * 0.64 : width * 0.9,
+      height: height * 0.89,
+      width: isDesktop ? width * 0.63 : width * 0.9,
       // titlePadding: EdgeInsets.all(0),
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       // backgroundColor: dBackground,
       title: _locale.documents,
-      content: Container(
-        width: width * 0.68,
-        height: height * 0.5,
-        child: formSection(),
-      ),
+      content: formSection(),
       actions: [],
     );
   }
@@ -84,8 +72,8 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         Row(
           children: [
             TableComponent(
-              tableWidth: width * 0.61,
-              tableHeigt: height * 0.4,
+              tableWidth: width * 0.6,
+              tableHeigt: height * 0.66,
               rowsHeight: 50,
               sendEmail: widget.isWorkFlowScreen == true ? null : sendEmail,
               delete: widget.isWorkFlowScreen == true ? null : deleteFile,
@@ -150,6 +138,8 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
           }
         }
       });
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -163,6 +153,8 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
           );
         },
       );
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -223,6 +215,8 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
       // Uint8List uint8List = Uint8List.fromList(stringBytes);
       saveExcelFile(bytes, selectedRow!.cells['txtFilename']!.value);
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -260,6 +254,8 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
               base64String: selectedRow!.cells['imgBlob']!.value);
         },
       );
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
@@ -291,6 +287,8 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
           },
         );
       }
+    } else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 

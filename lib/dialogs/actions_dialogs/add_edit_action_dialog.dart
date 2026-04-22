@@ -19,6 +19,7 @@ import 'package:intl/intl.dart';
 
 import '../../utils/constants/sorted_by_constant.dart';
 import '../../widget/custom_drop_down.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/date_time_component.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
@@ -362,19 +363,23 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       );
       await actionController.addAction(actionModel).then((value) {
         if (value.statusCode == 200) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialog(
-                  icon: Icons.done_all,
-                  errorDetails: _locale.done,
-                  errorTitle: _locale.addDoneSucess,
-                  color: Colors.green,
-                  statusCode: 200);
-            },
-          ).then((value) {
+          CustomToastMessage.success(context, _locale.addDoneSucess)
+              .then((value) {
             Navigator.pop(context, true);
           });
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return ErrorDialog(
+          //         icon: Icons.done_all,
+          //         errorDetails: _locale.done,
+          //         errorTitle: _locale.addDoneSucess,
+          //         color: Colors.green,
+          //         statusCode: 200);
+          //   },
+          // ).then((value) {
+          //   Navigator.pop(context, true);
+          // });
         }
       });
     } else {
@@ -387,19 +392,23 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
       );
       await actionController.addAction(actionModel).then((value) {
         if (value.statusCode == 200) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ErrorDialog(
-                  icon: Icons.done_all,
-                  errorDetails: _locale.done,
-                  errorTitle: _locale.addDoneSucess,
-                  color: Colors.green,
-                  statusCode: 200);
-            },
-          ).then((value) {
+          CustomToastMessage.success(context, _locale.addDoneSucess)
+              .then((value) {
             Navigator.pop(context, true);
           });
+          // showDialog(
+          //   context: context,
+          //   builder: (context) {
+          //     return ErrorDialog(
+          //         icon: Icons.done_all,
+          //         errorDetails: _locale.done,
+          //         errorTitle: _locale.addDoneSucess,
+          //         color: Colors.green,
+          //         statusCode: 200);
+          //   },
+          // ).then((value) {
+          //   Navigator.pop(context, true);
+          // });
         }
       });
     }
@@ -414,19 +423,23 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
         txtNotes: notesController.text);
     await actionController.updateAction(actionModel).then((value) {
       if (value.statusCode == 200) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-                icon: Icons.done_all,
-                errorDetails: _locale.done,
-                errorTitle: _locale.editDoneSucess,
-                color: Colors.green,
-                statusCode: 200);
-          },
-        ).then((value) {
+        CustomToastMessage.success(context, _locale.editDoneSucess)
+            .then((value) {
           Navigator.pop(context, true);
         });
+        // showDialog(
+        //   context: context,
+        //   builder: (context) {
+        //     return ErrorDialog(
+        //         icon: Icons.done_all,
+        //         errorDetails: _locale.done,
+        //         errorTitle: _locale.editDoneSucess,
+        //         color: Colors.green,
+        //         statusCode: 200);
+        //   },
+        // ).then((value) {
+        //   Navigator.pop(context, true);
+        // });
       }
     });
   }

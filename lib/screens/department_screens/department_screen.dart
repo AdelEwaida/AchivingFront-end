@@ -17,6 +17,8 @@ import 'dart:html' as html;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../../widget/custom_flutter_toast_message.dart';
+
 class DepartemntScreen extends StatefulWidget {
   const DepartemntScreen({super.key});
 
@@ -281,6 +283,9 @@ class _OfficeScreenState extends State<DepartemntScreen> {
         }
       });
     }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+    }
   }
 
   void editDep() {
@@ -299,6 +304,9 @@ class _OfficeScreenState extends State<DepartemntScreen> {
           reloadData();
         }
       });
+    }
+    else {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
