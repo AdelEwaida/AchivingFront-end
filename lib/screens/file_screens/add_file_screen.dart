@@ -29,10 +29,19 @@ import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../../utils/func/converters.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/custom_drop_down.dart';
-import '../../widget/custom_drop_down2.dart';
+import '../../widget/dashboard_components/custom_elevated_button.dart';
 import '../../widget/date_time_component.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
+
+// ── Design tokens ─────────────────────────────────────────────────
+const Color _primary = Color(0xFF185FA5);
+const Color _accent = Color(0xFF0D9B8A);
+const Color _bgPage = Color(0xFFF0F4F8);
+const Color _cardBg = Colors.white;
+const Color _border = Color(0xFFDDE3EE);
+const Color _textPrimary = Color(0xFF1A2340);
+const Color _textSecondary = Color(0xFF8A94A6);
 
 class AddFileScreen extends StatefulWidget {
   const AddFileScreen({super.key});
@@ -48,7 +57,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController issueNoController = TextEditingController();
   TextEditingController arrivalDateController = TextEditingController();
-
   TextEditingController keyWordsController = TextEditingController();
   TextEditingController ref1Controller = TextEditingController();
   TextEditingController ref2Controller = TextEditingController();
@@ -61,19 +69,10 @@ class _AddFileScreenState extends State<AddFileScreen> {
   bool isDesktop = false;
   UserController userController = UserController();
   DocumentsController documentsController = DocumentsController();
-  // ValueNotifier isFileLoading = ValueNotifier(false);
   bool isFileLoading = false;
-// في State
-  Future<List<String>>? _scannersFuture;
-  List<String> scannersCache = [];
-  bool _errorShown = false;
-  String? _scanStatusText;
   String? txtFilename;
   String? imgBlob;
   int? dblFilesize;
-  Uint8List? image;
-  List<String> scanners = [];
-
   String selectedCat = "";
   String selectedCatDesc = "";
   bool saving = false;
@@ -90,6 +89,12 @@ class _AddFileScreenState extends State<AddFileScreen> {
   String active = "0";
   late AppLocalizations _locale;
   FocusNode issueNameFocusNode = FocusNode();
+  String? _scanStatusText;
+  List<String> filesName = [];
+  List<String> filesBlobs = [];
+  List<dynamic> _cachedScanners = [];
+  bool _loadedScanners = false;
+  int scannerIndex = 0;
 
   @override
   void initState() {
@@ -102,7 +107,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
-
     documentListProvider = context.read<DocumentListProvider>();
     fileDateController = TextEditingController(
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
@@ -110,16 +114,13 @@ class _AddFileScreenState extends State<AddFileScreen> {
         text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
     catList = await DocumentsController().getDocCategoryList();
     userName = await storage.read(key: "userName");
-
     departmetList = await UserController().getDepartmentSelectedUser(userName!);
-
     setState(() {});
     if (documentListProvider.description != null) {
       descriptionController.text = documentListProvider.description ?? "";
     }
     if (documentListProvider.issueNumber != null) {
       issueNoController.text = documentListProvider.issueNumber ?? "";
-      DepartmentUserModel? departmentUserModel;
       var departmentUserModelResonse =
           await UserController().getDepartmentSelectedUser(userName!);
       for (int i = 0; i < departmentUserModelResonse.length; i++) {
@@ -131,7 +132,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
             selectedCatDesc = catList[0].txtDescription!;
             setState(() {});
           }
-          // setState(() {});
         }
       }
     }
@@ -143,7 +143,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
   void dispose() {
     documentListProvider.setDescription(null);
     documentListProvider.setIssueNumber(null);
-
     super.dispose();
   }
 
@@ -152,319 +151,247 @@ class _AddFileScreenState extends State<AddFileScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
+
     return Scaffold(
-    
-      //https://arch2.asdnova.com:7002//users/getScanners
+      backgroundColor: _bgPage,
       body: Stack(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Text(
-              //   _locale.addDocument,
-              //   style: TextStyle(fontSize: 25),
-              // ),
-              Container(
-                width: width * 0.73,
-                height: height * 0.6,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 0.5,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          // mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            customTextField(_locale.issueNo, issueNoController,
-                                isDesktop, 0.2, true,
-                                focusNode: issueNameFocusNode),
-                            SizedBox(
-                              width: width * 0.015,
-                            ),
-                            DateTimeComponent(
-                              height: height * 0.05,
-                              label: _locale.arrivalDate,
-                              dateController: arrivalDateController,
-                              dateWidth: width * 0.2,
-                              dateControllerToCompareWith: null,
-                              readOnly: false,
-                              isInitiaDate: true,
-                              onValue: (isValid, value) {
-                                if (isValid) {
-                                  arrivalDateController.text = value;
-                                }
-                              },
-                              timeControllerToCompareWith: null,
-                            ),
-                            SizedBox(
-                              width: width * 0.015,
-                            ),
-                            DateTimeComponent(
-                              height: height * 0.05,
-                              label: _locale.issueDate,
-                              dateController: fileDateController,
-                              dateWidth: width * 0.2,
-                              dateControllerToCompareWith: null,
-                              readOnly: false,
-                              isInitiaDate: true,
-                              onValue: (isValid, value) {
-                                if (isValid) {
-                                  fileDateController.text = value;
-                                }
-                              },
-                              timeControllerToCompareWith: null,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.txtDescription,
-                            descriptionController,
-                            isDesktop,
-                            0.2,
-                            true,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          DropDown(
-                            key: UniqueKey(),
-                            isMandatory: true,
-                            onChanged: (value) {
-                              selectedDep = value.txtDeptkey;
-                              selctedDepDesc = value.txtDeptName;
-                              // setState(() {});
-                            },
-                            initialValue:
-                                selctedDepDesc == "" ? null : selctedDepDesc,
-                            bordeText: _locale.department,
-                            width: width * 0.2,
-                            items: departmetList,
-                            height: height * 0.05,
-                            // onSearch: (p0) async {
-                            //   return await DepartmentController()
-                            //       .getDep(
-                            //       SearchModel(
-                            //           page: -1,
-                            //           searchField: p0.trim(),
-                            //           status: -1));
-                            // },
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          DropDown(
-                            key: UniqueKey(),
-                            isMandatory: true,
-                            initialValue: selectedCatDesc.isEmpty
-                                ? null
-                                : selectedCatDesc,
-                            width: width * 0.2,
-                            height: height * 0.05,
-                            onChanged: (value) {
-                              selectedCat = value.txtKey;
-                              selectedCatDesc = value.txtDescription;
-                            },
-                            items: catList,
-                            searchBox: true,
-                            valSelected: true,
-                            bordeText: _locale.category,
-                            // width: width * 0.21,
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: _sectionCard(
+              icon: Icons.note_add_rounded,
+              title: _locale.addDocument,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // ── Row 1: Issue No + Arrival Date + Issue Date ──
+                  _fieldRow([
+                    _fieldItem(customTextField(
+                        _locale.issueNo, issueNoController, isDesktop, 1, true,
+                        focusNode: issueNameFocusNode)),
+                    _fieldItem(DateTimeComponent(
+                      height: height * 0.05,
+                      label: _locale.arrivalDate,
+                      dateController: arrivalDateController,
+                      dateWidth: double.infinity,
+                      dateControllerToCompareWith: null,
+                      readOnly: false,
+                      isInitiaDate: true,
+                      onValue: (isValid, value) {
+                        if (isValid) arrivalDateController.text = value;
+                      },
+                      timeControllerToCompareWith: null,
+                    )),
+                    _fieldItem(DateTimeComponent(
+                      height: height * 0.05,
+                      label: _locale.issueDate,
+                      dateController: fileDateController,
+                      dateWidth: double.infinity,
+                      dateControllerToCompareWith: null,
+                      readOnly: false,
+                      isInitiaDate: true,
+                      onValue: (isValid, value) {
+                        if (isValid) fileDateController.text = value;
+                      },
+                      timeControllerToCompareWith: null,
+                    )),
+                  ]),
 
-                            // onSearch: (p0) async {
-                            //   return await DocumentsController()
-                            //       .getDocCategoryList();
-                            // },
-                          ),
-                        ],
+                  // ── Row 2: Description + Department + Category ───
+                  _fieldRow([
+                    _fieldItem(customTextField(_locale.txtDescription,
+                        descriptionController, isDesktop, 1, true)),
+                    _fieldItem(DropDown(
+                      key: const ValueKey('dept_dropdown'),
+                      isMandatory: true,
+                      onChanged: (value) {
+                        selectedDep = value.txtDeptkey;
+                        selctedDepDesc = value.txtDeptName;
+                      },
+                      initialValue:
+                          selctedDepDesc == "" ? null : selctedDepDesc,
+                      bordeText: _locale.department,
+                      width: double.infinity,
+                      items: departmetList,
+                      height: height * 0.055,
+                    )),
+                    _fieldItem(DropDown(
+                      key: const ValueKey('cat_dropdown'),
+                      isMandatory: true,
+                      initialValue:
+                          selectedCatDesc.isEmpty ? null : selectedCatDesc,
+                      width: double.infinity,
+                      height: height * 0.055,
+                      onChanged: (value) {
+                        selectedCat = value.txtKey;
+                        selectedCatDesc = value.txtDescription;
+                      },
+                      items: catList,
+                      searchBox: true,
+                      valSelected: true,
+                      bordeText: _locale.category,
+                    )),
+                  ]),
+
+                  // ── Row 3: Keywords + Following + Ref1 ───────────
+                  _fieldRow([
+                    _fieldItem(customTextField(_locale.keyWords,
+                        keyWordsController, isDesktop, 1, false)),
+                    _fieldItem(customTextField(_locale.following,
+                        followingController, isDesktop, 1, false)),
+                    _fieldItem(customTextField(
+                        _locale.ref1, ref1Controller, isDesktop, 1, false)),
+                  ]),
+
+                  // ── Row 4: Ref2 + OtherRef + Organization ────────
+                  _fieldRow([
+                    _fieldItem(customTextField(
+                        _locale.ref2, ref2Controller, isDesktop, 1, false)),
+                    _fieldItem(customTextField(_locale.otherRef,
+                        otherRefController, isDesktop, 1, false)),
+                    _fieldItem(customTextField(_locale.organization,
+                        organizationController, isDesktop, 1, false)),
+                  ]),
+
+                  // ── Row 5: Toggles ────────────────────────────────
+                  Row(
+                    children: [
+                      if (active == "1") ...[
+                        _toggleChip(
+                          label: _locale.submitforWorkflowApproval,
+                          value: approval,
+                          onChanged: (v) => setState(() => approval = v!),
+                          color: _accent,
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+                      _toggleChip(
+                        label: _locale.uploadFile,
+                        value: _isUploadFileSelected,
+                        onChanged: (v) =>
+                            setState(() => _isUploadFileSelected = v!),
+                        color: _primary,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.keyWords,
-                            keyWordsController,
-                            isDesktop,
-                            0.2,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.following,
-                            followingController,
-                            isDesktop,
-                            0.2,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.ref1,
-                            ref1Controller,
-                            isDesktop,
-                            0.2,
-                            false,
-                          ),
-                        ],
+                      const SizedBox(width: 12),
+                      _toggleChip(
+                        label: _locale.scanFile,
+                        value: !_isUploadFileSelected,
+                        onChanged: (v) =>
+                            setState(() => _isUploadFileSelected = !v!),
+                        color: _primary,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          customTextField(
-                            _locale.ref2,
-                            ref2Controller,
-                            isDesktop,
-                            0.2,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.otherRef,
-                            otherRefController,
-                            isDesktop,
-                            0.2,
-                            false,
-                          ),
-                          SizedBox(
-                            width: width * 0.015,
-                          ),
-                          customTextField(
-                            _locale.organization,
-                            organizationController,
-                            isDesktop,
-                            0.2,
-                            false,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          active == "1"
-                              ? Row(
-                                  children: [
-                                    Checkbox(
-                                      value: approval,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          approval = value!;
-                                        });
-                                      },
-                                    ),
-                                    Text(_locale.submitforWorkflowApproval),
-                                  ],
-                                )
-                              : SizedBox.shrink(),
-                          Checkbox(
-                            value: _isUploadFileSelected,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isUploadFileSelected = value!;
-                              });
-                            },
-                          ),
-                          Text(_locale.uploadFile),
-                          Checkbox(
-                            value: !_isUploadFileSelected,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isUploadFileSelected = !value!;
-                              });
-                            },
-                          ),
-                          Text(_locale.scanFile),
-                        ],
-                      ),
-                      if (_isUploadFileSelected) buildFileUpload(),
-                      if (!_isUploadFileSelected) buildScanDropdown(),
                     ],
                   ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: saveDocument,
-                    style: customButtonStyle(
-                      context,
-                      Size(isDesktop ? width * 0.1 : width * 0.4,
-                          height * 0.055),
-                      16,
-                      primary,
-                    ),
-                    child: Text(_locale.save),
-                  ),
-                  SizedBox(
-                    width: width * 0.01,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      resetForm();
-                    },
-                    style: customButtonStyle(
-                        context,
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.055),
-                        16,
-                        redColor),
-                    child: Text(
-                      _locale.resetFilter,
-                      style: const TextStyle(color: whiteColor),
-                    ),
+
+                  // ── Row 6: File / Scan ────────────────────────────
+                  if (_isUploadFileSelected) _buildFileUploadSection(),
+                  if (!_isUploadFileSelected) _buildScanSection(),
+
+                  // ── Row 7: Action buttons ─────────────────────────
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomElevatedButton(
+                        text: _locale.save,
+                        color: _primary,
+                        icon: Icons.save_rounded,
+                        width: width * 0.12,
+                        height: height * 0.052,
+                        fontSize: 14,
+                        isLoading: saving,
+                        onPressed: saveDocument,
+                      ),
+                      const SizedBox(width: 12),
+                      CustomElevatedButton(
+                        text: _locale.resetFilter,
+                        color: redColor,
+                        icon: Icons.refresh_rounded,
+                        width: width * 0.12,
+                        height: height * 0.052,
+                        fontSize: 14,
+                        onPressed: resetForm,
+                      ),
+                    ],
                   ),
                 ],
-              )
-            ],
-          ),
-          if (saving)
-            Center(
-              child: CircularProgressIndicator(),
+              ),
             ),
-          Center(
-            child: Visibility(
-              visible: isFileLoading,
-              child: Container(
-                // color: Colors.black.withOpacity(
-                //     0.08), // Semi-transparent black background for the blur effect
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                      sigmaX: 2.0,
-                      sigmaY: 2.0), // Adjust the blur amount as needed
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 16),
-                      ],
-                    ),
+          ),
+
+          // ── Loading overlay ───────────────────────────────────────
+          if (isFileLoading)
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionCard({
+    required IconData icon,
+    required String title,
+    required Widget child,
+  }) {
+    return Container(
+      width: double.infinity,
+      height: height - 32, // ← fill screen minus padding
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: _border, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: _primary.withOpacity(0.04),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(14),
+                topRight: Radius.circular(14),
+              ),
+              border: Border(bottom: BorderSide(color: _border, width: 1)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: _primary.withOpacity(0.10),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: _primary, size: 16),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: _textPrimary,
                   ),
                 ),
-              ),
+              ],
+            ),
+          ),
+
+          // Content — fills remaining height evenly
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: child,
             ),
           ),
         ],
@@ -472,89 +399,214 @@ class _AddFileScreenState extends State<AddFileScreen> {
     );
   }
 
-  Widget buildFileUpload() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, left: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              pickFile();
-            },
-            style: customButtonStyle(
-                context,
-                Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.055),
-                16,
-                primary3),
-            child: Text(
-              _locale.uploadFile,
-              style: const TextStyle(color: whiteColor),
+  // ── 3-column field row ────────────────────────────────────────────
+  Widget _fieldRow(List<Widget> children) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children
+          .map((c) => Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: c,
+                ),
+              ))
+          .toList(),
+    );
+  }
+
+  Widget _fieldItem(Widget child) => child;
+
+  // ── Toggle chip ───────────────────────────────────────────────────
+  Widget _toggleChip({
+    required String label,
+    required bool value,
+    required ValueChanged<bool?> onChanged,
+    required Color color,
+  }) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(
+          color: value ? color.withOpacity(0.10) : Colors.transparent,
+          borderRadius: BorderRadius.circular(99),
+          border: Border.all(
+            color: value ? color : _border,
+            width: value ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: value ? color : Colors.transparent,
+                border: Border.all(
+                  color: value ? color : _textSecondary,
+                  width: 1.5,
+                ),
+              ),
+              child: value
+                  ? const Icon(Icons.check_rounded,
+                      color: Colors.white, size: 10)
+                  : null,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: value ? FontWeight.w600 : FontWeight.w400,
+                color: value ? color : _textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── File upload section ───────────────────────────────────────────
+  Widget _buildFileUploadSection() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CustomElevatedButton(
+          text: _locale.uploadFile,
+          color: _accent,
+          icon: Icons.upload_rounded,
+          width: isDesktop ? width * 0.12 : width * 0.35,
+          height: height * 0.05,
+          fontSize: 13,
+          onPressed: pickFile,
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Tooltip(
+            message: fileNameController.text,
+            child: customTextField(
+              _locale.fileName,
+              fileNameController,
+              isDesktop,
+              1,
+              true,
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  // ── Scan section ──────────────────────────────────────────────────
+  Widget _buildScanSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: DropDown(
+                isMandatory: true,
+                onChanged: (value) {
+                  if (value != null) {
+                    scannerIndex = _cachedScanners.indexOf(value as String);
+                  }
+                },
+                noDataString: "⚠️ No scanners found",
+                initialValue: "",
+                bordeText: _locale.scanners,
+                width: double.infinity,
+                height: height * 0.05,
+                onSearch: _getScanners,
+              ),
+            ),
+            const SizedBox(width: 16),
+            CustomElevatedButton(
+              text: _locale.scanFile,
+              color: _accent,
+              icon: Icons.document_scanner_rounded,
+              width: isDesktop ? width * 0.12 : width * 0.35,
+              height: height * 0.05,
+              fontSize: 13,
+              onPressed: () async {
+                openLoadinDialog(context);
+                await DocumentsController()
+                    .getAllScannersMethod(url)
+                    .then((value) {
+                  Navigator.pop(context);
+                  if (value.isNotEmpty) {
+                    scan();
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (_) => ErrorDialog(
+                        icon: Icons.error_outline,
+                        errorTitle: _locale.error,
+                        errorDetails: _locale.noScannersFound,
+                        color: Colors.red,
+                        statusCode: 406,
+                      ),
+                    );
+                  }
+                }).catchError((e) {
+                  Navigator.pop(context);
+                });
+              },
+            ),
+          ],
+        ),
+        if (_scanStatusText != null && _scanStatusText!.isNotEmpty) ...[
           const SizedBox(height: 10),
-          SizedBox(
-            width: width * 0.3,
-            child: Tooltip(
-              message: fileNameController.text,
-              child: customTextField(
-                _locale.fileName,
-                fileNameController,
-                isDesktop,
-                0.2,
-                true,
-              ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.green.withOpacity(0.3)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.check_circle_rounded,
+                    color: Colors.green, size: 16),
+                const SizedBox(width: 8),
+                Text(
+                  "${_locale.sucessScanFile} $_scanStatusText",
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
-      ),
+      ],
     );
   }
 
-  List<String> filesName = [];
-  List<String> filesBlobs = [];
-  Future pickFile() async {
-    setState(() {
-      isFileLoading = true;
-    });
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowMultiple: true);
-
-    if (result != null && result.files.isNotEmpty) {
-      List<PlatformFile> files = result.files;
-
-      for (int i = 0; i < files.length; i++) {
-        filesName.add(files[i].name);
-        filesBlobs.add(base64Encode(files[i].bytes!));
-      }
-      // PlatformFile selectedFile = result.files.first;
-
-      setState(() {
-        fileNameController.text = filesName.toString();
-        // fileNameController.text = selectedFile.name;
-        // txtFilename = selectedFile.name;
-        // imgBlob = base64Encode(selectedFile.bytes!);
-        // dblFilesize = selectedFile.size;
-        isFileLoading = false;
-      });
-    } else {
-      setState(() {
-        isFileLoading = false;
-      });
-    }
-  }
-
-  Widget customTextField(String hint, TextEditingController controller,
-      bool isDesktop, double width1, bool isMandetory,
-      {FocusNode? focusNode}) {
-    double height = MediaQuery.of(context).size.height * 0.3;
+  // ── Helpers (unchanged logic) ─────────────────────────────────────
+  Widget customTextField(
+    String hint,
+    TextEditingController controller,
+    bool isDesktop,
+    double widthFactor,
+    bool isMandetory, {
+    FocusNode? focusNode,
+  }) {
     return CustomTextField2(
       readOnly: hint == _locale.fileName ? true : false,
       isReport: true,
       isMandetory: isMandetory,
-      width: width * width1,
-      height: height * 0.18,
+      width: widthFactor == 1 ? double.infinity : width * widthFactor,
+      height: height * 0.055, // ← consistent with dropdowns
       text: Text(hint),
       controller: controller,
       onSubmitted: (text) {},
@@ -563,14 +615,62 @@ class _AddFileScreenState extends State<AddFileScreen> {
     );
   }
 
+  Future<List<dynamic>> _getScanners(String filter) async {
+    if (_loadedScanners && filter.isEmpty) return _cachedScanners;
+    final result = await DocumentsController().getAllScannersMethod(url);
+    if (filter.isEmpty) {
+      _cachedScanners = result;
+      _loadedScanners = true;
+    }
+    return result;
+  }
+
+  Future pickFile() async {
+    setState(() => isFileLoading = true);
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowMultiple: true);
+    if (result != null && result.files.isNotEmpty) {
+      for (final f in result.files) {
+        filesName.add(f.name);
+        filesBlobs.add(base64Encode(f.bytes!));
+      }
+      setState(() {
+        fileNameController.text = filesName.toString();
+        isFileLoading = false;
+      });
+    } else {
+      setState(() => isFileLoading = false);
+    }
+  }
+
+  scan() async {
+    openLoadinDialog(context);
+    try {
+      final response =
+          await documentsController.getSccanedImageMethod(url, scannerIndex);
+      final String base64Data = response.scannedImage ?? "";
+      if (base64Data.isNotEmpty) {
+        final fileName = "${issueNoController.text}.pdf";
+        final bytes = base64Decode(base64Data);
+        final sizeMB = bytes.length / 1000000;
+        filesName.add(fileName);
+        filesBlobs.add(base64Data);
+        setState(() {
+          scannedFile.text = fileName;
+          _scanStatusText = "${sizeMB.toStringAsFixed(2)} MB";
+        });
+      } else {
+        setState(() => _scanStatusText = _locale.noFileAvailableToPreview);
+      }
+    } finally {
+      Navigator.pop(context);
+    }
+  }
+
   void saveDocument() async {
     if (saving) return;
+    setState(() => saving = true);
 
-    setState(() {
-      saving = true;
-    });
-
-    // Create DocumentModel instance
     DocumentModel documentModel = DocumentModel(
       txtKey: "",
       txtDescription: descriptionController.text,
@@ -600,8 +700,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
       datArrvialdate: arrivalDateController.text,
       txtOriginalfilekey: "",
     );
+
     List<FileUploadModel> filesUploadList = [];
-    print("filesBlobs.length ${filesBlobs.length}");
     for (int i = 0; i < filesBlobs.length; i++) {
       filesUploadList.add(FileUploadModel(
         txtKey: "",
@@ -616,15 +716,13 @@ class _AddFileScreenState extends State<AddFileScreen> {
         intType: 1,
       ));
     }
-    // Create FileUploadModel instance
 
-    // Create DocumentFileRequest instance
     DocumentFileRequest documentFileRequest = DocumentFileRequest(
-        documentInfo: documentModel,
-        documentFile: filesUploadList,
-        submitForWfApproval: approval == true ? 1 : 0);
+      documentInfo: documentModel,
+      documentFile: filesUploadList,
+      submitForWfApproval: approval == true ? 1 : 0,
+    );
 
-    // Check if all required fields are empty
     if (selectedDep.isEmpty ||
         selectedCat.isEmpty ||
         (fileNameController.text.isEmpty && _isUploadFileSelected) ||
@@ -639,34 +737,26 @@ class _AddFileScreenState extends State<AddFileScreen> {
         confirmBtnText: _locale.ok,
         onConfirmBtnTap: () {},
       );
-      setState(() {
-        saving = false;
-      });
+      setState(() => saving = false);
       return;
     }
 
     await documentsController.addDocument(documentFileRequest).then((value) {
-      print("value.statusCode :${value.statusCode} :${value.toString()}");
       if (value.statusCode == 200) {
         showDialog(
           context: context,
-          builder: (context) {
-            return ErrorDialog(
-              icon: Icons.done_all,
-              errorDetails: _locale.done,
-              errorTitle: _locale.addDoneSucess,
-              color: Colors.green,
-              statusCode: 200,
-            );
-          },
-        ).then((value) {
-          resetForm();
-        });
+          builder: (context) => ErrorDialog(
+            icon: Icons.done_all,
+            errorDetails: _locale.done,
+            errorTitle: _locale.addDoneSucess,
+            color: Colors.green,
+            statusCode: 200,
+          ),
+        ).then((_) => resetForm());
       }
     });
-    setState(() {
-      saving = false;
-    });
+
+    setState(() => saving = false);
   }
 
   void resetForm() {
@@ -688,147 +778,10 @@ class _AddFileScreenState extends State<AddFileScreen> {
     followingController.clear();
     otherRefController.clear();
     organizationController.clear();
+    _scanStatusText = null;
     arrivalDateController.text =
         Converters.formatDate2(DateTime.now().toString());
     fileDateController.text = Converters.formatDate2(DateTime.now().toString());
     setState(() {});
-  }
-
-  List<dynamic> _cachedScanners = [];
-  bool _loadedScanners = false;
-
-  Future<List<dynamic>> _getScanners(String filter) async {
-    if (_loadedScanners && filter.isEmpty) {
-      return _cachedScanners;
-    }
-
-    final result = await DocumentsController().getAllScannersMethod(url);
-
-    if (filter.isEmpty) {
-      _cachedScanners = result;
-      _loadedScanners = true;
-    }
-
-    return result;
-  }
-
-  int scannerIndex = 0;
-  Widget buildScanDropdown() {
-    return Padding(
-        padding: const EdgeInsets.only(top: 10, left: 10),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              DropDown(
-                isMandatory: true,
-                onChanged: (value) {
-                  if (value != null) {
-                    scannerIndex = _cachedScanners.indexOf(value as String);
-                  }
-                },
-                noDataString: "⚠️ No scanners found",
-                initialValue: "",
-                bordeText: _locale.scanners,
-                width: width * 0.2,
-                height: height * 0.05,
-                onSearch: _getScanners,
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () async {
-                  openLoadinDialog(context);
-
-                  await DocumentsController()
-                      .getAllScannersMethod(url)
-                      .then((value) {
-                    Navigator.pop(context);
-                    if (value.isNotEmpty) {
-                      scan();
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (_) => ErrorDialog(
-                          icon: Icons.error_outline,
-                          errorTitle: _locale.error,
-                          errorDetails: _locale.noScannersFound,
-                          color: Colors.red,
-                          statusCode: 406,
-                        ),
-                      ).then((value) {
-                        // Navigator.pop(context);
-                      });
-                    }
-                  }).catchError((e) {
-                    Navigator.pop(context);
-                  });
-                },
-                style: customButtonStyle(
-                    context,
-                    Size(isDesktop ? width * 0.1 : width * 0.4, height * 0.055),
-                    14,
-                    primary3),
-                child: Text(
-                  _locale.scanFile,
-                  style: const TextStyle(color: whiteColor),
-                ),
-              ),
-              if (_scanStatusText != null && _scanStatusText!.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.check_circle,
-                        color: Colors.green, size: 18),
-                    const SizedBox(width: 6),
-                    Text(
-                      "${_locale.sucessScanFile} " "$_scanStatusText",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.green,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ],
-            ]));
-  }
-
-  scan() async {
-    openLoadinDialog(context);
-    try {
-      final response =
-          await documentsController.getSccanedImageMethod(url, scannerIndex);
-
-      final String base64Data = response.scannedImage ?? "";
-
-      if (base64Data.isNotEmpty) {
-        final fileName = "${issueNoController.text}.pdf";
-
-        // decode base64 to bytes
-        final bytes = base64Decode(base64Data);
-
-        // size in MB using 10^6 (per your request)
-        final sizeMB = bytes.length / 1000000; // 10^6
-
-        // keep your existing arrays updated
-        filesName.add(fileName);
-        filesBlobs.add(base64Data);
-
-        setState(() {
-          scannedFile.text = fileName; // if you still want it in the controller
-          _scanStatusText = "${sizeMB.toStringAsFixed(2)} MB";
-        });
-      } else {
-        setState(() {
-          _scanStatusText =
-              _locale.noFileAvailableToPreview; // or any message you prefer
-        });
-      }
-    } finally {
-      Navigator.pop(context); // close loading
-    }
   }
 }

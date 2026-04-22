@@ -70,81 +70,50 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     bool isDesktop = Responsive.isDesktop(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(7),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withOpacity(0.2),
-          //     spreadRadius: 1,
-          //     blurRadius: 5,
-          //   ),
-          // ],
-        ),
-        width: widget.width!,
-        height: widget.height!,
-        child: TextFormField(
-          textDirection: TextDirection.rtl,
-          onTap: () {
-            if (widget.onTap != null) {
-              widget.onTap!();
-            }
-          },
-          focusNode: widget.focusNode ?? FocusNode(),
-          onFieldSubmitted: (value) {
-            if (widget.onFieldSubmitted != null) {
-              widget.onFieldSubmitted!(value);
-            }
-          },
-          style: widget.style,
-          controller: widget.controller,
-          onChanged:
-              // (newValue) {
-              widget.onChanged,
-          // _setCursorToEnd();
-          // },
-          maxLines: widget.maxLines ?? 1,
-          validator: (text) =>
-              widget.onValidator == null ? null : widget.onValidator!(text!),
-          decoration: widget.decoration ??
-              InputDecoration(
-                // prefix: widget.pre,
-                label: Text(
-                  widget.text!.data!,
-                  style: TextStyle(
-                    fontSize: isDesktop ? height * 0.016 : height * 0.014,
-                    // color:
-                    //     widget.color ?? const Color.fromARGB(255, 114, 119, 123),
-                  ),
-                ),
-                // labelStyle: TextStyle(
-                //   color: widget.color ?? const Color.fromARGB(255, 114, 119, 123),
-                // ),
-                // floatingLabelAlignment: FloatingLabelAlignment.center,
-                prefixIcon: widget.showText == false ? null : widget.customIcon,
-                suffixIcon:
-                    widget.showText == true ? null : widget.customIconSuffix,
-                border: const UnderlineInputBorder(
-                    // borderSide: BorderSide(color: Colors.red)
-                    ),
-                //  OutlineInputBorder(
-                //   borderRadius: BorderRadius.circular(20),
-                // ),
-                constraints: BoxConstraints.tightFor(
-                  width: width * 0.007,
+
+    return Container(
+      // ← remove the Padding wrapper and the white Container
+      // ← color: transparent so parent CustomTextField2 shows through
+      color: Colors.transparent,
+      width: widget.width,
+      height: widget.height,
+      child: TextFormField(
+        textDirection: TextDirection.rtl,
+        onTap: () {
+          if (widget.onTap != null) widget.onTap!();
+        },
+        focusNode: widget.focusNode ?? FocusNode(),
+        onFieldSubmitted: (value) {
+          if (widget.onFieldSubmitted != null) widget.onFieldSubmitted!(value);
+        },
+        style: widget.style,
+        controller: widget.controller,
+        onChanged: widget.onChanged,
+        maxLines: widget.maxLines ?? 1,
+        validator: (text) =>
+            widget.onValidator == null ? null : widget.onValidator!(text!),
+        decoration: widget.decoration ??
+            InputDecoration(
+              label: Text(
+                widget.text!.data!,
+                style: TextStyle(
+                  fontSize: isDesktop ? height * 0.016 : height * 0.014,
                 ),
               ),
-          inputFormatters: widget.inputFormatters,
-          onSaved: (value) => widget.onSaved,
-          obscureText: widget.obscureText ?? false,
-          initialValue: widget.initialValue,
-          maxLength: widget.maxLength,
-          readOnly: widget.readOnly ?? false,
-          keyboardType: widget.keyboardType,
-        ),
+              prefixIcon: widget.showText == false ? null : widget.customIcon,
+              suffixIcon:
+                  widget.showText == true ? null : widget.customIconSuffix,
+              border: InputBorder.none, // ← no underline
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+            ),
+        inputFormatters: widget.inputFormatters,
+        onSaved: (value) => widget.onSaved,
+        obscureText: widget.obscureText ?? false,
+        initialValue: widget.initialValue,
+        maxLength: widget.maxLength,
+        readOnly: widget.readOnly ?? false,
+        keyboardType: widget.keyboardType,
       ),
     );
   }

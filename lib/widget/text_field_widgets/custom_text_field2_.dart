@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../utils/constants/colors.dart';
 
-/* This TextField Component,
-    Supports Email, Password, and defualt TextFields
-    Example:
-    TextFieldCustom(
-      text: Text(_locale.userName), -> this is the hint for the Text Field
-      obscureText: false, -> if the text is shown or not in the Text Field
-      controller: username, -> The controller of the Text Field
-    ),
-    */
+// ── Design tokens ─────────────────────────────────────────────────
+const Color _tfPrimary = Color(0xFF185FA5);
+const Color _tfBorder = Color(0xFFDDE3EE);
+const Color _tfBorderHover = Color(0xFF185FA5);
+const Color _tfBg = Color(0xFFF6F8FC);
+const Color _tfBgFocus = Colors.white;
+const Color _tfLabel = Color(0xFF8A94A6);
+const Color _tfText = Color(0xFF1A2340);
+const Color _tfError = Color(0xFFA32D2D);
+
 class CustomTextField2 extends StatefulWidget {
   double? padding;
-  // String label;
   double? width;
   TextEditingController? controller;
   String? initialValue;
@@ -42,181 +42,245 @@ class CustomTextField2 extends StatefulWidget {
   bool? enabled;
   bool? isMandetory;
   bool? isReport;
-  CustomTextField2(
-      {Key? key,
-      this.onValidator,
-      this.height,
-      this.isMandetory,
-      // required this.label,
-      this.controller,
-      this.initialValue,
-      this.padding,
-      this.onSubmitted,
-      this.customKey,
-      this.width,
-      this.readOnly,
-      this.autoFocus,
-      this.onChanged,
-      this.focusNode,
-      this.customIcon,
-      this.customIconSuffix,
-      this.color,
-      this.onTap,
-      this.onSaved,
-      this.keyboardType,
-      this.inputFormatters,
-      this.text,
-      this.notefield,
-      this.maxLength,
-      this.decoration,
-      this.showText,
-      this.obscureText,
-      this.isReport = false,
-      this.enabled})
-      : super(key: key);
+
+  CustomTextField2({
+    Key? key,
+    this.onValidator,
+    this.height,
+    this.isMandetory,
+    this.controller,
+    this.initialValue,
+    this.padding,
+    this.onSubmitted,
+    this.customKey,
+    this.width,
+    this.readOnly,
+    this.autoFocus,
+    this.onChanged,
+    this.focusNode,
+    this.customIcon,
+    this.customIconSuffix,
+    this.color,
+    this.onTap,
+    this.onSaved,
+    this.keyboardType,
+    this.inputFormatters,
+    this.text,
+    this.notefield,
+    this.maxLength,
+    this.decoration,
+    this.showText,
+    this.obscureText,
+    this.isReport = false,
+    this.enabled,
+  }) : super(key: key);
+
   @override
   State createState() => _CustomTextField2State();
 }
 
-class _CustomTextField2State extends State<CustomTextField2> {
+class _CustomTextField2State extends State<CustomTextField2>
+    with SingleTickerProviderStateMixin {
+  late FocusNode _internalFocus;
+  bool _isFocused = false;
+  bool _isHovered = false;
+  late AnimationController _animController;
+  late Animation<double> _borderAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _internalFocus = widget.focusNode ?? FocusNode();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 180),
+    );
+    _borderAnim = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOut,
+    );
+    _internalFocus.addListener(() {
+      setState(() => _isFocused = _internalFocus.hasFocus);
+      if (_internalFocus.hasFocus) {
+        _animController.forward();
+      } else {
+        _animController.reverse();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Only dispose if we created it internally
+    if (widget.focusNode == null) _internalFocus.dispose();
+    _animController.dispose();
+    super.dispose();
+  }
+
+  bool get _isReadOnly => widget.readOnly ?? false;
+  bool get _isEnabled => widget.enabled ?? true;
+
+  Color get _currentBorderColor {
+    if (!_isEnabled) return _tfBorder.withOpacity(0.5);
+    if (_isFocused) return _tfPrimary;
+    if (_isHovered) return _tfPrimary.withOpacity(0.5);
+    return _tfBorder;
+  }
+
+  double get _currentBorderWidth {
+    if (_isFocused) return 1.8;
+    if (_isHovered) return 1.2;
+    return 1.0;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // _setCursorToEnd();
-    // _setCursorToBeginning();
+    final String hint = widget.text?.data ?? '';
+    final bool isMandatory = widget.isMandetory ?? false;
 
-    return SizedBox(
-      // height: widget.isReport!
-      //     ? MediaQuery.of(context).size.height * 0.045
-      //     : MediaQuery.of(context).size.height * 0.03,
-      // width: MediaQuery.of(context).size.width * 0.18,
-      child: TextFieldCustom(
-        focusNode: widget.focusNode,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
         width: widget.width,
         height: widget.height,
-        controller: widget.controller,
-        onTap: () {
-          // _setCursorToBeginning();
-          // setState(() {});
-        },
-        onChanged: widget.onChanged,
-        decoration: widget.isMandetory != null && widget.isMandetory!
-            ? inputDecorationMandatory(widget.text!.data!)
-            : widget.decoration ??
-                // InputDecoration(
-                //   label: Text(
-                //     widget.text!.data!,
-                //     style: TextStyle(
-                //       fontSize: MediaQuery.of(context).size.height * 0.015,
-                //       color:
-                //           widget.color ?? const Color.fromARGB(255, 114, 119, 123),
-                //     ),
-                //   ),
-                //   labelStyle: TextStyle(
-                //     color: widget.color ?? const Color.fromARGB(255, 114, 119, 123),
-                //   ),
-                //   floatingLabelAlignment: FloatingLabelAlignment.start,
-                //   prefixIcon: widget.showText == false ? null : widget.customIcon,
-                //   suffixIcon:
-                //       widget.showText == true ? null : widget.customIconSuffix,
-                //   border: OutlineInputBorder(
-                //     borderRadius: BorderRadius.circular(20),
-                //   ),
-                //   constraints: BoxConstraints.tightFor(
-                //     width: MediaQuery.of(context).size.width * 0.007,
-                //   ),
-                // ),
-                InputDecoration(
-                  // floatingLabelAlignment: FloatingLabelAlignment.center,
-
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  labelText: widget.text!.data!,
-                  labelStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                  hintStyle: const TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 68, 67, 67),
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.none,
-                    decorationColor: Colors.transparent,
-                    decorationStyle: TextDecorationStyle.solid,
-                    decorationThickness: 1.0,
+        decoration: BoxDecoration(
+          color: !_isEnabled
+              ? const Color(0xFFF0F2F5)
+              : _isFocused
+                  ? Colors.white
+                  : const Color(0xFFF6F8FC),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: _currentBorderColor,
+            width: _currentBorderWidth,
+          ),
+          boxShadow: _isFocused
+              ? [
+                  BoxShadow(
+                    color: _tfPrimary.withOpacity(0.10),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                  errorStyle: const TextStyle(
-                      height: 0, color: Color.fromARGB(255, 207, 95, 4)),
-                  enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Color.fromARGB(255, 131, 128, 128))),
-                  errorMaxLines: 1,
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: primary2,
-                      width: 0.5,
-                    ),
-                    borderRadius: BorderRadius.circular(1.0),
+                ]
+              : [],
+        ),
+        child: TextFieldCustom(
+          focusNode: _internalFocus,
+          width: widget.width,
+          height: widget.height,
+          controller: widget.controller,
+          onTap: widget.onTap ?? () {},
+          onChanged: widget.onChanged,
+          decoration: _buildDecoration(hint, isMandatory),
+          inputFormatters: widget.inputFormatters,
+          onSaved: (value) => widget.onSaved,
+          obscureText: widget.obscureText ?? false,
+          initialValue: widget.initialValue,
+          maxLength: widget.maxLength,
+          readOnly: _isReadOnly,
+          keyboardType: widget.keyboardType,
+          onFieldSubmitted: widget.onSubmitted,
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _buildDecoration(String hint, bool isMandatory) {
+    // If a custom decoration is passed, use it
+    if (widget.decoration != null) return widget.decoration!;
+
+    return InputDecoration(
+      // ── No double border — container handles it ──────────
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      errorBorder: InputBorder.none,
+      disabledBorder:
+          InputBorder.none, // In _buildDecoration, add these two lines:
+      filled: true,
+      fillColor: Colors.transparent, // ← TextFieldCustom bg = transparent
+
+      // ── Padding ──────────────────────────────────────────
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 10,
+      ),
+
+      // ── Label ────────────────────────────────────────────
+      label: isMandatory
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  hint,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: _isFocused ? _tfPrimary : _tfLabel,
                   ),
                 ),
-        inputFormatters: widget.inputFormatters,
-        onSaved: (value) => widget.onSaved,
-        obscureText: widget.obscureText ?? false,
-        initialValue: widget.initialValue,
-        maxLength: widget.maxLength,
-        readOnly: widget.readOnly ?? false,
-        keyboardType: widget.keyboardType,
-        onFieldSubmitted: widget.onSubmitted,
-        // enabled: widget.enabled ?? true,
-      ),
-    );
-  }
+                const SizedBox(width: 3),
+                Text(
+                  '*',
+                  style: TextStyle(
+                    color: _tfError,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            )
+          : Text(
+              hint,
+              style: TextStyle(
+                fontSize: 13,
+                color: _isFocused ? _tfPrimary : _tfLabel,
+              ),
+            ),
 
-  void _setCursorToEnd() {
-    final textLength = widget.controller?.text.length ?? 0;
-    widget.controller?.selection = TextSelection.fromPosition(
-      TextPosition(offset: textLength),
-    );
-  }
-
-  void _setCursorToBeginning() {
-    widget.controller?.selection = TextSelection.fromPosition(
-      TextPosition(offset: 0),
-    );
-    setState(() {});
-  }
-
-  InputDecoration inputDecorationMandatory(String hint) {
-    return (InputDecoration(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
-      label: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(hint),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 3),
-          ),
-          const Text('*', style: TextStyle(color: Colors.red)),
-        ],
+      floatingLabelStyle: TextStyle(
+        fontSize: 11,
+        color: _isFocused ? _tfPrimary : _tfLabel,
+        fontWeight: FontWeight.w500,
+        backgroundColor: _isFocused ? Colors.white : _tfBg,
       ),
-      //   labelText: hint,
-      labelStyle: TextStyle(fontSize: 14, color: Colors.grey),
-      hintStyle: const TextStyle(
-        fontSize: 16,
-        color: Color.fromARGB(255, 68, 67, 67),
-        fontWeight: FontWeight.bold,
-        decoration: TextDecoration.none,
-        decorationColor: Colors.transparent,
-        decorationStyle: TextDecorationStyle.solid,
-        decorationThickness: 1.0,
+
+      floatingLabelBehavior: FloatingLabelBehavior.auto,
+
+      // ── Prefix icon ──────────────────────────────────────
+      prefixIcon: widget.customIcon != null
+          ? Padding(
+              padding: const EdgeInsets.only(left: 8, right: 4),
+              child: Icon(
+                widget.customIcon!.icon,
+                size: 16,
+                color: _isFocused ? _tfPrimary : _tfLabel,
+              ),
+            )
+          : null,
+
+      // ── Suffix icon ──────────────────────────────────────
+      suffixIcon: _isReadOnly
+          ? Icon(Icons.lock_outline_rounded, size: 14, color: _tfLabel)
+          : widget.customIconSuffix != null
+              ? widget.customIconSuffix
+              : null,
+
+      // ── Error style ──────────────────────────────────────
+      errorStyle: const TextStyle(
+        height: 0.8,
+        fontSize: 10,
+        color: _tfError,
       ),
-      errorStyle:
-          const TextStyle(height: 0, color: Color.fromARGB(255, 207, 95, 4)),
-      enabledBorder:
-          const OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
       errorMaxLines: 1,
-      border: OutlineInputBorder(
-        borderSide: const BorderSide(
-          color: primary2,
-          width: 0.5,
-        ),
-        borderRadius: BorderRadius.circular(1.0),
+
+      // ── Hint style ───────────────────────────────────────
+      hintStyle: TextStyle(
+        fontSize: 13,
+        color: _tfLabel.withOpacity(0.6),
       ),
-    ));
+
+      // ── Fill ─────────────────────────────────────────────
+    );
   }
 }
