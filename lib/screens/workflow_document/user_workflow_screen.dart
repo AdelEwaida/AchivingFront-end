@@ -113,6 +113,8 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
     super.didChangeDependencies();
   }
 
+  final Key _statusDropdownKey =
+      const ValueKey('user_workflow_status_dropdown');
   PlutoRow? selectedRow;
   @override
   Widget build(BuildContext context) {
@@ -335,7 +337,7 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
 
   DropDown statusDropDown() {
     return DropDown(
-      key: UniqueKey(),
+      key: _statusDropdownKey,
       isMandatory: true,
       onChanged: (value) {
         selectedStatus = ListConstants.getStatusCode(value, _locale)!;

@@ -659,24 +659,23 @@ class _TableComponentState extends State<TableComponent> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    widget.hasDropdown == true && widget.isworkFlow == true
+                 widget.hasDropdown == true && widget.isworkFlow == true
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.center, 
                             children: [
                               CustomSearchField(
                                 horizontalPadding: 0,
                                 width: width * .28,
                                 label: locale.search,
-                                padding: 7,
+                                padding: 0, 
                                 inputFormatters: [MyInputFormatter()],
                                 onChanged: (value) {
-                                  //If input is white-space
                                   if (value.isNotEmpty &&
                                       value[value.length - 1] == " ") {
                                     widget.search!(value);
                                   }
-
                                   if (value == " " ||
                                       value.trim().isEmpty ||
                                       value.isEmpty) {
@@ -687,28 +686,24 @@ class _TableComponentState extends State<TableComponent> {
                                     widget.search!(value);
                                   } else if (value.isEmpty) {
                                     widget.search!(value);
-
-                                    // isFirstSpace = true;
-                                  } else {
-                                    // isFirstSpace = true;
                                   }
                                 },
-                                onSubmitted: ((value) {
+                                onSubmitted: (value) {
                                   widget.search!(value);
-                                  // searchItem().then((value) {
-                                  //   isSearching = false;
-                                  // });
-                                }),
+                                },
                                 controller: TextEditingController(),
                               ),
+                              const SizedBox(width: 8),
+                              // ── Wrap dropdown in fixed height SizedBox ──────
                               SizedBox(
-                                width: 5,
+                                height: 40,
+                                child: widget.dropdown!,
                               ),
-                              widget.dropdown!,
+                              const SizedBox(width: 8),
                               SizedBox(
-                                width: 5,
+                                height: 40,
+                                child: widget.statusDropDown!,
                               ),
-                              widget.statusDropDown!,
                             ],
                           )
                         : widget.hasDropdown == true &&
