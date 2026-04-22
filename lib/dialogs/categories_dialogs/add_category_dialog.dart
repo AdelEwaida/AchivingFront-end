@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
+import '../../widget/dashboard_components/custom_elevated_button.dart';
 import '../../widget/dialog_widgets/title_dialog_widget.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
@@ -62,7 +63,7 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
     final double dialogWidth = width * 0.3;
     final double dialogheight = height * 0.13;
     return AppDialog(
-       width: isDesktop ? width * 0.3 : width * 0.8,
+      width: isDesktop ? width * 0.3 : width * 0.8,
       height: height * 0.8,
       title: _locale.addCategory,
       content: Container(
@@ -117,31 +118,47 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    addCategory();
-                  },
-                  style: customButtonStyle1(Size(width * 0.08, height * 0.045),
-                      16, const Color(0xff1F6E8C)),
-                  child: Text(
-                    _locale.add,
-                    style: const TextStyle(color: whiteColor),
-                  ),
-                ),
+                CustomElevatedButton(
+                    height: height * 0.045,
+                    width: isDesktop ? width * 0.1 : width * 0.4,
+                    text: _locale.add,
+                    color: primary,
+                    onPressed: () {
+                      addCategory();
+                    }),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     addCategory();
+                //   },
+                //   style: customButtonStyle1(Size(width * 0.08, height * 0.045),
+                //       16, const Color(0xff1F6E8C)),
+                //   child: Text(
+                //     _locale.add,
+                //     style: const TextStyle(color: whiteColor),
+                //   ),
+                // ),
                 SizedBox(
                   width: width * 0.01,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: customButtonStyle1(
-                      Size(width * 0.1, height * 0.045), 16, redColor),
-                  child: Text(
-                    _locale.cancel,
-                    style: const TextStyle(color: whiteColor),
-                  ),
-                )
+                CustomElevatedButton(
+                    height: height * 0.045,
+                    width: isDesktop ? width * 0.1 : width * 0.4,
+                    text: _locale.cancel,
+                    color: redColor,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     Navigator.pop(context);
+                //   },
+                //   style: customButtonStyle1(
+                //       Size(width * 0.1, height * 0.045), 16, redColor),
+                //   child: Text(
+                //     _locale.cancel,
+                //     style: const TextStyle(color: whiteColor),
+                //   ),
+                // )
               ],
             ),
           ],

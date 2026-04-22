@@ -1,13 +1,9 @@
-import 'dart:html';
-
-import 'package:archiving_flutter_project/models/db/categories_models/doc_cat_parent.dart';
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
 import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
 import 'package:archiving_flutter_project/models/tree_model/my_node.dart';
 import 'package:archiving_flutter_project/models/tree_model/tree_tile.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
-import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,9 +14,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../dialogs/categories_dialogs/add_category_dialog.dart';
 import '../../dialogs/categories_dialogs/edit_category_dialog.dart';
 import '../../dialogs/error_dialgos/confirm_dialog.dart';
-import '../../utils/constants/colors.dart';
-import '../../utils/constants/styles.dart';
-import '../../utils/func/responsive.dart';
 
 class DealClassificationTreeScreen extends StatefulWidget {
   const DealClassificationTreeScreen({Key? key, this.selectedModel})
@@ -94,31 +87,45 @@ class DealClassificationTreeScreenState
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-    final double dialogWidth = screenWidth * 0.4;
-    final double dialogheight = screenHeight * 0.75;
-    bool isDesktop = Responsive.isDesktop(context);
-
     return Scaffold(
-   
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomSearchField(
-                  label: _locale.search,
-                  width: screenWidth * 0.45,
-                  padding: 8,
-                  controller: searchController,
-                  onChanged: (value) {
-                    searchTree(value);
-                    // Add search functionality if needed
-                  },
-                ),
-                IconButton(
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: CustomSearchField(
+                      label: _locale.search,
+                      width: screenWidth * 0.45,
+                      padding: 8,
+                      controller: searchController,
+                      onChanged: (value) {
+                        searchTree(value);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  _actionButton(
+                    icon: Icons.add,
+                    color: const Color(0xFF16A34A),
+                    tooltip: _locale.add,
                     onPressed: () {
                       if (selectedCategory != null) {
                         showDialog(
@@ -133,13 +140,13 @@ class DealClassificationTreeScreenState
                         });
                       }
                     },
-                    icon: const Icon(
-                      Icons.add,
-                      size: 20,
-                    )),
-                IconButton(
+                  ),
+                  const SizedBox(width: 6),
+                  _actionButton(
+                    icon: Icons.edit,
+                    color: const Color(0xFF2563EB),
+                    tooltip: _locale.edit,
                     onPressed: () {
-                      print("selectedCategory :${selectedCategory!.toJson()}");
                       if (selectedCategory != null) {
                         showDialog(
                             context: context,
@@ -153,24 +160,23 @@ class DealClassificationTreeScreenState
                         });
                       }
                     },
-                    icon: const Icon(
-                      Icons.edit,
-                      size: 20,
-                    )),
-                IconButton(
+                  ),
+                  const SizedBox(width: 6),
+                  _actionButton(
+                    icon: Icons.delete,
+                    color: Colors.red,
+                    tooltip: _locale.delete,
                     onPressed: (selectedCategory != null &&
                             selectedCategory!.docCatChildren!.isEmpty)
                         ? () {
                             deleteMethod();
                           }
                         : null,
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                      size: 20,
-                    )),
-              ],
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(height: 10),
             if (isLoading)
               Expanded(
                 child: Center(
@@ -182,44 +188,58 @@ class DealClassificationTreeScreenState
               )
             else
               Expanded(
-                child: Stack(
-                  children: [
-                    TreeView<MyNode>(
-                      key: ValueKey(treeController),
-                      treeController: treeController,
-                      nodeBuilder:
-                          (BuildContext context, TreeEntry<MyNode> entry) {
-                        return MyTreeTile(
-                          onPointerDown: (p0) {},
-                          key: ValueKey(entry.node),
-                          entry: entry,
-                          folderOnTap: () {
-                            if (entry.node.children.isNotEmpty) {
-                              selectedCategory = entry.node.extra;
-                              selectedCamp.value = selectedCategory!
-                                  .docCatParent!.txtDescription!;
-                              selectedValue.value =
-                                  selectedCategory!.docCatParent!.txtShortcode;
-                              treeController.toggleExpansion(entry.node);
-                            } else {
-                              // if (!entry.node.isRoot) {
-                              selectedCategory = entry.node.extra;
-                              selectedCamp.value = selectedCategory!
-                                  .docCatParent!.txtDescription!;
-                              selectedValue.value =
-                                  selectedCategory!.docCatParent!.txtShortcode;
-                              // }
-                            }
-                          },
-                          textWidget: nodeDesign(entry.node),
-                        );
-                      },
-                    ),
-                    if (isLoading)
-                      const Center(
-                        child: CircularProgressIndicator(),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
                       ),
-                  ],
+                    ],
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                  child: Stack(
+                    children: [
+                      TreeView<MyNode>(
+                        key: ValueKey(treeController),
+                        treeController: treeController,
+                        nodeBuilder:
+                            (BuildContext context, TreeEntry<MyNode> entry) {
+                          return MyTreeTile(
+                            onPointerDown: (p0) {},
+                            key: ValueKey(entry.node),
+                            entry: entry,
+                            folderOnTap: () {
+                              if (entry.node.children.isNotEmpty) {
+                                selectedCategory = entry.node.extra;
+                                selectedCamp.value = selectedCategory!
+                                    .docCatParent!.txtDescription!;
+                                selectedValue.value = selectedCategory!
+                                    .docCatParent!.txtShortcode;
+                                treeController.toggleExpansion(entry.node);
+                              } else {
+                                selectedCategory = entry.node.extra;
+                                selectedCamp.value = selectedCategory!
+                                    .docCatParent!.txtDescription!;
+                                selectedValue.value = selectedCategory!
+                                    .docCatParent!.txtShortcode;
+                              }
+                            },
+                            textWidget: nodeDesign(entry.node),
+                          );
+                        },
+                      ),
+                      if (isLoading)
+                        const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             // const Divider(height: 3),
@@ -407,17 +427,15 @@ class DealClassificationTreeScreenState
 
   Widget nodeDesign(MyNode node) {
     return SizedBox(
-      width: node.isRoot ? 200 : 300,
+      width: node.isRoot ? 220 : 360,
       child: InkWell(
         onTap: () {
-          // if (!node.isRoot && node.children.isEmpty) {
           selectedCategory = node.extra;
           selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
           selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
           treeController.toggleExpansion(node);
 
           setState(() {});
-          // }
         },
         onDoubleTap: () {
           if (!node.isRoot && node.children.isEmpty) {
@@ -429,16 +447,53 @@ class DealClassificationTreeScreenState
         child: ValueListenableBuilder(
           valueListenable: selectedValue,
           builder: (context, value, child) {
-            return Text(
-              node.title,
-              style: TextStyle(
-                fontSize: 16,
-                color: getColor(node.extra, value.toString())
-                    ? currentColor
-                    : Colors.black,
+            final bool isSelected = getColor(node.extra, value.toString());
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 140),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color:
+                    isSelected ? const Color(0xFFE0F2FE) : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                node.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected ? const Color(0xFF0C4A6E) : Colors.black87,
+                ),
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _actionButton({
+    required IconData icon,
+    required Color color,
+    required String tooltip,
+    required VoidCallback? onPressed,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: Ink(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          color: color.withOpacity(onPressed == null ? 0.08 : 0.14),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withOpacity(0.35)),
+        ),
+        child: IconButton(
+          onPressed: onPressed,
+          icon: Icon(icon, size: 18, color: color),
+          padding: EdgeInsets.zero,
+          splashRadius: 20,
         ),
       ),
     );

@@ -7,7 +7,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../providers/dates_provider.dart';
 import '../service/controller/error_controllers/error_controller.dart';
-import '../utils/constants/colors.dart';
 import '../utils/func/responsive.dart';
 
 //dania
@@ -159,6 +158,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
       // height: height * 0.09,
 
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Consumer<DatesProvider>(
             builder: (context, value, child) {
@@ -173,22 +173,35 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
               );
             },
           ),
-          Container(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
             //  width: width * 0.9,
-            height: widget.height ?? height * 0.04,
+            height: widget.height ?? height * 0.048,
+            padding: EdgeInsets.zero,
             decoration: BoxDecoration(
-              // color: Colors.white,
-
+              color: widget.readOnly == true
+                  ? const Color(0xFFF1F5F9)
+                  : Colors.white,
               border: Border.all(
-                color: borderColor,
+                color: (!dayTemp || !monthTemp || !yearTemp)
+                    ? borderErrorColor
+                    : const Color(0xFFCBD5E1),
               ),
-              borderRadius: BorderRadius.circular(borderRadius),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0F172A).withOpacity(0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 getSuffixIcon(),
+                const SizedBox(width: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -205,7 +218,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                 ),
                 widget.isTimeDate == true
                     ? const VerticalDivider(
-                        color: Color.fromARGB(255, 97, 97, 97),
+                        color: Color(0xFFCBD5E1),
                         thickness: 0.5,
                         width: 15,
                       )
@@ -259,11 +272,16 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                             },
                             child: Icon(
                               Icons.timer,
-                              color: primary2,
-                              size: MediaQuery.of(context).size.width * 0.012,
+                              color: const Color(0xFF2563EB),
+                              size: Responsive.isDesktop(context) ? 18 : 20,
                             ),
                           ),
                           TextButton(
+                            style: TextButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              minimumSize: const Size(0, 28),
+                            ),
                             onPressed: () async {
                               if (widget.readOnly == true) {
                               } else {
@@ -313,8 +331,12 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                                     ? widget.selectedTime!.format(context)
                                     : TimeOfDay.now().format(context),
                                 style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: height * 0.0165),
+                                  color: const Color(0xFF0F172A),
+                                  fontSize: Responsive.isDesktop(context)
+                                      ? 13
+                                      : height * 0.016,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
@@ -330,26 +352,54 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
   }
 
   SizedBox dateDivider() {
-    return SizedBox(width: width * 0.003, child: const Text("-"));
+    return SizedBox(
+      width: width * 0.01,
+      child: const Center(
+        child: Text(
+          "-",
+          style: TextStyle(
+            color: Color(0xFF64748B),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget createDateField(MaskTextInputFormatter mask,
       TextEditingController controller, String hint, FocusNode focusNode) {
     return Center(
       child: SizedBox(
-        width: Responsive.isDesktop(context) ? width * 0.026 : width * 0.07,
+        width: Responsive.isDesktop(context) ? width * 0.03 : width * 0.07,
         height: Responsive.isDesktop(context) ? height * 0.03 : height * 0.1,
         child: Center(
           child: TextFormField(
             readOnly: widget.readOnly != null ? widget.readOnly! : false,
-            style: TextStyle(fontSize: height * 0.0165),
+            style: TextStyle(
+              fontSize: Responsive.isDesktop(context) ? 13 : height * 0.016,
+              color: const Color(0xFF0F172A),
+              fontWeight: FontWeight.w600,
+            ),
             focusNode: focusNode,
             controller: controller,
             inputFormatters: [mask],
             textAlign: TextAlign.center,
             decoration: InputDecoration(
-              border: InputBorder.none,
+              filled: true,
+              fillColor: widget.readOnly == true
+                  ? const Color(0xFFE2E8F0)
+                  : const Color(0xFFF8FAFC),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(7),
+                borderSide: BorderSide.none,
+              ),
               hintText: hint,
+              hintStyle: const TextStyle(
+                color: Color(0xFF94A3B8),
+                fontWeight: FontWeight.w500,
+              ),
             ),
             onTap: () {
               if (hint == dayHint) {
@@ -515,17 +565,43 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
   }
 
   Widget getSuffixIcon() {
-    return InkWell(
-      onTap: () {
-        if (widget.readOnly == true) {
-        } else {
-          setDatePickerValues();
-        }
-      },
-      child: Icon(
-        Icons.date_range,
-        size: MediaQuery.of(context).size.width * 0.012,
-        color: primary2,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(9),
+          bottomRight: Radius.circular(9),
+        ),
+        onTap: () {
+          if (widget.readOnly == true) {
+          } else {
+            setDatePickerValues();
+          }
+        },
+        child: Container(
+          width: Responsive.isDesktop(context) ? 38 : 42,
+          height: double.infinity,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0x664F8CFF), Color(0x993B82F6)],
+            ),
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(9),
+              bottomRight: Radius.circular(9),
+            ),
+            border: BorderDirectional(
+              end: BorderSide(color: Color(0x80FFFFFF), width: 0.8),
+            ),
+          ),
+          child: Icon(
+            Icons.date_range_outlined,
+            size: Responsive.isDesktop(context) ? 17 : 19,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
@@ -613,6 +689,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
         style: TextStyle(
           fontSize: 10,
           color: borderErrorColor,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -620,9 +697,13 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
 
   Widget labelMessage(String msg) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Text(
-        style: const TextStyle(fontSize: 12),
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF0F172A),
+        ),
         msg,
       ),
     );
@@ -856,42 +937,76 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
     return yyyymmddd;
   }
 
-  void setDatePickerValues() {
-    DateTime firstDate = DateTime(2000);
-    showDatePicker(
+  void setDatePickerValues() async {
+    final DateTime firstDate = DateTime(2000);
+    DateTime tempSelectedDate = formattedDate;
+
+    final DateTime? dateResult = await showDialog<DateTime>(
       context: context,
-      initialDate: formattedDate,
-      firstDate: firstDate,
-      lastDate: DateTime(2050),
-    ).then((dateResult) {
-      setState(() {
-        if (dateResult != null && widget.onValue != null) {
-          yearController.text = dateResult.year.toString();
-          monthController.text = dateResult.month.toString();
-          dayController.text = dateResult.day.toString();
-          if (monthController.text.length == 1) {
-            monthController.text = "0${monthController.text}";
-          }
-          if (dayController.text.length == 1) {
-            dayController.text = "0${dayController.text}";
-          }
-          bool isValid = dateValidation();
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+          content: StatefulBuilder(
+            builder: (context, setDialogState) {
+              return SizedBox(
+                width: Responsive.isDesktop(context) ? 360 : 320,
+                child: CalendarDatePicker(
+                  initialDate: tempSelectedDate,
+                  firstDate: firstDate,
+                  lastDate: DateTime(2050),
+                  onDateChanged: (newDate) {
+                    setDialogState(() {
+                      tempSelectedDate = newDate;
+                    });
+                  },
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(dialogContext).pop(tempSelectedDate),
+              child: Text(MaterialLocalizations.of(context).okButtonLabel),
+            ),
+          ],
+        );
+      },
+    );
 
-          if (isValid) {
-            dayTemp = true;
-            monthTemp = true;
-            yearTemp = true;
-            context.read<DatesProvider>().setDayTemp(true);
-            context.read<DatesProvider>().setMonthTemp(true);
-            context.read<DatesProvider>().setYearTemp(true);
+    setState(() {
+      if (dateResult != null && widget.onValue != null) {
+        yearController.text = dateResult.year.toString();
+        monthController.text = dateResult.month.toString();
+        dayController.text = dateResult.day.toString();
+        if (monthController.text.length == 1) {
+          monthController.text = "0${monthController.text}";
+        }
+        if (dayController.text.length == 1) {
+          dayController.text = "0${dayController.text}";
+        }
+        bool isValid = dateValidation();
 
-            widget.onValue!(true, getDateValue());
-            if (widget.dateControllerToCompareWith != null) {
-              checkValidation();
-            }
+        if (isValid) {
+          dayTemp = true;
+          monthTemp = true;
+          yearTemp = true;
+          context.read<DatesProvider>().setDayTemp(true);
+          context.read<DatesProvider>().setMonthTemp(true);
+          context.read<DatesProvider>().setYearTemp(true);
+
+          widget.onValue!(true, getDateValue());
+          if (widget.dateControllerToCompareWith != null) {
+            checkValidation();
           }
         }
-      });
+      }
     });
   }
 

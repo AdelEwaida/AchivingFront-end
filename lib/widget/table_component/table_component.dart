@@ -3,6 +3,7 @@ import 'package:archiving_flutter_project/providers/screen_content_provider.dart
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/key.dart';
 import 'package:archiving_flutter_project/utils/func/text_and_number_inputFormater.dart';
+import 'package:archiving_flutter_project/widget/empty_widget.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,7 @@ class TableComponent extends StatefulWidget {
   final Function()? generalDownload;
   final Function()? filesList;
   bool? isFileScreen = false;
+  final Widget? appBarTitleWidget;
 
   final Function(PlutoGridOnLoadedEvent event)? onLoaded;
   final Function(PlutoGridOnRowDoubleTapEvent event)? doubleTab;
@@ -113,6 +115,7 @@ class TableComponent extends StatefulWidget {
       this.rowColor,
       this.generalDownload,
       this.filesList,
+      this.appBarTitleWidget,
       this.dropdown,
       this.hasDropdown,
       this.isworkFlow,
@@ -449,17 +452,15 @@ class _TableComponentState extends State<TableComponent> {
         columnHeight: widget.columnHeight ?? 48,
         columnFilterHeight: 30,
 
-        columnTextStyle: TextStyle(
+        columnTextStyle: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: widget.isWhiteText ?? false
-                ? Colors.white
-                : const Color(0xFF0F172A),
+            color: Colors.white,
             letterSpacing: 0.3),
-        rowHeight: widget.rowsHeight ?? 34,
+        rowHeight: widget.rowsHeight ?? 52,
         cellTextStyle: const TextStyle(
           fontSize: 13,
-          color: Color(0xFF111827),
+          color: Colors.white,
         ),
       ),
     );
@@ -512,7 +513,7 @@ class _TableComponentState extends State<TableComponent> {
                   ),
                 ),
                 polCols[i].title == "#"
-                    ? SizedBox.shrink()
+                    ? const SizedBox.shrink()
                     : Row(
                         children: [
                           const SizedBox(width: 2),
@@ -547,6 +548,23 @@ class _TableComponentState extends State<TableComponent> {
       );
       polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
       polCols[i].textAlign = PlutoColumnTextAlign.center;
+      polCols[i].renderer = polCols[i].renderer ??
+          (rendererContext) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: SelectableText(
+                    rendererContext.cell.value?.toString() ?? '',
+                    textAlign: TextAlign.center,
+                    maxLines: null,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      height: 1.25,
+                      color: Color(0xFF111827),
+                    ),
+                  ),
+                ),
+              );
     }
     return Column(
       children: [
@@ -617,17 +635,7 @@ class _TableComponentState extends State<TableComponent> {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: const Color(0xFFE2E8F0)),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.inbox_outlined, color: Color(0xFF64748B)),
-                        SizedBox(width: 8),
-                        Text(
-                          "No data available.",
-                          style: TextStyle(color: Color(0xFF64748B)),
-                        ),
-                      ],
-                    ),
+                    child: EmptyWidget(message: locale.error406),
                   ),
                 ),
                 onRowSecondaryTap: (event) {
@@ -656,13 +664,17 @@ class _TableComponentState extends State<TableComponent> {
         children: [
           widget.search != null
               ? Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    if (widget.appBarTitleWidget != null) ...[
+                      widget.appBarTitleWidget!,
+                      const SizedBox(width: 10),
+                    ],
                     widget.hasDropdown == true && widget.isworkFlow == true
                         ? Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               CustomSearchField(
                                 horizontalPadding: 0,
@@ -701,21 +713,27 @@ class _TableComponentState extends State<TableComponent> {
                                 }),
                                 controller: TextEditingController(),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
-                              widget.dropdown!,
-                              SizedBox(
+                              Align(
+                                alignment: Alignment.center,
+                                child: widget.dropdown!,
+                              ),
+                              const SizedBox(
                                 width: 5,
                               ),
-                              widget.statusDropDown!,
+                              Align(
+                                alignment: Alignment.center,
+                                child: widget.statusDropDown!,
+                              ),
                             ],
                           )
                         : widget.hasDropdown == true &&
                                 widget.isworkFlow == false
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [widget.dropdown!])
                             : CustomSearchField(
                                 horizontalPadding: 0,
@@ -829,7 +847,7 @@ class _TableComponentState extends State<TableComponent> {
                     // Text(rowsLength.value.toString()),
                   ],
                 )
-              : SizedBox.shrink(),
+              : (widget.appBarTitleWidget ?? SizedBox.shrink()),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -1148,12 +1166,16 @@ class _TableComponentState extends State<TableComponent> {
               widget.search != null
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        if (widget.appBarTitleWidget != null) ...[
+                          widget.appBarTitleWidget!,
+                          const SizedBox(width: 10),
+                        ],
                         widget.hasDropdown == true && widget.isworkFlow == true
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   CustomSearchField(
                                     horizontalPadding: 0,
@@ -1192,22 +1214,27 @@ class _TableComponentState extends State<TableComponent> {
                                     }),
                                     controller: TextEditingController(),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  widget.dropdown!,
-                                  SizedBox(
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: widget.dropdown!,
+                                  ),
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  widget.statusDropDown!,
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: widget.statusDropDown!,
+                                  ),
                                 ],
                               )
                             : widget.hasDropdown == true &&
                                     widget.isworkFlow == false
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [widget.dropdown!])
                                 : CustomSearchField(
                                     horizontalPadding: 0,

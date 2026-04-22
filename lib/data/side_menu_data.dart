@@ -49,7 +49,7 @@ List<MenuModel> getMenus(
               ),
               MenuModel(
                 title: locale.myApprovals,
-                icon: Icons.approval_rounded,
+                icon: Icons.verified,
                 pageNumber: 12,
                 isOpened: true,
                 isParent: false,
@@ -58,7 +58,7 @@ List<MenuModel> getMenus(
               ),
               MenuModel(
                 title: locale.dailyReminders,
-                icon: Icons.dashboard,
+                icon: Icons.notifications,
                 pageNumber: 1,
                 isOpened: true,
                 isParent: false,
@@ -67,7 +67,7 @@ List<MenuModel> getMenus(
               ),
               MenuModel(
                   title: locale.systemSetup,
-                  icon: Icons.settings_input_antenna_rounded,
+                  icon: Icons.settings,
                   isParent: true,
                   pageNumber: 1,
                   subMenuList: [
@@ -95,7 +95,7 @@ List<MenuModel> getMenus(
                   isOpened: false),
               MenuModel(
                   title: locale.users,
-                  icon: Icons.supervised_user_circle_sharp,
+                  icon: Icons.people,
                   isParent: false,
                   pageNumber: 11,
                   subMenuList: [
@@ -153,7 +153,7 @@ List<MenuModel> getMenus(
               // ),
               MenuModel(
                 title: locale.dailyReminders,
-                icon: Icons.dashboard,
+                icon: Icons.notifications,
                 pageNumber: 1,
                 isOpened: true,
                 isParent: false,
@@ -162,7 +162,7 @@ List<MenuModel> getMenus(
               ),
               MenuModel(
                   title: locale.systemSetup,
-                  icon: Icons.settings_input_antenna_rounded,
+                  icon: Icons.settings,
                   isParent: true,
                   pageNumber: 1,
                   subMenuList: [
@@ -190,7 +190,7 @@ List<MenuModel> getMenus(
                   isOpened: false),
               MenuModel(
                   title: locale.users,
-                  icon: Icons.supervised_user_circle_sharp,
+                  icon: Icons.people,
                   isParent: false,
                   pageNumber: 11,
                   subMenuList: [
