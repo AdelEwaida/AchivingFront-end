@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import '../../models/db/user_models/user_category.dart';
 import '../../models/db/user_models/user_update_req.dart';
 import '../../providers/user_provider.dart';
+import '../../widget/dashboard_components/custom_elevated_button.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
 import '../app_dialog.dart';
@@ -103,7 +104,7 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
     isDesktop = Responsive.isDesktop(context);
 
     return AppDialog(
-       width: isDesktop ? width * 0.3 : width * 0.8,
+      width: isDesktop ? width * 0.3 : width * 0.8,
       height: height * 0.8,
       // titlePadding: EdgeInsets.all(0),
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
@@ -119,80 +120,52 @@ class _EditUserCategoryDialogState extends State<EditUserCategoryDialog> {
         isDesktop
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      addDep();
-                    },
-                    style: customButtonStyle(    context,
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
-                        16,
-                        primary),
-                    child: Text(
-                      _locale.save,
-                      style: const TextStyle(color: whiteColor),
-                    ),
+                  CustomElevatedButton(
+                    text: _locale.save,
+                    color: primary,
+                    icon: Icons.save_rounded,
+                    width: width * 0.1,
+                    height: height * 0.045,
+                    fontSize: 14,
+                    onPressed: () => addDep(),
                   ),
-                  SizedBox(
-                    width: width * 0.01,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context, false);
-                    },
-                    style: customButtonStyle(    context,
-                        Size(isDesktop ? width * 0.1 : width * 0.4,
-                            height * 0.045),
-                        16,
-                        redColor),
-                    child: Text(
-                      _locale.cancel,
-                      style: const TextStyle(color: whiteColor),
-                    ),
+                  SizedBox(width: width * 0.01),
+                  CustomElevatedButton(
+                    text: _locale.cancel,
+                    color: redColor,
+                    icon: Icons.close_rounded,
+                    width: width * 0.1,
+                    height: height * 0.045,
+                    fontSize: 14,
+                    onPressed: () => Navigator.pop(context, false),
                   ),
                 ],
               )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+            : Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          addDep();
-                        },
-                        style: customButtonStyle(    context,
-                            Size(isDesktop ? width * 0.1 : width * 0.4,
-                                height * 0.045),
-                            16,
-                            greenColor),
-                        child: Text(
-                          _locale.save,
-                          style: const TextStyle(color: whiteColor),
-                        ),
-                      ),
-                      SizedBox(height: height * 0.01),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context, false);
-                        },
-                        style: customButtonStyle(    context,
-                            Size(isDesktop ? width * 0.1 : width * 0.4,
-                                height * 0.045),
-                            16,
-                            redColor),
-                        child: Text(
-                          _locale.cancel,
-                          style: const TextStyle(color: whiteColor),
-                        ),
-                      ),
-                    ],
+                  CustomElevatedButton(
+                    text: _locale.save,
+                    color: primary,
+                    icon: Icons.save_rounded,
+                    width: width * 0.4,
+                    height: height * 0.045,
+                    fontSize: 14,
+                    onPressed: () => addDep(),
+                  ),
+                  SizedBox(height: height * 0.01),
+                  CustomElevatedButton(
+                    text: _locale.cancel,
+                    color: redColor,
+                    icon: Icons.close_rounded,
+                    width: width * 0.4,
+                    height: height * 0.045,
+                    fontSize: 14,
+                    onPressed: () => Navigator.pop(context, false),
                   ),
                 ],
-              )
+              ),
       ],
     );
   }
