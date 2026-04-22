@@ -31,6 +31,7 @@ import '../../providers/user_provider.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
+import '../../widget/dashboard_components/custom_elevated_button.dart';
 
 class AddUserPermisonsScreen extends StatefulWidget {
   const AddUserPermisonsScreen({Key? key, this.selectedModel})
@@ -215,21 +216,14 @@ class AddUserPermisonsScreenState extends State<AddUserPermisonsScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
+                  CustomElevatedButton(
+                    text: _locale.save,
+                    color: primary,
+                    icon: Icons.save_rounded,
+                    width: isDesktop ? screenWidth * 0.1 : screenWidth * 0.4,
+                    height: screenHeight * 0.045,
+                    fontSize: 16,
                     onPressed: save,
-                    style: customButtonStyle(
-                      context,
-                      Size(
-                        isDesktop ? screenWidth * 0.1 : screenWidth * 0.4,
-                        screenHeight * 0.045,
-                      ),
-                      18,
-                      primary,
-                    ),
-                    child: Text(
-                      _locale.save,
-                      style: const TextStyle(color: whiteColor),
-                    ),
                   ),
                 ],
               ),
