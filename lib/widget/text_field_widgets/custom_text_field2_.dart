@@ -148,9 +148,7 @@ class _CustomTextField2State extends State<CustomTextField2>
         decoration: BoxDecoration(
           color: !_isEnabled
               ? const Color(0xFFF0F2F5)
-              : _isFocused
-                  ? Colors.white
-                  : const Color(0xFFF6F8FC),
+              : Colors.white, // ← always white, focused or not
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: _currentBorderColor,

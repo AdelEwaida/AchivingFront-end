@@ -402,7 +402,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
   // ── 3-column field row ────────────────────────────────────────────
   Widget _fieldRow(List<Widget> children) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: children
           .map((c) => Expanded(
                 child: Padding(
