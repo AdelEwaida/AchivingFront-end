@@ -3,12 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../utils/constants/colors.dart';
 
-// ── Design tokens ─────────────────────────────────────────────────
 const Color _tfPrimary = Color(0xFF185FA5);
 const Color _tfBorder = Color(0xFFDDE3EE);
-const Color _tfBorderHover = Color(0xFF185FA5);
-const Color _tfBg = Color(0xFFF6F8FC);
-const Color _tfBgFocus = Colors.white;
 const Color _tfLabel = Color(0xFF8A94A6);
 const Color _tfText = Color(0xFF1A2340);
 const Color _tfError = Color(0xFFA32D2D);
@@ -79,46 +75,37 @@ class CustomTextField2 extends StatefulWidget {
   State createState() => _CustomTextField2State();
 }
 
-class _CustomTextField2State extends State<CustomTextField2>
-    with SingleTickerProviderStateMixin {
+class _CustomTextField2State extends State<CustomTextField2> {
   late FocusNode _internalFocus;
   bool _isFocused = false;
   bool _isHovered = false;
-  late AnimationController _animController;
-  late Animation<double> _borderAnim;
 
   @override
   void initState() {
     super.initState();
     _internalFocus = widget.focusNode ?? FocusNode();
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 180),
-    );
-    _borderAnim = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOut,
-    );
     _internalFocus.addListener(() {
       setState(() => _isFocused = _internalFocus.hasFocus);
-      if (_internalFocus.hasFocus) {
-        _animController.forward();
-      } else {
-        _animController.reverse();
-      }
+    });
+    // Rebuild when controller text changes so label floats correctly
+    widget.controller?.addListener(() {
+      if (mounted) setState(() {});
     });
   }
 
   @override
   void dispose() {
-    // Only dispose if we created it internally
     if (widget.focusNode == null) _internalFocus.dispose();
-    _animController.dispose();
     super.dispose();
   }
 
   bool get _isReadOnly => widget.readOnly ?? false;
   bool get _isEnabled => widget.enabled ?? true;
+
+  // ── True when field already has a value ──────────────────────────
+  bool get _hasValue =>
+      (widget.controller != null && widget.controller!.text.isNotEmpty) ||
+      (widget.initialValue != null && widget.initialValue!.isNotEmpty);
 
   Color get _currentBorderColor {
     if (!_isEnabled) return _tfBorder.withOpacity(0.5);
@@ -137,33 +124,15 @@ class _CustomTextField2State extends State<CustomTextField2>
   Widget build(BuildContext context) {
     final String hint = widget.text?.data ?? '';
     final bool isMandatory = widget.isMandetory ?? false;
+    final bool shouldFloat = _hasValue || _isFocused;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
+      child: Container(
         width: widget.width,
         height: widget.height,
-        decoration: BoxDecoration(
-          color: !_isEnabled
-              ? const Color(0xFFF0F2F5)
-              : Colors.white, // ← always white, focused or not
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: _currentBorderColor,
-            width: _currentBorderWidth,
-          ),
-          boxShadow: _isFocused
-              ? [
-                  BoxShadow(
-                    color: _tfPrimary.withOpacity(0.10),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : [],
-        ),
+        // ← NO decoration here — OutlineInputBorder handles the border
         child: TextFieldCustom(
           focusNode: _internalFocus,
           width: widget.width,
@@ -186,27 +155,54 @@ class _CustomTextField2State extends State<CustomTextField2>
   }
 
   InputDecoration _buildDecoration(String hint, bool isMandatory) {
-    // If a custom decoration is passed, use it
     if (widget.decoration != null) return widget.decoration!;
 
-    return InputDecoration(
-      // ── No double border — container handles it ──────────
-      border: InputBorder.none,
-      enabledBorder: InputBorder.none,
-      focusedBorder: InputBorder.none,
-      errorBorder: InputBorder.none,
-      disabledBorder:
-          InputBorder.none, // In _buildDecoration, add these two lines:
-      filled: true,
-      fillColor: Colors.transparent, // ← TextFieldCustom bg = transparent
+    final bool shouldFloat = _hasValue || _isFocused;
 
-      // ── Padding ──────────────────────────────────────────
+    final OutlineInputBorder defaultBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: _tfBorder, width: 1),
+    );
+
+    final OutlineInputBorder focusedBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: _tfPrimary, width: 1.8),
+    );
+
+    final OutlineInputBorder hoveredBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: _tfPrimary.withOpacity(0.5), width: 1.2),
+    );
+
+    final OutlineInputBorder disabledBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: _tfBorder.withOpacity(0.5), width: 1),
+    );
+
+    return InputDecoration(
+      // ── OutlineInputBorder draws the border + label cutout ──
+      border: defaultBorder,
+      enabledBorder: _isHovered ? hoveredBorder : defaultBorder,
+      focusedBorder: focusedBorder,
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: _tfError, width: 1),
+      ),
+      disabledBorder: disabledBorder,
+
+      filled: true,
+      fillColor: !_isEnabled ? const Color(0xFFF0F2F5) : Colors.white,
+
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 10,
       ),
 
-      // ── Label ────────────────────────────────────────────
+      // ── Float label above border when value exists or focused ──
+      floatingLabelBehavior: shouldFloat
+          ? FloatingLabelBehavior.always
+          : FloatingLabelBehavior.auto,
+
       label: isMandatory
           ? Row(
               mainAxisSize: MainAxisSize.min,
@@ -219,12 +215,9 @@ class _CustomTextField2State extends State<CustomTextField2>
                   ),
                 ),
                 const SizedBox(width: 3),
-                Text(
+                const Text(
                   '*',
-                  style: TextStyle(
-                    color: _tfError,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: _tfError, fontSize: 13),
                 ),
               ],
             )
@@ -236,16 +229,14 @@ class _CustomTextField2State extends State<CustomTextField2>
               ),
             ),
 
+      // ── Floating label — white bg cuts through the border ──
       floatingLabelStyle: TextStyle(
         fontSize: 11,
         color: _isFocused ? _tfPrimary : _tfLabel,
         fontWeight: FontWeight.w500,
-        backgroundColor: _isFocused ? Colors.white : _tfBg,
+        backgroundColor: Colors.white,
       ),
 
-      floatingLabelBehavior: FloatingLabelBehavior.auto,
-
-      // ── Prefix icon ──────────────────────────────────────
       prefixIcon: widget.customIcon != null
           ? Padding(
               padding: const EdgeInsets.only(left: 8, right: 4),
@@ -257,14 +248,16 @@ class _CustomTextField2State extends State<CustomTextField2>
             )
           : null,
 
-      // ── Suffix icon ──────────────────────────────────────
       suffixIcon: _isReadOnly
-          ? Icon(Icons.lock_outline_rounded, size: 14, color: _tfLabel)
+          ? const Icon(
+              Icons.lock_outline_rounded,
+              size: 14,
+              color: _tfLabel,
+            )
           : widget.customIconSuffix != null
               ? widget.customIconSuffix
               : null,
 
-      // ── Error style ──────────────────────────────────────
       errorStyle: const TextStyle(
         height: 0.8,
         fontSize: 10,
@@ -272,13 +265,10 @@ class _CustomTextField2State extends State<CustomTextField2>
       ),
       errorMaxLines: 1,
 
-      // ── Hint style ───────────────────────────────────────
       hintStyle: TextStyle(
         fontSize: 13,
         color: _tfLabel.withOpacity(0.6),
       ),
-
-      // ── Fill ─────────────────────────────────────────────
     );
   }
 }
