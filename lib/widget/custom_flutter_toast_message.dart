@@ -1,12 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../utils/constants/key.dart';
+
 class CustomToastMessage {
   /// ==============================
-  /// 🔹 Base Method (General)
+  /// 🔹 Base Method (Internal UI)
   /// ==============================
   static Future<bool?> _show({
+    required BuildContext context,
     required String msg,
     Toast? toastLength,
     int timeInSecForIosWeb = 1,
@@ -18,29 +20,33 @@ class CustomToastMessage {
     bool webShowClose = false,
     dynamic webBgColor,
     dynamic webPosition,
+    IconData icon = Icons.info,
   }) {
-    // Only cancel on native platforms, not on web
-    if (!kIsWeb) {
-      try {
-        Fluttertoast.cancel();
-      } catch (e) {
-        // Ignore cancel errors on platforms that don't support it
-        debugPrint("Toast cancel error: $e");
-      }
+    final overlayState = navigatorKey.currentState?.overlay;
+
+    if (overlayState == null) {
+      debugPrint("❌ No Overlay found");
+      return Future.value(false);
     }
 
-    return Fluttertoast.showToast(
-      msg: msg,
-      toastLength: toastLength,
-      timeInSecForIosWeb: timeInSecForIosWeb,
-      fontSize: fontSize,
-      gravity: gravity,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      webShowClose: webShowClose,
-      webBgColor: webBgColor,
-      webPosition: webPosition,
+    final overlayEntry = OverlayEntry(
+      builder: (context) {
+        return _AnimatedToast(
+          msg: msg,
+          bgColor: backgroundColor ?? Colors.black87,
+          textColor: textColor ?? Colors.white,
+          icon: icon,
+        );
+      },
     );
+
+    overlayState.insert(overlayEntry);
+
+    Future.delayed(Duration(seconds: timeInSecForIosWeb), () {
+      overlayEntry.remove();
+    });
+
+    return Future.value(true);
   }
 
   /// ==============================
@@ -61,6 +67,7 @@ class CustomToastMessage {
     dynamic webPosition = "center",
   }) {
     return _show(
+      context: context,
       msg: msg,
       toastLength: toastLength,
       timeInSecForIosWeb: timeInSecForIosWeb,
@@ -72,6 +79,7 @@ class CustomToastMessage {
       webShowClose: webShowClose,
       webBgColor: webBgColor,
       webPosition: webPosition,
+      icon: Icons.check_circle,
     );
   }
 
@@ -93,6 +101,7 @@ class CustomToastMessage {
     dynamic webPosition = "right",
   }) {
     return _show(
+      context: context,
       msg: msg,
       toastLength: toastLength,
       timeInSecForIosWeb: timeInSecForIosWeb,
@@ -104,6 +113,7 @@ class CustomToastMessage {
       webShowClose: webShowClose,
       webBgColor: webBgColor,
       webPosition: webPosition,
+      icon: Icons.error,
     );
   }
 
@@ -125,6 +135,7 @@ class CustomToastMessage {
     dynamic webPosition = "center",
   }) {
     return _show(
+      context: context,
       msg: msg,
       toastLength: toastLength,
       timeInSecForIosWeb: timeInSecForIosWeb,
@@ -136,6 +147,7 @@ class CustomToastMessage {
       webShowClose: webShowClose,
       webBgColor: webBgColor,
       webPosition: webPosition,
+      icon: Icons.warning,
     );
   }
 
@@ -157,6 +169,7 @@ class CustomToastMessage {
     dynamic webPosition = "right",
   }) {
     return _show(
+      context: context,
       msg: msg,
       toastLength: toastLength,
       timeInSecForIosWeb: timeInSecForIosWeb,
@@ -168,6 +181,110 @@ class CustomToastMessage {
       webShowClose: webShowClose,
       webBgColor: webBgColor,
       webPosition: webPosition,
+      icon: Icons.info,
+    );
+  }
+}
+
+/// ==============================
+/// 🎨 UI Widget
+/// ==============================
+class _AnimatedToast extends StatefulWidget {
+  final String msg;
+  final Color bgColor;
+  final Color textColor;
+  final IconData icon;
+
+  const _AnimatedToast({
+    required this.msg,
+    required this.bgColor,
+    required this.textColor,
+    required this.icon,
+  });
+
+  @override
+  State<_AnimatedToast> createState() => _AnimatedToastState();
+}
+
+class _AnimatedToastState extends State<_AnimatedToast>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<Offset> offsetAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+
+    offsetAnimation = Tween<Offset>(
+      begin: const Offset(0, -1),
+      end: const Offset(0, 0),
+    ).animate(CurvedAnimation(
+      parent: controller,
+      curve: Curves.easeOut,
+    ));
+
+    controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 70,
+      left: 0,
+      right: 0,
+      child: Center(
+        // 🔥 هذا المهم (توسيط)
+        child: SlideTransition(
+          position: offsetAnimation,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              constraints: const BoxConstraints(
+                maxWidth: 300, // 🔥 ما يكبر كثير
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              decoration: BoxDecoration(
+                color: widget.bgColor,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: IntrinsicWidth(
+                // 🔥 حسب المحتوى
+                child: Row(
+                  mainAxisSize: MainAxisSize.min, // 🔥 مهم
+                  children: [
+                    Icon(widget.icon, color: widget.textColor, size: 20),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        widget.msg,
+                        style: TextStyle(
+                          color: widget.textColor,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

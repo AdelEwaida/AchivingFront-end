@@ -8,6 +8,7 @@ import '../dialogs/error_dialgos/show_error_dialog.dart';
 import '../utils/constants/colors.dart';
 import '../utils/encrypt/encryption.dart';
 import '../utils/func/responsive.dart';
+import '../widget/custom_flutter_toast_message.dart';
 import '../widget/dashboard_components/custom_elevated_button.dart';
 
 const Color _cpPrimary = Color(0xFF185FA5);
@@ -103,7 +104,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           topLeft: Radius.circular(20),
                           topRight: Radius.circular(20),
                         ),
-                        border: Border(
+                        border: const Border(
                           bottom: BorderSide(color: _cpBorder, width: 1),
                         ),
                       ),
@@ -138,7 +139,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               const SizedBox(height: 2),
                               Text(
                                 _locale.editPassword,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 11,
                                   color: _cpLabel,
                                 ),
@@ -178,7 +179,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     !obscureConfirmNewPassword),
                           ),
                           const SizedBox(height: 28),
-
                           CustomElevatedButton(
                             text: _locale.save,
                             color: _cpPrimary,
@@ -232,16 +232,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   void _showError(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => ErrorDialog(
-        icon: Icons.error,
-        errorDetails: message,
-        errorTitle: _locale.error,
-        color: Colors.red,
-        statusCode: 200,
-      ),
-    );
+    CustomToastMessage.error(context, message);
+
+    // showDialog(
+    //   context: context,
+    //   builder: (context) => ErrorDialog(
+    //     icon: Icons.error,
+    //     errorDetails: message,
+    //     errorTitle: _locale.error,
+    //     color: Colors.red,
+    //     statusCode: 200,
+    //   ),
+    // );
   }
 
   Future<void> _save() async {
@@ -272,21 +274,26 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     setState(() => isLoading = false);
 
     if (response.statusCode == 200) {
-      showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (context) => ErrorDialog(
-          icon: Icons.done_all,
-          errorDetails: _locale.done,
-          errorTitle: _locale.editDoneSucess,
-          color: Colors.green,
-          statusCode: 200,
-        ),
-      ).then((_) {
+      CustomToastMessage.success(context, _locale.editDoneSucess).then((_) {
         oldPasswordController.clear();
         newPasswordController.clear();
         confirmNewPasswordController.clear();
       });
+      // showDialog(
+      //   // ignore: use_build_context_synchronously
+      //   context: context,
+      //   builder: (context) => ErrorDialog(
+      //     icon: Icons.done_all,
+      //     errorDetails: _locale.done,
+      //     errorTitle: _locale.editDoneSucess,
+      //     color: Colors.green,
+      //     statusCode: 200,
+      //   ),
+      // ).then((_) {
+      //   oldPasswordController.clear();
+      //   newPasswordController.clear();
+      //   confirmNewPasswordController.clear();
+      // });
     }
   }
 }
@@ -352,6 +359,7 @@ class _StyledPasswordFieldState extends State<_StyledPasswordField> {
       onExit: (_) => setState(() => _isHovered = false),
       child: TextFormField(
         focusNode: _focus,
+        cursorColor: primary,
         controller: widget.controller,
         obscureText: widget.obscure,
         style: const TextStyle(fontSize: 14, color: _cpText),

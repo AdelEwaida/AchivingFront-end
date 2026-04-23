@@ -15,6 +15,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/dto/searchs_model/search_model.dart';
 import '../../service/controller/department_controller/department_cotnroller.dart';
 import '../../widget/custom_drop_down.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 import '../app_dialog.dart';
 
 class InfoDocumentDialog extends StatefulWidget {
@@ -479,18 +480,19 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
 
   Future<void> updateDocument() async {
     if (issueNoController.text.trim().isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return ErrorDialog(
-            icon: Icons.error,
-            errorDetails: _locale.pleaseAddAllRequiredFields,
-            errorTitle: _locale.error,
-            color: Colors.red,
-            statusCode: 400,
-          );
-        },
-      );
+      CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return ErrorDialog(
+      //       icon: Icons.error,
+      //       errorDetails: _locale.pleaseAddAllRequiredFields,
+      //       errorTitle: _locale.error,
+      //       color: Colors.red,
+      //       statusCode: 400,
+      //     );
+      //   },
+      // );
       return;
     }
 
@@ -502,20 +504,23 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     var response = await documentsController.updateDocument(documentModel!);
 
     if (response.statusCode == 200) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return ErrorDialog(
-            icon: Icons.done_all,
-            errorDetails: _locale.done,
-            errorTitle: _locale.editDoneSucess,
-            color: Colors.green,
-            statusCode: 200,
-          );
-        },
-      ).then((value) {
+      CustomToastMessage.success(context, _locale.editDoneSucess).then((value) {
         Navigator.pop(context, true);
       });
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return ErrorDialog(
+      //       icon: Icons.done_all,
+      //       errorDetails: _locale.done,
+      //       errorTitle: _locale.editDoneSucess,
+      //       color: Colors.green,
+      //       statusCode: 200,
+      //     );
+      //   },
+      // ).then((value) {
+      //   Navigator.pop(context, true);
+      // });
     }
   }
 }

@@ -253,6 +253,7 @@ class _WorkFlowScreenState extends State<WorkFlowScreen> {
         }
       });
     } else {
+      print("no row selected");
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }

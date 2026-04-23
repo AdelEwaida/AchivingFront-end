@@ -224,6 +224,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
             },
             timeControllerToCompareWith: null,
           ),
+        SizedBox(height: height * 0.01),
         customTextField(
           _locale.txtDescription,
           descController,
@@ -231,6 +232,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
           0.2,
           true,
         ),
+        SizedBox(height: height * 0.01),
         customTextField(
           _locale.notes,
           notesController,
@@ -238,6 +240,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
           0.2,
           true,
         ),
+        SizedBox(height: height * 0.01),
         // Row(
         // mainAxisAlignment: MainAxisAlignment.start,
         // crossAxisAlignment: CrossAxisAlignment.center,
@@ -265,6 +268,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
           width: width * 0.2,
           height: height * 0.045,
         ),
+        SizedBox(height: height * 0.01),
         if (!isDesktop) ...[
           DateTimeComponent(
             label: _locale.date,
@@ -280,6 +284,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
             },
             timeControllerToCompareWith: null,
           ),
+          SizedBox(height: height * 0.01),
           customTextField(
             _locale.txtDescription,
             descController,
@@ -287,6 +292,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
             0.8,
             true,
           ),
+          SizedBox(height: height * 0.01),
           customTextField(
             _locale.notes,
             notesController,
@@ -294,6 +300,7 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
             0.2,
             true,
           ),
+          SizedBox(height: height * 0.01),
           DropDown(
             key: UniqueKey(),
             onChanged: (value) {
@@ -340,17 +347,18 @@ class _AddEditActionDialogState extends State<AddEditActionDialog> {
   void addAction() async {
     if (descController.text.trim().isEmpty ||
         notesController.text.trim().isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return ErrorDialog(
-              icon: Icons.error,
-              errorDetails: _locale.error,
-              errorTitle: _locale.pleaseAddAllRequiredFields,
-              color: Colors.red,
-              statusCode: 400);
-        },
-      );
+      CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return ErrorDialog(
+      //         icon: Icons.error,
+      //         errorDetails: _locale.error,
+      //         errorTitle: _locale.pleaseAddAllRequiredFields,
+      //         color: Colors.red,
+      //         statusCode: 400);
+      //   },
+      // );
     } else if (widget.actionModel != null && widget.isFromList == false) {
       editMethod();
     } else if (widget.isFromList == true) {

@@ -134,6 +134,7 @@ class _TableComponentState extends State<TableComponent> {
   double height = 0;
   double scrollThickness = 10;
   double scrollRadius = 10;
+  int? _selectedRowIdx;
   late final PlutoGridStateManager stateManager;
   late AppLocalizations locale;
   List<PlutoRow> tempRow = [];
@@ -378,6 +379,21 @@ class _TableComponentState extends State<TableComponent> {
 
   ValueNotifier rowsLength = ValueNotifier(0);
   late PlutoGridConfiguration configuration;
+
+  Color _rowColorResolver(PlutoRowColorContext context) {
+    if (_selectedRowIdx != null && context.rowIdx == _selectedRowIdx) {
+      return const Color(0xFFE5E7EB);
+    }
+
+    if (widget.rowColor != null) {
+      return widget.rowColor!(context);
+    }
+
+    return context.rowIdx.isEven
+        ? Colors.white
+        : Color.fromARGB(255, 234, 239, 247);
+  }
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -435,8 +451,8 @@ class _TableComponentState extends State<TableComponent> {
         gridBackgroundColor: const Color(0xFFFCFDFF),
         evenRowColor: Color.fromARGB(255, 223, 234, 249),
         oddRowColor: Colors.white,
-        activatedBorderColor: const Color(0xFF38BDF8),
-        activatedColor: const Color(0xFFE0F2FE),
+        activatedBorderColor: Colors.transparent,
+        activatedColor: Colors.transparent,
         enableCellBorderVertical: false,
         enableGridBorderShadow: true,
         gridBorderColor: widget.borderColor == null
@@ -621,11 +637,16 @@ class _TableComponentState extends State<TableComponent> {
                   }
                 },
                 onSelected: (event) {
+                  setState(() {
+                    _selectedRowIdx = event.rowIdx;
+                  });
+                  stateManager.clearCurrentCell();
+                  stateManager.setCurrentCell(null, -1);
                   if (widget.onSelected != null) {
                     widget.onSelected!(event);
                   }
                 },
-                rowColorCallback: widget.rowColor,
+                rowColorCallback: _rowColorResolver,
                 noRowsWidget: Center(
                   child: Container(
                     padding: const EdgeInsets.symmetric(

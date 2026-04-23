@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -78,6 +79,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
       width: widget.width,
       height: widget.height,
       child: TextFormField(
+        cursorColor: primary,
         textDirection: TextDirection.rtl,
         onTap: () {
           if (widget.onTap != null) widget.onTap!();

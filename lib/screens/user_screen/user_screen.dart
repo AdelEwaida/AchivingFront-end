@@ -103,90 +103,87 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-   
-        body: Center(
-          child: Column(
-            children: [
-              Container(
-                  width: isDesktop ? width * 0.8 : width * 0.9,
-                  child: TableComponent(
-                    // key: UniqueKey(),
-                    tableHeigt: height * 0.78,
-                    tableWidth: width * 0.85,
-                    editPassword: chagnePassword,
-                    delete: deleteUser,
-                    add: addUser,
-                    chooseDep: addDepartmentUser,
-                    search: search,
-                    plCols: polCols,
-                    mode: PlutoGridMode.selectWithOneTap,
-                    polRows: [],
-                    footerBuilder: (stateManager) {
-                      return lazyLoadingfooter(stateManager);
-                    },
-                    genranlEdit: editUser,
-                    onLoaded: (PlutoGridOnLoadedEvent event) {
-                      stateManager = event.stateManager;
-                      stateManager!.setShowColumnFilter(true);
-                      // pageLis.value = pageLis.value > 1 ? 0 : 1;
-                      // totalActionsCount.value = 0;
-                      getCount();
-                    },
-                    doubleTab: (event) async {
-                      PlutoRow? tappedRow = event.row;
+        body: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: Column(
+          children: [
+            TableComponent(
+              // key: UniqueKey(),
+              tableHeigt: height * 0.75,
+              tableWidth: isDesktop ? width * 1 : width * 0.94,
+              editPassword: chagnePassword,
+              delete: deleteUser,
+              add: addUser,
+              chooseDep: addDepartmentUser,
+              search: search,
+              plCols: polCols,
+              mode: PlutoGridMode.selectWithOneTap,
+              polRows: [],
+              footerBuilder: (stateManager) {
+                return lazyLoadingfooter(stateManager);
+              },
+              genranlEdit: editUser,
+              onLoaded: (PlutoGridOnLoadedEvent event) {
+                stateManager = event.stateManager;
+                stateManager!.setShowColumnFilter(true);
+                // pageLis.value = pageLis.value > 1 ? 0 : 1;
+                // totalActionsCount.value = 0;
+                getCount();
+              },
+              doubleTab: (event) async {
+                PlutoRow? tappedRow = event.row;
 
-                      UserModel userModel =
-                          UserModel.fromPlutoRow(tappedRow!, _locale);
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) {
-                          return AddUserDialog(
-                            isChangePassword: false,
-                            userModel: userModel,
-                          );
-                        },
-                      ).then((value) {
-                        print("111111111111111111111111111 value");
-                        if (value == true) {
-                          print("222222222222222222222 value");
-                          refreshTable();
-                        }
-                        print("3333333333333333333333333 value");
-                      });
-                    },
-                    onSelected: (event) async {
-                      PlutoRow? tappedRow = event.row;
-                      selectedRow = tappedRow;
-                    },
-                  )),
-              Container(
-                width: isDesktop ? width * 0.8 : width * 0.9,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "${_locale.totalCount}: ",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      ValueListenableBuilder(
-                        valueListenable: totalUsersCount,
-                        builder: ((context, value, child) {
-                          return Text(
-                            "${totalUsersCount.value}",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          );
-                        }),
-                      ),
-                    ],
+                UserModel userModel =
+                    UserModel.fromPlutoRow(tappedRow!, _locale);
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return AddUserDialog(
+                      isChangePassword: false,
+                      userModel: userModel,
+                    );
+                  },
+                ).then((value) {
+                  print("111111111111111111111111111 value");
+                  if (value == true) {
+                    print("222222222222222222222 value");
+                    refreshTable();
+                  }
+                  print("3333333333333333333333333 value");
+                });
+              },
+              onSelected: (event) async {
+                PlutoRow? tappedRow = event.row;
+                selectedRow = tappedRow;
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "${_locale.totalCount}: ",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                ),
+                  ValueListenableBuilder(
+                    valueListenable: totalUsersCount,
+                    builder: ((context, value, child) {
+                      return Text(
+                        "${totalUsersCount.value}",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      );
+                    }),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    ));
   }
 
   void addDepartmentUser() {
@@ -206,8 +203,7 @@ class _UserScreenState extends State<UserScreen> {
 
         selectedRow = null;
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -229,8 +225,7 @@ class _UserScreenState extends State<UserScreen> {
           refreshTable();
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -256,8 +251,7 @@ class _UserScreenState extends State<UserScreen> {
           refreshTable();
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -302,8 +296,7 @@ class _UserScreenState extends State<UserScreen> {
           }
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }

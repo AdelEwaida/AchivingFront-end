@@ -164,8 +164,7 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
                                 },
                               );
                             });
-                          }
-                          else {
+                          } else {
                             CustomToastMessage.warning(
                                 context, _locale.pleaseSelectRow);
                           }
@@ -182,15 +181,17 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
                         onPressed: () async {
                           if (workFlowTemplateBody != null) {
                             if (workFlowTemplateBody!.intStatus == 1) {
-                              CoolAlert.show(
-                                width: width * 0.4,
-                                context: context,
-                                type: CoolAlertType.error,
-                                title: _locale.error,
-                                text: _locale.cannotEdit,
-                                confirmBtnText: _locale.ok,
-                                onConfirmBtnTap: () {},
-                              );
+                              CustomToastMessage.error(
+                                  context, _locale.cannotEdit);
+                              // CoolAlert.show(
+                              //   width: width * 0.4,
+                              //   context: context,
+                              //   type: CoolAlertType.error,
+                              //   title: _locale.error,
+                              //   text: _locale.cannotEdit,
+                              //   confirmBtnText: _locale.ok,
+                              //   onConfirmBtnTap: () {},
+                              // );
                             } else {
                               if (workFlowTemplateBody!.intCurrStep != 1) {
                                 showDialog(
@@ -220,15 +221,18 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
                         onPressed: () async {
                           if (workFlowTemplateBody != null) {
                             if (workFlowTemplateBody!.intStatus == 1) {
-                              CoolAlert.show(
-                                width: width * 0.4,
-                                context: context,
-                                type: CoolAlertType.error,
-                                title: _locale.error,
-                                text: _locale.cannotEdit,
-                                confirmBtnText: _locale.ok,
-                                onConfirmBtnTap: () {},
-                              );
+                              CustomToastMessage.error(
+                                  context, _locale.cannotEdit);
+
+                              // CoolAlert.show(
+                              //   width: width * 0.4,
+                              //   context: context,
+                              //   type: CoolAlertType.error,
+                              //   title: _locale.error,
+                              //   text: _locale.cannotEdit,
+                              //   confirmBtnText: _locale.ok,
+                              //   onConfirmBtnTap: () {},
+                              // );
                             } else {
                               if (workFlowTemplateBody!.intCurrStep != 1) {
                                 showDialog(
@@ -318,18 +322,22 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
         workFlowTemplateContoller
             .updateUserStep(userWorkflowSteps)
             .then((value) {
-          CoolAlert.show(
-            width: width * 0.4,
-            // ignore: use_build_context_synchronously
-            context: context,
-            type: CoolAlertType.success,
-            title: _locale.success,
-            text: _locale.updatedSuccess,
-            confirmBtnText: _locale.ok,
-            onConfirmBtnTap: () {},
-          ).then((value) {
+          CustomToastMessage.success(context, _locale.updatedSuccess)
+              .then((value) {
             refreshTable();
           });
+          // CoolAlert.show(
+          //   width: width * 0.4,
+          //   // ignore: use_build_context_synchronously
+          //   context: context,
+          //   type: CoolAlertType.success,
+          //   title: _locale.success,
+          //   text: _locale.updatedSuccess,
+          //   confirmBtnText: _locale.ok,
+          //   onConfirmBtnTap: () {},
+          // ).then((value) {
+          //   refreshTable();
+          // });
         });
       }
     });
@@ -371,18 +379,22 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
         workFlowTemplateContoller
             .updateUserStep(userWorkflowSteps)
             .then((value) {
-          CoolAlert.show(
-            width: width * 0.4,
-            // ignore: use_build_context_synchronously
-            context: context,
-            type: CoolAlertType.success,
-            title: _locale.success,
-            text: _locale.updatedSuccess,
-            confirmBtnText: _locale.ok,
-            onConfirmBtnTap: () {},
-          ).then((value) {
+          CustomToastMessage.success(context, _locale.updatedSuccess)
+              .then((value) {
             refreshTable();
           });
+          // CoolAlert.show(
+          //   width: width * 0.4,
+          //   // ignore: use_build_context_synchronously
+          //   context: context,
+          //   type: CoolAlertType.success,
+          //   title: _locale.success,
+          //   text: _locale.updatedSuccess,
+          //   confirmBtnText: _locale.ok,
+          //   onConfirmBtnTap: () {},
+          // ).then((value) {
+          //   refreshTable();
+          // });
         });
       }
     });

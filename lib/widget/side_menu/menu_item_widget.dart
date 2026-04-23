@@ -3,22 +3,26 @@ import '../../models/dto/side_menu/menu_model.dart';
 
 class MenuItemWidget extends StatelessWidget {
   final MenuModel menu;
+  final GlobalKey? itemKey;
+  final GlobalKey? arrowKey;
   final bool isSelected;
   final bool isOpened;
   final bool isHovered;
   final VoidCallback onTap;
-  final Function(TapDownDetails) onTapDown;
+  final VoidCallback? onArrowTap;
   final VoidCallback onHover;
   final VoidCallback onExit;
 
   const MenuItemWidget({
     super.key,
     required this.menu,
+    this.itemKey,
+    this.arrowKey,
     required this.isSelected,
     required this.isOpened,
     required this.isHovered,
     required this.onTap,
-    required this.onTapDown,
+    this.onArrowTap,
     required this.onHover,
     required this.onExit,
   });
@@ -31,6 +35,7 @@ class MenuItemWidget extends StatelessWidget {
       onEnter: (_) => onHover(),
       onExit: (_) => onExit(),
       child: AnimatedContainer(
+        key: itemKey,
         duration: const Duration(milliseconds: 110),
         curve: Curves.easeOutCubic,
         decoration: _buildDecoration(),
@@ -40,7 +45,6 @@ class MenuItemWidget extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(30),
             onTap: onTap,
-            onTapDown: onTapDown,
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: isSelected ? 11 : 14,
@@ -65,13 +69,22 @@ class MenuItemWidget extends StatelessWidget {
                   ),
                   if (isParent) ...[
                     const SizedBox(width: 4),
-                    Icon(
-                      isOpened
-                          ? Icons.keyboard_arrow_up_rounded
-                          : Icons.keyboard_arrow_down_rounded,
-                      size: 18,
-                      color:
-                          isSelected ? const Color(0xFFFFF8E1) : Colors.white,
+                    GestureDetector(
+                      key: arrowKey,
+                      behavior: HitTestBehavior.opaque,
+                      onTap: onArrowTap,
+                      child: Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: Icon(
+                          isOpened
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          size: 18,
+                          color: isSelected
+                              ? const Color(0xFFFFF8E1)
+                              : Colors.white,
+                        ),
+                      ),
                     ),
                   ],
                 ],

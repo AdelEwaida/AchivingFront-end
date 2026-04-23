@@ -39,6 +39,7 @@ class _SideMenuState extends State<SideMenu> {
   List<MenuModel> menuList = [];
   String? active;
   String? userRole;
+  final Map<int, GlobalKey> _submenuArrowKeys = {};
 
   @override
   Future<void> didChangeDependencies() async {
@@ -155,8 +156,11 @@ class _SideMenuState extends State<SideMenu> {
     int index, {
     bool closeDrawerOnTap = false,
   }) {
+    final arrowKey =
+        _submenuArrowKeys.putIfAbsent(index, () => GlobalKey(debugLabel: 'submenu_arrow_$index'));
     return MenuItemWidget(
       menu: menuItem,
+      arrowKey: arrowKey,
       isSelected: selectedMenuIndex == index,
       isOpened: menuItem.isOpened,
       isHovered: selectedMenuHover == index,
@@ -167,25 +171,33 @@ class _SideMenuState extends State<SideMenu> {
         setState(() => selectedMenuHover = -1);
       },
       onTap: () {
-        if (!menuItem.isParent) {
+        if (menuItem.isParent) {
           setState(() {
             closeAllMenus(index);
+            menuItem.isOpened = true;
             selectedMenuIndex = index;
-            screenProvider.setPage1(menuItem.pageNumber);
           });
-          if (closeDrawerOnTap) {
-            Navigator.of(context).maybePop();
-          }
+          _openSubMenuPopup(menuItem, index);
+          return;
+        }
+
+        setState(() {
+          closeAllMenus(index);
+          selectedMenuIndex = index;
+          screenProvider.setPage1(menuItem.pageNumber);
+        });
+        if (closeDrawerOnTap) {
+          Navigator.of(context).maybePop();
         }
       },
-      onTapDown: (details) async {
+      onArrowTap: () async {
         if (!menuItem.isParent) return;
         setState(() {
           closeAllMenus(index);
           menuItem.isOpened = true;
           selectedMenuIndex = index;
         });
-        await _openSubMenuPopup(menuItem, index, details);
+        await _openSubMenuPopup(menuItem, index);
       },
     );
   }
@@ -193,7 +205,6 @@ class _SideMenuState extends State<SideMenu> {
   Future<void> _openSubMenuPopup(
     MenuModel menu,
     int parentIndex,
-    TapDownDetails details,
   ) async {
     if (!menu.isParent || menu.subMenuList.isEmpty) {
       return;
@@ -205,6 +216,14 @@ class _SideMenuState extends State<SideMenu> {
       return;
     }
 
+    final arrowContext = _submenuArrowKeys[parentIndex]?.currentContext;
+    final arrowRenderBox = arrowContext?.findRenderObject() as RenderBox?;
+    if (arrowRenderBox == null) {
+      return;
+    }
+
+    final arrowGlobalOffset = arrowRenderBox.localToGlobal(Offset.zero);
+    final arrowSize = arrowRenderBox.size;
     final selectedIndex = await showMenu<int>(
       context: context,
       color: secondary,
@@ -212,15 +231,15 @@ class _SideMenuState extends State<SideMenu> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: Colors.white.withOpacity(0.15),
+          color: const Color(0xFFFFB300).withOpacity(0.95),
           width: 0.8,
         ),
       ),
       position: RelativeRect.fromLTRB(
-        details.globalPosition.dx,
-        details.globalPosition.dy + 24,
-        overlay.size.width - details.globalPosition.dx,
-        overlay.size.height - details.globalPosition.dy,
+        arrowGlobalOffset.dx - 8,
+        arrowGlobalOffset.dy + arrowSize.height + 6,
+        overlay.size.width - (arrowGlobalOffset.dx + arrowSize.width),
+        overlay.size.height - (arrowGlobalOffset.dy + arrowSize.height),
       ),
       items: [
         for (int i = 0; i < menu.subMenuList.length; i++)

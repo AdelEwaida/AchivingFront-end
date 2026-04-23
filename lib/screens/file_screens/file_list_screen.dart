@@ -782,17 +782,18 @@ class _FileListScreenState extends State<FileListScreen> {
         }
       });
     } else {
+      CustomToastMessage.error(context, _locale.notAllowedToEditDept);
       // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        builder: (context) => ErrorDialog(
-          icon: Icons.warning,
-          errorDetails: _locale.notAllowedToEditDept,
-          errorTitle: 'Unauthorized',
-          color: Colors.red,
-          statusCode: 403,
-        ),
-      );
+      // showDialog(
+      //   context: context,
+      //   builder: (context) => ErrorDialog(
+      //     icon: Icons.warning,
+      //     errorDetails: _locale.notAllowedToEditDept,
+      //     errorTitle: 'Unauthorized',
+      //     color: Colors.red,
+      //     statusCode: 403,
+      //   ),
+      // );
     }
   }
 
@@ -1495,17 +1496,18 @@ class _FileListScreenState extends State<FileListScreen> {
     if (hasMatch) {
       showUploadDialog(documentModel);
     } else {
-      // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        builder: (context) => ErrorDialog(
-          icon: Icons.warning,
-          errorDetails: _locale.notAllowedToEditDept,
-          errorTitle: 'Unauthorized',
-          color: Colors.red,
-          statusCode: 403,
-        ),
-      );
+      CustomToastMessage.error(context, _locale.notAllowedToEditDept);
+      // // ignore: use_build_context_synchronously
+      // showDialog(
+      //   context: context,
+      //   builder: (context) => ErrorDialog(
+      //     icon: Icons.warning,
+      //     errorDetails: _locale.notAllowedToEditDept,
+      //     errorTitle: 'Unauthorized',
+      //     color: Colors.red,
+      //     statusCode: 403,
+      //   ),
+      // );
     }
   }
 

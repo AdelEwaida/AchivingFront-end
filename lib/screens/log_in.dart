@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../models/db/work_flow/setup_model.dart';
 import '../service/controller/work_flow_controllers/setup_controller.dart';
+import '../widget/custom_flutter_toast_message.dart';
 import '../widget/side_menu/version_badge_widget.dart';
 
 // ── Floating particle model ──────────────────────────────────────
@@ -210,7 +211,7 @@ class _LogInScreenState extends State<LoginScreen>
   Widget _desktopView() {
     return Row(
       children: [
-      Expanded(
+        Expanded(
           flex: 4,
           child: Container(
             color: Colors.white, // ← replace the decoration with this
@@ -225,7 +226,7 @@ class _LogInScreenState extends State<LoginScreen>
                     ),
                   ),
                 ),
-             Positioned(
+                Positioned(
                   top: 20,
                   // ← switches side based on locale
                   left: Directionality.of(context) == TextDirection.ltr
@@ -785,27 +786,33 @@ class _LogInScreenState extends State<LoginScreen>
   // ── Logic ────────────────────────────────────────────────────────
   void passwordAndEmailCheck() {
     if (_userNameController.text.trim().isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) => ErrorDialog(
-          icon: Icons.error,
-          errorTitle: _locale.error,
-          errorDetails: _locale.emailReq,
-          color: Colors.red,
-          statusCode: 100,
-        ),
-      ).then((_) => userNameFocus.requestFocus());
+      CustomToastMessage.error(context, _locale.emailReq)
+          .then((_) => userNameFocus.requestFocus());
+
+      // showDialog(
+      //   context: context,
+      //   builder: (context) => ErrorDialog(
+      //     icon: Icons.error,
+      //     errorTitle: _locale.error,
+      //     errorDetails: _locale.emailReq,
+      //     color: Colors.red,
+      //     statusCode: 100,
+      //   ),
+      // ).then((_) => userNameFocus.requestFocus());
     } else if (_passwordController.text.trim().isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) => ErrorDialog(
-          icon: Icons.error,
-          errorTitle: _locale.error,
-          errorDetails: _locale.passReqField,
-          color: Colors.red,
-          statusCode: 100,
-        ),
-      ).then((_) => passwordFocus.requestFocus());
+      CustomToastMessage.error(context, _locale.passReqField)
+          .then((_) => passwordFocus.requestFocus());
+
+      // showDialog(
+      //   context: context,
+      //   builder: (context) => ErrorDialog(
+      //     icon: Icons.error,
+      //     errorTitle: _locale.error,
+      //     errorDetails: _locale.passReqField,
+      //     color: Colors.red,
+      //     statusCode: 100,
+      //   ),
+      // ).then((_) => passwordFocus.requestFocus());
     } else {
       logIn();
     }

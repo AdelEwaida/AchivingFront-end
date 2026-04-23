@@ -10,6 +10,7 @@ import 'package:archiving_flutter_project/service/controller/users_controller/us
 import 'package:archiving_flutter_project/service/handler/api_service.dart';
 import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
+import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -728,31 +729,35 @@ class _AddFileScreenState extends State<AddFileScreen> {
         (fileNameController.text.isEmpty && _isUploadFileSelected) ||
         descriptionController.text.isEmpty ||
         issueNoController.text.isEmpty) {
-      CoolAlert.show(
-        width: width * 0.4,
-        context: context,
-        type: CoolAlertType.error,
-        title: _locale.fillRequiredFields,
-        text: _locale.fillRequiredFields,
-        confirmBtnText: _locale.ok,
-        onConfirmBtnTap: () {},
-      );
+      CustomToastMessage.error(context, _locale.fillRequiredFields);  
+      // CoolAlert.show(
+      //   width: width * 0.4,
+      //   context: context,
+      //   type: CoolAlertType.error,
+      //   title: _locale.fillRequiredFields,
+      //   text: _locale.fillRequiredFields,
+      //   confirmBtnText: _locale.ok,
+      //   onConfirmBtnTap: () {},
+      // );
       setState(() => saving = false);
       return;
     }
 
     await documentsController.addDocument(documentFileRequest).then((value) {
       if (value.statusCode == 200) {
-        showDialog(
-          context: context,
-          builder: (context) => ErrorDialog(
-            icon: Icons.done_all,
-            errorDetails: _locale.done,
-            errorTitle: _locale.addDoneSucess,
-            color: Colors.green,
-            statusCode: 200,
-          ),
-        ).then((_) => resetForm());
+                                      CustomToastMessage.success(context, _locale.addDoneSucess)
+            .then((_) => resetForm());
+
+        // showDialog(
+        //   context: context,
+        //   builder: (context) => ErrorDialog(
+        //     icon: Icons.done_all,
+        //     errorDetails: _locale.done,
+        //     errorTitle: _locale.addDoneSucess,
+        //     color: Colors.green,
+        //     statusCode: 200,
+        //   ),
+        // ).then((_) => resetForm());
       }
     });
 

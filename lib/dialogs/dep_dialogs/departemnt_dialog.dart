@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
@@ -7,12 +5,8 @@ import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
-import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../app_dialog.dart';
@@ -63,7 +57,7 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
 
     return AppDialog(
       width: isDesktop ? width * 0.3 : width * 0.8,
-      height: height * 0.8,
+      height: height * 0.74,
       // titlePadding: EdgeInsets.all(0),
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       // backgroundColor: dBackground,
@@ -73,7 +67,7 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.2 : height * 0.5,
+        height: isDesktop ? height * 0.17 : height * 0.5,
         child: SingleChildScrollView(
           child: formSection(),
         ),
@@ -165,6 +159,7 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
           customTextField(
               _locale.txtShortcode, codeController, isDesktop, 0.2, true,
               focusNode: codeFocusNode),
+        const SizedBox(height: 20),
         customTextField(
             _locale.txtDescription, descController, isDesktop, 0.2, true),
         if (!isDesktop) ...[
@@ -216,17 +211,18 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
   void addDep() async {
     if (descController.text.trim().isEmpty ||
         codeController.text.trim().isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return ErrorDialog(
-              icon: Icons.error,
-              errorDetails: _locale.error,
-              errorTitle: _locale.pleaseAddAllRequiredFields,
-              color: Colors.red,
-              statusCode: 400);
-        },
-      );
+          CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return ErrorDialog(
+      //         icon: Icons.error,
+      //         errorDetails: _locale.error,
+      //         errorTitle: _locale.pleaseAddAllRequiredFields,
+      //         color: Colors.red,
+      //         statusCode: 400);
+      //   },
+      // );
     } else if (widget.departmentModel != null) {
       print(
           "departmentModeldepartmentModeldepartmentModel:${widget.departmentModel!.toJson()}");

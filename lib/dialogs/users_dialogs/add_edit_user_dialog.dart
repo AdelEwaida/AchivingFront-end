@@ -23,6 +23,7 @@ import 'package:encrypt/encrypt.dart' as enc;
 import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/user_models/user_dept_model.dart';
 import '../../models/dto/searchs_model/search_model.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../../widget/text_field_widgets/test_drop_down.dart';
 import '../app_dialog.dart';
@@ -560,17 +561,19 @@ class _DepartmentDialogState extends State<AddUserDialog> {
               txtReferenceUsernameController.text.isEmpty ||
               urlController.text.trim().isEmpty ||
               selectedUserType == null) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return ErrorDialog(
-                    icon: Icons.error,
-                    errorDetails: _locale.error,
-                    errorTitle: _locale.pleaseAddAllRequiredFields,
-                    color: Colors.red,
-                    statusCode: 400);
-              },
-            );
+                CustomToastMessage.error(
+                context, _locale.pleaseAddAllRequiredFields);
+            // showDialog(
+            //   context: context,
+            //   builder: (context) {
+            //     return ErrorDialog(
+            //         icon: Icons.error,
+            //         errorDetails: _locale.error,
+            //         errorTitle: _locale.pleaseAddAllRequiredFields,
+            //         color: Colors.red,
+            //         statusCode: 400);
+            //   },
+            // );
           } else if (userModel != null && widget.isChangePassword == false) {
             editMethod();
           } else if (userModel != null && widget.isChangePassword) {
@@ -626,17 +629,19 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         urlController.text.trim().isEmpty ||
         ((userDeptsList ?? []).isEmpty) ||
         selectedUserType == null) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return ErrorDialog(
-              icon: Icons.error,
-              errorDetails: _locale.error,
-              errorTitle: _locale.pleaseAddAllRequiredFields,
-              color: Colors.red,
-              statusCode: 400);
-        },
-      );
+          //
+          CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
+      // showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return ErrorDialog(
+      //         icon: Icons.error,
+      //         errorDetails: _locale.error,
+      //         errorTitle: _locale.pleaseAddAllRequiredFields,
+      //         color: Colors.red,
+      //         statusCode: 400);
+      //   },
+      // );
     } else if (userModel != null && widget.isChangePassword == false) {
       editMethod();
     } else if (userModel != null && widget.isChangePassword) {

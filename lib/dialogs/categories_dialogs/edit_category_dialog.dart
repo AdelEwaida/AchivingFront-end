@@ -1,15 +1,11 @@
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
 import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
-import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../utils/constants/colors.dart';
-import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
-import '../../widget/dialog_widgets/title_dialog_widget.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 import '../app_dialog.dart';
 
@@ -86,6 +82,7 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
               onChanged: (value) {},
               focusNode: descriptionFocusNode,
             ),
+            const SizedBox(height: 20),
             CustomTextField2(
               text: Text(_locale.refNumber),
               width: width * 0.25,
@@ -116,7 +113,7 @@ class _AdvanceSearchLogsDialogState extends State<EditCategoryDialog>
                     color: redColor,
                     onPressed: () {
                       Navigator.pop(context);
-                    }), 
+                    }),
               ],
             ),
           ],

@@ -1,15 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
-import 'package:archiving_flutter_project/service/controller/login_controllers/login_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/key.dart';
-import 'package:archiving_flutter_project/utils/encrypt/encryption.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:html' as html;
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../../widget/custom_flutter_toast_message.dart';
 
 class ErrorController {
   static bool temp = false;
@@ -33,45 +29,54 @@ class ErrorController {
     // }
     print("responseStatusresponseStatus ${responseStatus}");
     if (responseStatus == 400) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
-          const Color.fromARGB(255, 232, 232, 23), 400);
+      // dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
+      //     const Color.fromARGB(255, 232, 232, 23), 400);
+      CustomToastMessage.warning(context, errorDetails);
     } else if (responseStatus == 200) {
-      dialogBasedonResponseStatus(Icons.done, errorDetails, errorDetails,
-          const Color.fromARGB(255, 81, 237, 4), 200);
+      CustomToastMessage.success(context, errorDetails);
     } else if (responseStatus == 401) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
-          Color.fromARGB(255, 237, 4, 4), 401);
+      CustomToastMessage.warning(context, errorDetails);
     } else if (responseStatus == 405) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
-          const Color.fromARGB(255, 232, 232, 23), 405);
+      // dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
+      //     const Color.fromARGB(255, 232, 232, 23), 405);
+      CustomToastMessage.warning(context, errorDetails);
     } else if (responseStatus == 500) {
-      dialogBasedonResponseStatus(
-          Icons.error, errorDetails, locale.error500, Colors.red, 500);
+      // dialogBasedonResponseStatus(
+      //     Icons.error, errorDetails, locale.error500, Colors.red, 500);
+      CustomToastMessage.error(context, errorDetails);
     } else if (responseStatus == 406) {
-      dialogBasedonResponseStatus(
-          Icons.error, errorDetails, locale.error406, Colors.red, 406);
+      // dialogBasedonResponseStatus(
+      //     Icons.error, errorDetails, locale.error406, Colors.red, 406);
+      CustomToastMessage.error(context, errorDetails);
     } else if (responseStatus == 204) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
-          const Color.fromARGB(255, 232, 232, 23), 204);
+      // dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
+      // //     const Color.fromARGB(255, 232, 232, 23), 204);
+      CustomToastMessage.warning(context, errorDetails);
     } else if (responseStatus == 404) {
-      dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
-          const Color.fromARGB(255, 232, 232, 23), 404);
+      // dialogBasedonResponseStatus(Icons.warning, errorDetails, errorDetails,
+      //     const Color.fromARGB(255, 232, 232, 23), 404);
+      CustomToastMessage.warning(context, errorDetails);
     } else if (responseStatus == 3) {
-      dialogBasedonResponseStatus(
-          Icons.warning, '', locale.alreadyOppened, Colors.orange, 0);
+      // dialogBasedonResponseStatus(
+      //     Icons.warning, '', locale.alreadyOppened, Colors.orange, 0);
+      CustomToastMessage.warning(context, errorDetails);
     } else if (responseStatus == 0 && !ErrorController.temp) {
       ErrorController.temp = true;
-      dialogBasedonResponseStatus(
-          Icons.warning, errorDetails, locale.networkError, Colors.red, 0);
+      // dialogBasedonResponseStatus(
+      //     Icons.warning, errorDetails, locale.networkError, Colors.red, 0);
+      CustomToastMessage.warning(context, errorDetails);
     } else if (responseStatus == 1) {
-      dialogBasedonResponseStatus(
-          Icons.warning, errorDetails, locale.dateConflict, Colors.red, 0);
+      // dialogBasedonResponseStatus(
+      //     Icons.warning, errorDetails, locale.dateConflict, Colors.red, 0);
+      CustomToastMessage.warning(context, errorDetails);
     } else if (responseStatus == 2) {
-      dialogBasedonResponseStatus(
-          Icons.warning, errorDetails, locale.timeConflict, Colors.red, 0);
+      // dialogBasedonResponseStatus(
+      //     Icons.warning, errorDetails, locale.timeConflict, Colors.red, 0);
+      CustomToastMessage.warning(context, errorDetails);
     } else if (responseStatus == 4) {
-      dialogBasedonResponseStatus(
-          Icons.warning, '', locale.alreadyOppened, Colors.orange, 0);
+      // dialogBasedonResponseStatus(
+      //     Icons.warning, '', locale.alreadyOppened, Colors.orange, 0);
+      CustomToastMessage.warning(context, errorDetails);
     }
   }
 
@@ -90,19 +95,7 @@ class ErrorController {
 
     if (statusCode == 401 && token != null ||
         (statusCode == 401 && token == null && !ErrorController.temp)) {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (builder) {
-          return ErrorDialog(
-            icon: icon,
-            errorDetails: errorDetails,
-            errorTitle: errorTitle,
-            color: color,
-            statusCode: statusCode,
-          );
-        },
-      ).then((value) async {
+      CustomToastMessage.error(context, errorDetails).then((value) async {
         // SharedPreferences prefs = await SharedPreferences.getInstance();
         // String userCode = prefs.get("userName").toString();
         // String key = "scope@e2024A/key@team.CT";
@@ -117,21 +110,24 @@ class ErrorController {
         ErrorController.temp = true;
       });
     } else if (statusCode != 401) {
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (builder) {
-          return ErrorDialog(
-            icon: icon,
-            errorDetails: errorDetails,
-            errorTitle: errorTitle,
-            color: color,
-            statusCode: statusCode,
-          );
-        },
-      ).then((value) async {
+      CustomToastMessage.error(context, errorDetails).then((value) async {
         ErrorController.temp = false;
       });
+      // showDialog(
+      //   barrierDismissible: false,
+      //   context: context,
+      //   builder: (builder) {
+      //     return ErrorDialog(
+      //       icon: icon,
+      //       errorDetails: errorDetails,
+      //       errorTitle: errorTitle,
+      //       color: color,
+      //       statusCode: statusCode,
+      //     );
+      //   },
+      // ).then((value) async {
+      //   ErrorController.temp = false;
+      // });
     }
   }
 }

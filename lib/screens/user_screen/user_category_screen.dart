@@ -21,6 +21,7 @@ import '../../models/db/user_models/user_category.dart';
 import '../../service/controller/actions_controllers/action_controller.dart';
 import '../../service/controller/users_controller/user_controller.dart';
 import '../../widget/custom_flutter_toast_message.dart';
+import '../../widget/dashboard_components/app_bar_title.dart';
 
 class UserCategoryScreen extends StatefulWidget {
   const UserCategoryScreen({super.key});
@@ -112,9 +113,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-   
-        body: buildMainContent());
+    return Scaffold(body: buildMainContent());
   }
 
   Widget mobileView() {
@@ -158,15 +157,22 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
   }
 
   Widget buildMainContent() {
-    return Column(
-      children: [
-        Center(
-          child: Container(
-            width: isDesktop ? width * 0.8 : width * 0.9,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Center(
             child: TableComponent(
+              appBarTitleWidget: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: AppBarTitle(
+                  title: _locale.viewUserCategories,
+                  icon: Icons.category_outlined,
+                ),
+              ),
               // key: UniqueKey(),
-              tableHeigt: height * 0.76,
-              tableWidth: width,
+              tableHeigt: height * 0.75,
+              tableWidth: width * 1,
               delete: deleteDep,
               // add: addDep,
               genranlEdit: editDep,
@@ -194,7 +200,6 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
                     return EditUserCategoryDialog(
                       userCategoryModel: userCategoryModel,
                     );
-                    
                   },
                 ).then((value) {
                   if (value) {
@@ -208,15 +213,11 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
               },
             ),
           ),
-        ),
-        Container(
-          width: isDesktop ? width * 0.8 : width * 0.9,
-          child: Padding(
+          Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-              
                 Text(
                   "${_locale.totalCount}: ",
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -233,8 +234,8 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -270,8 +271,7 @@ class _OfficeScreenState extends State<UserCategoryScreen> {
           });
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }

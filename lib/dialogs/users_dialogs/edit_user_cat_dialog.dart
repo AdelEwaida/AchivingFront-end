@@ -1,21 +1,13 @@
-import 'dart:typed_data';
 
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
-import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/db/user_models/user_model.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
-import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/service/controller/users_controller/user_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
-import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
-import 'package:archiving_flutter_project/widget/dialog_widgets/title_dialog_widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-
 import '../../models/db/user_models/user_category.dart';
 import '../../models/db/user_models/user_update_req.dart';
 import '../../providers/user_provider.dart';

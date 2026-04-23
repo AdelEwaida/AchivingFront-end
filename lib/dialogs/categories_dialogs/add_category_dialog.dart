@@ -6,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../utils/constants/colors.dart';
-import '../../utils/constants/styles.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/dashboard_components/custom_elevated_button.dart';
-import '../../widget/dialog_widgets/title_dialog_widget.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
 
 class AddCategoryDialog extends StatefulWidget {
@@ -105,6 +103,7 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
               autoFocus: true,
               focusNode: descriptionFocusNode, // Assign the focus node
             ),
+            const SizedBox(height: 20),
             CustomTextField2(
               isMandetory: true,
               text: Text(_locale.refNumber),
