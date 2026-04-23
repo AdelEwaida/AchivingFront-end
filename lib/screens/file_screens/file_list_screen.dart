@@ -39,7 +39,7 @@ import 'package:archiving_flutter_project/widget/table_component/table_component
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:csv/csv.dart';
-import 'package:excel/excel.dart';
+import 'package:excel/excel.dart' hide Border;
 import 'package:flutter/material.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -65,6 +65,7 @@ import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../../utils/func/lists.dart';
 import '../../widget/custom_drop_down_new.dart';
 import '../../widget/custom_flutter_toast_message.dart';
+import '../../widget/dashboard_components/custom_elevated_button.dart';
 
 class FileListScreen extends StatefulWidget {
   const FileListScreen({super.key});
@@ -235,8 +236,10 @@ class _FileListScreenState extends State<FileListScreen> {
             WidgetSpan(
               child: Text(
                 title,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
             ),
           ],
@@ -266,205 +269,134 @@ class _FileListScreenState extends State<FileListScreen> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     return Scaffold(
-    
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(8.0),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Adding some spacing between search field and tree
+            // In build(), replace the top Padding Row with:
+            Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  context.read<DocumentListProvider>().isViewFile == true
+                      ? const SizedBox.shrink()
+                      : _treeCard(),
+                  if (context.read<DocumentListProvider>().isViewFile != true)
+                    const SizedBox(width: 8),
+                  Expanded(child: fillterSection()),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Adding some spacing between search field and tree
-                Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Row(
-                    mainAxisAlignment:
-                        context.read<DocumentListProvider>().isViewFile == true
-                            ? MainAxisAlignment.center
-                            : MainAxisAlignment.start,
-                    crossAxisAlignment:
-                        context.read<DocumentListProvider>().isViewFile == true
-                            ? CrossAxisAlignment.center
-                            : CrossAxisAlignment.start,
-                    children: [
-                      context.read<DocumentListProvider>().isViewFile == true
-                          ? SizedBox.shrink()
-                          : Container(
-                              width: width * 0.35,
-                              height: height * 0.34,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    spreadRadius: 1,
-                                    blurRadius: 3,
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: NewCustomDropDown(
-                                        searchBox: true,
-                                        bordeText: _locale.search,
-                                        initialValue: _locale.search,
-                                        items: dropDownChildren,
-                                        onChanged: (value) {
-                                          searchTree(value);
-                                        },
-                                        heightVal: height * 0.4,
-                                        width: width * .2,
-                                      ),
-                                    ),
-                                    Expanded(child: treeSection()),
-                                  ]),
-                            ),
-                      SizedBox(
-                        width: width * 0.01,
-                      ),
-                      fillterSection()
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                Column(
                   children: [
-                    Column(
-                      children: [
-                        active == "1"
-                            ? Row(
-                                children: [
-                                  Row(
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () async {
-                                          if (documentModel != null) {
-                                            var response =
-                                                await documentsController
-                                                    .createWorkFlowDocument(
-                                                        documentModel!);
-                                            if (response.statusCode == 200) {
-                                              // ignore: use_build_context_synchronously
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return ErrorDialog(
-                                                      icon: Icons.done_all,
-                                                      errorDetails:
-                                                          _locale.done,
-                                                      errorTitle: _locale
-                                                          .editDoneSucess,
-                                                      color: Colors.green,
-                                                      statusCode: 200);
-                                                },
-                                              ).then((value) {
-                                                if (value) {
-                                                  setState(() {});
-                                                  // Navigator.pop(context, true);
-                                                }
-                                              });
-                                            }
-                                          }
-                                        },
-                                        style: customButtonStyle(
-                                            context,
-                                            Size(
-                                                isDesktop
-                                                    ? width * 0.13
-                                                    : width * 0.19,
-                                                height * 0.043),
-                                            14,
-                                            greenColor),
-                                        child: Text(
-                                          _locale.submitforWorkflowApproval,
-                                          style: const TextStyle(
-                                              color: whiteColor),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      if (documentModel != null) {
-                                        // Fetch templates based on department
-                                        List<WorkFlowDocumentInfo> result =
-                                            await WorkFlowTemplateContoller()
-                                                .getWorkFlowDocumentInfo(
-                                                    WorkFlowDocumentModel(
-                                                        documentCode:
-                                                            documentModel!
-                                                                .txtKey));
+                    if (active == "1")
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomElevatedButton(
+                              text: _locale.submitforWorkflowApproval,
+                              color: greenColor,
+                              icon: Icons.approval_rounded,
+                              width: isDesktop ? width * 0.13 : width * 0.19,
+                              height: height * 0.043,
+                              fontSize: 13,
+                              onPressed: () async {
+                                if (documentModel != null) {
+                                  var response = await documentsController
+                                      .createWorkFlowDocument(documentModel!);
+                                  if (response.statusCode == 200) {
+                                    showDialog(
+                                      // ignore: use_build_context_synchronously
+                                      context: context,
+                                      builder: (context) {
+                                        return ErrorDialog(
+                                          icon: Icons.done_all,
+                                          errorDetails: _locale.done,
+                                          errorTitle: _locale.editDoneSucess,
+                                          color: Colors.green,
+                                          statusCode: 200,
+                                        );
+                                      },
+                                    ).then((value) {
+                                      if (value) setState(() {});
+                                    });
+                                  }
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            CustomElevatedButton(
+                              text: _locale.viewApprovals,
+                              color: primary,
+                              icon: Icons.visibility_rounded,
+                              width: isDesktop ? width * 0.1 : width * 0.19,
+                              height: height * 0.043,
+                              fontSize: 13,
+                              onPressed: () async {
+                                if (documentModel != null) {
+                                  List<WorkFlowDocumentInfo> result =
+                                      await WorkFlowTemplateContoller()
+                                          .getWorkFlowDocumentInfo(
+                                              WorkFlowDocumentModel(
+                                                  documentCode:
+                                                      documentModel!.txtKey));
 
-                                        if (result.isEmpty) {
-                                          // ignore: use_build_context_synchronously
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return const ErrorDialog(
-                                                icon: Icons.error,
-                                                errorDetails: "Error",
-                                                errorTitle:
-                                                    "No workflow template data available.",
-                                                color: Colors.red,
-                                                statusCode: 400,
-                                              );
-                                            },
-                                          );
-                                          return;
-                                        }
+                                  if (result.isEmpty) {
+                                    // ignore: use_build_context_synchronously
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return const ErrorDialog(
+                                          icon: Icons.error,
+                                          errorDetails: "Error",
+                                          errorTitle:
+                                              "No workflow template data available.",
+                                          color: Colors.red,
+                                          statusCode: 400,
+                                        );
+                                      },
+                                    );
+                                    return;
+                                  }
 
-                                        // ignore: use_build_context_synchronously
-                                        await showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (context) {
-                                            return EditTemplateDocumentDialog(
-                                              workFlowTemplateBody: result,
-                                            );
-                                          },
-                                        ).then((value) {
-                                          // Handle dialog result if needed
-                                          if (value == true) {
-                                            // Perform post-dialog actions if required
-                                          }
-                                        });
-                                      }
+                                  // ignore: use_build_context_synchronously
+                                  await showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) {
+                                      return EditTemplateDocumentDialog(
+                                        workFlowTemplateBody: result,
+                                      );
                                     },
-                                    style: customButtonStyle(
-                                        context,
-                                        Size(
-                                            isDesktop
-                                                ? width * 0.1
-                                                : width * 0.19,
-                                            height * 0.043),
-                                        14,
-                                        primary),
-                                    child: Text(
-                                      _locale.viewApprovals,
-                                      style: const TextStyle(color: whiteColor),
-                                    ),
-                                  )
-                                ],
-                              )
-                            : SizedBox.shrink(),
-                        tableSection(),
-                      ],
-                    )
+                                  ).then((value) {
+                                    if (value == true) {}
+                                  });
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    tableSection(),
                   ],
-                )
+                ),
               ],
             ),
-          ),
-        ));
+          ],
+        ),
+      ),
+    ));
   }
 
   void explorFiels() {
@@ -490,8 +422,7 @@ class _FileListScreenState extends State<FileListScreen> {
         //   Navigator.pop(context);
         // }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -623,16 +554,14 @@ class _FileListScreenState extends State<FileListScreen> {
     return Column(
       children: [
         TableComponent(
-          // key: UniqueKey(),
           tableHeigt: height * 0.42,
-          tableWidth: width * 0.81,
+          tableWidth: width * 0.98, // ← full width minus page padding
           addReminder: context.read<DocumentListProvider>().isViewFile == true
               ? null
               : addRemider,
           upload: context.read<DocumentListProvider>().isViewFile == true
               ? null
               : uploadFile,
-
           copy: context.read<DocumentListProvider>().isViewFile == true
               ? null
               : copyFile,
@@ -642,7 +571,6 @@ class _FileListScreenState extends State<FileListScreen> {
           genranlEdit: context.read<DocumentListProvider>().isViewFile == true
               ? null
               : editDocumentInfo,
-
           plCols: polCols,
           mode: PlutoGridMode.selectWithOneTap,
           polRows: [],
@@ -698,52 +626,90 @@ class _FileListScreenState extends State<FileListScreen> {
             documentModel = DocumentModel.fromPlutoRow(selectedRow!, _locale);
           },
         ),
-        // pageLis.value = pageLis.value > 1 ? 0 : 1;
+
+        // ── Footer: file count + total count ──────────────────
         SizedBox(
-          width: isDesktop ? width * 0.8 : width * 0.9,
+          width: width * 0.98,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Row(
-                  // mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "${_locale.numOfFilesNum}: ",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    ValueListenableBuilder(
-                      valueListenable: fileNumberDisplayed,
-                      builder: ((context, value, child) {
-                        return Text(
-                          "${fileNumberDisplayed.value}",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        );
-                      }),
-                    ),
-                  ],
+                // File count badge
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF185FA5).withOpacity(0.06),
+                    borderRadius: BorderRadius.circular(99),
+                    border: Border.all(
+                        color: const Color(0xFF185FA5).withOpacity(0.2)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.file_present_rounded,
+                          size: 13, color: Color(0xFF185FA5)),
+                      const SizedBox(width: 5),
+                      Text(
+                        '${_locale.numOfFilesNum}: ',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF8A94A6),
+                        ),
+                      ),
+                      ValueListenableBuilder(
+                        valueListenable: fileNumberDisplayed,
+                        builder: (context, value, child) => Text(
+                          '$value',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF185FA5),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Row(
-                  // mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "${_locale.totalCount}: ",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    ValueListenableBuilder(
-                      valueListenable: totalDocCount,
-                      builder: ((context, value, child) {
-                        return Text(
-                          "${totalDocCount.value}",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        );
-                      }),
-                    ),
-                  ],
+                const SizedBox(width: 10),
+
+                // Total count badge
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0D9B8A).withOpacity(0.06),
+                    borderRadius: BorderRadius.circular(99),
+                    border: Border.all(
+                        color: const Color(0xFF0D9B8A).withOpacity(0.2)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.numbers_rounded,
+                          size: 13, color: Color(0xFF0D9B8A)),
+                      const SizedBox(width: 5),
+                      Text(
+                        '${_locale.totalCount}: ',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF8A94A6),
+                        ),
+                      ),
+                      ValueListenableBuilder(
+                        valueListenable: totalDocCount,
+                        builder: (context, value, child) => Text(
+                          '$value',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF0D9B8A),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -1057,13 +1023,12 @@ class _FileListScreenState extends State<FileListScreen> {
       ).then((value) {
         selectedRow = null;
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
 
-  Widget fillterSection() {
+  Widget fillterSection1() {
     return Container(
       width: context.read<DocumentListProvider>().isViewFile == true
           ? width * 0.81
@@ -1574,8 +1539,7 @@ class _FileListScreenState extends State<FileListScreen> {
       ).then((value) {
         // selectedRow = null;
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -1602,8 +1566,7 @@ class _FileListScreenState extends State<FileListScreen> {
           }
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -1618,8 +1581,7 @@ class _FileListScreenState extends State<FileListScreen> {
         documentListProvider.searchDocumentCriteria.page = 0;
         setState(() {});
       }
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -1864,6 +1826,413 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   Widget treeSection() {
+    return ValueListenableBuilder(
+      valueListenable: isLoading,
+      builder: (context, value, child) {
+        return isLoading.value
+            ? Center(
+                child: SpinKitCircle(
+                  color: const Color(0xFF185FA5),
+                  size: 40,
+                ),
+              )
+            : TreeView<MyNode>(
+                key: ValueKey(treeController),
+                shrinkWrap: true,
+                treeController: treeController,
+                nodeBuilder: (BuildContext context, TreeEntry<MyNode> entry) {
+                  return MyTreeTile(
+                    onPointerDown: (p0) {},
+                    key: ValueKey(entry.node),
+                    entry: entry,
+                    folderOnTap: () {
+                      if (entry.node.children.isNotEmpty) {
+                        selectedCategory = entry.node.extra;
+                        selectedCamp.value =
+                            selectedCategory!.docCatParent!.txtDescription!;
+                        selectedValue.value =
+                            selectedCategory!.docCatParent!.txtShortcode;
+                        calssificatonNameAndCodeProvider
+                            .setSelectedClassificatonName(selectedCamp.value);
+                        calssificatonNameAndCodeProvider
+                            .setSelectedClassificatonKey(
+                                selectedCategory!.docCatParent!.txtKey!);
+                        treeController.toggleExpansion(entry.node);
+                      } else {
+                        selectedCategory = entry.node.extra;
+                        selectedCamp.value =
+                            selectedCategory!.docCatParent!.txtDescription!;
+                        selectedValue.value =
+                            selectedCategory!.docCatParent!.txtShortcode;
+                      }
+                    },
+                    textWidget: nodeDesign(entry.node),
+                  );
+                },
+              );
+      },
+    );
+  }
+
+  Widget _treeCard() {
+    return Container(
+      width: width * 0.28, // fixed tree width
+      height: height * 0.34,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFDDE3EE), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF185FA5).withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Header ──────────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF185FA5).withOpacity(0.04),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(14),
+                topRight: Radius.circular(14),
+              ),
+              border: const Border(
+                bottom: BorderSide(color: Color(0xFFDDE3EE), width: 1),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF185FA5).withOpacity(0.10),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.account_tree_outlined,
+                      color: Color(0xFF185FA5), size: 15),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _locale.category,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1A2340),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ── Dropdown ──────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: NewCustomDropDown(
+              searchBox: true,
+              bordeText: _locale.search,
+              initialValue: _locale.search,
+              items: dropDownChildren,
+              onChanged: (value) => searchTree(value),
+              heightVal: height * 0.4,
+              width: width * .18,
+            ),
+          ),
+          // ── Tree ──────────────────────────────────────────────
+          Expanded(child: treeSection()),
+        ],
+      ),
+    );
+  }
+
+  Widget fillterSection() {
+    final bool isViewFile =
+        context.read<DocumentListProvider>().isViewFile == true;
+
+    return Container(
+      // ← no fixed width — parent Expanded handles it
+      height: height * 0.34,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFDDE3EE), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF185FA5).withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // ── Header ────────────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF185FA5).withOpacity(0.04),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(14),
+                topRight: Radius.circular(14),
+              ),
+              border: const Border(
+                bottom: BorderSide(color: Color(0xFFDDE3EE), width: 1),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF185FA5).withOpacity(0.10),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.filter_alt_outlined,
+                      color: Color(0xFF185FA5), size: 15),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _locale.search,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1A2340),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── Fields ────────────────────────────────────────────
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Row 1: dates + dropdowns
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: DateTimeComponent(
+                          height: height * 0.04,
+                          dateControllerToCompareWith: null,
+                          isInitiaDate: true,
+                          dateWidth: double.infinity,
+                          dateController: fromDateController,
+                          label: _locale.fromDate,
+                          onValue: (isValid, value) {
+                            if (isValid) fromDateController.text = value;
+                          },
+                          timeControllerToCompareWith: null,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: DateTimeComponent(
+                          dateControllerToCompareWith: null,
+                          isInitiaDate: true,
+                          height: height * 0.04,
+                          dateWidth: double.infinity,
+                          dateController: toDateController,
+                          label: _locale.toDate,
+                          onValue: (isValid, value) {
+                            if (isValid) toDateController.text = value;
+                          },
+                          timeControllerToCompareWith: null,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: DropDown(
+                          key: const ValueKey('filter_dept_dropdown'),
+                          onChanged: (value) => selectedDep = value.txtKey,
+                          initialValue:
+                              selectedDep.isEmpty ? null : selectedDep,
+                          bordeText: _locale.department,
+                          width: double.infinity,
+                          height: height * 0.04,
+                          onSearch: (p0) async {
+                            return await DepartmentController()
+                                .search(SearchModel(page: 1, searchField: p0));
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: DropDown(
+                          key: const ValueKey('filter_sort_dropdown'),
+                          onChanged: (value) => selectedSortedType =
+                              getSortedByTyepsCode(_locale, value),
+                          initialValue: selectedSortedType == -1
+                              ? null
+                              : getSortedByTyepsByCode(
+                                  _locale, selectedSortedType),
+                          bordeText: _locale.sortedBy,
+                          items: getSortedByTyeps(_locale),
+                          width: double.infinity,
+                          height: height * 0.04,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Row 2: description, classification, keyword, ref1
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField2(
+                          width: double.infinity,
+                          height: height * 0.04,
+                          text: Text(_locale.description),
+                          controller: descreptionController,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Consumer<CalssificatonNameAndCodeProvider>(
+                          builder: (context, value, child) {
+                            classificationController.text =
+                                value.classificatonName;
+                            return CustomTextField2(
+                              text: Text(_locale.classification),
+                              controller: classificationController,
+                              width: double.infinity,
+                              height: height * 0.04,
+                              readOnly: true,
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: CustomTextField2(
+                          text: Text(_locale.keyword),
+                          controller: keyWordController,
+                          width: double.infinity,
+                          height: height * 0.04,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: CustomTextField2(
+                          text: Text(_locale.ref1),
+                          controller: ref1Controller,
+                          width: double.infinity,
+                          height: height * 0.04,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Row 3: ref2, otherRef, organization, following
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField2(
+                          text: Text(_locale.ref2),
+                          controller: ref2Controller,
+                          width: double.infinity,
+                          height: height * 0.04,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: CustomTextField2(
+                          text: Text(_locale.otherRef),
+                          controller: otherRefController,
+                          width: double.infinity,
+                          height: height * 0.04,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: CustomTextField2(
+                          text: Text(_locale.organization),
+                          controller: organizationController,
+                          width: double.infinity,
+                          height: height * 0.04,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: CustomTextField2(
+                          text: Text(_locale.following),
+                          controller: followingController,
+                          width: double.infinity,
+                          height: height * 0.04,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Row 4: issueNo + userCode
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: isViewFile ? 1 : 3,
+                        child: CustomTextField2(
+                          width: double.infinity,
+                          height: height * 0.04,
+                          text: Text(_locale.issueNo),
+                          controller: issueNoController,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: CustomTextField2(
+                          text: Text(_locale.userCode),
+                          controller: userCodeController,
+                          width: double.infinity,
+                          height: height * 0.04,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // ── Buttons ──────────────────────────────────
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomElevatedButton(
+                        text: _locale.search,
+                        color: const Color(0xFF185FA5),
+                        icon: Icons.search_rounded,
+                        width: width * 0.1,
+                        height: height * 0.043,
+                        fontSize: 13,
+                        onPressed: () => search().then((_) => getCount()),
+                      ),
+                      const SizedBox(width: 8),
+                      CustomElevatedButton(
+                        text: _locale.resetFilter,
+                        color: Colors.red,
+                        icon: Icons.refresh_rounded,
+                        width: width * 0.1,
+                        height: height * 0.043,
+                        fontSize: 13,
+                        onPressed: resetForm,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget treeSection1() {
     return ValueListenableBuilder(
       valueListenable: isLoading,
       builder: (context, value, child) {
