@@ -535,7 +535,6 @@ class ApiService {
     var requestUrl = "";
 
     requestUrl = "$urlServer/$api";
-
     try {
       var response = await http.post(
         Uri.parse(requestUrl),

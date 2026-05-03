@@ -321,19 +321,6 @@ class _LogInScreenState extends State<LoginScreen>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Positioned(
-                            bottom: 20,
-                            left: 0,
-                            right: 0,
-                            child: Center(
-                              child: LanguageWidget(
-                                color: Colors.white,
-                                onLocaleChanged: (l) =>
-                                    localeProvider.setLocale(l),
-                              ),
-                            ),
-                          ),
-
                           const SizedBox(height: 28),
 
                           // Logo with glow
@@ -402,6 +389,22 @@ class _LogInScreenState extends State<LoginScreen>
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 20,
+                  child: FadeTransition(
+                    opacity: _fadeAnim,
+                    child: Center(
+                      child: LanguageWidget(
+                        color: Colors.white,
+                        onLocaleChanged: (l) =>
+                            localeProvider.setLocale(l),
                       ),
                     ),
                   ),
