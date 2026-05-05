@@ -270,91 +270,95 @@ class _DepartmentDialogState extends State<AddUserDialog> {
   }
 
   Widget formSection() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (isDesktop)
-          userModel != null
-              ? const SizedBox.shrink()
-              : customTextField(_locale.userCode, userCodeController, isDesktop,
-                  0.2, true, widget.isChangePassword,
-                  focusNode: codeFocusNode),
-        customTextField(_locale.userName, userNameController, isDesktop, 0.2,
-            true, widget.isChangePassword),
-        customTextField(_locale.userRefName, txtReferenceUsernameController,
-            isDesktop, 0.2, true, widget.isChangePassword),
-        DropDown(
-          isEnabled: !widget.isChangePassword,
-          width: width * 0.2,
-          height: height * 0.05,
-          bordeText: _locale.userType,
-          initialValue: userModel != null
-              ? getNameOfUserType(_locale, selectedUserType!)
-              : null,
-          onChanged: (value) {
-            selectedUserType = getCodeOfUserType(_locale, value);
-          },
-          items: getUserTypesList(_locale),
-        ),
-        userModel != null && widget.isChangePassword
-            ? passwordField(_locale.newPass, passwordController, true,
-                isDesktop, obscureOldPassword)
-            : const SizedBox.shrink(),
-        customTextField(_locale.url, urlController, isDesktop, 0.2, true,
-            widget.isChangePassword),
-        dropDownUsers(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Checkbox(
-                    activeColor: primary2,
-                    value: isActive,
-                    onChanged: !widget.isChangePassword
-                        ? (value) {
-                            setState(() {
-                              isActive = value!;
-                              userActive = isActive ? 1 : 0;
-                            });
-                          }
-                        : null),
-                Text(_locale.active),
-              ],
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Checkbox(
-                    activeColor: primary2,
-                    value: isLimitAction,
-                    onChanged: !widget.isChangePassword
-                        ? (value) {
-                            setState(() {
-                              isLimitAction = value!;
-                            });
-                          }
-                        : null),
-                Text(_locale.isLimitAction),
-              ],
-            ),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (isDesktop)
+            userModel != null
+                ? const SizedBox.shrink()
+                : customTextField(
+                    _locale.userCode,
+                    userCodeController,
+                    isDesktop,
+                    0.2,
+                    true,
+                    widget.isChangePassword,
+                    focusNode: codeFocusNode,
+                  ),
+          SizedBox(height: height * 0.012),
+          customTextField(_locale.userName, userNameController, isDesktop, 0.2,
+              true, widget.isChangePassword),
+          SizedBox(height: height * 0.012),
+          customTextField(_locale.userRefName, txtReferenceUsernameController,
+              isDesktop, 0.2, true, widget.isChangePassword),
+          SizedBox(height: height * 0.012),
+          DropDown(
+            isEnabled: !widget.isChangePassword,
+            width: width * 0.2,
+            height: height * 0.05,
+            bordeText: _locale.userType,
+            initialValue: userModel != null
+                ? getNameOfUserType(_locale, selectedUserType!)
+                : null,
+            onChanged: (value) {
+              selectedUserType = getCodeOfUserType(_locale, value);
+            },
+            items: getUserTypesList(_locale),
+          ),
+          SizedBox(height: height * 0.012),
+          if (userModel != null && widget.isChangePassword)
+            passwordField(_locale.newPass, passwordController, true, isDesktop,
+                obscureOldPassword),
+          if (userModel != null && widget.isChangePassword)
+            SizedBox(height: height * 0.012),
+          customTextField(_locale.url, urlController, isDesktop, 0.2, true,
+              widget.isChangePassword),
+          SizedBox(height: height * 0.012),
+          dropDownUsers(),
+          SizedBox(height: height * 0.012),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Checkbox(
+                activeColor: primary2,
+                value: isActive,
+                onChanged: !widget.isChangePassword
+                    ? (value) {
+                        setState(() {
+                          isActive = value!;
+                          userActive = isActive ? 1 : 0;
+                        });
+                      }
+                    : null,
+              ),
+              Text(_locale.active),
+              SizedBox(width: width * 0.015),
+              Checkbox(
+                activeColor: primary2,
+                value: isLimitAction,
+                onChanged: !widget.isChangePassword
+                    ? (value) {
+                        setState(() {
+                          isLimitAction = value!;
+                        });
+                      }
+                    : null,
+              ),
+              Text(_locale.isLimitAction),
+            ],
+          ),
+          if (!isDesktop) ...[
+            SizedBox(height: height * 0.012),
+            customTextField(_locale.userCode, userCodeController, isDesktop,
+                0.8, true, widget.isChangePassword),
+            SizedBox(height: height * 0.012),
+            customTextField(_locale.userName, userCodeController, isDesktop,
+                0.8, true, widget.isChangePassword),
           ],
-        ),
-        if (!isDesktop) ...[
-          customTextField(_locale.userCode, userCodeController, isDesktop, 0.8,
-              true, widget.isChangePassword),
-          customTextField(_locale.userName, userCodeController, isDesktop, 0.8,
-              true, widget.isChangePassword),
         ],
-      ],
+      ),
     );
   }
 
@@ -385,25 +389,25 @@ class _DepartmentDialogState extends State<AddUserDialog> {
           height: hint == _locale.notes ? height * 0.1 : height * 0.05,
           text: Text(hint),
           controller: controller,
-          decoration: InputDecoration(
-            suffixIcon: isPassword
-                ? IconButton(
-                    alignment: Alignment.centerLeft,
-                    onPressed: () {
-                      setState(() {
-                        obscureText = !obscureText; // Toggle visibility
-                      });
-                    },
-                    icon: Icon(
-                      obscureText ? Icons.visibility_off : Icons.visibility,
-                      size: 25,
-                    ),
-                  )
-                : null,
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.all(10),
-            hintText: hint,
-          ),
+          // decoration: InputDecoration(
+          //   suffixIcon: isPassword
+          //       ? IconButton(
+          //           alignment: Alignment.centerLeft,
+          //           onPressed: () {
+          //             setState(() {
+          //               obscureText = !obscureText; // Toggle visibility
+          //             });
+          //           },
+          //           icon: Icon(
+          //             obscureText ? Icons.visibility_off : Icons.visibility,
+          //             size: 25,
+          //           ),
+          //         )
+          //       : null,
+          //   border: InputBorder.none,
+          //   contentPadding: const EdgeInsets.all(10),
+          //   hintText: hint,
+          // ),
           obscureText: isPassword ? obscureText : false, // Apply obscureText
         );
       },
@@ -561,7 +565,7 @@ class _DepartmentDialogState extends State<AddUserDialog> {
               txtReferenceUsernameController.text.isEmpty ||
               urlController.text.trim().isEmpty ||
               selectedUserType == null) {
-                CustomToastMessage.error(
+            CustomToastMessage.error(
                 context, _locale.pleaseAddAllRequiredFields);
             // showDialog(
             //   context: context,
@@ -629,8 +633,8 @@ class _DepartmentDialogState extends State<AddUserDialog> {
         urlController.text.trim().isEmpty ||
         ((userDeptsList ?? []).isEmpty) ||
         selectedUserType == null) {
-          //
-          CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
+      //
+      CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
       // showDialog(
       //   context: context,
       //   builder: (context) {

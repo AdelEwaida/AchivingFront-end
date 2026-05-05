@@ -228,32 +228,32 @@ class _FileListScreenState extends State<FileListScreen> {
 
     polCols = [];
     fillColumnTable();
-    if (stateManager != null) {
-      for (int i = 0; i < polCols.length; i++) {
-        String title = polCols[i].title;
-        polCols[i].titleSpan = TextSpan(
-          children: [
-            WidgetSpan(
-              child: Text(
-                title,
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-            ),
-          ],
-        );
-        polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
-        polCols[i].textAlign = PlutoColumnTextAlign.center;
+    // if (stateManager != null) {
+    //   for (int i = 0; i < polCols.length; i++) {
+    //     String title = polCols[i].title;
+    //     polCols[i].titleSpan = TextSpan(
+    //       children: [
+    //         WidgetSpan(
+    //           child: Text(
+    //             title,
+    //             style: const TextStyle(
+    //                 fontSize: 16,
+    //                 fontWeight: FontWeight.bold,
+    //                 color: Colors.red),
+    //           ),
+    //         ),
+    //       ],
+    //     );
+    //     polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
+    //     polCols[i].textAlign = PlutoColumnTextAlign.center;
 
-        stateManager.columns[i].title = polCols[i].title;
-        stateManager.columns[i].width = polCols[i].width;
-        stateManager.columns[i].titleTextAlign = polCols[i].titleTextAlign;
-        stateManager.columns[i].textAlign = polCols[i].textAlign;
-        stateManager.columns[i].titleSpan = polCols[i].titleSpan;
-      }
-    }
+    //     stateManager.columns[i].title = polCols[i].title;
+    //     stateManager.columns[i].width = polCols[i].width;
+    //     stateManager.columns[i].titleTextAlign = polCols[i].titleTextAlign;
+    //     stateManager.columns[i].textAlign = polCols[i].textAlign;
+    //     stateManager.columns[i].titleSpan = polCols[i].titleSpan;
+    //   }
+    // }
     userCode = (await storage.read(key: "userName")) ?? "";
     result = await userController.getUsers(
       SearchModel(searchField: userCode, page: -1, status: -1),
@@ -1587,7 +1587,7 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   void fillColumnTable() {
-    polCols.addAll([
+    polCols = [
       PlutoColumn(
         title: "#",
         field: "countNumber",
@@ -1626,39 +1626,78 @@ class _FileListScreenState extends State<FileListScreen> {
         width: isDesktop ? width * 0.08 : width * 0.2,
         backgroundColor: columnColors,
         renderer: (rendererContext) {
-          // Retrieve the status and current step values from the row
-          String statusText = rendererContext.cell.value;
+          String statusText = rendererContext.cell.value?.toString() ?? "";
 
-          // Determine if the row is odd or even
-          bool isOddRow = rendererContext.rowIdx % 2 == 0;
-
-          // Default background color based on odd/even row configuration
-          Color backgroundColor = Colors.transparent;
-
-          // Conditional logic to map the status to a specific color
-          if (statusText == _locale.approved) {
-            backgroundColor = Colors.green; // Approved
-          } else if (statusText == _locale.rejected) {
-            backgroundColor = Colors.red; // Rejected
-          } else if (statusText == _locale.pending) {
-            backgroundColor = Colors.orange[300]!; // Pending
+          // Return empty cell if null or empty
+          if (statusText.isEmpty || statusText == "null") {
+            return const SizedBox.shrink();
           }
 
-          return Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: backgroundColor == Colors.transparent
-                  ? BorderRadius.circular(0)
-                  : BorderRadius.circular(15),
-            ),
-            child: Text(
-              statusText,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+          Color backgroundColor;
+          IconData? icon;
+
+          if (statusText == _locale.approved) {
+            backgroundColor = Colors.green;
+            icon = Icons.check_circle_rounded;
+          } else if (statusText == _locale.rejected) {
+            backgroundColor = Colors.red;
+            icon = Icons.cancel_rounded;
+          } else if (statusText == _locale.pending) {
+            backgroundColor = Colors.orange;
+            icon = Icons.hourglass_top_rounded;
+          } else {
+            return const SizedBox.shrink(); // unknown status → show nothing
+          }
+          return Center(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    backgroundColor,
+                    backgroundColor == Colors.grey
+                        ? Colors.grey.shade600
+                        : backgroundColor == Colors.green
+                            ? Colors.green.shade700
+                            : backgroundColor == Colors.red
+                                ? Colors.red.shade700
+                                : Colors.orange.shade700,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(99),
+                boxShadow: [
+                  BoxShadow(
+                    color: backgroundColor.withOpacity(0.35),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon!, color: Colors.white, size: 12),
+                    const SizedBox(width: 4),
+                  ],
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      statusText,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -1697,7 +1736,7 @@ class _FileListScreenState extends State<FileListScreen> {
         backgroundColor: columnColors,
         readOnly: true,
       ),
-    ]);
+    ];
   }
 
   PlutoInfinityScrollRows lazyLoadingfooter(
