@@ -782,18 +782,17 @@ class _FileListScreenState extends State<FileListScreen> {
         }
       });
     } else {
-      CustomToastMessage.error(context, _locale.notAllowedToEditDept);
       // ignore: use_build_context_synchronously
-      // showDialog(
-      //   context: context,
-      //   builder: (context) => ErrorDialog(
-      //     icon: Icons.warning,
-      //     errorDetails: _locale.notAllowedToEditDept,
-      //     errorTitle: 'Unauthorized',
-      //     color: Colors.red,
-      //     statusCode: 403,
-      //   ),
-      // );
+      showDialog(
+        context: context,
+        builder: (context) => ErrorDialog(
+          icon: Icons.warning,
+          errorDetails: _locale.notAllowedToEditDept,
+          errorTitle: 'Unauthorized',
+          color: Colors.red,
+          statusCode: 403,
+        ),
+      );
     }
   }
 
@@ -1496,18 +1495,17 @@ class _FileListScreenState extends State<FileListScreen> {
     if (hasMatch) {
       showUploadDialog(documentModel);
     } else {
-      CustomToastMessage.error(context, _locale.notAllowedToEditDept);
-      // // ignore: use_build_context_synchronously
-      // showDialog(
-      //   context: context,
-      //   builder: (context) => ErrorDialog(
-      //     icon: Icons.warning,
-      //     errorDetails: _locale.notAllowedToEditDept,
-      //     errorTitle: 'Unauthorized',
-      //     color: Colors.red,
-      //     statusCode: 403,
-      //   ),
-      // );
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) => ErrorDialog(
+          icon: Icons.warning,
+          errorDetails: _locale.notAllowedToEditDept,
+          errorTitle: 'Unauthorized',
+          color: Colors.red,
+          statusCode: 403,
+        ),
+      );
     }
   }
 
@@ -1606,7 +1604,7 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.description,
         field: "txtDescription",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.18 : width * 0.4,
+        width: isDesktop ? width * 0.16 : width * 0.4,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
         readOnly: true,
@@ -1615,7 +1613,7 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.issueNo,
         field: "txtIssueno",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.15 : width * 0.2,
+        width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
         readOnly: true,
@@ -1625,71 +1623,42 @@ class _FileListScreenState extends State<FileListScreen> {
         field: "workflowStatus",
         readOnly: true,
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.1 : width * 0.2,
+        width: isDesktop ? width * 0.08 : width * 0.2,
         backgroundColor: columnColors,
         renderer: (rendererContext) {
-          final String statusText = rendererContext.cell.value;
+          // Retrieve the status and current step values from the row
+          String statusText = rendererContext.cell.value;
 
-          // ── Status config ──────────────────────────────────
-          Color bgColor = Colors.transparent;
-          Color darkColor = Colors.transparent;
-          IconData icon = Icons.circle_outlined;
+          // Determine if the row is odd or even
+          bool isOddRow = rendererContext.rowIdx % 2 == 0;
 
+          // Default background color based on odd/even row configuration
+          Color backgroundColor = Colors.transparent;
+
+          // Conditional logic to map the status to a specific color
           if (statusText == _locale.approved) {
-            bgColor = const Color(0xFF22C55E);
-            darkColor = const Color(0xFF16A34A);
-            icon = Icons.check_circle_rounded;
+            backgroundColor = Colors.green; // Approved
           } else if (statusText == _locale.rejected) {
-            bgColor = const Color(0xFFEF4444);
-            darkColor = const Color(0xFFDC2626);
-            icon = Icons.cancel_rounded;
+            backgroundColor = Colors.red; // Rejected
           } else if (statusText == _locale.pending) {
-            bgColor = const Color(0xFFF97316);
-            darkColor = const Color(0xFFEA580C);
-            icon = Icons.hourglass_top_rounded;
+            backgroundColor = Colors.orange[300]!; // Pending
           }
 
-          if (statusText.isEmpty || bgColor == Colors.transparent) {
-            return const SizedBox.shrink();
-          }
-
-          return Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [bgColor, darkColor],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(99),
-                boxShadow: [
-                  BoxShadow(
-                    color: bgColor.withOpacity(0.35),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, color: Colors.white, size: 11),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      statusText,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ),
-                ],
+          return Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: backgroundColor == Colors.transparent
+                  ? BorderRadius.circular(0)
+                  : BorderRadius.circular(15),
+            ),
+            child: Text(
+              statusText,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
               ),
             ),
           );
@@ -1699,7 +1668,7 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.issueDate,
         field: "datIssuedate",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.13 : width * 0.2,
+        width: isDesktop ? width * 0.1 : width * 0.2,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
         readOnly: true,
@@ -1708,7 +1677,7 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.userCode,
         field: "txtUsercode",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.15 : width * 0.2,
+        width: isDesktop ? width * 0.12 : width * 0.2,
         backgroundColor: columnColors,
         readOnly: true,
       ),

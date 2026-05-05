@@ -106,8 +106,9 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
         templateName.text =
             workFlowTemplateBody!.workflow!.txtTemplateName ?? "";
         workflowStatusController.text = ListConstants.getStatusNameWorkFlow(
-                workFlowTemplateBody!.workflow!.intStatus!, _locale)!
-            .toString();
+                    workFlowTemplateBody!.workflow!.intStatus ?? 0, _locale)
+                ?.toString() ??
+            "";
 
         selectedDep = workFlowTemplateBody!.workflow!.txtDept ?? "";
         selctedDepDesc = workFlowTemplateBody!.workflow!.txtDeptName ?? "";
@@ -116,9 +117,8 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
                 ? workFlowTemplateBody!.workflow!.datMaxDate!
                 : Converters.formatDate2(DateTime.now().toString());
         steps = workFlowTemplateBody!.stepsList ?? [];
-        for (int i = 0; i < workFlowTemplateBody!.stepsList!.length; i++) {
-          rowList.add(
-              workFlowTemplateBody!.stepsList![i].toPlutoRow(i + 1, _locale));
+        for (int i = 0; i < steps.length; i++) {
+          rowList.add(steps[i].toPlutoRow(i + 1, _locale));
         }
       }
     }
@@ -154,7 +154,7 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         width: isDesktop ? width * 0.5 : width * 0.8,
-        height: isDesktop ? height * 0.65 : height * 0.5,
+        height: isDesktop ? height * 0.69 : height * 0.5,
         child: formSection(),
       ),
       actions: [
@@ -242,105 +242,88 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
   }
 
   Widget formSection() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            DateTimeComponent(
-              dateController: datMaxDate,
-              // controller: ,
-              readOnly: true,
-              label: _locale.date,
-              onValue: (isValid, value) {
-                if (isValid) {
-                  datMaxDate.text = value;
-                }
-              },
-              height: height * 0.05,
-              dateWidth: width * 0.135,
-              dateControllerToCompareWith: null,
-              isInitiaDate: false,
-              timeControllerToCompareWith: null,
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            customTextField(
-                _locale.docName, documentName, isDesktop, 0.18, true, true),
-            const SizedBox(
-              width: 5,
-            ),
-            customTextField(_locale.department, departmentName, isDesktop, 0.18,
-                true, true),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            customTextField(_locale.templateName, templateName, isDesktop, 0.18,
-                true, true),
-            const SizedBox(
-              width: 5,
-            ),
-            // customTextField(_locale.department, departmentName, isDesktop, 0.18,
-            //     true, false),
-            customTextField(_locale.status, workflowStatusController, isDesktop,
-                0.18, true, true),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TableComponent(
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Date row
+          DateTimeComponent(
+            dateController: datMaxDate,
+            readOnly: true,
+            label: _locale.date,
+            onValue: (isValid, value) {
+              if (isValid) datMaxDate.text = value;
+            },
+            height: height * 0.05,
+            dateWidth: width * 0.15,
+            dateControllerToCompareWith: null,
+            isInitiaDate: false,
+            timeControllerToCompareWith: null,
+          ),
+
+          SizedBox(height: height * 0.015),
+
+          // Doc name + Department
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              customTextField(
+                  _locale.docName, documentName, isDesktop, 0.2, true, true),
+              SizedBox(width: width * 0.015),
+              customTextField(_locale.department, departmentName, isDesktop,
+                  0.2, true, true),
+            ],
+          ),
+
+          SizedBox(height: height * 0.015),
+
+          // Template name + Status
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              customTextField(_locale.templateName, templateName, isDesktop,
+                  0.2, true, true),
+              SizedBox(width: width * 0.015),
+              customTextField(_locale.status, workflowStatusController,
+                  isDesktop, 0.2, true, true),
+            ],
+          ),
+
+          SizedBox(height: height * 0.02),
+
+          // Steps table — full width, proper height
+          SizedBox(
+            height: height * 0.3,
+            width: isDesktop ? width * 0.5 : width * 0.85,
+            child: TableComponent(
               hasDropdown: true,
               isworkFlow: true,
-
-              tableHeigt: height * 0.30,
-              tableWidth: width * 0.49,
-              // delete: deleteTemplate,
+              tableHeigt: height * 0.28,
+              tableWidth: isDesktop ? width * 0.5 : width * 0.85,
               plCols: polCols,
               mode: PlutoGridMode.selectWithOneTap,
               polRows: rowList,
-
               rowColor: (colorContext) {
                 String localizedStatus =
                     colorContext.row.cells['intStatus']!.value as String;
-
                 int? statusCode = ListConstants.getStatusCodeWorkFlow(
                     localizedStatus, _locale);
-
-                if (statusCode == 1) {
-                  // Approved
-                  return Colors.green[100]!;
-                } else if (statusCode == 0) {
-                  // Pending
-                  return Colors.orange[100]!;
-                } else if (statusCode == 2) {
-                  // Rejected
-                  return Colors.red[100]!;
-                }
-
-                // Default color if status is unknown
+                if (statusCode == 1) return Colors.green[100]!;
+                if (statusCode == 0) return Colors.orange[100]!;
+                if (statusCode == 2) return Colors.red[100]!;
                 return Colors.grey[200]!;
               },
-
               doubleTab: (event) async {
                 PlutoRow? tappedRow = event.row;
                 workFlowTemplateBody =
                     WorkFlowDocumentInfo.fromPluto(tappedRow!, _locale);
               },
-              onSelected: (event) async {
-                PlutoRow? tappedRow = event.row;
-              },
+              onSelected: (event) async {},
             ),
-          ],
-        )
-      ],
+          ),
+        ],
+      ),
     );
   }
 

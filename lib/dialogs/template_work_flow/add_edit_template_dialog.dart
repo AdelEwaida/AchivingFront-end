@@ -235,7 +235,7 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
                   },
                   initialValue: selctedDepDesc == "" ? null : selctedDepDesc,
                   bordeText: _locale.department,
-                  width: width * 0.18,
+                  width: double.infinity,
                   items: departmetList,
                   height: height * 0.058,
                 ),

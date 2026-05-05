@@ -56,14 +56,15 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
   final Key _statusDropdownKey = const ValueKey('status_dropdown');
   final Key _departmentDropdownKey = const ValueKey('department_dropdown');
   @override
-  void didChangeDependencies() async {
+  void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
     width = MediaQuery.of(context).size.width;
-    polCols = [];
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
+    polCols = [];
 
     fillColumnTable();
+
     if (stateManager != null) {
       for (int i = 0; i < polCols.length; i++) {
         String title = polCols[i].title;
@@ -72,8 +73,10 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
             WidgetSpan(
               child: Text(
                 title,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
             ),
           ],
@@ -87,16 +90,16 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
         stateManager!.columns[i].textAlign = polCols[i].textAlign;
         stateManager!.columns[i].titleSpan = polCols[i].titleSpan;
       }
+
+      for (int i = 0; i < stateManager!.rows.length; i++) {
+        stateManager!.rows[i].cells['intStatus']!.value =
+            getStatusNameDependsLang(
+                stateManager!.rows[i].cells['intStatus']!.value, _locale);
+      }
+
+      stateManager!.notifyListeners(true);
     }
-    for (int i = 0; i < stateManager!.rows.length; i++) {
-      stateManager!.rows[i].cells['intStatus']!.value =
-          getStatusNameDependsLang(
-              stateManager!.rows[i].cells['intStatus']!.value, _locale);
-    }
-    stateManager!.notifyListeners(true);
-    userName = await storage.read(key: "userName");
-    departmetList = await UserController().getDepartmentSelectedUser(userName!);
-    if (mounted) setState(() {});
+
     super.didChangeDependencies();
   }
 
@@ -117,65 +120,63 @@ class _WorkFlowDocumentScreenState extends State<WorkFlowDocumentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Center(
-                child: Expanded(
-                  child: SingleChildScrollView(
-                    child: TableComponent(
-                      hasDropdown: true,
-                      isworkFlow: true,
-                      delete: deleteWorkFlow,
-                      dropdown: departmentDropdown(),
-                      tableHeigt: height * 0.8,
-                      tableWidth: isDesktop ? width * 1 : width * 0.94,
-                      search: searchField,
-                      statusDropDown: statusDropDown(),
-                      plCols: polCols,
-                      mode: PlutoGridMode.selectWithOneTap,
-                      polRows: [],
-                      footerBuilder: (stateManager) {
-                        return lazyLoadingfooter(stateManager);
-                      },
-                      view: editTemplate,
-                      refresh: refreshTable,
-                      explor: explorFiels,
-                      onLoaded: (PlutoGridOnLoadedEvent event) {
-                        stateManager = event.stateManager;
-                        stateManager!.setShowColumnFilter(true);
-                      },
-                      doubleTab: (event) async {
-                        PlutoRow? tappedRow = event.row;
-                        workFlowTemplateBody =
-                            WorkFlowDocumentInfo.fromPluto(tappedRow!, _locale);
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) {
-                            return EditTemplateDocumentDialog(
-                              workFlowTemplateBody: workFlowTemplateBody,
-                            );
-                          },
-                        ).then((value) {
-                          if (value == true) {
-                            refreshTable();
-                          }
-                        });
-                      },
-                      onSelected: (event) async {
-                        PlutoRow? tappedRow = event.row;
-                        selectedRow = tappedRow;
-                        workFlowTemplateBody =
-                            WorkFlowDocumentInfo.fromPluto(selectedRow!, _locale);
-                      },
-                    ),
-                  ),
-                ),
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: TableComponent(
+                hasDropdown: true,
+                isworkFlow: true,
+                delete: deleteWorkFlow,
+                dropdown: departmentDropdown(),
+                tableHeigt: height * 0.8,
+                tableWidth: isDesktop ? width * 1 : width * 0.94,
+                search: searchField,
+                statusDropDown: statusDropDown(),
+                plCols: polCols,
+                mode: PlutoGridMode.selectWithOneTap,
+                polRows: [],
+                footerBuilder: (stateManager) {
+                  return lazyLoadingfooter(stateManager);
+                },
+                view: editTemplate,
+                refresh: refreshTable,
+                explor: explorFiels,
+                onLoaded: (PlutoGridOnLoadedEvent event) {
+                  stateManager = event.stateManager;
+                  stateManager!.setShowColumnFilter(true);
+                },
+                doubleTab: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                  workFlowTemplateBody =
+                      WorkFlowDocumentInfo.fromPluto(tappedRow!, _locale);
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return EditTemplateDocumentDialog(
+                        workFlowTemplateBody: workFlowTemplateBody,
+                      );
+                    },
+                  ).then((value) {
+                    if (value == true) {
+                      refreshTable();
+                    }
+                  });
+                },
+                onSelected: (event) async {
+                  PlutoRow? tappedRow = event.row;
+                  selectedRow = tappedRow;
+                  workFlowTemplateBody =
+                      WorkFlowDocumentInfo.fromPluto(selectedRow!, _locale);
+                },
               ),
-            ],
+            ),
           ),
-        ));
+        ],
+      ),
+    ));
   }
 
   DropDown statusDropDown() {
