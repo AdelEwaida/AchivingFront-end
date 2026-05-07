@@ -242,59 +242,56 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
   }
 
   Widget formSection() {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Date row
-          DateTimeComponent(
-            dateController: datMaxDate,
-            readOnly: true,
-            label: _locale.date,
-            onValue: (isValid, value) {
-              if (isValid) datMaxDate.text = value;
-            },
-            height: height * 0.05,
-            dateWidth: width * 0.15,
-            dateControllerToCompareWith: null,
-            isInitiaDate: false,
-            timeControllerToCompareWith: null,
-          ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Date row
+        DateTimeComponent(
+          dateController: datMaxDate,
+          readOnly: true,
+          label: _locale.date,
+          onValue: (isValid, value) {
+            if (isValid) datMaxDate.text = value;
+          },
+          height: height * 0.05,
+          dateWidth: width * 0.15,
+          dateControllerToCompareWith: null,
+          isInitiaDate: false,
+          timeControllerToCompareWith: null,
+        ),
 
-          SizedBox(height: height * 0.015),
+        SizedBox(height: height * 0.015),
 
-          // Doc name + Department
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              customTextField(
-                  _locale.docName, documentName, isDesktop, 0.2, true, true),
-              SizedBox(width: width * 0.015),
-              customTextField(_locale.department, departmentName, isDesktop,
-                  0.2, true, true),
-            ],
-          ),
+        // Doc name + Department
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            customTextField(
+                _locale.docName, documentName, isDesktop, 0.2, true, true),
+            SizedBox(width: width * 0.015),
+            customTextField(
+                _locale.department, departmentName, isDesktop, 0.2, true, true),
+          ],
+        ),
 
-          SizedBox(height: height * 0.015),
+        SizedBox(height: height * 0.015),
 
-          // Template name + Status
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              customTextField(_locale.templateName, templateName, isDesktop,
-                  0.2, true, true),
-              SizedBox(width: width * 0.015),
-              customTextField(_locale.status, workflowStatusController,
-                  isDesktop, 0.2, true, true),
-            ],
-          ),
+        // Template name + Status
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            customTextField(
+                _locale.templateName, templateName, isDesktop, 0.2, true, true),
+            SizedBox(width: width * 0.015),
+            customTextField(_locale.status, workflowStatusController, isDesktop,
+                0.2, true, true),
+          ],
+        ),
 
-          SizedBox(height: height * 0.02),
-
-          // Steps table — full width, proper height
-          SizedBox(
-            height: height * 0.3,
+        Flexible(
+          child: SizedBox(
+            height: height * 0.40, // increased from 0.28
             width: isDesktop ? width * 0.5 : width * 0.85,
             child: TableComponent(
               hasDropdown: true,
@@ -322,8 +319,8 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
               onSelected: (event) async {},
             ),
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 

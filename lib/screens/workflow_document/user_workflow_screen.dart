@@ -472,16 +472,22 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
           }
 
           return GestureDetector(
+            // In fillColumnTable(), inside the status renderer's onTap:
             onTap: () async {
               final PlutoRow row = rendererContext.row;
-              final Map<String, PlutoCell> cells = row.cells;
-              final String workFlowCode = cells['txtWorkflowcode']?.value ?? "";
+              final String workFlowCode =
+                  row.cells['txtWorkflowcode']?.value ?? "";
+
+              // Show loading while fetching
+              openLoadinDialog(context);
 
               List<UserWorkflowSteps> result =
                   await workFlowTemplateContoller.getAllUsersWorkFlowSteps(
                 UserStepRequestBody(
                     stepStatus: -1, curStep: -1, workflowCode: workFlowCode),
               );
+
+              Navigator.pop(context); // Close loading dialog
 
               List<Map<String, String>> steps = result.map((step) {
                 String? status =
@@ -728,64 +734,94 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
   }
 
   Widget _buildStepCard(Map<String, String> step, int currentStep) {
+    final bool isApproved = step['status'] == _locale.approved;
+    final bool isRejected = step['status'] == _locale.rejected;
+
+    final Color borderColor = isApproved
+        ? const Color(0xFF0F6E56) // teal-600
+        : isRejected
+            ? const Color(0xFFA32D2D) // red-600
+            : const Color(0xFFBA7517); // amber-600
+
+    final Color avatarBg = isApproved
+        ? const Color(0xFFE1F5EE) // teal-50
+        : isRejected
+            ? const Color(0xFFFCEBEB) // red-50
+            : const Color(0xFFFAEEDA); // amber-50
+
+    final Color iconColor = isApproved
+        ? const Color(0xFF0F6E56)
+        : isRejected
+            ? const Color(0xFFA32D2D)
+            : const Color(0xFF854F0B);
+
+    final IconData icon = isApproved
+        ? Icons.check_rounded
+        : isRejected
+            ? Icons.close_rounded
+            : Icons.hourglass_empty_rounded;
+
     return SizedBox(
-      width: width * 0.27, // Adjust card width as needed
+      width: width * 0.27,
       child: Card(
-        elevation: 4,
-        color: currentStep == 1
-            ? Colors.red[50]
-            : Colors.white, // Set background color
+        elevation: 0,
+        color: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: borderColor, width: 1.5),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Center(
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.center, // Center horizontally
-              crossAxisAlignment:
-                  CrossAxisAlignment.center, // Center vertically
-              children: [
-                Icon(
-                  step['status'] == _locale.approved
-                      ? Icons.check_circle
-                      : Icons.hourglass_empty,
-                  color: step['status'] == _locale.approved
-                      ? Colors.green
-                      : Colors.orange,
-                  // size: 35, // Adjust icon size as needed
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              // Avatar circle
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: avatarBg,
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(width: 16), // Space between icon and text
-                Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center, // Center vertically
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Align text to start
-                  children: [
-                    Text(
-                      step['name']!,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: currentStep == 1 ? Colors.red : Colors.black,
-                      ),
+                child: Icon(icon, color: iconColor, size: 20),
+              ),
+              const SizedBox(width: 12),
+              // Name + status
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    step['name']!,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
                     ),
-                    SizedBox(height: 4), // Space between name and status
-                    Text(
-                      step['status']!,
-                      style: TextStyle(
-                        fontWeight: currentStep == 1
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        fontSize: 14,
-                        color: currentStep == 1 ? Colors.red : Colors.black,
-                      ),
-                    ),
-                  ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    step['status']!,
+                    style: TextStyle(fontSize: 13, color: borderColor),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              // Pill badge
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                decoration: BoxDecoration(
+                  color: avatarBg,
+                  borderRadius: BorderRadius.circular(99),
                 ),
-              ],
-            ),
+                child: Text(
+                  step['status']!,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: iconColor,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -793,12 +829,21 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
   }
 }
 
+// Add this extension at the bottom of the file
+extension ColorDarken on Color {
+  Color darken([double amount = 0.2]) {
+    final hsl = HSLColor.fromColor(this);
+    return hsl
+        .withLightness((hsl.lightness - amount).clamp(0.0, 1.0))
+        .toColor();
+  }
+}
+
 Widget _buildConnector() {
   return SizedBox(
-    height: 40,
-    child: CustomPaint(
-      painter: DottedLinePainter(),
-    ),
+    height: 28,
+    width: 1.5,
+    child: ColoredBox(color: Colors.grey.shade300),
   );
 }
 
