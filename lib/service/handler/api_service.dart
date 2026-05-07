@@ -489,40 +489,38 @@ class ApiService {
       }
 
       return response;
-    } catch (e) {
+    } // postRequestExcel catch block - fixed ✅
+    catch (e) {
       print("e.toString() ${e.toString()}");
-      if (api == logInApi) {
-        final context = navigatorKey.currentState!.overlay!.context;
-        // ignore: use_build_context_synchronously
-        Navigator.pop(context);
-        // ignore: use_build_context_synchronously
+      final context = navigatorKey.currentState!.overlay!.context;
 
-        // ignore: use_build_context_synchronously
-        // showDialog(
-        //   context: context,
-        //   builder: (context) {
-        //     return ErrorDialog(
-        //         icon: Icons.error_sharp,
-        //         errorDetails: AppLocalizations.of(context)!.error500,
-        //         errorTitle: AppLocalizations.of(context)!.error,
-        //         color: Colors.red,
-        //         statusCode: 500);
-        //   },
-        // );
-        // ignore: use_build_context_synchronously
-        // Navigator.pop(context);
-      } else {
-        final context = navigatorKey.currentState!.overlay!.context;
-        // ignore: use_build_context_synchronously
+      if (api == logInApi) {
+        if (navigatorKey.currentState!.canPop()) {
+          Navigator.pop(context);
+        }
         showDialog(
           context: context,
           builder: (context) {
             return ErrorDialog(
-                icon: Icons.error_sharp,
-                errorDetails: AppLocalizations.of(context)!.error500,
-                errorTitle: AppLocalizations.of(context)!.error,
-                color: Colors.red,
-                statusCode: 500);
+              icon: Icons.error_sharp,
+              errorDetails: AppLocalizations.of(context)!.error500,
+              errorTitle: AppLocalizations.of(context)!.error,
+              color: Colors.red,
+              statusCode: 500,
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+              icon: Icons.error_sharp,
+              errorDetails: AppLocalizations.of(context)!.error500,
+              errorTitle: AppLocalizations.of(context)!.error,
+              color: Colors.red,
+              statusCode: 500,
+            );
           },
         );
       }
@@ -533,16 +531,21 @@ class ApiService {
     String? token = await storage.read(key: 'jwt');
     final context2 = navigatorKey.currentState!.overlay!.context;
     var requestUrl = "";
-
+    final headers = api == logInApi
+        ? {
+            "Accept": "application/json",
+            "Content-type": "application/json",
+          }
+        : {
+            "Accept": "application/json",
+            "Content-type": "application/json",
+            "Authorization": "Bearer $token",
+          };
     requestUrl = "$urlServer/$api";
     try {
       var response = await http.post(
         Uri.parse(requestUrl),
-        headers: {
-          "Accept": "application/json",
-          "Content-type": "application/json",
-          "Authorization": "Bearer $token"
-        },
+        headers: headers,
         body: json.encode(toJson),
       );
 
@@ -668,38 +671,37 @@ class ApiService {
       return response;
     } catch (e) {
       print("e.toString() ${e.toString()}");
-      if (api == logInApi) {
-        final context = navigatorKey.currentState!.overlay!.context;
-        // ignore: use_build_context_synchronously
-        Navigator.pop(context);
-        // ignore: use_build_context_synchronously
+      final context = navigatorKey.currentState!.overlay!.context;
 
-        // ignore: use_build_context_synchronously
-        // showDialog(
-        //   context: context,
-        //   builder: (context) {
-        //     return ErrorDialog(
-        //         icon: Icons.error_sharp,
-        //         errorDetails: AppLocalizations.of(context)!.error500,
-        //         errorTitle: AppLocalizations.of(context)!.error,
-        //         color: Colors.red,
-        //         statusCode: 500);
-        //   },
-        // );
-        // ignore: use_build_context_synchronously
-        // Navigator.pop(context);
-      } else {
-        final context = navigatorKey.currentState!.overlay!.context;
-        // ignore: use_build_context_synchronously
+      if (api == logInApi) {
+        // Only pop if there's something to pop (e.g. a loading dialog)
+        if (navigatorKey.currentState!.canPop()) {
+          Navigator.pop(context);
+        }
+        // Show the error dialog instead of silently failing
         showDialog(
           context: context,
           builder: (context) {
             return ErrorDialog(
-                icon: Icons.error_sharp,
-                errorDetails: AppLocalizations.of(context)!.error500,
-                errorTitle: AppLocalizations.of(context)!.error,
-                color: Colors.red,
-                statusCode: 500);
+              icon: Icons.error_sharp,
+              errorDetails: AppLocalizations.of(context)!.error500,
+              errorTitle: AppLocalizations.of(context)!.error,
+              color: Colors.red,
+              statusCode: 500,
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return ErrorDialog(
+              icon: Icons.error_sharp,
+              errorDetails: AppLocalizations.of(context)!.error500,
+              errorTitle: AppLocalizations.of(context)!.error,
+              color: Colors.red,
+              statusCode: 500,
+            );
           },
         );
       }

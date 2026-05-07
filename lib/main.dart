@@ -45,7 +45,7 @@ import 'providers/user_provider.dart';
 //
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
+  WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
 
   await loadApiConfig();
