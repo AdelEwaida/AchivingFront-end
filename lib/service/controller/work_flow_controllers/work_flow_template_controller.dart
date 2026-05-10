@@ -4,6 +4,7 @@ import 'package:archiving_flutter_project/models/db/work_flow/template_model.dar
 
 import '../../../models/db/count_model.dart';
 import '../../../models/db/work_flow/setup_model.dart';
+import '../../../models/db/work_flow/tracking_doc_model.dart';
 import '../../../models/db/work_flow/user_step_request_body.dart';
 import '../../../models/db/work_flow/user_work_flow_steps.dart';
 import '../../../models/db/work_flow/work_flow_doc_model.dart';
@@ -141,5 +142,10 @@ class WorkFlowTemplateContoller {
     }
 
     return templateList; // Return the populated list
+  }
+
+  Future createTrackingDoc(TrackingDocModel trackingDocModel) async {
+    return await ApiService()
+        .postRequest(createTrackingDocs, trackingDocModel.toJson());
   }
 }

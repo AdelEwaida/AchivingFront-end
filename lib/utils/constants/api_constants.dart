@@ -87,6 +87,8 @@ const deleteTemplate = "workflowTemplateTransactions/delete";
 const getTemplates = "workflowTemplateInfo/searchCrit";
 const getTemplatesCount = "workflowTemplateInfo/count";
 
+const createTrackingDocs = "document-tracking/createTrackingDoc";
+
 const getWorkFlowDoc = "workflowDocumentInfo/searchCrit";
 const updateWorkFlowDoc = "workflowTransactions/update";
 const deleteWorklowDoc = "workflowTransactions/delete";
