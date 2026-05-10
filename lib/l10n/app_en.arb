@@ -281,5 +281,42 @@
     }
   },
   "createTrackingDoc": "Create Tracking Route",
-  "deptApprovals": "My approvals across departments"
+  "deptApprovals": "My approvals across departments",
+  "deptTrackingDocumentRef": "Document ref.",
+  "deptTrackingTrackingRef": "Tracking ref.",
+  "deptTrackingCurrentStepNo": "Current step",
+  "deptTrackingRouteOverview": "Route description",
+  "deptTrackingStepDetailsTitle": "Route steps",
+  "deptTrackingReceive": "Receive",
+  "deptTrackingReceiveAndSend": "Receive and send",
+  "deptTrackingNoDocumentHdr": "No document reference for this tracking row.",
+  "deptTrackingNoPreviewFile": "No PDF or image file to preview for this document.",
+  "deptTrackingSendNotesLabel": "Notes (for send)",
+  "deptTrackingSendNotesHint": "Sent to next department",
+  "deptTrackingNoRouteRef": "No tracking (route) reference for this row.",
+  "deptTrackingActiveStep": "Current step",
+  "deptTrackingStepSituation": "Current step state",
+  "deptTrackingOverallStatus": "File status",
+  "deptTrackingSituationAwaitReceive": "Awaiting receive",
+  "deptTrackingSituationReceivedOnly": "Received (not sent yet)",
+  "deptTrackingSituationReceivedSent": "Received and sent",
+  "deptTrackingSituationUnknown": "Unknown",
+  "deptTrackingOverallOpen": "In progress",
+  "deptTrackingOverallDone": "Completed",
+  "deptTrackingOverallOther": "Status {code}",
+  "@deptTrackingOverallOther": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "deptTrackingReceiveSummary": "Receive",
+  "deptTrackingSendSummary": "Send",
+  "deptTrackingReceivedAt": "Received at",
+  "deptTrackingSentAt": "Sent at",
+  "deptTrackingReceivedBy": "Received by",
+  "deptTrackingSentBy": "Sent by",
+  "deptTrackingNotesMerged": "Notes",
+  "deptTrackingStepNoteCaption": "Note"
 }

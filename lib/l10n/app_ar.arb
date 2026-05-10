@@ -267,5 +267,42 @@
     }
   },
   "createTrackingDoc": "إنشاء مسار عبر الدوائر",
-  "deptApprovals": "موافقاتي عبر الدوائر"
+  "deptApprovals": "موافقاتي عبر الدوائر",
+  "deptTrackingDocumentRef": "مرجع المستند",
+  "deptTrackingTrackingRef": "مرجع المسار",
+  "deptTrackingCurrentStepNo": "الخطوة الحالية",
+  "deptTrackingRouteOverview": "وصف المسار",
+  "deptTrackingStepDetailsTitle": "خطوات المسار",
+  "deptTrackingReceive": "استلام",
+  "deptTrackingReceiveAndSend": "استلام وإرسال",
+  "deptTrackingNoDocumentHdr": "لا يوجد مرجع مستند لهذا السطر.",
+  "deptTrackingNoPreviewFile": "لا يوجد ملف PDF أو صورة للمعاينة لهذا المستند.",
+  "deptTrackingSendNotesLabel": "ملاحظات الإرسال",
+  "deptTrackingSendNotesHint": "تم الإرسال إلى الدائرة التالية",
+  "deptTrackingNoRouteRef": "لا يوجد مرجع مسار لهذا السطر.",
+  "deptTrackingActiveStep": "الخطوة المعروضة",
+  "deptTrackingStepSituation": "وضع الخطوة الحالية",
+  "deptTrackingOverallStatus": "حالة الملف",
+  "deptTrackingSituationAwaitReceive": "بانتظار الاستلام",
+  "deptTrackingSituationReceivedOnly": "تم الاستلام (لم يُرسل بعد)",
+  "deptTrackingSituationReceivedSent": "تم الاستلام ثم الإرسال",
+  "deptTrackingSituationUnknown": "غير معروف",
+  "deptTrackingOverallOpen": "قيد التنفيذ",
+  "deptTrackingOverallDone": "مكتمل",
+  "deptTrackingOverallOther": "حالة {code}",
+  "@deptTrackingOverallOther": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "deptTrackingReceiveSummary": "الاستلام",
+  "deptTrackingSendSummary": "الإرسال",
+  "deptTrackingReceivedAt": "تاريخ الاستلام",
+  "deptTrackingSentAt": "تاريخ الإرسال",
+  "deptTrackingReceivedBy": "استلم بواسطة",
+  "deptTrackingSentBy": "أرسل بواسطة",
+  "deptTrackingNotesMerged": "الملاحظات",
+  "deptTrackingStepNoteCaption": "ملاحظة"
 }

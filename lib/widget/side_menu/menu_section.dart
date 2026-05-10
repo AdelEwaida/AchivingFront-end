@@ -44,23 +44,32 @@ class MenuSection extends StatelessWidget {
             height: 46,
             child: LayoutBuilder(
               builder: (context, constraints) {
+                final h = (constraints.maxHeight.isFinite &&
+                        constraints.maxHeight > 0)
+                    ? constraints.maxHeight
+                    : 46.0;
                 return ClipRect(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: ConstrainedBox(
-                        constraints:
-                            BoxConstraints(minWidth: constraints.maxWidth),
-                        child: Row(
-                          children: [
-                            for (int i = 0; i < menuList.length; i++) ...[
-                              itemBuilder(menuList[i], i),
-                              if (i != menuList.length - 1)
-                                const SizedBox(width: 8),
+                    child: SizedBox(
+                      width: constraints.maxWidth,
+                      height: h,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: ConstrainedBox(
+                          constraints:
+                              BoxConstraints(minWidth: constraints.maxWidth),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              for (int i = 0; i < menuList.length; i++) ...[
+                                itemBuilder(menuList[i], i),
+                                if (i != menuList.length - 1)
+                                  const SizedBox(width: 8),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                     ),

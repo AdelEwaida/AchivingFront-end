@@ -89,6 +89,11 @@ const getTemplatesCount = "workflowTemplateInfo/count";
 
 const createTrackingDocs = "document-tracking/createTrackingDoc";
 const getTrackingDocsByUserDept = "document-tracking/by-user-dept";
+const getAwaitingReceiveTrackingApi = "document-tracking/awaiting-receive";
+/// POST body: `{ "stepKey": "<workflow step TrackingStepInfoModel.txtKey>" }`
+const trackingReceiveApi = "document-tracking-steps/receive";
+/// POST body: `{ "stepKey": "<step.txtKey>", "notes": "..." }`
+const trackingSendApi = "document-tracking-steps/send";
 const getWorkFlowDoc = "workflowDocumentInfo/searchCrit";
 const updateWorkFlowDoc = "workflowTransactions/update";
 const deleteWorklowDoc = "workflowTransactions/delete";

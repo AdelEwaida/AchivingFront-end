@@ -9,8 +9,10 @@ import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
 import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
+import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/utils/func/save_excel_file.dart';
+import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,11 +23,42 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../widget/custom_flutter_toast_message.dart';
 import '../app_dialog.dart';
 
+Uint8List? _decodeBlobFromCell(dynamic cellValue) {
+  final s = cellValue?.toString();
+  if (s == null || s.isEmpty) return null;
+  final decoded = Converters.decodeDocumentImgBlob(s);
+  if (decoded != null && decoded.isNotEmpty) return decoded;
+  try {
+    return base64Decode(s);
+  } catch (_) {
+    return null;
+  }
+}
+
+
+class FileExplorerDeptTrackingExtras {
+  FileExplorerDeptTrackingExtras({
+    required this.onReceiveTap,
+    required this.onSendTap,
+  });
+
+  final Future<bool> Function() onReceiveTap;
+  final Future<bool> Function(String notes) onSendTap;
+}
+
 class FileExplorDialog extends StatefulWidget {
   List<FileUploadModel> listOfFiles;
   bool? isWorkFlowScreen;
-  FileExplorDialog(
-      {super.key, required this.listOfFiles, this.isWorkFlowScreen = false});
+
+  /// When non-null: same file table + download/view + ниже حقول مسار الدوائر.
+  final FileExplorerDeptTrackingExtras? deptTrackingExtras;
+
+  FileExplorDialog({
+    super.key,
+    required this.listOfFiles,
+    this.isWorkFlowScreen = false,
+    this.deptTrackingExtras,
+  });
 
   @override
   State<FileExplorDialog> createState() => _FileExplorDialogState();
@@ -36,10 +69,33 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
   double width = 0;
   double height = 0;
   bool isDesktop = false;
+
   late PlutoGridStateManager stateManager;
+
+  bool _dtReceiveBusy = false;
+  bool _dtReceiveSendBusy = false;
+
+  late final UniqueKey _filesPlutoKey;
+  TextEditingController? _deptNotesController;
+
+  @override
+  void initState() {
+    super.initState();
+    _filesPlutoKey = UniqueKey();
+    if (widget.deptTrackingExtras != null) {
+      _deptNotesController = TextEditingController();
+    }
+  }
+
+  @override
+  void dispose() {
+    _deptNotesController?.dispose();
+    super.dispose();
+  }
+
   @override
   void didChangeDependencies() {
-    _locale = AppLocalizations.of(context)!;
+    _locale = AppLocalizations.of(context);
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
@@ -55,9 +111,6 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
     return AppDialog(
       height: height * 0.89,
       width: isDesktop ? width * 0.63 : width * 0.9,
-      // titlePadding: EdgeInsets.all(0),
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-      // backgroundColor: dBackground,
       title: _locale.documents,
       content: formSection(),
       actions: [],
@@ -65,51 +118,185 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
   }
 
   PlutoRow? selectedRow;
+
+  double _tableHeight() =>
+      widget.deptTrackingExtras != null ? height * 0.52 : height * 0.66;
+
   Widget formSection() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          children: [
-            TableComponent(
-              tableWidth: width * 0.6,
-              tableHeigt: height * 0.66,
-              rowsHeight: 50,
-              sendEmail: widget.isWorkFlowScreen == true ? null : sendEmail,
-              delete: widget.isWorkFlowScreen == true ? null : deleteFile,
-              plCols: polCols,
-              sendWhatspp:
-                  widget.isWorkFlowScreen == true ? null : sendWhatsapp,
-              download: download,
-              view: view,
-              polRows: [],
-              mode: PlutoGridMode.selectWithOneTap,
-              onSelected: (event) {
-                selectedRow = event.row;
-              },
-              onLoaded: (event) {
-                stateManager = event.stateManager;
-                stateManager.setShowLoading(true);
-                stateManager.setShowColumnFilter(true);
-                if (widget.listOfFiles.isNotEmpty) {
-                  for (int i = 0; i < widget.listOfFiles.length; i++) {
-                    stateManager
-                        .appendRows([widget.listOfFiles[i].toPlutoRow(i + 1)]);
-                  }
-                }
-                if (stateManager.rows.isNotEmpty) {
-                  selectedRow = stateManager.rows[0];
-                }
-                stateManager.setShowLoading(false);
-              },
-              doubleTab: (event) {
-                view();
-              },
-            )
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              KeyedSubtree(
+                key: _filesPlutoKey,
+                child: TableComponent(
+                  tableWidth: width * 0.6,
+                  tableHeigt: _tableHeight(),
+                  rowsHeight: 50,
+                  sendEmail: widget.isWorkFlowScreen == true ? null : sendEmail,
+                  delete: widget.isWorkFlowScreen == true ? null : deleteFile,
+                  plCols: polCols,
+                  sendWhatspp:
+                      widget.isWorkFlowScreen == true ? null : sendWhatsapp,
+                  download: download,
+                  view: view,
+                  polRows: [],
+                  mode: PlutoGridMode.selectWithOneTap,
+                  onSelected: (event) {
+                    selectedRow = event.row;
+                  },
+                  onLoaded: (event) {
+                    stateManager = event.stateManager;
+                    stateManager.setShowLoading(true);
+                    stateManager.setShowColumnFilter(true);
+                    if (widget.listOfFiles.isNotEmpty) {
+                      for (int i = 0; i < widget.listOfFiles.length; i++) {
+                        stateManager.appendRows(
+                            [widget.listOfFiles[i].toPlutoRow(i + 1)]);
+                      }
+                    }
+                    if (stateManager.rows.isNotEmpty) {
+                      selectedRow = stateManager.rows[0];
+                    }
+                    stateManager.setShowLoading(false);
+                  },
+                  doubleTab: (event) {
+                    view();
+                  },
+                ),
+              ),
+            ],
+          ),
+          if (widget.deptTrackingExtras != null) ...[
+            const SizedBox(height: 14),
+            const Divider(height: 1),
+            const SizedBox(height: 12),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: width * 0.06),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  _locale.deptTrackingSendNotesLabel,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF475569),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: width * 0.06),
+              child: TextField(
+                controller: _deptNotesController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: _locale.deptTrackingSendNotesHint,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomElevatedButton(
+                  text: _locale.deptTrackingReceive,
+                  color: greenColor,
+                  icon: Icons.inbox_rounded,
+                  width: isDesktop ? width * 0.12 : width * 0.34,
+                  height: height * 0.046,
+                  fontSize: 14,
+                  isLoading: _dtReceiveBusy,
+                  onPressed: () {
+                    if (!_dtReceiveBusy &&
+                        !_dtReceiveSendBusy) {
+                      _onDeptReceive();
+                    }
+                  },
+                ),
+                SizedBox(width: isDesktop ? 14 : 8),
+                CustomElevatedButton(
+                  text: _locale.deptTrackingReceiveAndSend,
+                  color: const Color(0xFF1565C0),
+                  icon: Icons.sync_alt_rounded,
+                  width: isDesktop ? width * 0.18 : width * 0.44,
+                  height: height * 0.046,
+                  fontSize: 13,
+                  isLoading: _dtReceiveSendBusy,
+                  onPressed: () {
+                    if (!_dtReceiveBusy &&
+                        !_dtReceiveSendBusy) {
+                      _onDeptReceiveThenSend();
+                    }
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
           ],
-        ),
-      ],
+        ],
+      ),
     );
+  }
+
+  Future<void> _onDeptReceive() async {
+    final x = widget.deptTrackingExtras;
+    if (x == null || _dtReceiveBusy || _dtReceiveSendBusy) return;
+    setState(() => _dtReceiveBusy = true);
+    var clearBusyAfterPop = true;
+    try {
+      final ok = await x.onReceiveTap();
+      if (!mounted) return;
+      if (ok) {
+        CustomToastMessage.success(context, _locale.updatedSuccess);
+        clearBusyAfterPop = false;
+        Navigator.of(context).pop(true);
+        return;
+      }
+      CustomToastMessage.error(context, _locale.error);
+    } finally {
+      if (mounted && clearBusyAfterPop) {
+        setState(() => _dtReceiveBusy = false);
+      }
+    }
+  }
+
+  Future<void> _onDeptReceiveThenSend() async {
+    final x = widget.deptTrackingExtras;
+    if (x == null || _dtReceiveBusy || _dtReceiveSendBusy) return;
+    setState(() => _dtReceiveSendBusy = true);
+    var clearBusyAfterPop = true;
+    try {
+      final okReceive = await x.onReceiveTap();
+      if (!mounted) return;
+      if (!okReceive) {
+        CustomToastMessage.error(context, _locale.error);
+        return;
+      }
+      final notes = (_deptNotesController?.text ?? '').trim();
+      final okSend = await x.onSendTap(notes);
+      if (!mounted) return;
+      if (okSend) {
+        CustomToastMessage.success(context, _locale.updatedSuccess);
+        clearBusyAfterPop = false;
+        Navigator.of(context).pop(true);
+        return;
+      }
+      CustomToastMessage.error(context, _locale.error);
+    } finally {
+      if (mounted && clearBusyAfterPop) {
+        setState(() => _dtReceiveSendBusy = false);
+      }
+    }
   }
 
   void deleteFile() {
@@ -127,7 +314,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
               .deleteFile(selectedRow!.cells['txtKey']!.value);
           if (response.statusCode == 200) {
             setState(() {
-              widget.listOfFiles.removeAt(selectedRow!.sortIdx!);
+              widget.listOfFiles.removeAt(selectedRow!.sortIdx);
               stateManager.removeRows([selectedRow!]);
               if (stateManager.rows.isNotEmpty) {
                 selectedRow = stateManager.rows[0];
@@ -207,13 +394,12 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   Future<void> download() async {
     if (selectedRow != null) {
-      // final blob = html.Blob(utf8.encode(selectedRow!.cells['imgBlob']!.value));
-
-      // Convert Blob to Uint8List
-      // Uint8List uint8List = await blobToUint8List(blob);
-      Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
-
-      // Uint8List uint8List = Uint8List.fromList(stringBytes);
+      final bytes =
+          _decodeBlobFromCell(selectedRow!.cells['imgBlob']?.value);
+      if (bytes == null) {
+        CustomToastMessage.error(context, _locale.error);
+        return;
+      }
       saveExcelFile(bytes, selectedRow!.cells['txtFilename']!.value);
     } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
@@ -222,26 +408,18 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   Future<void> saveAndOpenFile(String base64String, String fileName) async {
     try {
-      // Decode the Base64 string
       Uint8List fileBytes = base64Decode(base64String);
 
-      // Get the directory to save the file
       Directory tempDir = await getTemporaryDirectory();
       String tempPath = tempDir.path;
 
-      // Save the file locally
       File file = File('$tempPath/$fileName');
       await file.writeAsBytes(fileBytes);
 
-      // Open the file using open_filex
       await OpenFilex.open(file.path);
     } catch (e) {
       print("Error: $e");
-    } finally {
-      // setState(() {
-      //   isLoading = false;
-      // });
-    }
+    } finally {}
   }
 
   void sendEmail() {
@@ -259,9 +437,14 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
     }
   }
 
-  view() {
+  void view() {
     if (selectedRow != null) {
-      Uint8List bytes = base64Decode(selectedRow!.cells['imgBlob']!.value);
+      final bytes =
+          _decodeBlobFromCell(selectedRow!.cells['imgBlob']?.value);
+      if (bytes == null) {
+        CustomToastMessage.warning(context, _locale.error);
+        return;
+      }
       if (selectedRow!.cells['txtFilename']!.value.contains(".pdf") ||
           selectedRow!.cells['txtFilename']!.value.contains(".jpeg") ||
           selectedRow!.cells['txtFilename']!.value.contains(".png") ||

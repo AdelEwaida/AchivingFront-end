@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/template_model.dart';
 
 import '../../../models/db/count_model.dart';
-import '../../../models/db/work_flow/setup_model.dart';
 import '../../../models/db/work_flow/tracking_doc_model.dart';
+import '../../../models/db/work_flow/tracking_response_model.dart';
 import '../../../models/db/work_flow/user_step_request_body.dart';
 import '../../../models/db/work_flow/user_work_flow_steps.dart';
 import '../../../models/db/work_flow/work_flow_doc_model.dart';
@@ -147,5 +148,80 @@ class WorkFlowTemplateContoller {
   Future createTrackingDoc(TrackingDocModel trackingDocModel) async {
     return await ApiService()
         .postRequest(createTrackingDocs, trackingDocModel.toJson());
+  }
+
+  /// Backend may return a raw array, a single `{ tracking, steps }` object, or a wrapped list.
+  List<TrackingResponseModel> _parseAwaitingReceiveBody(dynamic decoded) {
+    List<dynamic>? list;
+    if (decoded is List) {
+      list = decoded;
+    } else if (decoded is Map) {
+      final m = Map<String, dynamic>.from(decoded);
+      if (m['tracking'] != null) {
+        list = [m];
+      } else {
+        for (final k in [
+          'data',
+          'content',
+          'result',
+          'items',
+          'value',
+          'payload',
+        ]) {
+          final v = m[k];
+          if (v is List) {
+            list = v;
+            break;
+          }
+        }
+      }
+    }
+    if (list == null || list.isEmpty) {
+      return [];
+    }
+    return TrackingResponseModel.fromJsonList(list);
+  }
+
+  Future<List<TrackingResponseModel>> getAwaitingReceiveTracking() async {
+    final response =
+        await ApiService().getRequest(getAwaitingReceiveTrackingApi);
+    if (response == null || response.statusCode != 200) {
+      return [];
+    }
+    try {
+      final raw = utf8.decode(response.bodyBytes);
+      if (raw.trim().isEmpty) {
+        return [];
+      }
+      final jsonData = jsonDecode(raw);
+      final out = _parseAwaitingReceiveBody(jsonData);
+      if (out.isEmpty && kDebugMode) {
+        debugPrint(
+          'getAwaitingReceiveTracking: 200 but 0 rows after parse. '
+          'Top-level JSON type: ${jsonData.runtimeType}',
+        );
+      }
+      return out;
+    } catch (e, st) {
+      debugPrint('getAwaitingReceiveTracking parse error: $e\n$st');
+      return [];
+    }
+  }
+
+  /// POST [stepKey] = current step row id ([TrackingStepInfoModel.txtKey]).
+  Future postDocumentTrackingReceive({required String stepKey}) async {
+    return ApiService().postRequest(trackingReceiveApi, {
+      'stepKey': stepKey,
+    });
+  }
+
+  Future postDocumentTrackingSend({
+    required String stepKey,
+    String notes = '',
+  }) async {
+    return ApiService().postRequest(trackingSendApi, {
+      'stepKey': stepKey,
+      'notes': notes,
+    });
   }
 }

@@ -27,20 +27,27 @@ class TrackingStepInfoModel {
     this.isDeleted,
   });
 
+  static int? _asInt(dynamic v) {
+    if (v == null) return null;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    return int.tryParse(v.toString());
+  }
+
   factory TrackingStepInfoModel.fromJson(Map<String, dynamic> json) {
     return TrackingStepInfoModel(
-      txtKey: json['txtKey']?.toString(),
+      txtKey: json['txtKey']?.toString() ?? json['stepKey']?.toString(),
       txtTrackingcode: json['txtTrackingcode']?.toString(),
-      intStepOrder: json['intStepOrder'],
+      intStepOrder: _asInt(json['intStepOrder']),
       txtDeptcode: json['txtDeptcode']?.toString(),
-      intStatus: json['intStatus'],
+      intStatus: _asInt(json['intStatus']),
       txtReceivedBy: json['txtReceivedBy']?.toString(),
       datReceivedAt: json['datReceivedAt']?.toString(),
       txtSentBy: json['txtSentBy']?.toString(),
       datSentAt: json['datSentAt']?.toString(),
       txtNotes: json['txtNotes']?.toString(),
       txtStepDescription: json['txtStepDescription']?.toString(),
-      isDeleted: json['isDeleted'],
+      isDeleted: _asInt(json['isDeleted']),
     );
   }
 

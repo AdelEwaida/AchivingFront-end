@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -227,5 +230,24 @@ class Converters {
 
   static String getDateFromDateTime(String dateTime) {
     return dateTime.substring(0, dateTime.indexOf(" "));
+  }
+
+  /// [`FileUploadModel`] `imgBlob`: plain base64 or `data:*;base64,...` (same as FileExplorDialog).
+  static Uint8List? decodeDocumentImgBlob(String? raw) {
+    if (raw == null) return null;
+    var s = raw.trim();
+    if (s.isEmpty) return null;
+    const marker = 'base64,';
+    final idx = s.indexOf(marker);
+    if (idx >= 0) {
+      s = s.substring(idx + marker.length);
+    }
+    s = s.replaceAll(RegExp(r'[\s\r\n]'), '');
+    if (s.isEmpty) return null;
+    try {
+      return base64Decode(s);
+    } catch (_) {
+      return null;
+    }
   }
 }

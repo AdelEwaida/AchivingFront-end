@@ -21,17 +21,24 @@ class TrackingInfoModel {
     this.isDeleted,
   });
 
+  static int? _asInt(dynamic v) {
+    if (v == null) return null;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    return int.tryParse(v.toString());
+  }
+
   factory TrackingInfoModel.fromJson(Map<String, dynamic> json) {
     return TrackingInfoModel(
       txtKey: json['txtKey']?.toString(),
       txtDocumentcode: json['txtDocumentcode']?.toString(),
-      intStatus: json['intStatus'],
-      intCurrentStep: json['intCurrentStep'],
+      intStatus: _asInt(json['intStatus']),
+      intCurrentStep: _asInt(json['intCurrentStep']),
       txtCreatedBy: json['txtCreatedBy']?.toString(),
       datCreatedAt: json['datCreatedAt']?.toString(),
       datCompletedAt: json['datCompletedAt']?.toString(),
       txtNotes: json['txtNotes']?.toString(),
-      isDeleted: json['isDeleted'],
+      isDeleted: _asInt(json['isDeleted']),
     );
   }
 

@@ -22,6 +22,7 @@ import '../screens/user_screen/user_category_screen.dart';
 import '../screens/workflow/work_flow_screen.dart';
 import '../screens/workflow_document/user_workflow_screen.dart';
 import '../screens/workflow_document/user_workflow_settings.dart';
+import '../screens/workflow_document/dept_tracking_approvals_screen.dart';
 import '../screens/workflow_document/work_flow_document.dart';
 
 List<MenuModel> getMenus(
@@ -58,7 +59,7 @@ List<MenuModel> getMenus(
               ),
               MenuModel(
                 title: locale.deptApprovals,
-                icon: Icons.verified,
+                icon: Icons.account_tree_outlined,
                 pageNumber: 21,
                 isOpened: true,
                 isParent: false,
@@ -149,6 +150,14 @@ List<MenuModel> getMenus(
                 isOpened: true,
                 isParent: false,
                 // route: mainScreenRoute,
+                subMenuList: [],
+              ),
+              MenuModel(
+                title: locale.deptApprovals,
+                icon: Icons.account_tree_outlined,
+                pageNumber: 21,
+                isOpened: true,
+                isParent: false,
                 subMenuList: [],
               ),
               MenuModel(
@@ -313,6 +322,14 @@ List<MenuModel> getMenus(
                     subMenuList: [],
                   ),
                   MenuModel(
+                    title: locale.deptApprovals,
+                    icon: Icons.account_tree_outlined,
+                    pageNumber: 21,
+                    isOpened: true,
+                    isParent: false,
+                    subMenuList: [],
+                  ),
+                  MenuModel(
                       title: locale.listOfReminders,
                       icon: Icons.remember_me,
                       isParent: false,
@@ -349,6 +366,14 @@ List<MenuModel> getMenus(
                     isOpened: true,
                     isParent: false,
                     // route: mainScreenRoute,
+                    subMenuList: [],
+                  ),
+                  MenuModel(
+                    title: locale.deptApprovals,
+                    icon: Icons.account_tree_outlined,
+                    pageNumber: 21,
+                    isOpened: true,
+                    isParent: false,
                     subMenuList: [],
                   ),
                   MenuModel(
@@ -410,6 +435,14 @@ List<MenuModel> getMenus(
                         subMenuList: [],
                       ),
                       MenuModel(
+                        title: locale.deptApprovals,
+                        icon: Icons.account_tree_outlined,
+                        pageNumber: 21,
+                        isOpened: true,
+                        isParent: false,
+                        subMenuList: [],
+                      ),
+                      MenuModel(
                           title: locale.listOfReminders,
                           icon: Icons.remember_me,
                           isParent: false,
@@ -447,6 +480,14 @@ List<MenuModel> getMenus(
                         isOpened: true,
                         isParent: false,
                         // route: mainScreenRoute,
+                        subMenuList: [],
+                      ),
+                      MenuModel(
+                        title: locale.deptApprovals,
+                        icon: Icons.account_tree_outlined,
+                        pageNumber: 21,
+                        isOpened: true,
+                        isParent: false,
                         subMenuList: [],
                       ),
                       MenuModel(
@@ -521,6 +562,8 @@ Widget getScreenContent(int index) {
       return const UserWorkFlow();
     case 16:
       return const UserWorkFlowSettings();
+    case 21:
+      return const DeptTrackingApprovalsScreen();
 
     // case 2:
     //   return UsersScreen();
