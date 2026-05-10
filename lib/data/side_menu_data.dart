@@ -57,6 +57,15 @@ List<MenuModel> getMenus(
                 subMenuList: [],
               ),
               MenuModel(
+                title: locale.deptApprovals,
+                icon: Icons.verified,
+                pageNumber: 21,
+                isOpened: true,
+                isParent: false,
+                // route: mainScreenRoute,
+                subMenuList: [],
+              ),
+              MenuModel(
                 title: locale.dailyReminders,
                 icon: Icons.notifications,
                 pageNumber: 1,
@@ -133,24 +142,6 @@ List<MenuModel> getMenus(
                 // route: mainScreenRoute,
                 subMenuList: [],
               ),
-              // MenuModel(
-              //   title: locale.approvals,
-              //   icon: Icons.approval,
-              //   pageNumber: 10,
-              //   isOpened: true,
-              //   isParent: false,
-              //   // route: mainScreenRoute,
-              //   subMenuList: [],
-              // ),
-              // MenuModel(
-              //   title: locale.myApprovals,
-              //   icon: Icons.approval_rounded,
-              //   pageNumber: 12,
-              //   isOpened: true,
-              //   isParent: false,
-              //   // route: mainScreenRoute,
-              //   subMenuList: [],
-              // ),
               MenuModel(
                 title: locale.dailyReminders,
                 icon: Icons.notifications,
@@ -319,7 +310,6 @@ List<MenuModel> getMenus(
                     pageNumber: 12,
                     isOpened: true,
                     isParent: false,
-                    // route: mainScreenRoute,
                     subMenuList: [],
                   ),
                   MenuModel(

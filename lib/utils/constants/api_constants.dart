@@ -88,7 +88,7 @@ const getTemplates = "workflowTemplateInfo/searchCrit";
 const getTemplatesCount = "workflowTemplateInfo/count";
 
 const createTrackingDocs = "document-tracking/createTrackingDoc";
-
+const getTrackingDocsByUserDept = "document-tracking/by-user-dept";
 const getWorkFlowDoc = "workflowDocumentInfo/searchCrit";
 const updateWorkFlowDoc = "workflowTransactions/update";
 const deleteWorklowDoc = "workflowTransactions/delete";

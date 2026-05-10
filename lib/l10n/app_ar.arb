@@ -265,5 +265,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "createTrackingDoc": "إنشاء مسار عبر الدوائر",
+  "deptApprovals": "موافقاتي عبر الدوائر"
 }

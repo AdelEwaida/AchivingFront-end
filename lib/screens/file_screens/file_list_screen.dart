@@ -51,6 +51,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 import 'dart:html' as html;
+import '../../dialogs/template_work_flow/create_tracking_doc_dialog.dart';
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
 import '../../models/db/categories_models/doc_cat_parent.dart';
 import '../../models/db/user_models/department_user_model.dart';
@@ -316,6 +317,7 @@ class _FileListScreenState extends State<FileListScreen> {
                                   var response = await documentsController
                                       .createWorkFlowDocument(documentModel!);
                                   if (response.statusCode == 200) {
+                                    // ignore: use_build_context_synchronously
                                     showDialog(
                                       // ignore: use_build_context_synchronously
                                       context: context,
@@ -332,6 +334,32 @@ class _FileListScreenState extends State<FileListScreen> {
                                       if (value) setState(() {});
                                     });
                                   }
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            CustomElevatedButton(
+                              text: _locale.createTrackingDoc,
+                              color: const Color(0xFF7C3AED),
+                              icon: Icons.alt_route_rounded,
+                              width: isDesktop ? width * 0.13 : width * 0.19,
+                              height: height * 0.043,
+                              fontSize: 13,
+                              onPressed: () async {
+                                if (documentModel != null) {
+                                  await showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) {
+                                      return CreateTrackingDocDialog(
+                                        documentKey:
+                                            documentModel!.txtKey ?? "",
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  CustomToastMessage.warning(
+                                      context, _locale.pleaseSelectRow);
                                 }
                               },
                             ),
