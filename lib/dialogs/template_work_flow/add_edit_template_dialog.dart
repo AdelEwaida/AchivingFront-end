@@ -441,9 +441,7 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
             key: UniqueKey(),
             isMandatory: true,
             onChanged: (value) {
-              setState(() {
-                step.txtUsercode = value.txtCode;
-              });
+              step.txtUsercode = value.txtCode; // ✅ no setState needed
             },
             initialValue: selectedUserCode == "" ? null : selectedUserCode,
             bordeText: _locale.userName,
@@ -458,10 +456,12 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
             Checkbox(
               value: isOptional,
               onChanged: (bool? value) {
-                setState(() {
-                  isOptional = value!;
-                  step.bolOptional = isOptional ? 1 : 0; // Update bolOptional
-                });
+                if (mounted) {
+                  setState(() {
+                    isOptional = value!;
+                    step.bolOptional = isOptional ? 1 : 0;
+                  });
+                }
               },
             ),
             Text(_locale.optional),

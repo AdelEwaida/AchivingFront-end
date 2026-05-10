@@ -273,10 +273,40 @@ class _UserWorkFlowState extends State<UserWorkFlow> {
                 stateManager = event.stateManager;
                 stateManager!.setShowColumnFilter(true);
               },
-              doubleTab: (event) async {
+             doubleTab: (event) async {
                 PlutoRow? tappedRow = event.row;
+                selectedRow = tappedRow;
                 workFlowTemplateBody =
                     UserWorkflowSteps.fromPluto(tappedRow!, _locale);
+
+                // Fetch and show approval flow dialog
+                final String workFlowCode =
+                    tappedRow.cells['txtWorkflowcode']?.value ?? "";
+                final int currentStep =
+                    tappedRow.cells['intCurrStep']?.value ?? 0;
+
+                openLoadinDialog(context);
+
+                List<UserWorkflowSteps> result =
+                    await workFlowTemplateContoller.getAllUsersWorkFlowSteps(
+                  UserStepRequestBody(
+                      stepStatus: -1, curStep: -1, workflowCode: workFlowCode),
+                );
+
+                Navigator.pop(context); // close loading dialog
+
+                List<Map<String, String>> steps = result.map((step) {
+                  String? status = ListConstants.getStatusName(
+                      step.intStatus ?? -1, _locale);
+                  return {
+                    "name": step.txtUsercode ?? "Unknown User",
+                    "status": status == _locale.readyToApprove
+                        ? _locale.pending
+                        : status ?? "Unknown",
+                  };
+                }).toList();
+
+                showApprovalFlowDialog(context, steps, currentStep);
               },
               onSelected: (event) async {
                 PlutoRow? tappedRow = event.row;

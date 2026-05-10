@@ -146,12 +146,9 @@ class _UserScreenState extends State<UserScreen> {
                     );
                   },
                 ).then((value) {
-                  print("111111111111111111111111111 value");
                   if (value == true) {
-                    print("222222222222222222222 value");
                     refreshTable();
                   }
-                  print("3333333333333333333333333 value");
                 });
               },
               onSelected: (event) async {
@@ -302,7 +299,6 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void refreshTable() async {
-    // ⬅️ مهم: نخرج من وضع البحث
     isSearch.value = false;
     pageLis.value = 1;
 

@@ -60,122 +60,100 @@ class _AddFileDialogState extends State<AddFileDialog> {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
+
     return AppDialog(
-       width: isDesktop ? width * 0.3 : width * 0.8,
-        height: height * 0.8,
-        title: _locale.addDocument,
-        content: SizedBox(
-          width: width * 0.25,
-          height: height * 0.3,
-          child: Stack(
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              buildFileUpload(),
-                            ],
-                          ),
-                        )
-                      ]),
-                  SizedBox(
-                    height: height * 0.05,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: saveDocument,
-                        style: customButtonStyle(
-                          context,
-                          Size(isDesktop ? width * 0.1 : width * 0.4,
-                              height * 0.045),
-                          14,
-                          primary,
-                        ),
-                        child: Text(
-                          _locale.save,
-                          style: const TextStyle(color: whiteColor),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              if (saving)
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
-              Center(
-                child: Visibility(
-                  visible: isFileLoading,
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                        sigmaX: 2.0,
-                        sigmaY: 2.0), // Adjust the blur amount as needed
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          SizedBox(height: 16),
-                        ],
-                      ),
+      width: isDesktop ? width * 0.4 : width * 0.9,
+      height: height * 0.45,
+      title: _locale.addDocument,
+      content: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Spacer(),
+                buildFileUpload(),
+                const Spacer(),
+                SizedBox(
+                  width: isDesktop ? width * 0.12 : width * 0.5,
+                  height: height * 0.05,
+                  child: ElevatedButton(
+                    onPressed: saveDocument,
+                    style: customButtonStyle(
+                      context,
+                      Size(double.infinity, double.infinity),
+                      14,
+                      primary,
+                    ),
+                    child: Text(
+                      _locale.save,
+                      style: const TextStyle(color: whiteColor),
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
-        ));
+
+          // Saving overlay
+          if (saving) const Center(child: CircularProgressIndicator()),
+
+          // File loading overlay
+          if (isFileLoading)
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                child: const ColoredBox(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   Widget buildFileUpload() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, left: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              pickFile();
-            },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: isDesktop ? width * 0.12 : width * 0.5,
+          height: height * 0.05,
+          child: ElevatedButton(
+            onPressed: pickFile,
             style: customButtonStyle(
-                context,
-                Size(isDesktop ? width * 0.14 : width * 0.4, height * 0.045),
-                14,
-                primary3),
+              context,
+              Size(double.infinity, double.infinity),
+              14,
+              primary3,
+            ),
             child: Text(
               _locale.uploadFile,
               style: const TextStyle(color: whiteColor),
             ),
           ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: width * 0.3,
-            child: Tooltip(
-              message: fileNameController.text,
-              child: customTextField(
-                _locale.fileName,
-                fileNameController,
-                isDesktop,
-                0.13,
-                true,
-              ),
-            ),
+        ),
+        const SizedBox(height: 16),
+        Tooltip(
+          message: fileNameController.text,
+          child: customTextField(
+            _locale.fileName,
+            fileNameController,
+            isDesktop,
+            isDesktop ? 0.28 : 0.7,
+            true,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
