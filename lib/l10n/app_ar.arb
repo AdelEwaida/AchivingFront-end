@@ -267,6 +267,7 @@
     }
   },
   "createTrackingDoc": "إنشاء مسار عبر الدوائر",
+  "createTrackingDocDeptMismatch": "لا يمكن إنشاء مسار لأن دائرة الملف ليست من دائرتك",
   "viewTracking": "عرض المسار",
   "deptApprovals": "موافقاتي عبر الدوائر",
   "deptTrackingDocumentRef": "مرجع المستند",

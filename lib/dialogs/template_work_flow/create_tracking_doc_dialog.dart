@@ -378,10 +378,14 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
     );
 
     await workFlowTemplateContoller.createTrackingDoc(model).then((value) {
+      if (!mounted) return;
       if (value.statusCode == 200) {
         CustomToastMessage.success(context, _locale.addDoneSucess).then((_) {
           Navigator.pop(context, true);
         });
+      } else if (value.statusCode == 406) {
+        CustomToastMessage.error(
+            context, _locale.createTrackingDocDeptMismatch);
       }
     });
   }

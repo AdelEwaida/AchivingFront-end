@@ -281,6 +281,7 @@
     }
   },
   "createTrackingDoc": "Create Tracking Route",
+  "createTrackingDocDeptMismatch": "Cannot create a route because the document's department is not yours.",
   "deptApprovals": "My approvals across departments",
   "deptTrackingDocumentRef": "Document ref.",
   "deptTrackingTrackingRef": "Tracking ref.",
