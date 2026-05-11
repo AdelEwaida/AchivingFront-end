@@ -284,8 +284,9 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                 ),
 
                 // Received by
-                if (step.txtReceivedBy != null &&
-                    step.txtReceivedBy!.isNotEmpty) ...[
+                if (step.intStatus == 1 ||
+                    (step.txtReceivedBy != null &&
+                        step.txtReceivedBy!.isNotEmpty)) ...[
                   const SizedBox(height: 4),
                   Row(
                     children: [
@@ -293,7 +294,7 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                           size: 12, color: Color(0xFF0D9B8A)),
                       const SizedBox(width: 4),
                       Text(
-                        "${_locale.receivedBy}: ${step.txtReceivedBy}",
+                        "${_locale.receivedBy}: ${step.txtReceivedBy ?? ''}",
                         style: const TextStyle(
                             fontSize: 11, color: Color(0xFF0D9B8A)),
                       ),
@@ -310,7 +311,9 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                 ],
 
                 // Sent by
-                if (step.txtSentBy != null && step.txtSentBy!.isNotEmpty) ...[
+                if (step.intStatus == 1 ||
+                    (step.txtSentBy != null &&
+                        step.txtSentBy!.isNotEmpty)) ...[
                   const SizedBox(height: 4),
                   Row(
                     children: [
@@ -318,7 +321,7 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                           size: 12, color: Color(0xFF7C3AED)),
                       const SizedBox(width: 4),
                       Text(
-                        "${_locale.sentBy}: ${step.txtSentBy}",
+                        "${_locale.sentBy}: ${step.txtSentBy ?? ''}",
                         style: const TextStyle(
                             fontSize: 11, color: Color(0xFF7C3AED)),
                       ),
