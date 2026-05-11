@@ -38,15 +38,17 @@ class TrackingStepInfoModel {
     return TrackingStepInfoModel(
       txtKey: json['txtKey']?.toString() ?? json['stepKey']?.toString(),
       txtTrackingcode: json['txtTrackingcode']?.toString(),
-      intStepOrder: _asInt(json['intStepOrder']),
-      txtDeptcode: json['txtDeptcode']?.toString(),
+      intStepOrder: _asInt(json['intStepOrder'] ?? json['stepOrder']),
+      txtDeptcode:
+          json['txtDeptcode']?.toString() ?? json['deptKey']?.toString(),
       intStatus: _asInt(json['intStatus']),
       txtReceivedBy: json['txtReceivedBy']?.toString(),
       datReceivedAt: json['datReceivedAt']?.toString(),
       txtSentBy: json['txtSentBy']?.toString(),
       datSentAt: json['datSentAt']?.toString(),
       txtNotes: json['txtNotes']?.toString(),
-      txtStepDescription: json['txtStepDescription']?.toString(),
+      txtStepDescription: json['txtStepDescription']?.toString() ??
+          json['description']?.toString(),
       isDeleted: _asInt(json['isDeleted']),
     );
   }

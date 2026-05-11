@@ -1,8 +1,8 @@
 import 'package:archiving_flutter_project/models/db/user_models/department_user_model.dart';
-import 'package:archiving_flutter_project/models/db/work_flow/steps_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/tracking_doc_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/tracking_step_model.dart';
-import 'package:archiving_flutter_project/service/controller/users_controller/user_controller.dart';
+import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
+import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
@@ -12,7 +12,6 @@ import 'package:archiving_flutter_project/widget/dashboard_components/custom_ele
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../app_dialog.dart';
 
 class CreateTrackingDocDialog extends StatefulWidget {
@@ -35,20 +34,45 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
   TextEditingController notesController = TextEditingController();
   WorkFlowTemplateContoller workFlowTemplateContoller =
       WorkFlowTemplateContoller();
-  UserController userController = UserController();
-  var storage = const FlutterSecureStorage();
 
   List<DepartmentUserModel> departmentList = [];
   List<TrackingStepModel> steps = [];
+  bool _departmentLoadStarted = false;
 
   @override
-  Future<void> didChangeDependencies() async {
+  void didChangeDependencies() {
     super.didChangeDependencies();
-    _locale = AppLocalizations.of(context)!;
-    final userName = await storage.read(key: "userName");
-    departmentList =
-        await UserController().getDepartmentSelectedUser(userName ?? "");
+    _locale = AppLocalizations.of(context);
+    if (_departmentLoadStarted) return;
+    _departmentLoadStarted = true;
+    _loadDepartmentsForDropdown();
+  }
+
+  Future<void> _loadDepartmentsForDropdown() async {
+    final list = await DepartmentController().getDep(SearchModel(page: 1));
+    if (!mounted) return;
     setState(() {
+      departmentList = list
+          .where((d) => d.txtKey != null && d.txtKey!.isNotEmpty)
+          .map(
+            (d) {
+              final name = (d.txtDescription != null &&
+                      d.txtDescription!.trim().isNotEmpty)
+                  ? d.txtDescription!.trim()
+                  : (d.txtShortcode != null &&
+                          d.txtShortcode!.trim().isNotEmpty)
+                      ? d.txtShortcode!.trim()
+                      : d.txtKey;
+              return DepartmentUserModel(
+                txtDeptkey: d.txtKey,
+                txtDeptName: name,
+                txtUsercode: null,
+                bolSelected: null,
+                canWrite: null,
+              );
+            },
+          )
+          .toList();
       isLoading = false;
     });
   }

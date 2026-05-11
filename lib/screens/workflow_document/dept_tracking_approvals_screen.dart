@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-/// "موافقاتي عبر الدوائر" — lists document tracking rows awaiting receive.
 class DeptTrackingApprovalsScreen extends StatefulWidget {
   const DeptTrackingApprovalsScreen({super.key});
 
@@ -56,6 +55,9 @@ class _DeptTrackingApprovalsScreenState
   }
 
   static const String _lookupKeyField = '_deptLookupKey';
+  static const String _activeStepNotesField = '_activeStepNotes';
+
+  static const Color _stepNotesSkinTone = Color(0xFF8D7569);
 
   void _buildColumns() {
     final w = _width;
@@ -76,11 +78,25 @@ class _DeptTrackingApprovalsScreenState
       ),
       PlutoColumn(
         readOnly: true,
+        title: '',
+        field: _activeStepNotesField,
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        hide: true,
+        enableColumnDrag: false,
+        enableContextMenu: false,
+        enableDropToResize: false,
+        enableFilterMenuItem: false,
+        enableHideColumnMenuItem: false,
+        enableSetColumnsMenuItem: false,
+      ),
+      PlutoColumn(
+        readOnly: true,
         title: _locale.deptTrackingActiveStep,
         field: 'activeStepSummary',
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.16 : w * 0.72,
+        width: _isDesktop ? w * 0.07 : w * 0.22,
       ),
       PlutoColumn(
         readOnly: true,
@@ -97,20 +113,51 @@ class _DeptTrackingApprovalsScreenState
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
         width: _isDesktop ? w * 0.22 : w * 0.92,
-        renderer: (ctx) => _DeptStepDescCellPainter(
-          data: ctx.cell.value is _DeptStepDescCell
-              ? ctx.cell.value as _DeptStepDescCell
-              : _DeptStepDescCell.tryParseFallback(ctx.cell.value),
-          captionLabel: _locale.deptTrackingStepNoteCaption,
-        ),
+        renderer: (PlutoColumnRendererContext ctx) {
+          final descRaw = ctx.cell.value?.toString() ?? '';
+          final desc = descRaw.trim();
+          final notesRaw =
+              ctx.row.cells[_activeStepNotesField]?.value?.toString() ?? '';
+          final notes = notesRaw.trim();
+          final showDesc = desc.isNotEmpty && desc != '—';
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  showDesc ? desc : '—',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF1E293B),
+                    height: 1.25,
+                  ),
+                ),
+                if (notes.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '${_locale.deptTrackingStepNotePrefix}$notes',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: _stepNotesSkinTone,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
       ),
       PlutoColumn(
         readOnly: true,
-        title: _locale.user,
+        title: _locale.deptTrackingRouteCreator,
         field: 'txtCreatedBy',
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.06 : w * 0.28,
+        width: _isDesktop ? w * 0.09 : w * 0.32,
       ),
       PlutoColumn(
         readOnly: true,
@@ -118,23 +165,7 @@ class _DeptTrackingApprovalsScreenState
         field: 'datCreatedAt',
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.08 : w * 0.4,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.deptTrackingReceiveSummary,
-        field: 'receiveSummary',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.10 : w * 0.52,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.deptTrackingSendSummary,
-        field: 'sendSummary',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.10 : w * 0.52,
+        width: _isDesktop ? w * 0.09 : w * 0.42,
       ),
       PlutoColumn(
         readOnly: true,
@@ -142,7 +173,7 @@ class _DeptTrackingApprovalsScreenState
         field: 'routeOverview',
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.22 : w * 0.92,
+        width: _isDesktop ? w * 0.24 : w * 0.95,
       ),
     ];
   }
@@ -160,46 +191,39 @@ class _DeptTrackingApprovalsScreenState
     }
   }
 
-  String _receiveSendLine(String? user, String? rawDt) {
-    final u = (user ?? '').trim();
-    final t = TrackingResponseModel.shortStepMoment(rawDt);
-    if (u.isEmpty && t.isEmpty) return '—';
-    if (u.isEmpty) return t;
-    if (t.isEmpty) return u;
-    return '$u · $t';
-  }
-
   String _routeOverviewCellText(String overview) {
     final t = overview.trim();
     return t.isEmpty ? '—' : t;
   }
 
+  String _stepOrderCellText(String order) {
+    final t = order.trim();
+    return t.isEmpty ? '—' : t;
+  }
+
   PlutoRow _deptTrackingRow(TrackingResponseModel e) {
-    final step = e.activeStepDisplayed();
     final routeKey = e.routeTrackingKeyForGrid();
     final t = e.tracking;
     final stepDesc = e.activeStepDescriptionOnly();
+    final stepNotes =
+        (trackingStepForAction(e)?.txtNotes ?? '').trim();
     return PlutoRow(
       cells: {
         _lookupKeyField: PlutoCell(value: routeKey),
-        'activeStepSummary': PlutoCell(value: e.activeStepSummaryLabel()),
+        _activeStepNotesField: PlutoCell(value: stepNotes),
+        'activeStepSummary': PlutoCell(
+          value: _stepOrderCellText(e.activeStepOrderDisplay()),
+        ),
         'stepSituation':
             PlutoCell(value: _situationLabel(e.activeStepSituationCode())),
         'txtStepDescription': PlutoCell(
-          value: _DeptStepDescCell(
-            description: stepDesc.isEmpty ? '—' : stepDesc,
-            notes: (step?.txtNotes ?? '').trim(),
-          ),
+          value: stepDesc.isEmpty ? '—' : stepDesc,
         ),
         'txtCreatedBy': PlutoCell(value: t?.txtCreatedBy ?? ''),
         'datCreatedAt':
             PlutoCell(value: TrackingResponseModel.shortCreatedAt(t?.datCreatedAt)),
-        'receiveSummary': PlutoCell(
-            value: _receiveSendLine(step?.txtReceivedBy, step?.datReceivedAt)),
-        'sendSummary': PlutoCell(
-            value: _receiveSendLine(step?.txtSentBy, step?.datSentAt)),
         'routeOverview': PlutoCell(
-          value: _routeOverviewCellText(e.routeOverviewText()),
+          value: _routeOverviewCellText(e.trackingRouteNotesText()),
         ),
       },
     );
@@ -272,21 +296,30 @@ class _DeptTrackingApprovalsScreenState
       return res?.statusCode == 200;
     }
 
+    final last = item.isActiveStepLastInRoute();
+    final situation = item.activeStepSituationCode();
+    final hideDeptActions = last &&
+        (situation == 'received_only' || situation == 'received_sent');
+
     final reload = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => FileExplorDialog(
         listOfFiles: files,
         isWorkFlowScreen: true,
-        deptTrackingExtras: FileExplorerDeptTrackingExtras(
-          onReceiveTap: receive,
-          onSendTap: send,
-        ),
+        deptTrackingExtras: hideDeptActions
+            ? null
+            : FileExplorerDeptTrackingExtras(
+                onReceiveTap: receive,
+                onSendTap: send,
+                receiveOnlyLastStep: last,
+                sendOnlyAfterReceived:
+                    !last && situation == 'received_only',
+              ),
       ),
     );
     if (!mounted) return;
     if (reload == true) {
-      // إطارَي رسم بعد إزالة route الحوار لتفادي تعارض Pluto وشاشة Flutter الحمراء على Web.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) _load();
@@ -369,85 +402,6 @@ class _DeptTrackingApprovalsScreenState
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Holds [txtStepDescription] + خطوة [txtNotes] for the Pluto cell renderer.
-class _DeptStepDescCell {
-  const _DeptStepDescCell({
-    required this.description,
-    required this.notes,
-  });
-
-  final String description;
-  final String notes;
-
-  static _DeptStepDescCell tryParseFallback(dynamic v) {
-    if (v == null) {
-      return const _DeptStepDescCell(description: '—', notes: '');
-    }
-    final s = v.toString();
-    return _DeptStepDescCell(description: s.isEmpty ? '—' : s, notes: '');
-  }
-
-  @override
-  String toString() =>
-      notes.isEmpty ? description : '$description • $notes';
-}
-
-class _DeptStepDescCellPainter extends StatelessWidget {
-  const _DeptStepDescCellPainter({
-    required this.data,
-    required this.captionLabel,
-  });
-
-  final _DeptStepDescCell data;
-  final String captionLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final secondaryStyle = theme.textTheme.bodySmall?.copyWith(
-          fontWeight: FontWeight.w300,
-          height: 1.35,
-          color: Colors.black54,
-          fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) - 2,
-        ) ??
-        TextStyle(
-          fontWeight: FontWeight.w300,
-          fontSize: 12,
-          height: 1.35,
-          color: Colors.grey.shade700,
-        );
-
-    return Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: Padding(
-        padding: const EdgeInsetsDirectional.only(start: 4, top: 4, bottom: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              data.description,
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodyMedium,
-            ),
-            if (data.notes.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                '$captionLabel: ${data.notes}',
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: secondaryStyle,
-              ),
-            ],
           ],
         ),
       ),

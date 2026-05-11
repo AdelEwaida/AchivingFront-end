@@ -40,17 +40,21 @@ class FileExplorerDeptTrackingExtras {
   FileExplorerDeptTrackingExtras({
     required this.onReceiveTap,
     required this.onSendTap,
+    this.receiveOnlyLastStep = false,
+    this.sendOnlyAfterReceived = false,
   });
 
   final Future<bool> Function() onReceiveTap;
   final Future<bool> Function(String notes) onSendTap;
+
+  final bool receiveOnlyLastStep;
+  final bool sendOnlyAfterReceived;
 }
 
 class FileExplorDialog extends StatefulWidget {
   List<FileUploadModel> listOfFiles;
   bool? isWorkFlowScreen;
 
-  /// When non-null: same file table + download/view + ниже حقول مسار الدوائر.
   final FileExplorerDeptTrackingExtras? deptTrackingExtras;
 
   FileExplorDialog({
@@ -74,6 +78,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   bool _dtReceiveBusy = false;
   bool _dtReceiveSendBusy = false;
+  bool _dtSendOnlyBusy = false;
 
   late final UniqueKey _filesPlutoKey;
   TextEditingController? _deptNotesController;
@@ -175,71 +180,43 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
             const SizedBox(height: 14),
             const Divider(height: 1),
             const SizedBox(height: 12),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * 0.06),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  _locale.deptTrackingSendNotesLabel,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF475569),
+            if (!widget.deptTrackingExtras!.receiveOnlyLastStep) ...[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.06),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    _locale.deptTrackingSendNotesLabel,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF475569),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * 0.06),
-              child: TextField(
-                controller: _deptNotesController,
-                maxLines: 2,
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: _locale.deptTrackingSendNotesHint,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+              const SizedBox(height: 8),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.06),
+                child: TextField(
+                  controller: _deptNotesController,
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    hintText: _locale.deptTrackingSendNotesHint,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 14),
+              const SizedBox(height: 14),
+            ] else ...[
+              const SizedBox(height: 4),
+            ],
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomElevatedButton(
-                  text: _locale.deptTrackingReceive,
-                  color: greenColor,
-                  icon: Icons.inbox_rounded,
-                  width: isDesktop ? width * 0.12 : width * 0.34,
-                  height: height * 0.046,
-                  fontSize: 14,
-                  isLoading: _dtReceiveBusy,
-                  onPressed: () {
-                    if (!_dtReceiveBusy &&
-                        !_dtReceiveSendBusy) {
-                      _onDeptReceive();
-                    }
-                  },
-                ),
-                SizedBox(width: isDesktop ? 14 : 8),
-                CustomElevatedButton(
-                  text: _locale.deptTrackingReceiveAndSend,
-                  color: const Color(0xFF1565C0),
-                  icon: Icons.sync_alt_rounded,
-                  width: isDesktop ? width * 0.18 : width * 0.44,
-                  height: height * 0.046,
-                  fontSize: 13,
-                  isLoading: _dtReceiveSendBusy,
-                  onPressed: () {
-                    if (!_dtReceiveBusy &&
-                        !_dtReceiveSendBusy) {
-                      _onDeptReceiveThenSend();
-                    }
-                  },
-                ),
-              ],
+              children: _deptTrackingActionButtons(),
             ),
             const SizedBox(height: 10),
           ],
@@ -248,9 +225,87 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
     );
   }
 
+  List<Widget> _deptTrackingActionButtons() {
+    final x = widget.deptTrackingExtras!;
+    if (x.receiveOnlyLastStep) {
+      return [
+        CustomElevatedButton(
+          text: _locale.deptTrackingReceive,
+          color: greenColor,
+          icon: Icons.inbox_rounded,
+          width: isDesktop ? width * 0.14 : width * 0.42,
+          height: height * 0.046,
+          fontSize: 14,
+          isLoading: _dtReceiveBusy,
+          onPressed: () {
+            if (!_dtReceiveBusy &&
+                !_dtReceiveSendBusy &&
+                !_dtSendOnlyBusy) {
+              _onDeptReceive();
+            }
+          },
+        ),
+      ];
+    }
+    if (x.sendOnlyAfterReceived) {
+      return [
+        CustomElevatedButton(
+          text: _locale.deptTrackingSendOnly,
+          color: const Color(0xFF1565C0),
+          icon: Icons.send_rounded,
+          width: isDesktop ? width * 0.14 : width * 0.42,
+          height: height * 0.046,
+          fontSize: 14,
+          isLoading: _dtSendOnlyBusy,
+          onPressed: () {
+            if (!_dtSendOnlyBusy) {
+              _onDeptSendOnly();
+            }
+          },
+        ),
+      ];
+    }
+    return [
+      CustomElevatedButton(
+        text: _locale.deptTrackingReceive,
+        color: greenColor,
+        icon: Icons.inbox_rounded,
+        width: isDesktop ? width * 0.12 : width * 0.34,
+        height: height * 0.046,
+        fontSize: 14,
+        isLoading: _dtReceiveBusy,
+        onPressed: () {
+          if (!_dtReceiveBusy && !_dtReceiveSendBusy && !_dtSendOnlyBusy) {
+            _onDeptReceive();
+          }
+        },
+      ),
+      SizedBox(width: isDesktop ? 14 : 8),
+      CustomElevatedButton(
+        text: _locale.deptTrackingReceiveAndSend,
+        color: const Color(0xFF1565C0),
+        icon: Icons.sync_alt_rounded,
+        width: isDesktop ? width * 0.18 : width * 0.44,
+        height: height * 0.046,
+        fontSize: 13,
+        isLoading: _dtReceiveSendBusy,
+        onPressed: () {
+          if (!_dtReceiveBusy && !_dtReceiveSendBusy && !_dtSendOnlyBusy) {
+            _onDeptReceiveThenSend();
+          }
+        },
+      ),
+    ];
+  }
+
   Future<void> _onDeptReceive() async {
     final x = widget.deptTrackingExtras;
-    if (x == null || _dtReceiveBusy || _dtReceiveSendBusy) return;
+    if (x == null ||
+        _dtReceiveBusy ||
+        _dtReceiveSendBusy ||
+        _dtSendOnlyBusy) {
+      return;
+    }
     setState(() => _dtReceiveBusy = true);
     var clearBusyAfterPop = true;
     try {
@@ -272,7 +327,12 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   Future<void> _onDeptReceiveThenSend() async {
     final x = widget.deptTrackingExtras;
-    if (x == null || _dtReceiveBusy || _dtReceiveSendBusy) return;
+    if (x == null ||
+        _dtReceiveBusy ||
+        _dtReceiveSendBusy ||
+        _dtSendOnlyBusy) {
+      return;
+    }
     setState(() => _dtReceiveSendBusy = true);
     var clearBusyAfterPop = true;
     try {
@@ -295,6 +355,29 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
     } finally {
       if (mounted && clearBusyAfterPop) {
         setState(() => _dtReceiveSendBusy = false);
+      }
+    }
+  }
+
+  Future<void> _onDeptSendOnly() async {
+    final x = widget.deptTrackingExtras;
+    if (x == null || _dtSendOnlyBusy) return;
+    setState(() => _dtSendOnlyBusy = true);
+    var clearBusyAfterPop = true;
+    try {
+      final notes = (_deptNotesController?.text ?? '').trim();
+      final okSend = await x.onSendTap(notes);
+      if (!mounted) return;
+      if (okSend) {
+        CustomToastMessage.success(context, _locale.updatedSuccess);
+        clearBusyAfterPop = false;
+        Navigator.of(context).pop(true);
+        return;
+      }
+      CustomToastMessage.error(context, _locale.error);
+    } finally {
+      if (mounted && clearBusyAfterPop) {
+        setState(() => _dtSendOnlyBusy = false);
       }
     }
   }

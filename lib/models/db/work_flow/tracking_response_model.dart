@@ -57,6 +57,8 @@ class TrackingResponseModel {
         .toList();
   }
 
+  String trackingRouteNotesText() => (tracking?.txtNotes ?? '').trim();
+
   /// Summary of step descriptions in order (for grid / previews).
   String routeOverviewText() {
     final list = List<TrackingStepInfoModel>.from(steps ?? [])
@@ -97,6 +99,13 @@ class TrackingResponseModel {
     return '';
   }
 
+  String activeStepOrderDisplay() {
+    final s = activeStepDisplayed();
+    final o = s?.intStepOrder ?? tracking?.intCurrentStep;
+    if (o != null) return o.toString();
+    return '';
+  }
+
   String activeStepDescriptionOnly() =>
       (activeStepDisplayed()?.txtStepDescription ?? '').trim();
 
@@ -108,6 +117,24 @@ class TrackingResponseModel {
     if (hasR && hasS) return 'received_sent';
     if (hasR) return 'received_only';
     return 'await_receive';
+  }
+
+  bool isActiveStepLastInRoute() {
+    final list = steps ?? [];
+    if (list.isEmpty) return true;
+    final orders = <int>[];
+    for (final s in list) {
+      final o = s.intStepOrder;
+      if (o != null) orders.add(o);
+    }
+    if (orders.isEmpty) {
+      return list.length <= 1;
+    }
+    final maxOrder = orders.reduce((a, b) => a > b ? a : b);
+    final active = activeStepDisplayed();
+    final cur = active?.intStepOrder ?? tracking?.intCurrentStep;
+    if (cur == null) return false;
+    return cur >= maxOrder;
   }
 
   String trackingOverallStatusCode() {
@@ -152,7 +179,7 @@ class TrackingResponseModel {
         'datCreatedAt': PlutoCell(value: shortCreatedAt(t?.datCreatedAt)),
         'intStatus': PlutoCell(value: t?.intStatus?.toString() ?? ''),
         'intCurrentStep': PlutoCell(value: t?.intCurrentStep?.toString() ?? ''),
-        'routeOverview': PlutoCell(value: routeOverviewText()),
+        'routeOverview': PlutoCell(value: trackingRouteNotesText()),
         'txtNotes': PlutoCell(value: t?.txtNotes ?? ''),
       },
     );

@@ -31,13 +31,14 @@ class TrackingInfoModel {
   factory TrackingInfoModel.fromJson(Map<String, dynamic> json) {
     return TrackingInfoModel(
       txtKey: json['txtKey']?.toString(),
-      txtDocumentcode: json['txtDocumentcode']?.toString(),
+      txtDocumentcode:
+          json['txtDocumentcode']?.toString() ?? json['documentKey']?.toString(),
       intStatus: _asInt(json['intStatus']),
       intCurrentStep: _asInt(json['intCurrentStep']),
       txtCreatedBy: json['txtCreatedBy']?.toString(),
       datCreatedAt: json['datCreatedAt']?.toString(),
       datCompletedAt: json['datCompletedAt']?.toString(),
-      txtNotes: json['txtNotes']?.toString(),
+      txtNotes: json['txtNotes']?.toString() ?? json['notes']?.toString(),
       isDeleted: _asInt(json['isDeleted']),
     );
   }
