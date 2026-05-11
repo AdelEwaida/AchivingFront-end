@@ -333,4 +333,5 @@
   "stepStatusReceived": "Received",
   "stepStatusSent": "Sent to Next Step",
   "noData": "No data"
+  "deptTrackingStepNotePrefix": "Notes: "
 }

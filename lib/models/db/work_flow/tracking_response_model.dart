@@ -3,7 +3,6 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'tracking_info_model.dart';
 import 'tracking_step_info_model.dart';
 
-/// Current workflow step (`intStepOrder == intCurrentStep`), else pending (`intStatus == 1`).
 TrackingStepInfoModel? trackingStepForAction(TrackingResponseModel item) {
   final steps = item.steps ?? [];
   final curOrder = item.tracking?.intCurrentStep;
@@ -108,6 +107,9 @@ class TrackingResponseModel {
 
   String activeStepDescriptionOnly() =>
       (activeStepDisplayed()?.txtStepDescription ?? '').trim();
+
+  String activeStepNotesOnly() =>
+      (activeStepDisplayed()?.txtNotes ?? '').trim();
 
   String activeStepSituationCode() {
     final s = activeStepDisplayed();

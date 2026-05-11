@@ -307,16 +307,5 @@
   "deptTrackingReceivedBy": "استلم بواسطة",
   "deptTrackingSentBy": "أرسل بواسطة",
   "deptTrackingNotesMerged": "الملاحظات",
-  "deptTrackingStepNotePrefix": "ملاحظة : ",
-  "viewTracking": "عرض المسار",
-  "receivedBy": "استُلم من",
-  "sentBy": "أُرسل من",
-  "trackingStatusPending": "معلق",
-  "trackingStatusInProgress": "جارٍ",
-  "trackingStatusCompleted": "مكتمل",
-  "stepStatusNone": "لا شيء",
-  "stepStatusPending": "عالقة عند المستخدم",
-  "stepStatusReceived": "تم الاستلام",
-  "stepStatusSent": "أرسلت للخطوة التالية",
-  "noData": "لا توجد بيانات"
+  "deptTrackingStepNotePrefix": "ملاحظة : "
 }

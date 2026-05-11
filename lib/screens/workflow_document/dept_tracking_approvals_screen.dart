@@ -31,7 +31,6 @@ class _DeptTrackingApprovalsScreenState
   double _height = 0;
   bool _isDesktop = false;
   bool _loading = true;
-  /// Bumps after each load so [TableComponent] / PlutoGrid rebuild with new rows.
   int _gridEpoch = 0;
   List<TrackingResponseModel> _items = [];
 
@@ -92,19 +91,35 @@ class _DeptTrackingApprovalsScreenState
       ),
       PlutoColumn(
         readOnly: true,
+        title: _locale.deptTrackingRouteOverview,
+        field: 'routeOverview',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: _isDesktop ? w * 0.24 : w * 0.95,
+      ),
+      PlutoColumn(
+        readOnly: true,
+        title: _locale.dateCreated,
+        field: 'datCreatedAt',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: _isDesktop ? w * 0.09 : w * 0.42,
+      ),
+      PlutoColumn(
+        readOnly: true,
+        title: _locale.deptTrackingRouteCreator,
+        field: 'txtCreatedBy',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: _isDesktop ? w * 0.09 : w * 0.32,
+      ),
+      PlutoColumn(
+        readOnly: true,
         title: _locale.deptTrackingActiveStep,
         field: 'activeStepSummary',
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
         width: _isDesktop ? w * 0.07 : w * 0.22,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.deptTrackingStepSituation,
-        field: 'stepSituation',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.11 : w * 0.45,
       ),
       PlutoColumn(
         readOnly: true,
@@ -153,27 +168,11 @@ class _DeptTrackingApprovalsScreenState
       ),
       PlutoColumn(
         readOnly: true,
-        title: _locale.deptTrackingRouteCreator,
-        field: 'txtCreatedBy',
+        title: _locale.deptTrackingStepSituation,
+        field: 'stepSituation',
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.09 : w * 0.32,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.dateCreated,
-        field: 'datCreatedAt',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.09 : w * 0.42,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.deptTrackingRouteOverview,
-        field: 'routeOverview',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.24 : w * 0.95,
+        width: _isDesktop ? w * 0.11 : w * 0.45,
       ),
     ];
   }
@@ -205,12 +204,11 @@ class _DeptTrackingApprovalsScreenState
     final routeKey = e.routeTrackingKeyForGrid();
     final t = e.tracking;
     final stepDesc = e.activeStepDescriptionOnly();
-    final stepNotes =
-        (trackingStepForAction(e)?.txtNotes ?? '').trim();
+    final notesForCell = e.activeStepNotesOnly();
     return PlutoRow(
       cells: {
         _lookupKeyField: PlutoCell(value: routeKey),
-        _activeStepNotesField: PlutoCell(value: stepNotes),
+        _activeStepNotesField: PlutoCell(value: notesForCell),
         'activeStepSummary': PlutoCell(
           value: _stepOrderCellText(e.activeStepOrderDisplay()),
         ),
