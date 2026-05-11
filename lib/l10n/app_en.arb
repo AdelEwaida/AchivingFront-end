@@ -332,6 +332,6 @@
   "stepStatusPending": "Pending at User",
   "stepStatusReceived": "Received",
   "stepStatusSent": "Sent to Next Step",
-  "noData": "No data"
+  "noData": "No data",
   "deptTrackingStepNotePrefix": "Notes: "
 }
