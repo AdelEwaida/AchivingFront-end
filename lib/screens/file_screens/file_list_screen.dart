@@ -341,7 +341,7 @@ class _FileListScreenState extends State<FileListScreen> {
                             const SizedBox(width: 8),
                             CustomElevatedButton(
                               text: _locale.createTrackingDoc,
-                              color: const Color(0xFF7C3AED),
+                              color: Color.fromARGB(255, 196, 83, 177),
                               icon: Icons.alt_route_rounded,
                               width: isDesktop ? width * 0.13 : width * 0.19,
                               height: height * 0.043,
