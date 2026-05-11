@@ -35,7 +35,6 @@ Uint8List? _decodeBlobFromCell(dynamic cellValue) {
   }
 }
 
-
 class FileExplorerDeptTrackingExtras {
   FileExplorerDeptTrackingExtras({
     required this.onReceiveTap,
@@ -100,7 +99,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   @override
   void didChangeDependencies() {
-    _locale = AppLocalizations.of(context);
+    _locale = AppLocalizations.of(context)!;
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
@@ -125,7 +124,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
   PlutoRow? selectedRow;
 
   double _tableHeight() =>
-      widget.deptTrackingExtras != null ? height * 0.52 : height * 0.66;
+      widget.deptTrackingExtras != null ? height * 0.45 : height * 0.66;
 
   Widget formSection() {
     return SingleChildScrollView(
@@ -238,9 +237,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
           fontSize: 14,
           isLoading: _dtReceiveBusy,
           onPressed: () {
-            if (!_dtReceiveBusy &&
-                !_dtReceiveSendBusy &&
-                !_dtSendOnlyBusy) {
+            if (!_dtReceiveBusy && !_dtReceiveSendBusy && !_dtSendOnlyBusy) {
               _onDeptReceive();
             }
           },
@@ -300,10 +297,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   Future<void> _onDeptReceive() async {
     final x = widget.deptTrackingExtras;
-    if (x == null ||
-        _dtReceiveBusy ||
-        _dtReceiveSendBusy ||
-        _dtSendOnlyBusy) {
+    if (x == null || _dtReceiveBusy || _dtReceiveSendBusy || _dtSendOnlyBusy) {
       return;
     }
     setState(() => _dtReceiveBusy = true);
@@ -327,10 +321,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   Future<void> _onDeptReceiveThenSend() async {
     final x = widget.deptTrackingExtras;
-    if (x == null ||
-        _dtReceiveBusy ||
-        _dtReceiveSendBusy ||
-        _dtSendOnlyBusy) {
+    if (x == null || _dtReceiveBusy || _dtReceiveSendBusy || _dtSendOnlyBusy) {
       return;
     }
     setState(() => _dtReceiveSendBusy = true);
@@ -477,8 +468,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   Future<void> download() async {
     if (selectedRow != null) {
-      final bytes =
-          _decodeBlobFromCell(selectedRow!.cells['imgBlob']?.value);
+      final bytes = _decodeBlobFromCell(selectedRow!.cells['imgBlob']?.value);
       if (bytes == null) {
         CustomToastMessage.error(context, _locale.error);
         return;
@@ -522,8 +512,7 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   void view() {
     if (selectedRow != null) {
-      final bytes =
-          _decodeBlobFromCell(selectedRow!.cells['imgBlob']?.value);
+      final bytes = _decodeBlobFromCell(selectedRow!.cells['imgBlob']?.value);
       if (bytes == null) {
         CustomToastMessage.warning(context, _locale.error);
         return;

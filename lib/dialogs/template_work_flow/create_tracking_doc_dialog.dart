@@ -42,7 +42,7 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _locale = AppLocalizations.of(context);
+    _locale = AppLocalizations.of(context)!;
     if (_departmentLoadStarted) return;
     _departmentLoadStarted = true;
     _loadDepartmentsForDropdown();

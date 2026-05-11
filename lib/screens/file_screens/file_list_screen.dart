@@ -53,6 +53,7 @@ import 'package:provider/provider.dart';
 import 'dart:html' as html;
 import '../../dialogs/template_work_flow/create_tracking_doc_dialog.dart';
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
+import '../../dialogs/template_work_flow/view_tracking_dialog.dart';
 import '../../models/db/categories_models/doc_cat_parent.dart';
 import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/user_models/user_model.dart';
@@ -352,6 +353,32 @@ class _FileListScreenState extends State<FileListScreen> {
                                     context: context,
                                     builder: (context) {
                                       return CreateTrackingDocDialog(
+                                        documentKey:
+                                            documentModel!.txtKey ?? "",
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  CustomToastMessage.warning(
+                                      context, _locale.pleaseSelectRow);
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            CustomElevatedButton(
+                              text: _locale.viewTracking,
+                              color: const Color(0xFF7C3AED),
+                              icon: Icons.alt_route_rounded,
+                              width: isDesktop ? width * 0.13 : width * 0.19,
+                              height: height * 0.043,
+                              fontSize: 13,
+                          onPressed: () async {
+                                if (documentModel != null) {
+                                  await showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) {
+                                      return ViewTrackingDialog(
                                         documentKey:
                                             documentModel!.txtKey ?? "",
                                       );

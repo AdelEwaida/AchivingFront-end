@@ -38,7 +38,7 @@ class _DeptTrackingApprovalsScreenState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _locale = AppLocalizations.of(context);
+    _locale = AppLocalizations.of(context)!;
     _width = MediaQuery.of(context).size.width;
     _height = MediaQuery.of(context).size.height;
     _isDesktop = Responsive.isDesktop(context);
@@ -368,7 +368,7 @@ class _DeptTrackingApprovalsScreenState
                     key: ValueKey('dept_tracking_approvals_$_gridEpoch'),
                     noHeader: true,
                     isworkFlow: true,
-                    tableHeigt: _height * 0.82,
+                    tableHeigt: _height *  0.75,
                     tableWidth: _width,
                     plCols: _columns,
                     mode: PlutoGridMode.selectWithOneTap,

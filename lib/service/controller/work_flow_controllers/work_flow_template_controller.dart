@@ -224,4 +224,21 @@ class WorkFlowTemplateContoller {
       'notes': notes,
     });
   }
+
+  Future<List<TrackingResponseModel>> getTrackingByDocument(
+      String documentCode) async {
+    final api = "document-tracking/by-document/$documentCode"; // dynamic URL
+    List<TrackingResponseModel> trackingList = [];
+
+    var response = await ApiService().getRequest(api);
+
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+      trackingList = TrackingResponseModel.fromJsonList(jsonData);
+    } else {
+      print("Error: ${response.statusCode}, ${response.reasonPhrase}");
+    }
+
+    return trackingList;
+  }
 }

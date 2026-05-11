@@ -320,5 +320,17 @@
   "deptTrackingReceivedBy": "Received by",
   "deptTrackingSentBy": "Sent by",
   "deptTrackingNotesMerged": "Notes",
-  "deptTrackingStepNotePrefix": "Note: "
+  "deptTrackingStepNotePrefix": "Note: ",
+  "viewTracking": "View Tracking",
+  "viewTracking": "View Tracking",
+  "receivedBy": "Received By",
+  "sentBy": "Sent By",
+  "trackingStatusPending": "Pending",
+  "trackingStatusInProgress": "In Progress",
+  "trackingStatusCompleted": "Completed",
+  "stepStatusNone": "None",
+  "stepStatusPending": "Pending at User",
+  "stepStatusReceived": "Received",
+  "stepStatusSent": "Sent to Next Step",
+  "noData": "No data"
 }
