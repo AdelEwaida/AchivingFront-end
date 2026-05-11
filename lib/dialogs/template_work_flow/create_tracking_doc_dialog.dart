@@ -1,4 +1,5 @@
 import 'package:archiving_flutter_project/models/db/user_models/department_user_model.dart';
+import 'package:archiving_flutter_project/models/db/work_flow/steps_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/tracking_doc_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/tracking_step_model.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
@@ -37,42 +38,26 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
 
   List<DepartmentUserModel> departmentList = [];
   List<TrackingStepModel> steps = [];
-  bool _departmentLoadStarted = false;
 
   @override
-  void didChangeDependencies() {
+  Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
-    _locale = AppLocalizations.of(context);
-    if (_departmentLoadStarted) return;
-    _departmentLoadStarted = true;
-    _loadDepartmentsForDropdown();
-  }
+    _locale = AppLocalizations.of(context)!;
+    final departments = await DepartmentController().getDep(
+      SearchModel(),
+    );
 
-  Future<void> _loadDepartmentsForDropdown() async {
-    final list = await DepartmentController().getDep(SearchModel(page: 1));
-    if (!mounted) return;
+    departmentList = departments.map((dept) {
+      return DepartmentUserModel(
+        txtDeptName: dept.txtDescription,
+        txtDeptkey: dept.txtKey,
+        txtUsercode: null,
+        bolSelected: 0,
+        canWrite: 0,
+      );
+    }).toList();
+
     setState(() {
-      departmentList = list
-          .where((d) => d.txtKey != null && d.txtKey!.isNotEmpty)
-          .map(
-            (d) {
-              final name = (d.txtDescription != null &&
-                      d.txtDescription!.trim().isNotEmpty)
-                  ? d.txtDescription!.trim()
-                  : (d.txtShortcode != null &&
-                          d.txtShortcode!.trim().isNotEmpty)
-                      ? d.txtShortcode!.trim()
-                      : d.txtKey;
-              return DepartmentUserModel(
-                txtDeptkey: d.txtKey,
-                txtDeptName: name,
-                txtUsercode: null,
-                bolSelected: null,
-                canWrite: null,
-              );
-            },
-          )
-          .toList();
       isLoading = false;
     });
   }
