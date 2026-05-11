@@ -198,8 +198,11 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
               child: Column(
-                children:
-                    item.steps!.map((step) => _buildStepCard(step)).toList(),
+                children: (item.steps!.toList()
+                      ..sort((a, b) =>
+                          (a.intStepOrder ?? 0).compareTo(b.intStepOrder ?? 0)))
+                    .map((step) => _buildStepCard(step))
+                    .toList(),
               ),
             ),
         ],
