@@ -334,5 +334,6 @@
   "stepStatusReceived": "Received",
   "stepStatusSent": "Sent to Next Step",
   "noData": "No data",
-  "deptTrackingStepNotePrefix": "Notes: "
+  "deptTrackingStepNotePrefix": "Notes: ",
+  "noWorkFlowAvailable": "No workflow template data available"
 }

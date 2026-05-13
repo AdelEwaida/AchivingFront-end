@@ -319,5 +319,6 @@
   "stepStatusPending": "قيد الانتظار عند المستخدم",
   "stepStatusReceived": "تم الاستلام",
   "stepStatusSent": "تم الإرسال للخطوة التالية",
-  "noData": "لا توجد بيانات"
+  "noData": "لا توجد بيانات",
+  "noWorkFlowAvailable": "لا يوجد بيانات لملف مخطط سير العمل"
 }

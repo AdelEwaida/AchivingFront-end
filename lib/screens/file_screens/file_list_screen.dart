@@ -372,7 +372,7 @@ class _FileListScreenState extends State<FileListScreen> {
                               width: isDesktop ? width * 0.13 : width * 0.19,
                               height: height * 0.043,
                               fontSize: 13,
-                          onPressed: () async {
+                              onPressed: () async {
                                 if (documentModel != null) {
                                   await showDialog(
                                     barrierDismissible: false,
@@ -412,11 +412,11 @@ class _FileListScreenState extends State<FileListScreen> {
                                     showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return const ErrorDialog(
+                                        return ErrorDialog(
                                           icon: Icons.error,
-                                          errorDetails: "Error",
+                                          errorDetails: _locale.error,
                                           errorTitle:
-                                              "No workflow template data available.",
+                                              _locale.noWorkFlowAvailable,
                                           color: Colors.red,
                                           statusCode: 400,
                                         );

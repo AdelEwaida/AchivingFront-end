@@ -1,5 +1,4 @@
 import 'package:archiving_flutter_project/models/db/user_models/department_user_model.dart';
-import 'package:archiving_flutter_project/models/db/work_flow/steps_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/tracking_doc_model.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/tracking_step_model.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
@@ -42,7 +41,7 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
   @override
   Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
-    _locale = AppLocalizations.of(context)!!;
+    _locale = AppLocalizations.of(context)!;
     final departments = await DepartmentController().getDep(
       SearchModel(),
     );
