@@ -322,7 +322,9 @@
   "deptTrackingSentBy": "Sent by",
   "deptTrackingNotesMerged": "Notes",
   "deptTrackingStepNotePrefix": "Note: ",
-  "viewTracking": "View Tracking",
+  "deptTrackingReceiveLockupTitle": "Receive — select archive location",
+  "deptTrackingReceiveLockupLabel": "Lockup location",
+  "deptTrackingReceiveNoLockups": "No lockup locations are configured.",
   "viewTracking": "View Tracking",
   "receivedBy": "Received By",
   "sentBy": "Sent By",
@@ -343,4 +345,10 @@
   "updatedAt": "Updated At",
   "name": "Name",
   "code": "Code",
-  "deleteDoneSuccess": "Deleted successfully"}
+  "deleteDoneSuccess": "Deleted successfully",
+  "currentLockupLocation": "Current location",
+  "txtIn": "In",
+  "createdBy": "Created by",
+  "byDate": "Creation date",
+  "reiveAndSycleDone": "Receive and sycle done"
+}

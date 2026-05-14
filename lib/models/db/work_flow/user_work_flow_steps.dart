@@ -1,10 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import '../../../utils/constants/colors.dart';
 import '../../../utils/func/lists.dart';
-import '../../../utils/func/responsive.dart';
+
 
 class UserWorkflowSteps {
   String? txtKey;

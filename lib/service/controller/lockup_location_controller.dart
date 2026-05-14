@@ -6,7 +6,7 @@ import '../../models/db/work_flow/lockup_location_model.dart';
 import '../handler/api_service.dart';
 
 class LockupLocationController {
-  // ── GET ALL ────────────────────────────────────────────────────────────────
+  // GET ALL 
   Future<List<LockupLocationModel>> getAllLockupLocations() async {
     List<LockupLocationModel> list = [];
     try {
@@ -32,8 +32,7 @@ class LockupLocationController {
     return list;
   }
 
-  // ── INSERT ─────────────────────────────────────────────────────────────────
-  /// Returns `null` on success, or an error message string (e.g. "already exists").
+
   Future<String?> insertLockupLocation(LockupLocationModel model) async {
     try {
       final response = await ApiService()
@@ -42,7 +41,6 @@ class LockupLocationController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return null; // success
       }
-      // Try to extract backend message (e.g. "Can't add lockup location: already exists.")
       try {
         final body = jsonDecode(utf8.decode(response.bodyBytes));
         if (body is Map && body['message'] != null) {
@@ -56,9 +54,7 @@ class LockupLocationController {
     }
   }
 
-  // ── UPDATE ─────────────────────────────────────────────────────────────────
-  /// Sends PUT to lockupLocation/update/{key} with body {"name": "..."}.
-  /// Returns true on success.
+  //UPDATE
   Future<bool> updateLockupLocation(LockupLocationModel model) async {
     if (model.key == null || model.key!.isEmpty) return false;
     try {
@@ -71,9 +67,7 @@ class LockupLocationController {
     }
   }
 
-  // ── DELETE ─────────────────────────────────────────────────────────────────
-  /// Sends DELETE to lockupLocation/delete/{key}.
-  /// Returns true on success.
+  // DELETE
   Future<bool> deleteLockupLocation(String key) async {
     if (key.isEmpty) return false;
     try {

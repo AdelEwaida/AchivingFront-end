@@ -1,4 +1,5 @@
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/document_dialogs/select_lockup_for_receive_dialog.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/tracking_response_model.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/service/controller/work_flow_controllers/work_flow_template_controller.dart';
@@ -268,7 +269,6 @@ class _DeptTrackingApprovalsScreenState
     Navigator.of(context).pop();
 
     final flow = WorkFlowTemplateContoller();
-    /// Receive/send APIs expect current step row [TrackingStepInfoModel.txtKey].
     final activeStepKey = trackingStepForAction(item)?.txtKey?.trim() ?? '';
 
     Future<bool> receive() async {
@@ -276,8 +276,14 @@ class _DeptTrackingApprovalsScreenState
         CustomToastMessage.warning(context, _locale.deptTrackingNoRouteRef);
         return false;
       }
+      final lockupLocationCode = await showSelectLockupForReceiveDialog(context);
+      if (!mounted) return false;
+      if (lockupLocationCode == null || lockupLocationCode.isEmpty) {
+        return false;
+      }
       final res = await flow.postDocumentTrackingReceive(
         stepKey: activeStepKey,
+        locationCode: lockupLocationCode,
       );
       return res?.statusCode == 200;
     }
@@ -294,10 +300,10 @@ class _DeptTrackingApprovalsScreenState
       return res?.statusCode == 200;
     }
 
-    final last = item.isActiveStepLastInRoute();
     final situation = item.activeStepSituationCode();
-    final hideDeptActions = last &&
-        (situation == 'received_only' || situation == 'received_sent');
+    final hideDeptActions = situation == 'received_sent';
+    final receiveOnlyUi = situation == 'await_receive';
+    final sendOnlyAfterReceived = situation == 'received_only';
 
     final reload = await showDialog<bool>(
       context: context,
@@ -310,9 +316,8 @@ class _DeptTrackingApprovalsScreenState
             : FileExplorerDeptTrackingExtras(
                 onReceiveTap: receive,
                 onSendTap: send,
-                receiveOnlyLastStep: last,
-                sendOnlyAfterReceived:
-                    !last && situation == 'received_only',
+                receiveOnlyLastStep: receiveOnlyUi,
+                sendOnlyAfterReceived: sendOnlyAfterReceived,
               ),
       ),
     );

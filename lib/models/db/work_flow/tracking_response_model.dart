@@ -48,7 +48,6 @@ class TrackingResponseModel {
     };
   }
 
-  /// Parse the root list directly
   static List<TrackingResponseModel> fromJsonList(List<dynamic> jsonList) {
     return jsonList
         .map((item) => TrackingResponseModel.fromJson(
@@ -58,7 +57,6 @@ class TrackingResponseModel {
 
   String trackingRouteNotesText() => (tracking?.txtNotes ?? '').trim();
 
-  /// Summary of step descriptions in order (for grid / previews).
   String routeOverviewText() {
     final list = List<TrackingStepInfoModel>.from(steps ?? [])
       ..sort((a, b) =>
@@ -114,9 +112,15 @@ class TrackingResponseModel {
   String activeStepSituationCode() {
     final s = activeStepDisplayed();
     if (s == null) return 'unknown';
+    final st = s.intStatus;
+    if (st == 3) return 'received_sent';
+    if (st == 2) return 'received_only';
+    if (st == 1) return 'await_receive';
+
     final hasR = _nonEmptyDt(s.datReceivedAt);
-    final hasS = _nonEmptyDt(s.datSentAt);
-    if (hasR && hasS) return 'received_sent';
+    final hasOutboundSend =
+        (s.txtSentBy != null && s.txtSentBy!.trim().isNotEmpty);
+    if (hasR && hasOutboundSend) return 'received_sent';
     if (hasR) return 'received_only';
     return 'await_receive';
   }

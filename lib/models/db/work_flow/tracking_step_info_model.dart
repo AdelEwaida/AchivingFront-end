@@ -11,6 +11,8 @@ class TrackingStepInfoModel {
   String? txtNotes;
   String? txtStepDescription;
   int? isDeleted;
+  String? txtLocationCode;
+  String? txtLocationName;
 
   TrackingStepInfoModel({
     this.txtKey,
@@ -25,6 +27,8 @@ class TrackingStepInfoModel {
     this.txtNotes,
     this.txtStepDescription,
     this.isDeleted,
+    this.txtLocationCode,
+    this.txtLocationName,
   });
 
   static int? _asInt(dynamic v) {
@@ -50,6 +54,8 @@ class TrackingStepInfoModel {
       txtStepDescription: json['txtStepDescription']?.toString() ??
           json['description']?.toString(),
       isDeleted: _asInt(json['isDeleted']),
+      txtLocationCode: json['txtLocationCode']?.toString(),
+      txtLocationName: json['txtLocationName']?.toString(),
     );
   }
 
@@ -67,6 +73,8 @@ class TrackingStepInfoModel {
       'txtNotes': txtNotes,
       'txtStepDescription': txtStepDescription,
       'isDeleted': isDeleted,
+      'txtLocationCode': txtLocationCode,
+      'txtLocationName': txtLocationName,
     };
   }
 }

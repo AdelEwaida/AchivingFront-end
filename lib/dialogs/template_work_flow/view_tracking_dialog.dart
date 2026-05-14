@@ -176,7 +176,7 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                     size: 13, color: Color(0xFF64748B)),
                 const SizedBox(width: 4),
                 Text(
-                  item.tracking?.txtCreatedBy ?? "",
+                  "${_locale.createdBy}: ${item.tracking?.txtCreatedBy ?? ""}",
                   style:
                       const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
                 ),
@@ -185,7 +185,7 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                     size: 13, color: Color(0xFF64748B)),
                 const SizedBox(width: 4),
                 Text(
-                  _formatDate(item.tracking?.datCreatedAt),
+                  "${_locale.byDate}: ${_formatDate(item.tracking?.datCreatedAt)}",
                   style:
                       const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
                 ),
@@ -271,13 +271,13 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                 Row(
                   children: [
                     const Icon(Icons.account_balance_outlined,
-                        size: 12, color: Color(0xFF64748B)),
+                        size: 12.5, color: Color(0xFF64748B)),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        _deptMap[step.txtDeptcode] ?? step.txtDeptcode ?? "",
+                        "${_locale.department}: ${_deptMap[step.txtDeptcode] ?? step.txtDeptcode ?? ""}",
                         style: const TextStyle(
-                            fontSize: 11, color: Color(0xFF64748B)),
+                            fontSize: 12.5, color: Color(0xFF64748B)),
                       ),
                     ),
                   ],
@@ -291,19 +291,26 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                   Row(
                     children: [
                       const Icon(Icons.download_done_rounded,
-                          size: 12, color: Color(0xFF0D9B8A)),
+                          size: 12.5, color: Color(0xFF0D9B8A)),
                       const SizedBox(width: 4),
                       Text(
                         "${_locale.receivedBy}: ${step.txtReceivedBy ?? ''}",
                         style: const TextStyle(
-                            fontSize: 11, color: Color(0xFF0D9B8A)),
+                            fontSize: 12.5, color: Color(0xFF0D9B8A)),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        "${_locale.txtIn}: ${step.txtLocationCode ?? ''}(${step.txtLocationName ?? ''})",
+                        style: const TextStyle(
+                            fontSize: 12.5,
+                             color: Color(0xFF0D9B8A)),
                       ),
                       if (step.datReceivedAt != null) ...[
                         const SizedBox(width: 8),
                         Text(
                           _formatDate(step.datReceivedAt),
                           style: const TextStyle(
-                              fontSize: 11, color: Color(0xFF64748B)),
+                              fontSize: 12.5, color: Color(0xFF64748B)),
                         ),
                       ],
                     ],
@@ -312,25 +319,24 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
 
                 // Sent by
                 if (step.intStatus == 1 ||
-                    (step.txtSentBy != null &&
-                        step.txtSentBy!.isNotEmpty)) ...[
+                    (step.txtSentBy != null && step.txtSentBy!.isNotEmpty)) ...[
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(Icons.send_rounded,
-                          size: 12, color: Color(0xFF7C3AED)),
+                          size: 12.5, color: Color(0xFF7C3AED)),
                       const SizedBox(width: 4),
                       Text(
                         "${_locale.sentBy}: ${step.txtSentBy ?? ''}",
                         style: const TextStyle(
-                            fontSize: 11, color: Color(0xFF7C3AED)),
+                            fontSize: 12.5, color: Color(0xFF7C3AED)),
                       ),
                       if (step.datSentAt != null) ...[
                         const SizedBox(width: 8),
                         Text(
                           _formatDate(step.datSentAt),
                           style: const TextStyle(
-                              fontSize: 11, color: Color(0xFF64748B)),
+                              fontSize: 12.5, color: Color(0xFF64748B)),
                         ),
                       ],
                     ],
@@ -343,13 +349,13 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                   Row(
                     children: [
                       const Icon(Icons.notes_rounded,
-                          size: 12, color: Color(0xFF64748B)),
+                          size: 12.5, color: Color(0xFF64748B)),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          step.txtNotes!,
+                          "ملاحظات: ${step.txtNotes!}",
                           style: const TextStyle(
-                              fontSize: 11, color: Color(0xFF64748B)),
+                              fontSize: 12.5, color: Color(0xFF64748B)),
                         ),
                       ),
                     ],
@@ -396,6 +402,8 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
         return _StepStatusInfo(Colors.blue, _locale.stepStatusReceived);
       case 3:
         return _StepStatusInfo(Colors.green, _locale.stepStatusSent);
+      case 4:
+        return _StepStatusInfo(Color.fromARGB(255, 227, 146, 59), _locale.reiveAndSycleDone);
       default:
         return _StepStatusInfo(Colors.grey, "");
     }
@@ -426,10 +434,21 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
   }
 
   String _formatDate(String? raw) {
-    if (raw == null) return "";
+    if (raw == null || raw.isEmpty) return "";
+
     try {
       final dt = DateTime.parse(raw);
-      return "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}";
+
+      final hour = dt.hour > 12
+          ? dt.hour - 12
+          : dt.hour == 0
+              ? 12
+              : dt.hour;
+
+      final period = dt.hour >= 12 ? "PM" : "AM";
+
+      return "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} "
+          "${hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')} $period";
     } catch (_) {
       return raw;
     }

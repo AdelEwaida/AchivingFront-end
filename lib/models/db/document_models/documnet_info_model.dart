@@ -34,6 +34,8 @@ class DocumentModel {
   String? catKey;
   String? deptKey;
   int? workflowStatus;
+  String? txtLockupCode;
+  String? txtLockupName;
   DocumentModel(
       {this.txtKey,
       this.txtDescription,
@@ -65,7 +67,9 @@ class DocumentModel {
       this.fileName,
       this.catKey,
       this.deptKey,
-      this.workflowStatus});
+      this.workflowStatus,
+      this.txtLockupCode,
+      this.txtLockupName});
 
   factory DocumentModel.fromJson(Map<String, dynamic> json) {
     return DocumentModel(
@@ -99,9 +103,24 @@ class DocumentModel {
         fileName: json['fileName'],
         catKey: json['catKey'] ?? "",
         deptKey: json['deptKey'] ?? "",
-        workflowStatus: json['workflowStatus'].toString() == "null"
-            ? -1
-            : json['workflowStatus']);
+        workflowStatus: () {
+          final ws = json['workflowStatus'];
+          if (ws == null || ws.toString() == "null") return -1;
+          if (ws is int) return ws;
+          return int.tryParse(ws.toString()) ?? -1;
+        }(),
+        txtLockupCode: json['txtLockupCode']?.toString() ?? "",
+        txtLockupName: json['txtLockupName']?.toString() ?? "");
+  }
+
+  /// Display for grid: `name - code` when both exist; otherwise the non-empty part.
+  String get currentLockupDisplay {
+    final name = (txtLockupName ?? "").trim();
+    final code = (txtLockupCode ?? "").trim();
+    if (name.isEmpty && code.isEmpty) return "";
+    if (name.isEmpty) return code;
+    if (code.isEmpty) return name;
+    return "$name - $code";
   }
 
   Map<String, dynamic> toJson() {
@@ -136,7 +155,9 @@ class DocumentModel {
       'fileName': fileName ?? "",
       'catKey': catKey ?? "",
       "deptKey": deptKey ?? "",
-      'workflowStatus': workflowStatus ?? -1
+      'workflowStatus': workflowStatus ?? -1,
+      'txtLockupCode': txtLockupCode ?? "",
+      'txtLockupName': txtLockupName ?? ""
     };
   }
 
@@ -177,6 +198,9 @@ class DocumentModel {
         'workflowStatus': PlutoCell(
             value: ListConstants.getStatusNameWorkFlow(
                 workflowStatus ?? -1, localizations)),
+        'txtLockupCode': PlutoCell(value: txtLockupCode ?? ''),
+        'txtLockupName': PlutoCell(value: txtLockupName ?? ''),
+        'txtCurrentLockup': PlutoCell(value: currentLockupDisplay),
         // 'submitForWfApproval': PlutoCell(value: submitForWfApproval)
       },
     );
@@ -217,7 +241,9 @@ class DocumentModel {
         catKey: row.cells['catKey']?.value,
         // workflowStatus: row.cells['workflowStatus']?.value,
         workflowStatus: ListConstants.getStatusCodeWorkFlow(
-            row.cells['workflowStatus']?.value ?? -1, localizations)
+            row.cells['workflowStatus']?.value ?? -1, localizations),
+        txtLockupCode: row.cells['txtLockupCode']?.value?.toString(),
+        txtLockupName: row.cells['txtLockupName']?.value?.toString(),
         // submitForWfApproval: row.cells['submitForWfApproval']?.value
         );
   }

@@ -1791,6 +1791,15 @@ class _FileListScreenState extends State<FileListScreen> {
         backgroundColor: columnColors,
         readOnly: true,
       ),
+      PlutoColumn(
+        title: _locale.currentLockupLocation,
+        field: "txtCurrentLockup",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.14 : width * 0.28,
+        backgroundColor: columnColors,
+        enableFilterMenuItem: true,
+        readOnly: true,
+      ),
     ];
   }
 

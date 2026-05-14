@@ -133,8 +133,6 @@ class WorkFlowTemplateContoller {
 
     if (response.statusCode == 200) {
       var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
-
-      // Assuming jsonData is a list of objects
       for (var stock in jsonData) {
         templateList.add(UserWorkflowSteps.fromJson(stock));
       }
@@ -142,7 +140,7 @@ class WorkFlowTemplateContoller {
       print("Error: ${response.statusCode}, ${response.reasonPhrase}");
     }
 
-    return templateList; // Return the populated list
+    return templateList; 
   }
 
   Future createTrackingDoc(TrackingDocModel trackingDocModel) async {
@@ -150,7 +148,6 @@ class WorkFlowTemplateContoller {
         .postRequest(createTrackingDocs, trackingDocModel.toJson());
   }
 
-  /// Backend may return a raw array, a single `{ tracking, steps }` object, or a wrapped list.
   List<TrackingResponseModel> _parseAwaitingReceiveBody(dynamic decoded) {
     List<dynamic>? list;
     if (decoded is List) {
@@ -208,10 +205,10 @@ class WorkFlowTemplateContoller {
     }
   }
 
-  /// POST [stepKey] = current step row id ([TrackingStepInfoModel.txtKey]).
-  Future postDocumentTrackingReceive({required String stepKey}) async {
+  Future postDocumentTrackingReceive({required String stepKey, String? locationCode}) async {
     return ApiService().postRequest(trackingReceiveApi, {
       'stepKey': stepKey,
+      'lockupLocationCode': locationCode,
     });
   }
 
