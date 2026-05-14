@@ -91,8 +91,10 @@ const createTrackingDocs = "document-tracking/createTrackingDoc";
 const getTrackingDocsByUserDept = "document-tracking/by-user-dept";
 const getAwaitingReceiveTrackingApi = "document-tracking/awaiting-receive";
 const getTrackingByCode = "document-tracking/by-document/documnet_code";
+
 /// POST body: `{ "stepKey": "<workflow step TrackingStepInfoModel.txtKey>" }`
 const trackingReceiveApi = "document-tracking-steps/receive";
+
 /// POST body: `{ "stepKey": "<step.txtKey>", "notes": "..." }`
 const trackingSendApi = "document-tracking-steps/send";
 const getWorkFlowDoc = "workflowDocumentInfo/searchCrit";
@@ -104,3 +106,9 @@ const allUserWorkFlowSteps = "workflowDocumentSteps/searchCrit";
 const importIssuesApi = "excel/issuesArchivedReport";
 const findUserByUrl = "users/findByUrl";
 const exportExcel = "excel/docInfo";
+const lockupLocation = "lockupLocation/getAll";
+
+const String lockupLocationGetAll = "lockupLocation/getAll";
+const String lockupLocationInsert = "lockupLocation/insert";
+const String lockupLocationUpdate = "lockupLocation/update"; // append /{key}
+const String lockupLocationDelete = "lockupLocation/delete"; // append /{key}

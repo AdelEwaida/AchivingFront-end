@@ -320,5 +320,14 @@
   "stepStatusReceived": "تم الاستلام",
   "stepStatusSent": "تم الإرسال للخطوة التالية",
   "noData": "لا توجد بيانات",
-  "noWorkFlowAvailable": "لا يوجد بيانات لملف مخطط سير العمل"
+  "noWorkFlowAvailable": "لا يوجد بيانات لملف مخطط سير العمل",
+  "fileLocations": "مواقع الملفات",
+  "lockupCode": "كود الخزانة",
+  "updatedAt": "تم التحديث في",
+    "lockupCodeRequired": "كود الخزانة مطلوب",
+    "nameRequired": "الاسم مطلوب",
+    "lockupCode": "كود الخزانة",
+    "updatedAt": "تم التحديث في",
+    "name": "الاسم",
+    "code": "الكود"
 }

@@ -335,5 +335,12 @@
   "stepStatusSent": "Sent to Next Step",
   "noData": "No data",
   "deptTrackingStepNotePrefix": "Notes: ",
-  "noWorkFlowAvailable": "No workflow template data available"
+  "noWorkFlowAvailable": "No workflow template data available",
+  "fileLocations": "File Locations",
+  "lockupCodeRequired": "Lockup code is required",
+  "nameRequired": "Name is required",
+  "lockupCode": "Lockup Code",
+  "updatedAt": "Updated At",
+  "name": "Name",
+  "code": "Code"
 }

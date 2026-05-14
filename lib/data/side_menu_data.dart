@@ -20,6 +20,7 @@ import '../screens/file_screens/add_file_screen.dart';
 import '../screens/reports/dashboard_screen.dart';
 import '../screens/user_screen/user_category_screen.dart';
 import '../screens/workflow/work_flow_screen.dart';
+import '../screens/workflow_document/file_locations_screen.dart';
 import '../screens/workflow_document/user_workflow_screen.dart';
 import '../screens/workflow_document/user_workflow_settings.dart';
 import '../screens/workflow_document/dept_tracking_approvals_screen.dart';
@@ -88,6 +89,7 @@ List<MenuModel> getMenus(
                     SubMenuModel(title: locale.listOfDepartment, pageNumber: 3),
                     SubMenuModel(title: locale.listOfReminders, pageNumber: 4),
                     SubMenuModel(title: locale.workFlow, pageNumber: 9),
+                    SubMenuModel(title: locale.fileLocations, pageNumber: 22),
                     // SubMenuModel(
                     //     title: locale.workFlowSettings, pageNumber: 16),
                   ],
@@ -564,6 +566,8 @@ Widget getScreenContent(int index) {
       return const UserWorkFlowSettings();
     case 21:
       return const DeptTrackingApprovalsScreen();
+    case 22:
+      return const FilesLocationScreen();
 
     // case 2:
     //   return UsersScreen();
