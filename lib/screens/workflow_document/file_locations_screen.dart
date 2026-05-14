@@ -2,7 +2,6 @@ import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.d
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.dart';
-import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -34,8 +33,6 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
   int _gridEpoch = 0;
 
   List<LockupLocationModel> _items = [];
-
-  // Selected item (single-tap)
   LockupLocationModel? _selectedItem;
 
   static const String _lookupKeyField = '_lockupKey';
@@ -151,6 +148,7 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
     }
   }
 
+  // ── data ──────────────────────────────────────────────────────────────────
   Future<void> _load() async {
     setState(() => _loading = true);
     final list = await _controller.getAllLockupLocations();
@@ -164,13 +162,17 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
     });
   }
 
+  // ── CRUD actions ──────────────────────────────────────────────────────────
   void _openAddDialog() async {
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (_) => const AddEditLockupLocationDialog(),
     );
-    if (result == true && mounted) _load();
+    if (result == true && mounted) {
+      CustomToastMessage.success(context, _locale.addDoneSucess);
+      _load();
+    }
   }
 
   void _openEditDialog() async {
@@ -183,7 +185,10 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
       barrierDismissible: false,
       builder: (_) => AddEditLockupLocationDialog(existingItem: _selectedItem),
     );
-    if (result == true && mounted) _load();
+    if (result == true && mounted) {
+      CustomToastMessage.success(context, _locale.editDoneSucess);
+      _load();
+    }
   }
 
   void _deleteSelected() async {
@@ -204,6 +209,7 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
     final ok = await _controller.deleteLockupLocation(_selectedItem!.key ?? '');
     if (!mounted) return;
     if (ok) {
+      CustomToastMessage.success(context, _locale.deleteDoneSuccess);
       _load();
     } else {
       setState(() => _loading = false);
@@ -211,6 +217,7 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
     }
   }
 
+  // ── build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     if (_width == 0) {
@@ -226,63 +233,18 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-              child: Wrap(
-                spacing: _width * 0.01,
-                runSpacing: 6,
-                children: [
-                  CustomElevatedButton(
-                    text: _locale.refresh,
-                    color: primary,
-                    icon: Icons.refresh_rounded,
-                    width: _isDesktop ? _width * 0.09 : _width * 0.28,
-                    height: _height * 0.043,
-                    fontSize: 14,
-                    onPressed: () {
-                      if (!_loading) _load();
-                    },
-                  ),
-                  // Add
-                  CustomElevatedButton(
-                    text: _locale.add,
-                    color: greenColor,
-                    icon: Icons.add_rounded,
-                    width: _isDesktop ? _width * 0.09 : _width * 0.28,
-                    height: _height * 0.043,
-                    fontSize: 14,
-                    onPressed: _openAddDialog,
-                  ),
-                  // Edit
-                  CustomElevatedButton(
-                    text: _locale.edit,
-                    color: primary,
-                    icon: Icons.edit_rounded,
-                    width: _isDesktop ? _width * 0.09 : _width * 0.28,
-                    height: _height * 0.043,
-                    fontSize: 14,
-                    onPressed: _openEditDialog,
-                  ),
-                  // Delete
-                  CustomElevatedButton(
-                    text: _locale.delete,
-                    color: redColor,
-                    icon: Icons.delete_rounded,
-                    width: _isDesktop ? _width * 0.09 : _width * 0.28,
-                    height: _height * 0.043,
-                    fontSize: 14,
-                    onPressed: _deleteSelected,
-                  ),
-                ],
-              ),
-            ),
-
             Expanded(
               child: Stack(
                 children: [
                   TableComponent(
                     key: ValueKey('lockup_location_grid_$_gridEpoch'),
-                    noHeader: true,
+                    // ── header icon callbacks ─────────────────────────────
+                    add: _openAddDialog,
+                    genranlEdit: _openEditDialog,
+                    delete: _deleteSelected,
+                    refresh: _load,
+                    // ── table config ──────────────────────────────────────
+                    noHeader: false, // show the header bar
                     isworkFlow: false,
                     tableHeigt: _height * 0.75,
                     tableWidth: _width,
@@ -293,12 +255,14 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
                       _stateManager = e.stateManager;
                       _stateManager?.setShowColumnFilter(true);
                     },
+                    // single-tap → select
                     onSelected: (event) {
                       final key = event.row?.cells[_lookupKeyField]?.value
                               ?.toString() ??
                           '';
                       setState(() => _selectedItem = _findByKey(key));
                     },
+                    // double-tap → open edit dialog directly
                     doubleTab: (event) {
                       final key =
                           event.row.cells[_lookupKeyField]?.value?.toString() ??
@@ -311,6 +275,7 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
                     },
                   ),
 
+                  // loading overlay
                   if (_loading)
                     Container(
                       color: Colors.white.withOpacity(0.6),

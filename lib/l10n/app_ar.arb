@@ -329,5 +329,6 @@
     "lockupCode": "كود الخزانة",
     "updatedAt": "تم التحديث في",
     "name": "الاسم",
-    "code": "الكود"
+    "code": "الكود",
+    "deleteDoneSuccess": "تم الحذف بنجاح"
 }
