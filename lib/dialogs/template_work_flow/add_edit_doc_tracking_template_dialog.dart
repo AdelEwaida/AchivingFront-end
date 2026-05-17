@@ -64,7 +64,7 @@ class _AddEditDocTrackingTemplateDialogState
     if (widget.isEdit && widget.model != null) {
       nameController.text = widget.model!.name ?? '';
       noteController.text =
-          widget.model!.description ?? widget.model!.note ?? '';
+          widget.model!.name ?? widget.model!.note ?? '';
       steps = (widget.model!.steps ?? [])
           .map((s) => DocTrackingTemplateStepModel(
                 stepOrder: s.stepOrder,
@@ -382,7 +382,6 @@ class _AddEditDocTrackingTemplateDialogState
       key: widget.model?.key,
       name: nameController.text.trim(),
       note: noteController.text.trim(),
-      description: noteController.text.trim(),
       steps: steps,
     );
 
