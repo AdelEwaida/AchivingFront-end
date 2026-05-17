@@ -6,6 +6,8 @@ import 'package:archiving_flutter_project/widget/dashboard_components/custom_ele
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../widget/custom_drop_down.dart';
+
 Future<String?> showSelectLockupForReceiveDialog(BuildContext context) {
   return showDialog<String?>(
     context: context,
@@ -94,28 +96,28 @@ class _SelectLockupForReceiveDialogState
                 )
               : Align(
                   alignment: AlignmentDirectional.topCenter,
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedCode,
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      labelText: l10n.deptTrackingReceiveLockupLabel,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                  child: DropDown(
+                    width: double.infinity,
+                    height: 50,
+                    searchBox: true,
+                    bordeText: l10n.deptTrackingReceiveLockupLabel,
+                    initialValue: _items.firstWhere(
+                      (e) => e.lockupCode?.trim() == _selectedCode,
+                      orElse: () => _items.first,
                     ),
-                    items: _items
-                        .map(
-                          (e) => DropdownMenuItem<String>(
-                            value: e.lockupCode!.trim(),
-                            child: Text(
-                              _rowLabel(e),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (v) => setState(() => _selectedCode = v),
+                    items: _items,
+                    selectedVal: _items
+                        .where((e) => e.lockupCode?.trim() == _selectedCode)
+                        .map((e) => _rowLabel(e))
+                        .firstOrNull,
+                    noDataString: l10n.noData,
+                    onChanged: (value) {
+                      if (value is LockupLocationModel) {
+                        setState(() {
+                          _selectedCode = value.lockupCode?.trim();
+                        });
+                      }
+                    },
                   ),
                 ),
       actions: [

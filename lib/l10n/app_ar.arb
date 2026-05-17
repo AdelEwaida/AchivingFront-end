@@ -338,5 +338,6 @@
   "txtIn":"في",
   "createdBy": "أنشأ بواسطة",
   "byDate": "بتاريخ",
-  "reiveAndSycleDone":"تم الاستلام وانتهاء المسار"
+  "reiveAndSycleDone":"تم الاستلام وانتهاء المسار",
+  "departmentWorkFlow": "مخطط سير العمل الخاص بالدائرة"
 }

@@ -55,6 +55,11 @@ class LockupLocationModel {
   }
 
   @override
-  String toString() =>
-      'LockupLocationModel(key: $key, lockupCode: $lockupCode, name: $name)';
+  String toString() {
+    final nameVal = (name ?? '').trim();
+    final codeVal = (lockupCode ?? '').trim();
+
+    if (nameVal.isEmpty) return codeVal;
+    return '$nameVal ($codeVal)';
+  }
 }

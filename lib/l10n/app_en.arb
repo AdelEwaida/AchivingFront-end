@@ -350,5 +350,6 @@
   "txtIn": "In",
   "createdBy": "Created by",
   "byDate": "Creation date",
-  "reiveAndSycleDone": "Receive and sycle done"
+  "reiveAndSycleDone": "Receive and sycle done",
+  "departmentWorkFlow": "Department workflow"
 }
