@@ -33,13 +33,12 @@ class _TrackingTypeSelectionDialogState
       content: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-           
             _OptionTile(
               label: locale.createTrackingDoc,
-              subtitle:
-                  '',
+              subtitle: '',
               value: TrackingType.createTracking,
               groupValue: _selected,
               onTap: () =>
@@ -120,8 +119,8 @@ class _OptionTile extends StatelessWidget {
           ),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center, // ← add this
           children: [
-            // Radio circle
             Container(
               width: 18,
               height: 18,
@@ -149,30 +148,16 @@ class _OptionTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected
-                          ? const Color(0xFF0C447C)
-                          : const Color(0xFF1A2340),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isSelected
-                          ? const Color(0xFF185FA5)
-                          : const Color(0xFF64748B),
-                    ),
-                  ),
-                ],
+              child: Text(
+                // ← remove the Column, just Text
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected
+                      ? const Color(0xFF0C447C)
+                      : const Color(0xFF1A2340),
+                ),
               ),
             ),
           ],

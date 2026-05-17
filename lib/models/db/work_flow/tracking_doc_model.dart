@@ -4,18 +4,21 @@ import 'tracking_step_model.dart';
 class TrackingDocModel {
   String? documentKey;
   String? notes;
+  String? templateKey;
   List<TrackingStepModel>? steps;
 
   TrackingDocModel({
     this.documentKey,
     this.notes,
     this.steps,
+    this.templateKey,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'documentKey': documentKey,
       'notes': notes,
+      'templateKey': templateKey,
       'steps': steps?.map((step) => step.toJson()).toList(),
     };
   }
@@ -25,6 +28,9 @@ class TrackingDocModel {
       documentKey: json['documentKey']?.toString() == "null"
           ? ""
           : json['documentKey'].toString(),
+      templateKey: json['templateKey']?.toString() == "null"
+          ? ""
+          : json['templateKey'].toString(),
       notes:
           json['notes']?.toString() == "null" ? "" : json['notes'].toString(),
       steps: json['steps'] != null
@@ -41,6 +47,7 @@ class TrackingDocModel {
         'documentKey': PlutoCell(value: documentKey ?? ""),
         'notes': PlutoCell(value: notes ?? ""),
         'steps': PlutoCell(value: steps),
+        'templateKey': PlutoCell(value: templateKey ?? ""),
       },
     );
   }
@@ -48,6 +55,7 @@ class TrackingDocModel {
   TrackingDocModel.fromPluto(PlutoRow plutoRow) {
     documentKey = plutoRow.cells['documentKey']?.value as String?;
     notes = plutoRow.cells['notes']?.value as String?;
+    templateKey = plutoRow.cells['templateKey']?.value as String?;
     steps = (plutoRow.cells['steps']?.value as List<dynamic>?)
         ?.map((step) => step as TrackingStepModel)
         .toList();

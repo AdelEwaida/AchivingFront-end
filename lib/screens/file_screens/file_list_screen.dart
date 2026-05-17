@@ -53,6 +53,7 @@ import 'package:provider/provider.dart';
 import 'dart:html' as html;
 import '../../dialogs/template_work_flow/create_tracking_doc_dialog.dart';
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
+import '../../dialogs/template_work_flow/select_tracking_template_dialog.dart';
 import '../../dialogs/template_work_flow/tracking_type_selection_dialog.dart';
 import '../../dialogs/template_work_flow/view_tracking_dialog.dart';
 import '../../models/db/categories_models/doc_cat_parent.dart';
@@ -354,7 +355,6 @@ class _FileListScreenState extends State<FileListScreen> {
                                   return;
                                 }
 
-                                // Step 1: show the type selection dialog
                                 final TrackingType? choice =
                                     await showDialog<TrackingType>(
                                   barrierDismissible: false,
@@ -363,10 +363,8 @@ class _FileListScreenState extends State<FileListScreen> {
                                       const TrackingTypeSelectionDialog(),
                                 );
 
-                                if (choice == null || !mounted)
-                                  return; // user cancelled
+                                if (choice == null || !mounted) return;
 
-                                // Step 2: branch based on selection
                                 if (choice == TrackingType.createTracking) {
                                   await showDialog(
                                     barrierDismissible: false,
@@ -377,15 +375,14 @@ class _FileListScreenState extends State<FileListScreen> {
                                     ),
                                   );
                                 } else {
-                                  // TrackingType.departmentWorkFlow — open your other screen/dialog here
-                                  // await showDialog(
-                                  //   barrierDismissible: false,
-                                  //   context: context,
-                                  //   builder: (context) =>
-                                  //       YourDepartmentWorkFlowDialog(
-                                  //     documentKey: documentModel!.txtKey ?? "",
-                                  //   ),
-                                  // );
+                                  await showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) =>
+                                        SelectTrackingTemplateDialog(
+                                      documentKey: documentModel!.txtKey ?? "",
+                                    ),
+                                  );
                                 }
                               },
                             ),

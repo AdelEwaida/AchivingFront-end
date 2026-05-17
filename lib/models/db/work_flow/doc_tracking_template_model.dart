@@ -39,4 +39,6 @@ class DocTrackingTemplateModel {
         'note': note,
         'steps': steps?.map((e) => e.toJson()).toList(),
       };
+  @override
+  String toString() => name ?? "";
 }
