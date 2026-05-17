@@ -339,5 +339,7 @@
   "createdBy": "أنشأ بواسطة",
   "byDate": "بتاريخ",
   "reiveAndSycleDone":"تم الاستلام وانتهاء المسار",
-  "departmentWorkFlow": "مخطط سير العمل الخاص بالدائرة"
+  "departmentWorkFlow": "مخطط سير العمل الخاص بالدائرة",
+  "addDepartmentWorkFlow": "إضافة مخطط سير عمل خاص بالدائرة",
+  "editDepartmentWorkFlow": "تعديل مخطط سير عمل خاص بالدائرة"
 }

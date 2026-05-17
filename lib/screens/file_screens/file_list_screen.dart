@@ -53,6 +53,7 @@ import 'package:provider/provider.dart';
 import 'dart:html' as html;
 import '../../dialogs/template_work_flow/create_tracking_doc_dialog.dart';
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
+import '../../dialogs/template_work_flow/tracking_type_selection_dialog.dart';
 import '../../dialogs/template_work_flow/view_tracking_dialog.dart';
 import '../../models/db/categories_models/doc_cat_parent.dart';
 import '../../models/db/user_models/department_user_model.dart';
@@ -347,20 +348,44 @@ class _FileListScreenState extends State<FileListScreen> {
                               height: height * 0.043,
                               fontSize: 13,
                               onPressed: () async {
-                                if (documentModel != null) {
+                                if (documentModel == null) {
+                                  CustomToastMessage.warning(
+                                      context, _locale.pleaseSelectRow);
+                                  return;
+                                }
+
+                                // Step 1: show the type selection dialog
+                                final TrackingType? choice =
+                                    await showDialog<TrackingType>(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) =>
+                                      const TrackingTypeSelectionDialog(),
+                                );
+
+                                if (choice == null || !mounted)
+                                  return; // user cancelled
+
+                                // Step 2: branch based on selection
+                                if (choice == TrackingType.createTracking) {
                                   await showDialog(
                                     barrierDismissible: false,
                                     context: context,
-                                    builder: (context) {
-                                      return CreateTrackingDocDialog(
-                                        documentKey:
-                                            documentModel!.txtKey ?? "",
-                                      );
-                                    },
+                                    builder: (context) =>
+                                        CreateTrackingDocDialog(
+                                      documentKey: documentModel!.txtKey ?? "",
+                                    ),
                                   );
                                 } else {
-                                  CustomToastMessage.warning(
-                                      context, _locale.pleaseSelectRow);
+                                  // TrackingType.departmentWorkFlow — open your other screen/dialog here
+                                  // await showDialog(
+                                  //   barrierDismissible: false,
+                                  //   context: context,
+                                  //   builder: (context) =>
+                                  //       YourDepartmentWorkFlowDialog(
+                                  //     documentKey: documentModel!.txtKey ?? "",
+                                  //   ),
+                                  // );
                                 }
                               },
                             ),

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/template_model.dart';
 
 import '../../../models/db/count_model.dart';
+import '../../../models/db/work_flow/doc_tracking_template_model.dart';
 import '../../../models/db/work_flow/tracking_doc_model.dart';
 import '../../../models/db/work_flow/tracking_response_model.dart';
 import '../../../models/db/work_flow/user_step_request_body.dart';
@@ -140,7 +141,7 @@ class WorkFlowTemplateContoller {
       print("Error: ${response.statusCode}, ${response.reasonPhrase}");
     }
 
-    return templateList; 
+    return templateList;
   }
 
   Future createTrackingDoc(TrackingDocModel trackingDocModel) async {
@@ -205,7 +206,8 @@ class WorkFlowTemplateContoller {
     }
   }
 
-  Future postDocumentTrackingReceive({required String stepKey, String? locationCode}) async {
+  Future postDocumentTrackingReceive(
+      {required String stepKey, String? locationCode}) async {
     return ApiService().postRequest(trackingReceiveApi, {
       'stepKey': stepKey,
       'lockupLocationCode': locationCode,
@@ -237,5 +239,48 @@ class WorkFlowTemplateContoller {
     }
 
     return trackingList;
+  }
+
+  Future<List<DocTrackingTemplateModel>> getDocTrackingTemplates() async {
+    const api = getDocTrackingTemplatesAll;
+    List<DocTrackingTemplateModel> templateList = [];
+
+    var response = await ApiService().getRequest(api);
+
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+      for (var item in jsonData) {
+        templateList.add(DocTrackingTemplateModel.fromJson(item));
+      }
+    } else {
+      print("Error: ${response.statusCode}, ${response.reasonPhrase}");
+    }
+
+    return templateList;
+  }
+
+  Future insertDocTrackingTemplateReq(DocTrackingTemplateModel model) async {
+    return await ApiService()
+        .postRequest(insertDocTrackingTemplate, model.toInsertJson());
+  }
+
+  Future updateDocTrackingTemplateReq(DocTrackingTemplateModel model) async {
+    return await ApiService().putRequest(
+        updateDocTrackingTemplate(model.key!), model.toUpdateJson());
+  } // work_flow_template_controller.dart
+
+  Future deleteDocTrackingTemplateReq(String key) async {
+    return await ApiService().deleteRequest(deleteDocTrackingTemplate(key), {});
+  }
+
+  Future<DocTrackingTemplateModel?> getDocTrackingTemplateByKey(
+      String key) async {
+    final response =
+        await ApiService().getRequest(docTrackingTemplateByKeyApi(key));
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+      return DocTrackingTemplateModel.fromJson(jsonData);
+    }
+    return null;
   }
 }

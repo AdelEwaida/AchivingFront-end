@@ -351,5 +351,7 @@
   "createdBy": "Created by",
   "byDate": "Creation date",
   "reiveAndSycleDone": "Receive and sycle done",
-  "departmentWorkFlow": "Department workflow"
+  "departmentWorkFlow": "Department workflow",
+  "addDepartmentWorkFlow": "Add department workflow",
+  "editDepartmentWorkFlow": "Edit department workflow"
 }

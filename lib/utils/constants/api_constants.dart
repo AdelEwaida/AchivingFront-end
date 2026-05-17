@@ -112,3 +112,12 @@ const String lockupLocationGetAll = "lockupLocation/getAll";
 const String lockupLocationInsert = "lockupLocation/insert";
 const String lockupLocationUpdate = "lockupLocation/update"; // append /{key}
 const String lockupLocationDelete = "lockupLocation/delete"; // append /{key}
+const String getDocTrackingTemplatesAll = 'doc-tracking-template/getAll';
+const String insertDocTrackingTemplate = 'doc-tracking-template/insert';
+String updateDocTrackingTemplate(String key) =>
+    'doc-tracking-template/update/$key';
+// api_constants.dart
+String deleteDocTrackingTemplate(String key) =>
+    'doc-tracking-template/delete/$key';
+String docTrackingTemplateByKeyApi(String key) =>
+    'doc-tracking-template/getByKey/$key';
