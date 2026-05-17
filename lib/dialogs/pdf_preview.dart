@@ -118,72 +118,8 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                   : SizedBox.shrink(),
             ],
           ),
-
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: Container(
-          //     decoration: const BoxDecoration(
-          //         shape: BoxShape.rectangle,
-          //         color: Color.fromARGB(255, 237, 34, 20)),
-          //     child: IconButton(
-          //         onPressed: () {
-          //           Navigator.pop(context);
-          //         },
-          //         icon: const Icon(
-          //           Icons.close_rounded,
-          //           color: Colors.white,
-          //           size: 14,
-          //         )),
-          //   ),
-          // ),
         ],
       ),
-      // title: Row(
-      //   mainAxisAlignment: MainAxisAlignment.center,
-      //   children: [
-      //     // Text("", style: TextStyle(fontSize: height * 0.03)),
-      //     IconButton(
-      //         icon: Icon(
-      //           Icons.file_download,
-      //           size: height * 0.035,
-      //         ),
-      //         onPressed: () {
-      //           saveExcelFile(widget.pdfFile, widget.fileName);
-      //         }
-      //         //  _downloadPdf().then((value) {
-      //         //   if (value) {
-      //         //     CoolAlert.show(
-      //         //         barrierDismissible: false,
-      //         //         cancelBtnText: _local.cancel,
-      //         //         confirmBtnText: _local.ok,
-      //         //         width: width * 0.3,
-      //         //         context: context,
-      //         //         type: CoolAlertType.success,
-      //         //         title: "",
-      //         //         widget: Column(
-      //         //           children: [
-      //         //             Text(
-      //         //               textAlign: TextAlign.center,
-      //         //               "${_local.success}\nDocuments: Scope-pos arabic manual.pdf",
-      //         //               style: const TextStyle(fontSize: 30),
-      //         //             ),
-      //         //             const SizedBox(
-      //         //               height: 25,
-      //         //             )
-      //         //           ],
-      //         //         ),
-      //         //         confirmBtnTextStyle:
-      //         //             const TextStyle(fontSize: 30, color: Colors.white),
-      //         //         cancelBtnTextStyle: const TextStyle(fontSize: 30),
-      //         //         onConfirmBtnTap: () {
-      //         //           Navigator.pop(context);
-      //         //           Navigator.pop(context);
-      //         //         });
-      //         //   }
-      //         // }),
-      //         ),
-      //   ],
-      // ),
       content: Column(
         children: [
           widget.fileName.contains('.pdf')
@@ -207,7 +143,7 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                   ),
                 )
               : SizedBox(
-                  height: height * 0.7,
+                  height: height * 0.5,
                   width: width * 0.4, //,
                   child: Transform.scale(
                     scale: _scale,
@@ -263,27 +199,5 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
         ],
       ),
     );
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: Text('Syncfusion Flutter PDF Viewer'),
-    //     actions: <Widget>[
-    //       IconButton(
-    //         icon: const Icon(
-    //           Icons.arrow_drop_down_circle,
-    //           color: Colors.white,
-    //         ),
-    //         onPressed: () {
-    //           _pdfViewerController.jumpToPage(3);
-    //           print(_pdfViewerController.scrollOffset.dy);
-    //           print(_pdfViewerController.scrollOffset.dx);
-    //         },
-    //       ),
-    //     ],
-    //   ),
-    //   body: SfPdfViewer.memory(
-    //     widget.pdfFile,
-    //     controller: _pdfViewerController,
-    //   ),
-    // );
   }
 }
