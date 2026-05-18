@@ -286,7 +286,7 @@
   "deptTrackingDocumentRef": "Document ref.",
   "deptTrackingTrackingRef": "Tracking ref.",
   "deptTrackingCurrentStepNo": "Current step",
-  "deptTrackingRouteOverview": "Route description",
+  "deptTrackingRouteOverview": "Route name",
   "deptTrackingRouteCreator": "Route creator",
   "deptTrackingStepDetailsTitle": "Route steps",
   "deptTrackingReceive": "Receive",

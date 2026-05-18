@@ -8,6 +8,7 @@ class TrackingInfoModel {
   String? datCompletedAt;
   String? txtNotes;
   int? isDeleted;
+  String? name;
 
   TrackingInfoModel({
     this.txtKey,
@@ -19,6 +20,7 @@ class TrackingInfoModel {
     this.datCompletedAt,
     this.txtNotes,
     this.isDeleted,
+    this.name,
   });
 
   static int? _asInt(dynamic v) {
@@ -31,8 +33,8 @@ class TrackingInfoModel {
   factory TrackingInfoModel.fromJson(Map<String, dynamic> json) {
     return TrackingInfoModel(
       txtKey: json['txtKey']?.toString(),
-      txtDocumentcode:
-          json['txtDocumentcode']?.toString() ?? json['documentKey']?.toString(),
+      txtDocumentcode: json['txtDocumentcode']?.toString() ??
+          json['documentKey']?.toString(),
       intStatus: _asInt(json['intStatus']),
       intCurrentStep: _asInt(json['intCurrentStep']),
       txtCreatedBy: json['txtCreatedBy']?.toString(),
@@ -40,6 +42,7 @@ class TrackingInfoModel {
       datCompletedAt: json['datCompletedAt']?.toString(),
       txtNotes: json['txtNotes']?.toString() ?? json['notes']?.toString(),
       isDeleted: _asInt(json['isDeleted']),
+      name: json['name']?.toString(),
     );
   }
 
@@ -54,6 +57,7 @@ class TrackingInfoModel {
       'datCompletedAt': datCompletedAt,
       'txtNotes': txtNotes,
       'isDeleted': isDeleted,
+      'name': name,
     };
   }
 }

@@ -153,7 +153,7 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    item.tracking?.txtNotes ?? "",
+                    item.tracking?.name ?? "",
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -302,8 +302,7 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                       Text(
                         "${_locale.txtIn}: ${step.txtLocationCode ?? ''}(${step.txtLocationName ?? ''})",
                         style: const TextStyle(
-                            fontSize: 12.5,
-                             color: Color(0xFF0D9B8A)),
+                            fontSize: 12.5, color: Color(0xFF0D9B8A)),
                       ),
                       if (step.datReceivedAt != null) ...[
                         const SizedBox(width: 8),
@@ -403,7 +402,8 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
       case 3:
         return _StepStatusInfo(Colors.green, _locale.stepStatusSent);
       case 4:
-        return _StepStatusInfo(Color.fromARGB(255, 227, 146, 59), _locale.reiveAndSycleDone);
+        return _StepStatusInfo(
+            Color.fromARGB(255, 227, 146, 59), _locale.reiveAndSycleDone);
       default:
         return _StepStatusInfo(Colors.grey, "");
     }

@@ -29,13 +29,12 @@ class TrackingResponseModel {
   factory TrackingResponseModel.fromJson(Map<String, dynamic> json) {
     return TrackingResponseModel(
       tracking: json['tracking'] != null
-          ? TrackingInfoModel.fromJson(
-              json['tracking'] as Map<String, dynamic>)
+          ? TrackingInfoModel.fromJson(json['tracking'] as Map<String, dynamic>)
           : null,
       steps: json['steps'] != null
           ? (json['steps'] as List)
-              .map((s) => TrackingStepInfoModel.fromJson(
-                  s as Map<String, dynamic>))
+              .map((s) =>
+                  TrackingStepInfoModel.fromJson(s as Map<String, dynamic>))
               .toList()
           : null,
     );
@@ -50,17 +49,16 @@ class TrackingResponseModel {
 
   static List<TrackingResponseModel> fromJsonList(List<dynamic> jsonList) {
     return jsonList
-        .map((item) => TrackingResponseModel.fromJson(
-            item as Map<String, dynamic>))
+        .map((item) =>
+            TrackingResponseModel.fromJson(item as Map<String, dynamic>))
         .toList();
   }
 
-  String trackingRouteNotesText() => (tracking?.txtNotes ?? '').trim();
+  String trackingRouteNotesText() => (tracking?.name ?? '').trim();
 
   String routeOverviewText() {
     final list = List<TrackingStepInfoModel>.from(steps ?? [])
-      ..sort((a, b) =>
-          (a.intStepOrder ?? 0).compareTo(b.intStepOrder ?? 0));
+      ..sort((a, b) => (a.intStepOrder ?? 0).compareTo(b.intStepOrder ?? 0));
     return list
         .map((s) => (s.txtStepDescription ?? '').trim())
         .where((s) => s.isNotEmpty)
@@ -75,8 +73,7 @@ class TrackingResponseModel {
 
   static bool _nonEmptyDt(String? s) => s != null && s.trim().isNotEmpty;
 
-  TrackingStepInfoModel? activeStepDisplayed() =>
-      trackingStepForAction(this);
+  TrackingStepInfoModel? activeStepDisplayed() => trackingStepForAction(this);
 
   String routeTrackingKeyForGrid() {
     final s = activeStepDisplayed();
