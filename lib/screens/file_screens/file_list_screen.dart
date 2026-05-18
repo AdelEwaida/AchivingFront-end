@@ -59,6 +59,7 @@ import '../../dialogs/template_work_flow/view_tracking_dialog.dart';
 import '../../models/db/categories_models/doc_cat_parent.dart';
 import '../../models/db/user_models/department_user_model.dart';
 import '../../models/db/user_models/user_model.dart';
+import '../../models/db/work_flow/tracking_response_model.dart';
 import '../../models/db/work_flow/work_flow_doc_model.dart';
 import '../../models/db/work_flow/work_flow_document_info.dart';
 import '../../service/controller/users_controller/user_controller.dart';
@@ -364,6 +365,39 @@ class _FileListScreenState extends State<FileListScreen> {
                                 );
 
                                 if (choice == null || !mounted) return;
+
+// ── CHECK for BOTH options ──────────────────────────────────────
+                                final List<TrackingResponseModel>
+                                    existingTrackings =
+                                    await WorkFlowTemplateContoller()
+                                        .getTrackingByDocument(
+                                            documentModel!.txtKey ?? "");
+
+                                if (existingTrackings.isNotEmpty) {
+                                  final bool canCreate =
+                                      existingTrackings.any((t) {
+                                    final steps = t.steps ?? [];
+                                    if (steps.isEmpty) return false;
+                                    return steps.every((s) => s.intStatus == 4);
+                                  });
+
+                                  if (!canCreate) {
+                                    if (!mounted) return;
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => ErrorDialog(
+                                        icon: Icons.block_rounded,
+                                        errorDetails:
+                                            'لا يمكن انشاء مسار جديد الا عند الانتهاء من جميع خطواط المسار المفتوح',
+                                        errorTitle: _locale.error,
+                                        color: Colors.red,
+                                        statusCode: 400,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                }
+// ───────────────────────────────────────────────────────────────
 
                                 if (choice == TrackingType.createTracking) {
                                   await showDialog(

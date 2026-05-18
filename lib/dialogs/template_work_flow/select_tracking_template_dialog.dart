@@ -7,6 +7,7 @@ import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.da
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../models/db/work_flow/tracking_response_model.dart';
 import '../../widget/custom_drop_down.dart';
 import '../app_dialog.dart';
 
@@ -123,6 +124,60 @@ class _SelectTrackingTemplateDialogState
   }
 
   Future<void> _save() async {
+    if (selectedTemplate == null) {
+      CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
+      return;
+    }
+
+    setState(() => isSaving = true);
+
+    // ── Re-validate: fetch latest tracking state ──────────────────────
+    final List<TrackingResponseModel> existingTrackings =
+        await _controller.getTrackingByDocument(widget.documentKey);
+
+    if (existingTrackings.isNotEmpty) {
+      final bool canCreate = existingTrackings.any((t) {
+        final steps = t.steps ?? [];
+        if (steps.isEmpty) return false;
+        return steps.every((s) => s.intStatus == 4);
+      });
+
+      if (!canCreate) {
+        if (!mounted) return;
+        setState(() => isSaving = false);
+        CustomToastMessage.error(
+          context,
+          _locale.cannotCreateNewTrackingUntilAllStepsComplete,
+        );
+        return;
+      }
+    }
+    // ─────────────────────────────────────────────────────────────────
+
+    final model = TrackingDocModel(
+      documentKey: widget.documentKey,
+      templateKey: selectedTemplate!.key,
+      name: selectedTemplate!.name,
+      notes: null,
+      steps: null,
+    );
+
+    final res = await _controller.createTrackingDoc(model);
+
+    if (!mounted) return;
+    setState(() => isSaving = false);
+
+    if (res.statusCode == 200) {
+      CustomToastMessage.success(context, _locale.addDoneSucess)
+          .then((_) => Navigator.pop(context, true));
+    } else if (res.statusCode == 406) {
+      CustomToastMessage.error(context, _locale.createTrackingDocDeptMismatch);
+    } else {
+      CustomToastMessage.error(context, _locale.error);
+    }
+  }
+
+  Future<void> _save1() async {
     if (selectedTemplate == null) {
       CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
       return;
