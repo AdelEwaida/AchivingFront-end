@@ -357,5 +357,6 @@
   "fileTrackingWorkflow": "File tracking workflow",
   "workflowName": "Workflow Name",
   "cannotCreateNewTrackingUntilAllStepsComplete":"Cannot create a new tracking route for this document until the current route is completed.",
-  "create":"Create"
+  "create":"Create",
+  "pleaseFillStepOrDelete": "Please fill step number {stepNumber} or delete it"
 }

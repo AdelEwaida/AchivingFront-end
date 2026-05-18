@@ -63,8 +63,7 @@ class _AddEditDocTrackingTemplateDialogState
 
     if (widget.isEdit && widget.model != null) {
       nameController.text = widget.model!.name ?? '';
-      noteController.text =
-          widget.model!.name ?? widget.model!.note ?? '';
+      noteController.text = widget.model!.name ?? widget.model!.note ?? '';
       steps = (widget.model!.steps ?? [])
           .map((s) => DocTrackingTemplateStepModel(
                 stepOrder: s.stepOrder,
@@ -156,7 +155,9 @@ class _AddEditDocTrackingTemplateDialogState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.isEdit ? _locale.editDepartmentWorkFlow : _locale.addDepartmentWorkFlow,
+          widget.isEdit
+              ? _locale.editDepartmentWorkFlow
+              : _locale.addDepartmentWorkFlow,
           style: const TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 13,
@@ -372,8 +373,10 @@ class _AddEditDocTrackingTemplateDialogState
       if (s.description == null ||
           s.description!.trim().isEmpty ||
           s.deptKey == null) {
-        CustomToastMessage.error(
-            context, 'Please fill step number ${s.stepOrder} or delete it');
+       CustomToastMessage.error(
+          context,
+          _locale.pleaseFillStepOrDelete(s.stepOrder!),
+        );
         return;
       }
     }

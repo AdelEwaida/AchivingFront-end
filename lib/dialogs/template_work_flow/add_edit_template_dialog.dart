@@ -550,8 +550,11 @@ class _DepartmentDialogState extends State<AddEditTemplateDialog> {
       StepsModel step = steps[i];
       if (step.txtStepdesc!.trim().isEmpty || step.txtUsercode == null) {
         // Show a dialog with the step number
-        CustomToastMessage.error(
-            context, "Please fill step number ${step.intStepno} or delete it");
+    
+             CustomToastMessage.error(
+          context,
+          _locale.pleaseFillStepOrDelete(step.intStepno!),
+        );
 
         // showDialog(
         //   context: context,

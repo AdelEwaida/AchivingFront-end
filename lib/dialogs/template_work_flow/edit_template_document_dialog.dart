@@ -575,8 +575,8 @@ class _DepartmentDialogState extends State<EditTemplateDocumentDialog> {
             return ErrorDialog(
               icon: Icons.error,
               errorDetails: _locale.error,
-              errorTitle:
-                  "Please fill step number ${step.intStepno} or delete it",
+              errorTitle: _locale.pleaseFillStepOrDelete(step
+                  .intStepno!), // "Please fill step number ${step.intStepno} or delete it"
               color: Colors.red,
               statusCode: 400,
             );

@@ -185,7 +185,7 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
                 CustomTextField2(
                   readOnly: false,
                   isReport: true,
-                  isMandetory: true,
+                  isMandetory: false,
                   width: double.infinity,
                   height: height * 0.058,
                   text: Text(_locale.notes),
@@ -368,7 +368,7 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
   }
 
   void save() async {
-    if (notesController.text.trim().isEmpty) {
+    if (nameController.text.trim().isEmpty) {
       CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
       return;
     }
@@ -378,8 +378,11 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
       if (step.description == null ||
           step.description!.trim().isEmpty ||
           step.deptKey == null) {
-        CustomToastMessage.error(
-            context, "Please fill step number ${step.stepOrder} or delete it");
+      
+             CustomToastMessage.error(
+          context,
+          _locale.pleaseFillStepOrDelete(step.stepOrder!),
+        );
         return;
       }
     }
