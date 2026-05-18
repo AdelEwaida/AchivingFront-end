@@ -356,5 +356,6 @@
   "editDepartmentWorkFlow": "Edit department workflow",
   "fileTrackingWorkflow": "File tracking workflow",
   "workflowName": "Workflow Name",
-  "cannotCreateNewTrackingUntilAllStepsComplete":"Cannot create a new tracking route for this document until the current route is completed."
+  "cannotCreateNewTrackingUntilAllStepsComplete":"Cannot create a new tracking route for this document until the current route is completed.",
+  "create":"Create"
 }

@@ -344,5 +344,6 @@
   "editDepartmentWorkFlow": "تعديل مخطط سير عمل خاص بالدائرة",
   "fileTrackingWorkflow": "مخطط تتبع الملفات",
   "workflowName": "اسم المسار",
-  "cannotCreateNewTrackingUntilAllStepsComplete": "لا يمكن انشاء مسار جديد الا عند الانتهاء من جميع خطواط المسار المفتوح"
+  "cannotCreateNewTrackingUntilAllStepsComplete": "لا يمكن انشاء مسار جديد الا عند الانتهاء من جميع خطواط المسار المفتوح",
+  "create": "إنشاء"
 }

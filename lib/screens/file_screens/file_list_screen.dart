@@ -374,11 +374,12 @@ class _FileListScreenState extends State<FileListScreen> {
                                             documentModel!.txtKey ?? "");
 
                                 if (existingTrackings.isNotEmpty) {
-                                  final bool canCreate =
+                                final bool canCreate =
                                       existingTrackings.any((t) {
                                     final steps = t.steps ?? [];
-                                    if (steps.isEmpty) return false;
-                                    return steps.every((s) => s.intStatus == 4);
+
+                                    return steps
+                                        .any((step) => step.intStatus == 4);
                                   });
 
                                   if (!canCreate) {
@@ -388,7 +389,7 @@ class _FileListScreenState extends State<FileListScreen> {
                                       builder: (_) => ErrorDialog(
                                         icon: Icons.block_rounded,
                                         errorDetails:
-                                            'لا يمكن انشاء مسار جديد الا عند الانتهاء من جميع خطواط المسار المفتوح',
+                                           "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
                                         errorTitle: _locale.error,
                                         color: Colors.red,
                                         statusCode: 400,

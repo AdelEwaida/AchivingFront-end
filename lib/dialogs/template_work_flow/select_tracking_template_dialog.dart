@@ -138,10 +138,9 @@ class _SelectTrackingTemplateDialogState
     if (existingTrackings.isNotEmpty) {
       final bool canCreate = existingTrackings.any((t) {
         final steps = t.steps ?? [];
-        if (steps.isEmpty) return false;
-        return steps.every((s) => s.intStatus == 4);
-      });
 
+        return steps.any((step) => step.intStatus == 4);
+      });
       if (!canCreate) {
         if (!mounted) return;
         setState(() => isSaving = false);

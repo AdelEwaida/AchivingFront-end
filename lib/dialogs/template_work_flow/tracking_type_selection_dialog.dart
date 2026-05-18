@@ -61,7 +61,7 @@ class _TrackingTypeSelectionDialogState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CustomElevatedButton(
-              text: locale.save, // "Continue" or your locale key
+              text: locale.create, // "Continue" or your locale key
               color: primary,
               icon: Icons.arrow_forward_rounded,
               width: isDesktop ? width * 0.11 : width * 0.36,
