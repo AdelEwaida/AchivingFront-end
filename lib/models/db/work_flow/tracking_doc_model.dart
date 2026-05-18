@@ -6,12 +6,14 @@ class TrackingDocModel {
   String? notes;
   String? templateKey;
   List<TrackingStepModel>? steps;
+  String? name;
 
   TrackingDocModel({
     this.documentKey,
     this.notes,
     this.steps,
     this.templateKey,
+    this.name,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class TrackingDocModel {
       'notes': notes,
       'templateKey': templateKey,
       'steps': steps?.map((step) => step.toJson()).toList(),
+      'name': name,
     };
   }
 
@@ -38,6 +41,7 @@ class TrackingDocModel {
               .map((step) => TrackingStepModel.fromJson(step))
               .toList()
           : null,
+      name: json['name']?.toString() == "null" ? "" : json['name'].toString(),
     );
   }
 
@@ -48,6 +52,7 @@ class TrackingDocModel {
         'notes': PlutoCell(value: notes ?? ""),
         'steps': PlutoCell(value: steps),
         'templateKey': PlutoCell(value: templateKey ?? ""),
+        'name': PlutoCell(value: name ?? ""),
       },
     );
   }
@@ -59,5 +64,6 @@ class TrackingDocModel {
     steps = (plutoRow.cells['steps']?.value as List<dynamic>?)
         ?.map((step) => step as TrackingStepModel)
         .toList();
+    name = plutoRow.cells['name']?.value as String?;
   }
 }

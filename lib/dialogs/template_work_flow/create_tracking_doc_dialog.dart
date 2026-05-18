@@ -32,6 +32,8 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
   bool isLoading = true;
 
   TextEditingController notesController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+
   WorkFlowTemplateContoller workFlowTemplateContoller =
       WorkFlowTemplateContoller();
 
@@ -176,6 +178,18 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
                   height: height * 0.058,
                   text: Text(_locale.notes),
                   controller: notesController,
+                  onSubmitted: (_) {},
+                  onChanged: (_) {},
+                ),
+                SizedBox(height: height * 0.01),
+                CustomTextField2(
+                  readOnly: false,
+                  isReport: true,
+                  isMandetory: true,
+                  width: double.infinity,
+                  height: height * 0.058,
+                  text: Text(_locale.workflowName),
+                  controller: nameController,
                   onSubmitted: (_) {},
                   onChanged: (_) {},
                 ),
@@ -374,6 +388,7 @@ class _CreateTrackingDocDialogState extends State<CreateTrackingDocDialog> {
       documentKey: widget.documentKey,
       notes: notesController.text,
       steps: steps,
+      name: nameController.text,
     );
 
     await workFlowTemplateContoller.createTrackingDoc(model).then((value) {

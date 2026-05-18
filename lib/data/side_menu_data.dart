@@ -92,7 +92,7 @@ List<MenuModel> getMenus(
                     SubMenuModel(title: locale.workFlow, pageNumber: 9),
                     SubMenuModel(title: locale.fileLocations, pageNumber: 22),
                     SubMenuModel(
-                        title: locale.departmentWorkFlow, pageNumber: 23),
+                        title: locale.fileTrackingWorkflow, pageNumber: 23),
                     // SubMenuModel(
                     //     title: locale.workFlowSettings, pageNumber: 16),
                   ],

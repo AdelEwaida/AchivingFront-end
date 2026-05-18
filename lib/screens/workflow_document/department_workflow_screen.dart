@@ -207,7 +207,7 @@ class _DepartmentWorkFlowScreenState extends State<DepartmentWorkFlowScreen> {
             appBarTitleWidget: Padding(
               padding: const EdgeInsets.only(right: 8),
               child: AppBarTitle(
-                title: _locale.departmentWorkFlow,
+                title: _locale.fileTrackingWorkflow,
                 icon: Icons.account_tree_outlined,
               ),
             ),

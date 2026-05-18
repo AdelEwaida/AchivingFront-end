@@ -266,7 +266,7 @@
       }
     }
   },
-  "createTrackingDoc": "إنشاء مسار عبر الدوائر",
+  "createTrackingDoc": "إنشاء مسار لمرة واحدة",
   "createTrackingDocDeptMismatch": "لا يمكن إنشاء مسار لأن دائرة الملف ليست من دائرتك",
   "viewTracking": "عرض المسار",
   "deptApprovals": "موافقاتي عبر الدوائر",
@@ -339,7 +339,9 @@
   "createdBy": "أنشأ بواسطة",
   "byDate": "بتاريخ",
   "reiveAndSycleDone":"تم الاستلام وانتهاء المسار",
-  "departmentWorkFlow": "مخطط سير العمل الخاص بالدائرة",
+  "departmentWorkFlow": "إنشاء مسار تلقائي من مخطط جاهز",
   "addDepartmentWorkFlow": "إضافة مخطط سير عمل خاص بالدائرة",
-  "editDepartmentWorkFlow": "تعديل مخطط سير عمل خاص بالدائرة"
+  "editDepartmentWorkFlow": "تعديل مخطط سير عمل خاص بالدائرة",
+  "fileTrackingWorkflow": "مخطط تتبع الملفات",
+  "workflowName": "اسم المسار"
 }

@@ -133,6 +133,7 @@ class _SelectTrackingTemplateDialogState
     final model = TrackingDocModel(
       documentKey: widget.documentKey,
       templateKey: selectedTemplate!.key,
+      name: selectedTemplate!.name,
       notes: null,
       steps: null,
     );

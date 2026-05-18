@@ -353,5 +353,7 @@
   "reiveAndSycleDone": "Receive and sycle done",
   "departmentWorkFlow": "Department workflow",
   "addDepartmentWorkFlow": "Add department workflow",
-  "editDepartmentWorkFlow": "Edit department workflow"
+  "editDepartmentWorkFlow": "Edit department workflow",
+  "fileTrackingWorkflow": "File tracking workflow",
+  "workflowName": "Workflow Name"
 }
