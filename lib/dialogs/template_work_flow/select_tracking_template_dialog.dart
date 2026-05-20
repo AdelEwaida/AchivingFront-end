@@ -96,17 +96,16 @@ class _SelectTrackingTemplateDialogState
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            isSaving
-                ? const CircularProgressIndicator()
-                : CustomElevatedButton(
-                    text: _locale.save,
-                    color: primary,
-                    icon: Icons.save,
-                    width: isDesktop ? width * 0.11 : width * 0.36,
-                    height: height * 0.048,
-                    fontSize: 15,
-                    onPressed: _save,
-                  ),
+            CustomElevatedButton(
+              text: _locale.save,
+              color: primary,
+              icon: Icons.save,
+              width: isDesktop ? width * 0.11 : width * 0.36,
+              height: height * 0.048,
+              fontSize: 15,
+              isLoading: isSaving,
+              onPressed: isSaving ? () {} : _save,
+            ),
             SizedBox(width: isDesktop ? 8 : 10),
             CustomElevatedButton(
               text: _locale.cancel,
