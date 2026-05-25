@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../providers/file_list_provider.dart';
+import '../voice_assistant/voice_assistant_fab.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -42,6 +43,9 @@ class _HomePageState extends State<HomePage> {
 
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+    final hideVoiceFab =
+        context.read<DocumentListProvider>().isViewFile == true;
+
     return Scaffold(
         drawer: ValueListenableBuilder(
           valueListenable: name,
@@ -51,45 +55,55 @@ class _HomePageState extends State<HomePage> {
             );
           },
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        body: Stack(
           children: [
-            Container(
-              decoration: const BoxDecoration(),
-              width: width,
-              height: height,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  context.read<DocumentListProvider>().isViewFile == true
-                      ? Container()
-                      : isDesktop
-                          ? ValueListenableBuilder(
-                              valueListenable: name,
-                              builder: (context, value, child) {
-                                return SideMenu(
-                                  name: name.value,
-                                );
-                              },
-                            )
-                          : Container(
-                              color: Colors.white,
-                            ),
-                  Expanded(
-                    child: Container(
-                      color: Colors.white,
-                      child: Consumer<ScreenContentProvider>(
-                          builder: (builder, value, child) {
-                        Widget tabView =
-                            getScreenContent(screenContentProvider.getPage());
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(),
+                  width: width,
+                  height: height,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      context.read<DocumentListProvider>().isViewFile == true
+                          ? Container()
+                          : isDesktop
+                              ? ValueListenableBuilder(
+                                  valueListenable: name,
+                                  builder: (context, value, child) {
+                                    return SideMenu(
+                                      name: name.value,
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  color: Colors.white,
+                                ),
+                      Expanded(
+                        child: Container(
+                          color: Colors.white,
+                          child: Consumer<ScreenContentProvider>(
+                              builder: (builder, value, child) {
+                            Widget tabView = getScreenContent(
+                                screenContentProvider.getPage());
 
-                        return tabView;
-                      }),
-                    ),
+                            return tabView;
+                          }),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+            if (!hideVoiceFab)
+              const Positioned(
+                right: 20,
+                bottom: 20,
+                child: VoiceAssistantFab(),
+              ),
           ],
         ));
   }

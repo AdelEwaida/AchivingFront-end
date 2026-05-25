@@ -64,6 +64,7 @@ import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../../utils/func/lists.dart';
 import '../../widget/custom_drop_down_new.dart';
+import '../../voice_assistant/assistant_search_field.dart';
 
 class FileListScreen extends StatefulWidget {
   const FileListScreen({super.key});
@@ -167,9 +168,87 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   bool _isInitialized = false;
+  bool _gridReady = false;
+  int _lastAssistantSearchTick = 0;
+  DocumentListProvider? _listenedDocumentProvider;
+
+  void _applySearchFieldValue(AssistantSearchField field, String value) {
+    switch (field) {
+      case AssistantSearchField.description:
+        descreptionController.text = value;
+        break;
+      case AssistantSearchField.issueNo:
+        issueNoController.text = value;
+        break;
+      case AssistantSearchField.keyword:
+        keyWordController.text = value;
+        break;
+      case AssistantSearchField.ref1:
+        ref1Controller.text = value;
+        break;
+      case AssistantSearchField.ref2:
+        ref2Controller.text = value;
+        break;
+      case AssistantSearchField.userCode:
+        userCodeController.text = value;
+        break;
+    }
+  }
+
+  Future<void> _applyPendingAssistantSearch() async {
+    final provider = context.read<DocumentListProvider>();
+    documentListProvider = provider;
+    calssificatonNameAndCodeProvider =
+        context.read<CalssificatonNameAndCodeProvider>();
+
+    final pending = provider.pendingAssistantSearch;
+    if (pending == null || pending.value.isEmpty) return;
+
+    if (!_gridReady || !mounted) return;
+
+    _applySearchFieldValue(pending.field, pending.value);
+
+    if (!mounted) return;
+    try {
+      await search();
+      getCount();
+      if (mounted) setState(() {});
+    } finally {
+      provider.clearAssistantSearchGate();
+      provider.consumePendingAssistantSearch();
+    }
+  }
+
+  void _onDocumentListProviderUpdate() {
+    if (!mounted) return;
+    if (documentListProvider.pendingAssistantSearch == null) return;
+    _scheduleAssistantSearchIfNeeded();
+  }
+
+  void _attachDocumentListProviderListener() {
+    final provider = context.read<DocumentListProvider>();
+    documentListProvider = provider;
+    if (_listenedDocumentProvider == provider) return;
+    _listenedDocumentProvider?.removeListener(_onDocumentListProviderUpdate);
+    _listenedDocumentProvider = provider;
+    provider.addListener(_onDocumentListProviderUpdate);
+  }
+
+  void _scheduleAssistantSearchIfNeeded() {
+    if (!mounted) return;
+    final provider = context.read<DocumentListProvider>();
+    final tick = provider.assistantSearchTick;
+    if (tick == _lastAssistantSearchTick) return;
+    _lastAssistantSearchTick = tick;
+    documentListProvider = provider;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _applyPendingAssistantSearch();
+    });
+  }
 
   @override
   void dispose() {
+    _listenedDocumentProvider?.removeListener(_onDocumentListProviderUpdate);
     calssificatonNameAndCodeProvider.clearProvider();
     documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
     documentListProvider.searchDocumentCriteria.page = 1;
@@ -182,6 +261,7 @@ class _FileListScreenState extends State<FileListScreen> {
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
+    _attachDocumentListProviderListener();
     // Execute only if it hasn't run before
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
@@ -257,6 +337,7 @@ class _FileListScreenState extends State<FileListScreen> {
     print("documentListProvider.page :${documentListProvider.page}");
 
     limitAction = result.first!.bolLimitActions;
+    _scheduleAssistantSearchIfNeeded();
     super.didChangeDependencies();
   }
 
@@ -656,11 +737,13 @@ class _FileListScreenState extends State<FileListScreen> {
           exportToExcel: exportExcel,
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
+            _gridReady = true;
             if (isLoading.value) {
               stateManager.setShowLoading(true);
             }
             stateManager.setShowColumnFilter(true);
             getCount();
+            _scheduleAssistantSearchIfNeeded();
           },
           doubleTab: (event) async {
             PlutoRow? tappedRow = event.row;
@@ -1790,7 +1873,13 @@ class _FileListScreenState extends State<FileListScreen> {
           rows: resultRows,
         );
       } else {
-        print("tkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+        if (documentListProvider.blockUnfilteredLazyFetch) {
+          stateManager.setShowLoading(false);
+          return PlutoInfinityScrollRowsResponse(
+            isLast: true,
+            rows: [],
+          );
+        }
         documentListProvider.searchDocumentCriteria.page =
             documentListProvider.page ?? -1;
         documentListProvider.searchDocumentCriteria.fromIssueDate =
