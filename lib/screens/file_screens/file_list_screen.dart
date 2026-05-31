@@ -179,6 +179,62 @@ class _FileListScreenState extends State<FileListScreen> {
   int _lastAssistantSearchTick = 0;
   DocumentListProvider? _listenedDocumentProvider;
 
+  void _clearFiltersExcept(AssistantSearchField keep) {
+    if (keep != AssistantSearchField.description) {
+      descreptionController.clear();
+    }
+    if (keep != AssistantSearchField.issueNo) issueNoController.clear();
+    if (keep != AssistantSearchField.keyword) keyWordController.clear();
+    if (keep != AssistantSearchField.ref1) ref1Controller.clear();
+    if (keep != AssistantSearchField.ref2) ref2Controller.clear();
+    if (keep != AssistantSearchField.userCode) userCodeController.clear();
+    selectedDep = "";
+    selectedSortedType = -1;
+    calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
+    calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
+    classificationController.clear();
+  }
+
+  Future<void> _runAssistantSearchBody(AssistantFileSearchRequest pending) async {
+    final provider = context.read<DocumentListProvider>();
+    documentListProvider = provider;
+    calssificatonNameAndCodeProvider =
+        context.read<CalssificatonNameAndCodeProvider>();
+
+    if (!_gridReady) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _runAssistantSearchBody(pending);
+      });
+      return;
+    }
+
+    _clearFiltersExcept(pending.field);
+    _applySearchFieldValue(pending.field, pending.value);
+
+    if (!mounted) return;
+    try {
+      await search();
+      getCount();
+      if (mounted) setState(() {});
+    } finally {
+      provider.clearAssistantSearchGate(delay: true);
+    }
+  }
+
+  Future<void> _runAssistantSearch(AssistantFileSearchRequest pending) async {
+    if (pending.value.isEmpty || !mounted) return;
+
+    final provider = context.read<DocumentListProvider>();
+    final tick = provider.assistantSearchTick;
+    if (tick == _lastAssistantSearchTick) return;
+    _lastAssistantSearchTick = tick;
+
+    await _runAssistantSearchBody(pending);
+
+    if (!mounted) return;
+    provider.consumePendingAssistantSearch();
+  }
+
   void _applySearchFieldValue(AssistantSearchField field, String value) {
     switch (field) {
       case AssistantSearchField.description:
@@ -204,35 +260,16 @@ class _FileListScreenState extends State<FileListScreen> {
 
   Future<void> _applyPendingAssistantSearch() async {
     final provider = context.read<DocumentListProvider>();
-    documentListProvider = provider;
-    calssificatonNameAndCodeProvider =
-        context.read<CalssificatonNameAndCodeProvider>();
-
     final pending = provider.pendingAssistantSearch;
     if (pending == null || pending.value.isEmpty) return;
-
-    final tick = provider.assistantSearchTick;
-    if (tick == _lastAssistantSearchTick) return;
-
-    if (!_gridReady || !mounted) return;
-
-    _applySearchFieldValue(pending.field, pending.value);
-
-    if (!mounted) return;
-    try {
-      await search();
-      getCount();
-      _lastAssistantSearchTick = tick;
-      provider.consumePendingAssistantSearch();
-      if (mounted) setState(() {});
-    } finally {
-      provider.clearAssistantSearchGate(delay: true);
-    }
+    await _runAssistantSearch(pending);
   }
 
   void _onDocumentListProviderUpdate() {
     if (!mounted) return;
-    if (documentListProvider.pendingAssistantSearch == null) return;
+    final provider = context.read<DocumentListProvider>();
+    documentListProvider = provider;
+    if (provider.pendingAssistantSearch == null) return;
     _scheduleAssistantSearchIfNeeded();
   }
 
@@ -259,6 +296,7 @@ class _FileListScreenState extends State<FileListScreen> {
   void dispose() {
     _gridReady = false;
     _listenedDocumentProvider?.removeListener(_onDocumentListProviderUpdate);
+    _listenedDocumentProvider?.registerAssistantSearchHandler(null);
     calssificatonNameAndCodeProvider.clearProvider();
     documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
     documentListProvider.searchDocumentCriteria.page = 1;
@@ -268,9 +306,22 @@ class _FileListScreenState extends State<FileListScreen> {
 
   bool isFetchExecuted = false; // Track fetch execution
   int? limitAction;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<DocumentListProvider>().registerAssistantSearchHandler(
+            _runAssistantSearch,
+          );
+    });
+  }
+
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
+    _attachDocumentListProviderListener();
     // Execute only if it hasn't run before
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;

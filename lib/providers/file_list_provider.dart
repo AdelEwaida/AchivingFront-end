@@ -79,6 +79,16 @@ class DocumentListProvider with ChangeNotifier {
   AssistantFileSearchRequest? get pendingAssistantSearch =>
       _pendingAssistantSearch;
 
+  /// يُسجَّل من [FileListScreen] عند التواجد على صفحة الملفات لتنفيذ البحث مباشرة.
+  Future<void> Function(AssistantFileSearchRequest request)?
+      _assistantSearchHandler;
+
+  void registerAssistantSearchHandler(
+    Future<void> Function(AssistantFileSearchRequest request)? handler,
+  ) {
+    _assistantSearchHandler = handler;
+  }
+
   void requestAssistantFileSearch({
     required AssistantSearchField field,
     required String value,
@@ -90,6 +100,13 @@ class DocumentListProvider with ChangeNotifier {
     _blockUnfilteredLazyFetch = true;
     _assistantSearchEpoch++;
     _assistantSearchTick++;
+
+    final handler = _assistantSearchHandler;
+    if (handler != null) {
+      final request = _pendingAssistantSearch!;
+      Future.microtask(() => handler(request));
+    }
+
     notifyListeners();
   }
 

@@ -31,6 +31,7 @@ class _ChatMessage {
 class _VoiceAssistantFabState extends State<VoiceAssistantFab> {
   final TextEditingController _textInput = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _inputFocus = FocusNode();
 
   bool _panelOpen = false;
   _ChatStep _step = _ChatStep.chooseField;
@@ -42,12 +43,21 @@ class _VoiceAssistantFabState extends State<VoiceAssistantFab> {
 
   @override
   void dispose() {
+    _inputFocus.dispose();
     _textInput.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
+  void _focusInputField() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_panelOpen || _step != _ChatStep.enterValue) return;
+      _inputFocus.requestFocus();
+    });
+  }
+
   void _resetConversation() {
+    _inputFocus.unfocus();
     setState(() {
       _step = _ChatStep.chooseField;
       _selectedField = null;
@@ -69,6 +79,7 @@ class _VoiceAssistantFabState extends State<VoiceAssistantFab> {
   }
 
   void _closePanel() {
+    _inputFocus.unfocus();
     setState(() => _panelOpen = false);
   }
 
@@ -108,6 +119,7 @@ class _VoiceAssistantFabState extends State<VoiceAssistantFab> {
     _addUser(info.label(_isArabic));
     _addBot(info.valuePrompt(_isArabic));
     _textInput.clear();
+    _focusInputField();
   }
 
   void _submitValue() {
@@ -139,6 +151,7 @@ class _VoiceAssistantFabState extends State<VoiceAssistantFab> {
       _selectedField = null;
       _messages.clear();
     });
+    _inputFocus.unfocus();
   }
 
   void _submitInput() {
@@ -177,6 +190,7 @@ class _VoiceAssistantFabState extends State<VoiceAssistantFab> {
               messages: _messages,
               scrollController: _scrollController,
               textInput: _textInput,
+              inputFocus: _inputFocus,
               inputEnabled: _step == _ChatStep.enterValue,
               inputHint: hint,
               onSubmit: _submitInput,
@@ -211,7 +225,7 @@ class _VoiceAssistantFabState extends State<VoiceAssistantFab> {
                   child: Icon(
                     _panelOpen
                         ? Icons.close_rounded
-                        : Icons.chat_bubble_outline,
+                        : Icons.manage_search_rounded,
                     color: textPrimary,
                     size: 26,
                   ),
@@ -232,6 +246,7 @@ class _ChatPanel extends StatelessWidget {
     required this.messages,
     required this.scrollController,
     required this.textInput,
+    required this.inputFocus,
     required this.inputEnabled,
     required this.inputHint,
     required this.onSubmit,
@@ -244,6 +259,7 @@ class _ChatPanel extends StatelessWidget {
   final List<_ChatMessage> messages;
   final ScrollController scrollController;
   final TextEditingController textInput;
+  final FocusNode inputFocus;
   final bool inputEnabled;
   final String inputHint;
   final VoidCallback onSubmit;
@@ -269,7 +285,7 @@ class _ChatPanel extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    isArabic ? 'مساعد البحث' : 'Search assistant',
+                    isArabic ? 'بحث سريع' : 'Quick search',
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -321,6 +337,7 @@ class _ChatPanel extends StatelessWidget {
                 Expanded(
                   child: TextField(
                     controller: textInput,
+                    focusNode: inputFocus,
                     enabled: inputEnabled,
                     decoration: InputDecoration(
                       isDense: true,
