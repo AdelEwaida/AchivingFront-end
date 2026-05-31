@@ -1,6 +1,7 @@
 import 'package:archiving_flutter_project/data/side_menu_data.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
+import 'package:archiving_flutter_project/voice_assistant/voice_assistant_fab.dart';
 import 'package:archiving_flutter_project/widget/side_menu/side_menu.dart';
 
 import 'package:flutter/material.dart';
@@ -40,6 +41,9 @@ class _HomePageState extends State<HomePage> {
 
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+    final hideVoiceFab =
+        context.read<DocumentListProvider>().isViewFile == true;
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: !isDesktop
@@ -62,35 +66,45 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: SizedBox(
-        width: width,
-        height: height,
-        child: Column(
-          children: [
-            if (context.read<DocumentListProvider>().isViewFile != true &&
-                isDesktop)
-              ValueListenableBuilder(
-                valueListenable: name,
-                builder: (context, value, child) {
-                  return SideMenu(
-                    name: name.value,
-                  );
-                },
-              ),
-            Expanded(
-              child: Container(
-                color: Colors.white,
-                child: Consumer<ScreenContentProvider>(
-                  builder: (builder, value, child) {
-                    Widget tabView =
-                        getScreenContent(screenContentProvider.getPage());
-                    return tabView;
-                  },
+      body: Stack(
+        children: [
+          SizedBox(
+            width: width,
+            height: height,
+            child: Column(
+              children: [
+                if (context.read<DocumentListProvider>().isViewFile != true &&
+                    isDesktop)
+                  ValueListenableBuilder(
+                    valueListenable: name,
+                    builder: (context, value, child) {
+                      return SideMenu(
+                        name: name.value,
+                      );
+                    },
+                  ),
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
+                    child: Consumer<ScreenContentProvider>(
+                      builder: (builder, value, child) {
+                        Widget tabView =
+                            getScreenContent(screenContentProvider.getPage());
+                        return tabView;
+                      },
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+          if (!hideVoiceFab)
+            const Positioned(
+              right: 20,
+              bottom: 20,
+              child: VoiceAssistantFab(),
+            ),
+        ],
       ),
     );
   }

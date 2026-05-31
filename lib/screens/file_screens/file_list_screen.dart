@@ -33,6 +33,7 @@ import 'package:archiving_flutter_project/utils/constants/styles.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/utils/func/save_excel_file.dart';
+import 'package:archiving_flutter_project/voice_assistant/assistant_search_field.dart';
 import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
 import 'package:archiving_flutter_project/widget/date_time_component.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
@@ -174,9 +175,90 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   bool _isInitialized = false;
+  bool _gridReady = false;
+  int _lastAssistantSearchTick = 0;
+  DocumentListProvider? _listenedDocumentProvider;
+
+  void _applySearchFieldValue(AssistantSearchField field, String value) {
+    switch (field) {
+      case AssistantSearchField.description:
+        descreptionController.text = value;
+        break;
+      case AssistantSearchField.issueNo:
+        issueNoController.text = value;
+        break;
+      case AssistantSearchField.keyword:
+        keyWordController.text = value;
+        break;
+      case AssistantSearchField.ref1:
+        ref1Controller.text = value;
+        break;
+      case AssistantSearchField.ref2:
+        ref2Controller.text = value;
+        break;
+      case AssistantSearchField.userCode:
+        userCodeController.text = value;
+        break;
+    }
+  }
+
+  Future<void> _applyPendingAssistantSearch() async {
+    final provider = context.read<DocumentListProvider>();
+    documentListProvider = provider;
+    calssificatonNameAndCodeProvider =
+        context.read<CalssificatonNameAndCodeProvider>();
+
+    final pending = provider.pendingAssistantSearch;
+    if (pending == null || pending.value.isEmpty) return;
+
+    final tick = provider.assistantSearchTick;
+    if (tick == _lastAssistantSearchTick) return;
+
+    if (!_gridReady || !mounted) return;
+
+    _applySearchFieldValue(pending.field, pending.value);
+
+    if (!mounted) return;
+    try {
+      await search();
+      getCount();
+      _lastAssistantSearchTick = tick;
+      provider.consumePendingAssistantSearch();
+      if (mounted) setState(() {});
+    } finally {
+      provider.clearAssistantSearchGate(delay: true);
+    }
+  }
+
+  void _onDocumentListProviderUpdate() {
+    if (!mounted) return;
+    if (documentListProvider.pendingAssistantSearch == null) return;
+    _scheduleAssistantSearchIfNeeded();
+  }
+
+  void _attachDocumentListProviderListener() {
+    final provider = context.read<DocumentListProvider>();
+    documentListProvider = provider;
+    if (_listenedDocumentProvider == provider) return;
+    _listenedDocumentProvider?.removeListener(_onDocumentListProviderUpdate);
+    _listenedDocumentProvider = provider;
+    provider.addListener(_onDocumentListProviderUpdate);
+  }
+
+  void _scheduleAssistantSearchIfNeeded() {
+    if (!mounted) return;
+    final provider = context.read<DocumentListProvider>();
+    if (provider.pendingAssistantSearch == null) return;
+    documentListProvider = provider;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _applyPendingAssistantSearch();
+    });
+  }
 
   @override
   void dispose() {
+    _gridReady = false;
+    _listenedDocumentProvider?.removeListener(_onDocumentListProviderUpdate);
     calssificatonNameAndCodeProvider.clearProvider();
     documentListProvider.setDocumentSearchCriterea(SearchDocumentCriteria());
     documentListProvider.searchDocumentCriteria.page = 1;
@@ -266,6 +348,7 @@ class _FileListScreenState extends State<FileListScreen> {
     print("documentListProvider.page :${documentListProvider.page}");
 
     limitAction = result.first!.bolLimitActions;
+    _scheduleAssistantSearchIfNeeded();
     super.didChangeDependencies();
   }
 
@@ -374,7 +457,7 @@ class _FileListScreenState extends State<FileListScreen> {
                                             documentModel!.txtKey ?? "");
 
                                 if (existingTrackings.isNotEmpty) {
-                                final bool canCreate =
+                                  final bool canCreate =
                                       existingTrackings.any((t) {
                                     final steps = t.steps ?? [];
 
@@ -389,7 +472,7 @@ class _FileListScreenState extends State<FileListScreen> {
                                       builder: (_) => ErrorDialog(
                                         icon: Icons.block_rounded,
                                         errorDetails:
-                                           "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
+                                            "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
                                         errorTitle: _locale.error,
                                         color: Colors.red,
                                         statusCode: 400,
@@ -698,11 +781,17 @@ class _FileListScreenState extends State<FileListScreen> {
           exportToExcel: exportExcel,
           onLoaded: (PlutoGridOnLoadedEvent event) {
             stateManager = event.stateManager;
+            _gridReady = true;
             if (isLoading.value) {
               stateManager.setShowLoading(true);
             }
             stateManager.setShowColumnFilter(true);
             getCount();
+            if (documentListProvider.pendingAssistantSearch != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _applyPendingAssistantSearch();
+              });
+            }
           },
           doubleTab: (event) async {
             PlutoRow? tappedRow = event.row;
@@ -1874,6 +1963,16 @@ class _FileListScreenState extends State<FileListScreen> {
   List<PlutoRow> rowList = [];
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
+    final fetchEpoch = documentListProvider.assistantSearchEpoch;
+
+    if (documentListProvider.blockUnfilteredLazyFetch) {
+      stateManager.setShowLoading(false);
+      return PlutoInfinityScrollRowsResponse(
+        isLast: true,
+        rows: [],
+      );
+    }
+
     stateManager.setShowLoading(true);
     List<PlutoRow> resultRows = [];
 
@@ -1921,12 +2020,14 @@ class _FileListScreenState extends State<FileListScreen> {
 
         await Future.delayed(const Duration(milliseconds: 300));
         stateManager.setShowLoading(false);
+        if (fetchEpoch != documentListProvider.assistantSearchEpoch) {
+          return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
+        }
         return PlutoInfinityScrollRowsResponse(
           isLast: result.isEmpty,
           rows: resultRows,
         );
       } else {
-        print("tkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
         documentListProvider.searchDocumentCriteria.page =
             documentListProvider.page ?? -1;
         documentListProvider.searchDocumentCriteria.fromIssueDate =
@@ -1951,6 +2052,9 @@ class _FileListScreenState extends State<FileListScreen> {
         fileNumberDisplayed.value = currentLoaded + newlyFetched;
         await Future.delayed(const Duration(milliseconds: 300));
         stateManager.setShowLoading(false);
+        if (fetchEpoch != documentListProvider.assistantSearchEpoch) {
+          return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
+        }
         return PlutoInfinityScrollRowsResponse(
           isLast: result.isEmpty,
           rows: resultRows,
@@ -1978,6 +2082,9 @@ class _FileListScreenState extends State<FileListScreen> {
       fileNumberDisplayed.value = currentLoaded + newlyFetched;
       await Future.delayed(const Duration(milliseconds: 300));
       stateManager.setShowLoading(false);
+      if (fetchEpoch != documentListProvider.assistantSearchEpoch) {
+        return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
+      }
       return PlutoInfinityScrollRowsResponse(
         isLast: result.isEmpty,
         rows: resultRows,
