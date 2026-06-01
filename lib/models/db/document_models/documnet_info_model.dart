@@ -36,6 +36,7 @@ class DocumentModel {
   int? workflowStatus;
   String? txtLockupCode;
   String? txtLockupName;
+  String? txtDocTrackingStatus;
   DocumentModel(
       {this.txtKey,
       this.txtDescription,
@@ -110,11 +111,15 @@ class DocumentModel {
           return int.tryParse(ws.toString()) ?? -1;
         }(),
         txtLockupCode: json['txtLockupCode']?.toString() ?? "",
-        txtLockupName: json['txtLockupName']?.toString() ?? "");
+        txtLockupName: json['txtLockupName']?.toString() ?? "")
+      ..txtDocTrackingStatus = json['txtDocTrackingStatus']?.toString() ?? "";
   }
 
   /// Display for grid: `name - code` when both exist; otherwise the non-empty part.
-  String get currentLockupDisplay {
+  String currentLockupDisplay(AppLocalizations localizations) {
+    if ((txtDocTrackingStatus ?? "").trim() == "3") {
+      return localizations.currentLockupInTransitLabel;
+    }
     final name = (txtLockupName ?? "").trim();
     final code = (txtLockupCode ?? "").trim();
     if (name.isEmpty && code.isEmpty) return "";
@@ -200,7 +205,7 @@ class DocumentModel {
                 workflowStatus ?? -1, localizations)),
         'txtLockupCode': PlutoCell(value: txtLockupCode ?? ''),
         'txtLockupName': PlutoCell(value: txtLockupName ?? ''),
-        'txtCurrentLockup': PlutoCell(value: currentLockupDisplay),
+        'txtCurrentLockup': PlutoCell(value: currentLockupDisplay(localizations)),
         // 'submitForWfApproval': PlutoCell(value: submitForWfApproval)
       },
     );

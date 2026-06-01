@@ -103,8 +103,24 @@ class TrackingResponseModel {
   String activeStepDescriptionOnly() =>
       (activeStepDisplayed()?.txtStepDescription ?? '').trim();
 
-  String activeStepNotesOnly() =>
-      (activeStepDisplayed()?.txtNotes ?? '').trim();
+  TrackingStepInfoModel? _stepByOrder(int order) {
+    for (final s in steps ?? []) {
+      if (s.intStepOrder == order) return s;
+    }
+    return null;
+  }
+
+  String activeStepNotesOnly() {
+    final s = activeStepDisplayed();
+    if (s == null) return '';
+    final direct = (s.txtNotes ?? '').trim();
+    if (direct.isNotEmpty) return direct;
+    final order = s.intStepOrder;
+    if (order != null && order > 1) {
+      return (_stepByOrder(order - 1)?.txtNotes ?? '').trim();
+    }
+    return '';
+  }
 
   String activeStepSituationCode() {
     final s = activeStepDisplayed();

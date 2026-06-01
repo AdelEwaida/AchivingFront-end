@@ -1,7 +1,7 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import '../../utils/constants/colors.dart';
-import '../../utils/constants/key.dart';
+
 
 // ── Design tokens (matching CustomDropDownSearch) ────────────────
 const Color _primary = Color(0xFF185FA5);
@@ -77,7 +77,6 @@ class DropDown extends StatefulWidget {
 
 class _CustomDropDownState extends State<DropDown>
     with SingleTickerProviderStateMixin {
-  FocusNode focusNode = FocusNode();
   bool _isHovered = false;
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
@@ -85,7 +84,6 @@ class _CustomDropDownState extends State<DropDown>
   @override
   void initState() {
     super.initState();
-    focusNode.requestFocus();
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 200),
@@ -97,10 +95,15 @@ class _CustomDropDownState extends State<DropDown>
     _animController.forward();
   }
 
+  String? get _labelText {
+    final t = widget.bordeText?.trim();
+    if (t == null || t.isEmpty) return null;
+    return widget.isMandatory == true ? '$t *' : t;
+  }
+
   @override
   void dispose() {
     _animController.dispose();
-    focusNode.dispose();
     super.dispose();
   }
 
@@ -165,6 +168,12 @@ class _CustomDropDownState extends State<DropDown>
             items: widget.items ?? [],
             asyncItems: widget.onSearch,
 
+            itemAsString: (item) {
+              if (item == null) return '';
+              final sv = widget.selectedVal?.trim();
+              if (sv != null && sv.isNotEmpty) return sv;
+              return item.toString();
+            },
             dropdownButtonProps: DropdownButtonProps(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               icon: AnimatedRotation(
@@ -180,13 +189,20 @@ class _CustomDropDownState extends State<DropDown>
             ),
 
             dropdownDecoratorProps: DropDownDecoratorProps(
+              baseStyle: TextStyle(fontSize: _fontSize, color: _textPrimary),
               dropdownSearchDecoration: InputDecoration(
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                labelText: null,
-
+                labelText: _labelText,
+                alignLabelWithHint: true,
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                labelStyle: TextStyle(fontSize: _fontSize, color: _textSecondary),
+                floatingLabelStyle: const TextStyle(
+                  fontSize: 14,
+                  color: _primary,
+                  fontWeight: FontWeight.w500,
+                  backgroundColor: Colors.white,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide:
@@ -218,7 +234,6 @@ class _CustomDropDownState extends State<DropDown>
                 fillColor: _isEnabled ? Colors.white : _bgColor,
               ),
             ),
-            dropdownBuilder: _customDropDownPrograms,
 
             popupProps: PopupProps.menu(
               searchDelay: const Duration(milliseconds: 200),
@@ -243,7 +258,7 @@ class _CustomDropDownState extends State<DropDown>
                 autofocus: true,
                 style: TextStyle(fontSize: _fontSize),
                 decoration: InputDecoration(
-                  hintText: '...',
+                  hintText: "...",
                   hintStyle:
                       TextStyle(fontSize: _fontSize - 1, color: _textSecondary),
                   prefixIcon: Icon(Icons.search_rounded,
@@ -322,53 +337,8 @@ class _CustomDropDownState extends State<DropDown>
             ),
 
             onBeforePopupOpening: widget.onBeforeOpening,
-            onChanged: (value) => widget.onChanged(value),
+            onChanged: widget.onChanged,
             selectedItem: widget.initialValue,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _customDropDownPrograms(BuildContext context, dynamic item) {
-    if (item == null && widget.selectedVal == null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Row(
-          children: [
-            Flexible(
-              child: Text(
-                widget.bordeText != null
-                    ? widget.isMandatory == true
-                        ? '${widget.bordeText!} *'
-                        : widget.bordeText!
-                    : '',
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: _fontSize,
-                  color: _textSecondary, 
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final String displayText = widget.selectedVal ?? item.toString();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Tooltip(
-        message: displayText,
-        child: Text(
-          displayText,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: _fontSize,
-            color: _textPrimary,
-            fontWeight: FontWeight.w500,
           ),
         ),
       ),

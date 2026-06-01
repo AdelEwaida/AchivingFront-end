@@ -57,7 +57,7 @@ class _DeptTrackingApprovalsScreenState
   static const String _lookupKeyField = '_deptLookupKey';
   static const String _activeStepNotesField = '_activeStepNotes';
 
-  static const Color _stepNotesSkinTone = Color(0xFF8D7569);
+  static const Color _stepNotesMuted = Color.fromARGB(255, 161, 167, 176);
 
   void _buildColumns() {
     final w = _width;
@@ -153,11 +153,11 @@ class _DeptTrackingApprovalsScreenState
                 if (notes.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(
-                    '${_locale.deptTrackingStepNotePrefix}$notes',
+                    '${_locale.deptTrackingStepNotesLabel} $notes',
                     style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: _stepNotesSkinTone,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: _stepNotesMuted,
                       height: 1.3,
                     ),
                   ),
@@ -371,6 +371,7 @@ class _DeptTrackingApprovalsScreenState
                     key: ValueKey('dept_tracking_approvals_$_gridEpoch'),
                     noHeader: true,
                     isworkFlow: true,
+                    rowsHeight: 68,
                     tableHeigt: _height *  0.75,
                     tableWidth: _width,
                     plCols: _columns,
