@@ -78,6 +78,7 @@ class DropDown extends StatefulWidget {
 class _CustomDropDownState extends State<DropDown>
     with SingleTickerProviderStateMixin {
   bool _isHovered = false;
+  bool _isPopupOpen = false;
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
 
@@ -211,10 +212,10 @@ class _CustomDropDownState extends State<DropDown>
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
-                    color: _isHovered
+                    color: (_isHovered || _isPopupOpen)
                         ? _primary.withOpacity(0.5)
                         : const Color(0xFFDDE3EE),
-                    width: _isHovered ? 1.5 : 1,
+                    width: (_isHovered || _isPopupOpen) ? 1.5 : 1,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -236,10 +237,12 @@ class _CustomDropDownState extends State<DropDown>
             ),
 
             popupProps: PopupProps.menu(
+              fit: FlexFit.loose,
+              onDismissed: () => setState(() => _isPopupOpen = false),
               searchDelay: const Duration(milliseconds: 200),
               showSearchBox: widget.searchBox ?? true,
               isFilterOnline: widget.onSearch != null,
-              constraints: BoxConstraints.tightFor(height: popupHeight),
+              constraints: BoxConstraints(maxHeight: popupHeight),
 
               menuProps: MenuProps(
                 backgroundColor: _cardColor,
@@ -248,7 +251,7 @@ class _CustomDropDownState extends State<DropDown>
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                   side: BorderSide(
-                    color: _primary.withOpacity(0.12),
+                    color: _primary,
                     width: 0.5,
                   ),
                 ),
@@ -258,7 +261,7 @@ class _CustomDropDownState extends State<DropDown>
                 autofocus: true,
                 style: TextStyle(fontSize: _fontSize),
                 decoration: InputDecoration(
-                  hintText: "...",
+                  hintText: "بحث",
                   hintStyle:
                       TextStyle(fontSize: _fontSize - 1, color: _textSecondary),
                   prefixIcon: Icon(Icons.search_rounded,
@@ -336,7 +339,13 @@ class _CustomDropDownState extends State<DropDown>
               ),
             ),
 
-            onBeforePopupOpening: widget.onBeforeOpening,
+            onBeforePopupOpening: (dynamic selected) async {
+              setState(() => _isPopupOpen = true);
+              if (widget.onBeforeOpening != null) {
+                return widget.onBeforeOpening!(selected);
+              }
+              return true;
+            },
             onChanged: widget.onChanged,
             selectedItem: widget.initialValue,
           ),

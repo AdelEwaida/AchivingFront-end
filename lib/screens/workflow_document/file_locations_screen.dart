@@ -106,14 +106,14 @@ class _FilesLocationScreenState extends State<FilesLocationScreen> {
         type: PlutoColumnType.text(),
         width: _isDesktop ? w * 0.14 : w * 0.38,
       ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.updatedAt,
-        field: 'updatedAt',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.14 : w * 0.38,
-      ),
+      // PlutoColumn(
+      //   readOnly: true,
+      //   title: _locale.updatedAt,
+      //   field: 'updatedAt',
+      //   backgroundColor: columnColors,
+      //   type: PlutoColumnType.text(),
+      //   width: _isDesktop ? w * 0.14 : w * 0.38,
+      // ),
     ];
   }
 

@@ -327,7 +327,6 @@
   "noWorkFlowAvailable": "لا يوجد بيانات لملف مخطط سير العمل",
   "fileLocations": "مواقع الملفات",
   "lockupCode": "كود الخزانة",
-  "updatedAt": "تم التحديث في",
   "lockupCodeRequired": "كود الخزانة مطلوب",
   "nameRequired": "الاسم مطلوب",
   "lockupCode": "كود الخزانة",

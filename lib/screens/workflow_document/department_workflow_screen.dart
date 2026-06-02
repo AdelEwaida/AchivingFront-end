@@ -62,7 +62,7 @@ class _DepartmentWorkFlowScreenState extends State<DepartmentWorkFlowScreen> {
       ),
       PlutoColumn(
         readOnly: true,
-        title: _locale.issueDate,
+        title: _locale.dateCreated,
         field: 'createdAt',
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
