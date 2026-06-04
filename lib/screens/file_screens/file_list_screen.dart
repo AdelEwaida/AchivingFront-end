@@ -135,6 +135,9 @@ class _FileListScreenState extends State<FileListScreen> {
   // String? userName = "";
   var storage = FlutterSecureStorage();
   ValueNotifier totalDocCount = ValueNotifier(0);
+  String _userRole = '';
+
+  bool get _isAdmin => _userRole.trim().toUpperCase() == USERTYPEADMIN;
 
   getCountOnLoaded() {
     documentsController
@@ -195,7 +198,8 @@ class _FileListScreenState extends State<FileListScreen> {
     classificationController.clear();
   }
 
-  Future<void> _runAssistantSearchBody(AssistantFileSearchRequest pending) async {
+  Future<void> _runAssistantSearchBody(
+      AssistantFileSearchRequest pending) async {
     final provider = context.read<DocumentListProvider>();
     documentListProvider = provider;
     calssificatonNameAndCodeProvider =
@@ -312,6 +316,12 @@ class _FileListScreenState extends State<FileListScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      storage.read(key: 'roles').then((value) {
+        if (!mounted) return;
+        setState(() {
+          _userRole = value ?? '';
+        });
+      });
       context.read<DocumentListProvider>().registerAssistantSearchHandler(
             _runAssistantSearch,
           );
@@ -476,112 +486,116 @@ class _FileListScreenState extends State<FileListScreen> {
                               },
                             ),
                             const SizedBox(width: 8),
-                            CustomElevatedButton(
-                              text: _locale.createTrackingDocByDep,
-                              color: Color.fromARGB(255, 196, 83, 177),
-                              icon: Icons.alt_route_rounded,
-                              width: isDesktop ? width * 0.13 : width * 0.19,
-                              height: height * 0.043,
-                              fontSize: 13,
-                              onPressed: () async {
-                                if (documentModel == null) {
-                                  CustomToastMessage.warning(
-                                      context, _locale.pleaseSelectRow);
-                                  return;
-                                }
-
-                                final TrackingType? choice =
-                                    await showDialog<TrackingType>(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) =>
-                                      const TrackingTypeSelectionDialog(),
-                                );
-
-                                if (choice == null || !mounted) return;
-
-// ── CHECK for BOTH options ──────────────────────────────────────
-                                final List<TrackingResponseModel>
-                                    existingTrackings =
-                                    await WorkFlowTemplateContoller()
-                                        .getTrackingByDocument(
-                                            documentModel!.txtKey ?? "");
-
-                                if (existingTrackings.isNotEmpty) {
-                                  final bool canCreate =
-                                      existingTrackings.any((t) {
-                                    final steps = t.steps ?? [];
-
-                                    return steps
-                                        .any((step) => step.intStatus == 4);
-                                  });
-
-                                  if (!canCreate) {
-                                    if (!mounted) return;
-                                    showDialog(
-                                      context: context,
-                                      builder: (_) => ErrorDialog(
-                                        icon: Icons.block_rounded,
-                                        errorDetails:
-                                            "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
-                                        errorTitle: _locale.error,
-                                        color: Colors.red,
-                                        statusCode: 400,
-                                      ),
-                                    );
+                            if (_isAdmin) ...[
+                              CustomElevatedButton(
+                                text: _locale.createTrackingDocByDep,
+                                color: Color.fromARGB(255, 196, 83, 177),
+                                icon: Icons.alt_route_rounded,
+                                width: isDesktop ? width * 0.13 : width * 0.19,
+                                height: height * 0.043,
+                                fontSize: 13,
+                                onPressed: () async {
+                                  if (documentModel == null) {
+                                    CustomToastMessage.warning(
+                                        context, _locale.pleaseSelectRow);
                                     return;
                                   }
-                                }
+
+                                  final TrackingType? choice =
+                                      await showDialog<TrackingType>(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) =>
+                                        const TrackingTypeSelectionDialog(),
+                                  );
+
+                                  if (choice == null || !mounted) return;
+
+// ── CHECK for BOTH options ──────────────────────────────────────
+                                  final List<TrackingResponseModel>
+                                      existingTrackings =
+                                      await WorkFlowTemplateContoller()
+                                          .getTrackingByDocument(
+                                              documentModel!.txtKey ?? "");
+
+                                  if (existingTrackings.isNotEmpty) {
+                                    final bool canCreate =
+                                        existingTrackings.any((t) {
+                                      final steps = t.steps ?? [];
+
+                                      return steps
+                                          .any((step) => step.intStatus == 4);
+                                    });
+
+                                    if (!canCreate) {
+                                      if (!mounted) return;
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => ErrorDialog(
+                                          icon: Icons.block_rounded,
+                                          errorDetails:
+                                              "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
+                                          errorTitle: _locale.error,
+                                          color: Colors.red,
+                                          statusCode: 400,
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                  }
 // ───────────────────────────────────────────────────────────────
 
-                                if (choice == TrackingType.createTracking) {
-                                  await showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) =>
-                                        CreateTrackingDocDialog(
-                                      documentKey: documentModel!.txtKey ?? "",
-                                    ),
-                                  );
-                                } else {
-                                  await showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) =>
-                                        SelectTrackingTemplateDialog(
-                                      documentKey: documentModel!.txtKey ?? "",
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            CustomElevatedButton(
-                              text: _locale.viewTracking,
-                              color: const Color(0xFF7C3AED),
-                              icon: Icons.alt_route_rounded,
-                              width: isDesktop ? width * 0.13 : width * 0.19,
-                              height: height * 0.043,
-                              fontSize: 13,
-                              onPressed: () async {
-                                if (documentModel != null) {
-                                  await showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) {
-                                      return ViewTrackingDialog(
+                                  if (choice == TrackingType.createTracking) {
+                                    await showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) =>
+                                          CreateTrackingDocDialog(
                                         documentKey:
                                             documentModel!.txtKey ?? "",
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  CustomToastMessage.warning(
-                                      context, _locale.pleaseSelectRow);
-                                }
-                              },
-                            ),
-                            const SizedBox(width: 8),
+                                      ),
+                                    );
+                                  } else {
+                                    await showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) =>
+                                          SelectTrackingTemplateDialog(
+                                        documentKey:
+                                            documentModel!.txtKey ?? "",
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              CustomElevatedButton(
+                                text: _locale.viewTracking,
+                                color: const Color(0xFF7C3AED),
+                                icon: Icons.alt_route_rounded,
+                                width: isDesktop ? width * 0.13 : width * 0.19,
+                                height: height * 0.043,
+                                fontSize: 13,
+                                onPressed: () async {
+                                  if (documentModel != null) {
+                                    await showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return ViewTrackingDialog(
+                                          documentKey:
+                                              documentModel!.txtKey ?? "",
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    CustomToastMessage.warning(
+                                        context, _locale.pleaseSelectRow);
+                                  }
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                            ],
                             CustomElevatedButton(
                               text: _locale.viewApprovals,
                               color: primary,
