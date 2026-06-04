@@ -44,8 +44,8 @@ class _DeptTrackingApprovalsScreenState
     _isDesktop = Responsive.isDesktop(context);
     _buildColumns();
     if (_stateManager != null && _columns.isNotEmpty) {
-      for (int i = 0; i < _columns.length &&
-          i < _stateManager!.columns.length;
+      for (int i = 0;
+          i < _columns.length && i < _stateManager!.columns.length;
           i++) {
         _stateManager!.columns[i].title = _columns[i].title;
         _stateManager!.columns[i].width = _columns[i].width;
@@ -56,6 +56,7 @@ class _DeptTrackingApprovalsScreenState
 
   static const String _lookupKeyField = '_deptLookupKey';
   static const String _activeStepNotesField = '_activeStepNotes';
+  static const String _routeNotesField = '_routeNotes';
 
   static const Color _stepNotesMuted = Color.fromARGB(255, 161, 167, 176);
 
@@ -92,11 +93,61 @@ class _DeptTrackingApprovalsScreenState
       ),
       PlutoColumn(
         readOnly: true,
+        title: '',
+        field: _routeNotesField,
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        hide: true,
+        enableColumnDrag: false,
+        enableContextMenu: false,
+        enableDropToResize: false,
+        enableFilterMenuItem: false,
+        enableHideColumnMenuItem: false,
+        enableSetColumnsMenuItem: false,
+      ),
+      PlutoColumn(
+        readOnly: true,
         title: _locale.deptTrackingRouteOverview,
         field: 'routeOverview',
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
         width: _isDesktop ? w * 0.24 : w * 0.95,
+        renderer: (PlutoColumnRendererContext ctx) {
+          final name = ctx.cell.value?.toString().trim() ?? '';
+          final notes =
+              ctx.row.cells[_routeNotesField]?.value?.toString().trim() ?? '';
+          final hasName = name.isNotEmpty && name != '—';
+          final hasNotes = notes.isNotEmpty;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  hasName ? name : '—',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF1E293B),
+                    height: 1.25,
+                  ),
+                ),
+                if (hasNotes) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '${_locale.notes}: $notes',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: _stepNotesMuted,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
       ),
       PlutoColumn(
         readOnly: true,
@@ -210,6 +261,7 @@ class _DeptTrackingApprovalsScreenState
       cells: {
         _lookupKeyField: PlutoCell(value: routeKey),
         _activeStepNotesField: PlutoCell(value: notesForCell),
+        _routeNotesField: PlutoCell(value: e.tracking?.txtNotes ?? ''),
         'activeStepSummary': PlutoCell(
           value: _stepOrderCellText(e.activeStepOrderDisplay()),
         ),
@@ -219,8 +271,8 @@ class _DeptTrackingApprovalsScreenState
           value: stepDesc.isEmpty ? '—' : stepDesc,
         ),
         'txtCreatedBy': PlutoCell(value: t?.txtCreatedBy ?? ''),
-        'datCreatedAt':
-            PlutoCell(value: TrackingResponseModel.shortCreatedAt(t?.datCreatedAt)),
+        'datCreatedAt': PlutoCell(
+            value: TrackingResponseModel.shortCreatedAt(t?.datCreatedAt)),
         'routeOverview': PlutoCell(
           value: _routeOverviewCellText(e.trackingRouteNotesText()),
         ),
@@ -276,7 +328,8 @@ class _DeptTrackingApprovalsScreenState
         CustomToastMessage.warning(context, _locale.deptTrackingNoRouteRef);
         return false;
       }
-      final lockupLocationCode = await showSelectLockupForReceiveDialog(context);
+      final lockupLocationCode =
+          await showSelectLockupForReceiveDialog(context);
       if (!mounted) return false;
       if (lockupLocationCode == null || lockupLocationCode.isEmpty) {
         return false;
@@ -372,7 +425,7 @@ class _DeptTrackingApprovalsScreenState
                     noHeader: true,
                     isworkFlow: true,
                     rowsHeight: 68,
-                    tableHeigt: _height *  0.75,
+                    tableHeigt: _height * 0.75,
                     tableWidth: _width,
                     plCols: _columns,
                     mode: PlutoGridMode.selectWithOneTap,
@@ -382,10 +435,9 @@ class _DeptTrackingApprovalsScreenState
                       _stateManager?.setShowColumnFilter(true);
                     },
                     doubleTab: (event) {
-                      final key = event.row.cells[_lookupKeyField]
-                              ?.value
-                              ?.toString() ??
-                          '';
+                      final key =
+                          event.row.cells[_lookupKeyField]?.value?.toString() ??
+                              '';
                       final item = _findDeptItem(key);
                       if (item != null) {
                         _openFileExplorerLikeFileList(item);
