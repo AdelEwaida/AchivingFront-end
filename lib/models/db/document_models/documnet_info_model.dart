@@ -1,6 +1,8 @@
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../utils/func/lists.dart';
+import '../work_flow/tracking_step_info_model.dart';
+import '../../../screens/file_screens/document_dep_track_display.dart';
 
 class DocumentModel {
   String? txtKey;
@@ -34,9 +36,10 @@ class DocumentModel {
   String? catKey;
   String? deptKey;
   int? workflowStatus;
-  String? txtLockupCode;
-  String? txtLockupName;
+  String? currentDepTrackCode;
+  String? currentDepTrackName;
   String? txtDocTrackingStatus;
+  List<TrackingStepInfoModel>? trackingSteps;
   DocumentModel(
       {this.txtKey,
       this.txtDescription,
@@ -69,8 +72,8 @@ class DocumentModel {
       this.catKey,
       this.deptKey,
       this.workflowStatus,
-      this.txtLockupCode,
-      this.txtLockupName});
+      this.currentDepTrackCode,
+      this.currentDepTrackName});
 
   factory DocumentModel.fromJson(Map<String, dynamic> json) {
     return DocumentModel(
@@ -110,22 +113,19 @@ class DocumentModel {
           if (ws is int) return ws;
           return int.tryParse(ws.toString()) ?? -1;
         }(),
-        txtLockupCode: json['txtLockupCode']?.toString() ?? "",
-        txtLockupName: json['txtLockupName']?.toString() ?? "")
-      ..txtDocTrackingStatus = json['txtDocTrackingStatus']?.toString() ?? "";
+        currentDepTrackCode: json['currentDepTrackCode']?.toString() ?? "",
+        currentDepTrackName: json['currentDepTrackName']?.toString() ?? "")
+      ..txtDocTrackingStatus = json['txtDocTrackingStatus']?.toString() ?? ""
+      ..trackingSteps = json['trackingSteps'] is List
+          ? (json['trackingSteps'] as List)
+              .map((e) => TrackingStepInfoModel.fromJson(
+                  e as Map<String, dynamic>))
+              .toList()
+          : null;
   }
 
-  /// Display for grid: `name - code` when both exist; otherwise the non-empty part.
-  String currentLockupDisplay(AppLocalizations localizations) {
-    if ((txtDocTrackingStatus ?? "").trim() == "3") {
-      return localizations.currentLockupInTransitLabel;
-    }
-    final name = (txtLockupName ?? "").trim();
-    final code = (txtLockupCode ?? "").trim();
-    if (name.isEmpty && code.isEmpty) return "";
-    if (name.isEmpty) return code;
-    if (code.isEmpty) return name;
-    return "$name - $code";
+  String currentDepTrackDisplay(AppLocalizations localizations) {
+    return formatDocumentDepTrackDisplay(this, localizations);
   }
 
   Map<String, dynamic> toJson() {
@@ -161,8 +161,8 @@ class DocumentModel {
       'catKey': catKey ?? "",
       "deptKey": deptKey ?? "",
       'workflowStatus': workflowStatus ?? -1,
-      'txtLockupCode': txtLockupCode ?? "",
-      'txtLockupName': txtLockupName ?? ""
+      'currentDepTrackCode': currentDepTrackCode ?? "",
+      'currentDepTrackName': currentDepTrackName ?? ""
     };
   }
 
@@ -203,9 +203,10 @@ class DocumentModel {
         'workflowStatus': PlutoCell(
             value: ListConstants.getStatusNameWorkFlow(
                 workflowStatus ?? -1, localizations)),
-        'txtLockupCode': PlutoCell(value: txtLockupCode ?? ''),
-        'txtLockupName': PlutoCell(value: txtLockupName ?? ''),
-        'txtCurrentLockup': PlutoCell(value: currentLockupDisplay(localizations)),
+        'currentDepTrackCode': PlutoCell(value: currentDepTrackCode ?? ''),
+        'currentDepTrackName': PlutoCell(value: currentDepTrackName ?? ''),
+        'txtCurrentLockup':
+            PlutoCell(value: currentDepTrackDisplay(localizations)),
         // 'submitForWfApproval': PlutoCell(value: submitForWfApproval)
       },
     );
@@ -214,43 +215,43 @@ class DocumentModel {
   static DocumentModel fromPlutoRow(
       PlutoRow row, AppLocalizations localizations) {
     return DocumentModel(
-        txtKey: row.cells['txtKey']?.value,
-        txtDescription: row.cells['txtDescription']?.value,
-        txtKeywords: row.cells['txtKeywords']?.value,
-        txtReference1: row.cells['txtReference1']?.value,
-        txtReference2: row.cells['txtReference2']?.value,
-        txtOtherRef: row.cells['txtOtherRef']?.value,
-        txtOrganization: row.cells['txtOrganization']?.value,
-        intType: row.cells['intType']?.value,
-        datCreationdate: row.cells['datCreationdate']?.value,
-        txtLastupdateduser: row.cells['txtLastupdateduser']?.value,
-        txtMimetype: row.cells['txtMimetype']?.value,
-        intVouchtype: row.cells['intVouchtype']?.value,
-        intVouchnum: row.cells['intVouchnum']?.value,
-        txtJcode: row.cells['txtJcode']?.value,
-        txtCategory: row.cells['txtCategory']?.value,
-        txtDept: row.cells['txtDept']?.value,
-        txtIssueno: row.cells['txtIssueno']?.value,
-        datIssuedate: row.cells['datIssuedate']?.value,
-        txtFollowing: row.cells['txtFollowing']?.value,
-        txtUsercode: row.cells['txtUsercode']?.value,
-        txtInsurance: row.cells['txtInsurance']?.value,
-        txtLicense: row.cells['txtLicense']?.value,
-        txtMaintenance: row.cells['txtMaintenance']?.value,
-        txtOtherservices: row.cells['txtOtherservices']?.value,
-        bolHasfile: row.cells['bolHasfile']?.value,
-        datArrvialdate: row.cells['datArrvialdate']?.value,
-        txtOriginalfilekey: row.cells['txtOriginalfilekey']?.value,
-        fileName: row.cells['fileName']?.value,
-        deptKey: row.cells['deptKey']?.value,
-        catKey: row.cells['catKey']?.value,
-        // workflowStatus: row.cells['workflowStatus']?.value,
-        workflowStatus: ListConstants.getStatusCodeWorkFlow(
-            row.cells['workflowStatus']?.value ?? -1, localizations),
-        txtLockupCode: row.cells['txtLockupCode']?.value?.toString(),
-        txtLockupName: row.cells['txtLockupName']?.value?.toString(),
-        // submitForWfApproval: row.cells['submitForWfApproval']?.value
-        );
+      txtKey: row.cells['txtKey']?.value,
+      txtDescription: row.cells['txtDescription']?.value,
+      txtKeywords: row.cells['txtKeywords']?.value,
+      txtReference1: row.cells['txtReference1']?.value,
+      txtReference2: row.cells['txtReference2']?.value,
+      txtOtherRef: row.cells['txtOtherRef']?.value,
+      txtOrganization: row.cells['txtOrganization']?.value,
+      intType: row.cells['intType']?.value,
+      datCreationdate: row.cells['datCreationdate']?.value,
+      txtLastupdateduser: row.cells['txtLastupdateduser']?.value,
+      txtMimetype: row.cells['txtMimetype']?.value,
+      intVouchtype: row.cells['intVouchtype']?.value,
+      intVouchnum: row.cells['intVouchnum']?.value,
+      txtJcode: row.cells['txtJcode']?.value,
+      txtCategory: row.cells['txtCategory']?.value,
+      txtDept: row.cells['txtDept']?.value,
+      txtIssueno: row.cells['txtIssueno']?.value,
+      datIssuedate: row.cells['datIssuedate']?.value,
+      txtFollowing: row.cells['txtFollowing']?.value,
+      txtUsercode: row.cells['txtUsercode']?.value,
+      txtInsurance: row.cells['txtInsurance']?.value,
+      txtLicense: row.cells['txtLicense']?.value,
+      txtMaintenance: row.cells['txtMaintenance']?.value,
+      txtOtherservices: row.cells['txtOtherservices']?.value,
+      bolHasfile: row.cells['bolHasfile']?.value,
+      datArrvialdate: row.cells['datArrvialdate']?.value,
+      txtOriginalfilekey: row.cells['txtOriginalfilekey']?.value,
+      fileName: row.cells['fileName']?.value,
+      deptKey: row.cells['deptKey']?.value,
+      catKey: row.cells['catKey']?.value,
+      // workflowStatus: row.cells['workflowStatus']?.value,
+      workflowStatus: ListConstants.getStatusCodeWorkFlow(
+          row.cells['workflowStatus']?.value ?? -1, localizations),
+      currentDepTrackCode: row.cells['currentDepTrackCode']?.value?.toString(),
+      currentDepTrackName: row.cells['currentDepTrackName']?.value?.toString(),
+      // submitForWfApproval: row.cells['submitForWfApproval']?.value
+    );
   }
 
   @override

@@ -3,6 +3,7 @@ class TrackingStepInfoModel {
   String? txtTrackingcode;
   int? intStepOrder;
   String? txtDeptcode;
+  String? txtDeptName;
   int? intStatus;
   String? txtReceivedBy;
   String? datReceivedAt;
@@ -19,6 +20,7 @@ class TrackingStepInfoModel {
     this.txtTrackingcode,
     this.intStepOrder,
     this.txtDeptcode,
+    this.txtDeptName,
     this.intStatus,
     this.txtReceivedBy,
     this.datReceivedAt,
@@ -45,6 +47,7 @@ class TrackingStepInfoModel {
       intStepOrder: _asInt(json['intStepOrder'] ?? json['stepOrder']),
       txtDeptcode:
           json['txtDeptcode']?.toString() ?? json['deptKey']?.toString(),
+      txtDeptName: json['txtDeptName']?.toString(),
       intStatus: _asInt(json['intStatus']),
       txtReceivedBy: json['txtReceivedBy']?.toString(),
       datReceivedAt: json['datReceivedAt']?.toString(),
@@ -65,6 +68,7 @@ class TrackingStepInfoModel {
       'txtTrackingcode': txtTrackingcode,
       'intStepOrder': intStepOrder,
       'txtDeptcode': txtDeptcode,
+      'txtDeptName': txtDeptName,
       'intStatus': intStatus,
       'txtReceivedBy': txtReceivedBy,
       'datReceivedAt': datReceivedAt,

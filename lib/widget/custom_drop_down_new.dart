@@ -28,6 +28,9 @@ class NewCustomDropDown extends StatefulWidget {
   bool? isEnabled;
   bool? isMandatory;
   bool? isReports;
+  final Widget Function(BuildContext context, dynamic item, bool isSelected)?
+      customItemBuilder;
+  final Widget? popupTitle;
 
   NewCustomDropDown(
       {Key? key,
@@ -53,7 +56,9 @@ class NewCustomDropDown extends StatefulWidget {
       this.onBeforeOpening,
       this.showBorder,
       this.isReports = false,
-      this.color})
+      this.color,
+      this.customItemBuilder,
+      this.popupTitle})
       : super(key: key);
 
   @override
@@ -120,6 +125,7 @@ class _NewCustomDropDownState extends State<NewCustomDropDown> {
                 ? _NewcustomDropDownPrograms
                 : null,
             popupProps: PopupProps.menu(
+              title: widget.popupTitle,
               searchDelay: const Duration(milliseconds: 1),
               showSearchBox: widget.searchBox ?? true,
               isFilterOnline: widget.onSearch != null ? true : false,
@@ -131,18 +137,17 @@ class _NewCustomDropDownState extends State<NewCustomDropDown> {
                   )),
               constraints:
                   BoxConstraints.tightFor(height: widget.heightVal ?? height),
-              itemBuilder: (context, item, isSelected) {
+              itemBuilder: widget.customItemBuilder ??
+                  (context, item, isSelected) {
                 return ListTile(
                   title: Text(
                     item.toString(),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 12, // Set your desired font size here
+                      fontSize: 12,
                       color: isSelected ? Colors.white : Colors.black,
                     ),
                   ),
-
-                  // Add any other customization for the ListTile here
                 );
               },
             ),

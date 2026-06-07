@@ -143,8 +143,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         //   Navigator.pop(context);
         // }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -165,8 +164,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
               documentListProvider.searchDocumentCriteria);
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -224,8 +222,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       ).then((value) {
         selectedRow = null;
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -247,8 +244,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         print("Error downloading file: $e");
         // Handle error here
       }
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -268,8 +264,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
       ).then((value) {
         // selectedRow = null;
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -298,8 +293,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
           }
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -315,8 +309,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
         documentListProvider.setDocumentSearchCriterea(
             documentListProvider.searchDocumentCriteria);
       }
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -341,8 +334,7 @@ class _TableFileListSectionState extends State<TableFileListSection> {
               documentListProvider.searchDocumentCriteria);
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }

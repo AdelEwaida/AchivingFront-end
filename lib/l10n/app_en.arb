@@ -218,6 +218,7 @@
   "addStep": "Add Step",
   "optional": "Optional",
   "approvals": "Approvals",
+  "notificationsPanel": "Notifications",
   "myApprovals": "My Approvals",
   "viewApprovals": "View Approvals",
   "submitforWorkflowApproval": "Submit for Workflow Approvals",
@@ -286,6 +287,16 @@
   "deptTrackingDocumentRef": "Document ref.",
   "deptTrackingTrackingRef": "Tracking ref.",
   "deptTrackingCurrentStepNo": "Current step",
+  "deptTrackingAction": "Action",
+  "deptTrackingBulkReceive": "Receive multiple",
+  "deptTrackingBulkReceiveTitle": "Receive multiple files",
+  "deptTrackingRefNumberLabel": "Reference number",
+  "deptTrackingRefNumberHint": "Enter reference and press Enter",
+  "deptTrackingBulkReceiveSearchType": "Search by",
+  "deptTrackingBulkReceiveSelectedFiles": "Selected files",
+  "deptTrackingBulkReceiveEmpty": "No files added yet. Enter a reference number and press Enter.",
+  "deptTrackingBulkReceiveNoSearchResults": "No results found for the entered reference number.",
+  "deptTrackingBulkReceiveConfirm": "Receive all",
   "deptTrackingRouteOverview": "Route name",
   "deptTrackingRouteCreator": "Route creator",
   "deptTrackingStepDetailsTitle": "Route steps",
@@ -349,6 +360,51 @@
   "deleteDoneSuccess": "Deleted successfully",
   "currentLockupLocation": "Current location",
   "currentLockupInTransitLabel": "On the way to receive at the next department",
+  "currentDepTrackLocation": "Current department",
+  "currentDepTrackReceivedAt": "Received at department {name}",
+  "@currentDepTrackReceivedAt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "currentDepTrackAwaitReceiveAt": "Awaiting receive at department",
+  "currentDepTrackAwaitReceiveAtNamed": "Awaiting receive at department {name}",
+  "@currentDepTrackAwaitReceiveAtNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "currentDepTrackReceivedInThisDept": "Received at this department",
+  "currentDepTrackReceivedInThisDeptNamed": "Received at this department {name}",
+  "@currentDepTrackReceivedInThisDeptNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "currentDepTrackInTransitToDept": "On the way to receive at department",
+  "currentDepTrackInTransitToDeptNamed": "On the way to receive at department {name}",
+  "@currentDepTrackInTransitToDeptNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "currentDepTrackFullyReceivedAt": "Fully received at department",
+  "currentDepTrackFullyReceivedAtNamed": "Fully received at department {name}",
+  "@currentDepTrackFullyReceivedAtNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "txtIn": "In",
   "createdBy": "Created by",
   "byDate": "Creation date",

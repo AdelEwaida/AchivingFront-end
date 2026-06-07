@@ -90,10 +90,15 @@ const getTemplatesCount = "workflowTemplateInfo/count";
 const createTrackingDocs = "document-tracking/createTrackingDoc";
 const getTrackingDocsByUserDept = "document-tracking/by-user-dept";
 const getAwaitingReceiveTrackingApi = "document-tracking/awaiting-receive";
+const getAwaitingReceiveIssueNosApi =
+    "document-tracking/awaiting-receive/issue-nos";
+const searchAwaitingReceiveApi =
+    "document-tracking/awaiting-receive/search";
 const getTrackingByCode = "document-tracking/by-document/documnet_code";
 
 /// POST body: `{ "stepKey": "<workflow step TrackingStepInfoModel.txtKey>" }`
 const trackingReceiveApi = "document-tracking-steps/receive";
+const trackingBulkReceiveApi = "document-tracking-steps/receive/bulk";
 
 /// POST body: `{ "stepKey": "<step.txtKey>", "notes": "..." }`
 const trackingSendApi = "document-tracking-steps/send";

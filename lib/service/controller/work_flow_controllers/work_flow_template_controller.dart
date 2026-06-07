@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/template_model.dart';
 
 import '../../../models/db/count_model.dart';
+import '../../../models/db/work_flow/awaiting_receive_issue_no_model.dart';
 import '../../../models/db/work_flow/doc_tracking_template_model.dart';
 import '../../../models/db/work_flow/tracking_doc_model.dart';
 import '../../../models/db/work_flow/tracking_response_model.dart';
@@ -206,11 +207,65 @@ class WorkFlowTemplateContoller {
     }
   }
 
+  Future<List<AwaitingReceiveIssueNoModel>> getAwaitingReceiveIssueNos() async {
+    final response =
+        await ApiService().getRequest(getAwaitingReceiveIssueNosApi);
+    if (response == null || response.statusCode != 200) {
+      return [];
+    }
+    try {
+      final raw = utf8.decode(response.bodyBytes);
+      if (raw.trim().isEmpty) {
+        return [];
+      }
+      final jsonData = jsonDecode(raw);
+      if (jsonData is! List) {
+        return [];
+      }
+      return AwaitingReceiveIssueNoModel.fromJsonList(jsonData);
+    } catch (e, st) {
+      debugPrint('getAwaitingReceiveIssueNos parse error: $e\n$st');
+      return [];
+    }
+  }
+
+  Future<List<TrackingResponseModel>> searchAwaitingReceive({
+    String? issueNo,
+  }) async {
+    final trimmed = issueNo?.trim() ?? '';
+    final response = await ApiService().postRequest(
+      searchAwaitingReceiveApi,
+      {'issueNo': trimmed.isEmpty ? null : trimmed},
+    );
+    if (response == null || response.statusCode != 200) {
+      return [];
+    }
+    try {
+      final raw = utf8.decode(response.bodyBytes);
+      if (raw.trim().isEmpty) {
+        return [];
+      }
+      final jsonData = jsonDecode(raw);
+      return _parseAwaitingReceiveBody(jsonData);
+    } catch (e, st) {
+      debugPrint('searchAwaitingReceive parse error: $e\n$st');
+      return [];
+    }
+  }
+
   Future postDocumentTrackingReceive(
       {required String stepKey, String? locationCode}) async {
     return ApiService().postRequest(trackingReceiveApi, {
       'stepKey': stepKey,
       'lockupLocationCode': locationCode,
+    });
+  }
+
+  Future postDocumentTrackingBulkReceive({
+    required List<String> stepKeys,
+  }) async {
+    return ApiService().postRequest(trackingBulkReceiveApi, {
+      'stepKeys': stepKeys,
     });
   }
 

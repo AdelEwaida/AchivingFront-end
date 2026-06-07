@@ -77,7 +77,6 @@ class _ViewTableState extends State<ViewTable> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Consumer<DocumentListProvider>(builder: (context, value, child) {
-
         return TableComponent(
           // key: UniqueKey(),
           tableHeigt: height * 0.4,
@@ -162,8 +161,7 @@ class _ViewTableState extends State<ViewTable> {
         //   Navigator.pop(context);
         // }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -184,8 +182,7 @@ class _ViewTableState extends State<ViewTable> {
               documentListProvider.searchDocumentCriteria);
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -204,8 +201,7 @@ class _ViewTableState extends State<ViewTable> {
           );
         },
       );
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -227,8 +223,7 @@ class _ViewTableState extends State<ViewTable> {
         print("Error downloading file: $e");
         // Handle error here
       }
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -246,8 +241,7 @@ class _ViewTableState extends State<ViewTable> {
           );
         },
       );
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -291,8 +285,7 @@ class _ViewTableState extends State<ViewTable> {
           );
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -321,8 +314,7 @@ class _ViewTableState extends State<ViewTable> {
           }
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -338,8 +330,7 @@ class _ViewTableState extends State<ViewTable> {
         documentListProvider.setDocumentSearchCriterea(
             documentListProvider.searchDocumentCriteria);
       }
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }
@@ -364,8 +355,7 @@ class _ViewTableState extends State<ViewTable> {
               documentListProvider.searchDocumentCriteria);
         }
       });
-    }
-    else {
+    } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
   }

@@ -1,6 +1,7 @@
+import 'package:archiving_flutter_project/dialogs/document_dialogs/bulk_receive_files_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
-import 'package:archiving_flutter_project/dialogs/document_dialogs/select_lockup_for_receive_dialog.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/tracking_response_model.dart';
+import 'package:archiving_flutter_project/screens/workflow_document/dept_tracking_pluto_mapper.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
@@ -33,6 +34,7 @@ class _DeptTrackingApprovalsScreenState
   bool _isDesktop = false;
   bool _loading = true;
   int _gridEpoch = 0;
+  String? _actionBusyKey;
   List<TrackingResponseModel> _items = [];
 
   @override
@@ -54,231 +56,95 @@ class _DeptTrackingApprovalsScreenState
     }
   }
 
-  static const String _lookupKeyField = '_deptLookupKey';
-  static const String _activeStepNotesField = '_activeStepNotes';
-  static const String _routeNotesField = '_routeNotes';
-
-  static const Color _stepNotesMuted = Color.fromARGB(255, 161, 167, 176);
+  static const String _lookupKeyField = deptTrackingLookupKeyField;
 
   void _buildColumns() {
-    final w = _width;
-    _columns = [
-      PlutoColumn(
-        readOnly: true,
-        title: '',
-        field: _lookupKeyField,
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        hide: true,
-        enableColumnDrag: false,
-        enableContextMenu: false,
-        enableDropToResize: false,
-        enableFilterMenuItem: false,
-        enableHideColumnMenuItem: false,
-        enableSetColumnsMenuItem: false,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: '',
-        field: _activeStepNotesField,
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        hide: true,
-        enableColumnDrag: false,
-        enableContextMenu: false,
-        enableDropToResize: false,
-        enableFilterMenuItem: false,
-        enableHideColumnMenuItem: false,
-        enableSetColumnsMenuItem: false,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: '',
-        field: _routeNotesField,
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        hide: true,
-        enableColumnDrag: false,
-        enableContextMenu: false,
-        enableDropToResize: false,
-        enableFilterMenuItem: false,
-        enableHideColumnMenuItem: false,
-        enableSetColumnsMenuItem: false,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.deptTrackingRouteOverview,
-        field: 'routeOverview',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.24 : w * 0.95,
-        renderer: (PlutoColumnRendererContext ctx) {
-          final name = ctx.cell.value?.toString().trim() ?? '';
-          final notes =
-              ctx.row.cells[_routeNotesField]?.value?.toString().trim() ?? '';
-          final hasName = name.isNotEmpty && name != '—';
-          final hasNotes = notes.isNotEmpty;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  hasName ? name : '—',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF1E293B),
-                    height: 1.25,
-                  ),
-                ),
-                if (hasNotes) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    '${_locale.notes}: $notes',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      color: _stepNotesMuted,
-                      height: 1.3,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          );
-        },
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.dateCreated,
-        field: 'datCreatedAt',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.09 : w * 0.42,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.deptTrackingRouteCreator,
-        field: 'txtCreatedBy',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.09 : w * 0.32,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.deptTrackingActiveStep,
-        field: 'activeStepSummary',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.07 : w * 0.22,
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.stepDescription,
-        field: 'txtStepDescription',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.22 : w * 0.92,
-        renderer: (PlutoColumnRendererContext ctx) {
-          final descRaw = ctx.cell.value?.toString() ?? '';
-          final desc = descRaw.trim();
-          final notesRaw =
-              ctx.row.cells[_activeStepNotesField]?.value?.toString() ?? '';
-          final notes = notesRaw.trim();
-          final showDesc = desc.isNotEmpty && desc != '—';
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  showDesc ? desc : '—',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF1E293B),
-                    height: 1.25,
-                  ),
-                ),
-                if (notes.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    '${_locale.deptTrackingStepNotesLabel} $notes',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      color: _stepNotesMuted,
-                      height: 1.3,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          );
-        },
-      ),
-      PlutoColumn(
-        readOnly: true,
-        title: _locale.deptTrackingStepSituation,
-        field: 'stepSituation',
-        backgroundColor: columnColors,
-        type: PlutoColumnType.text(),
-        width: _isDesktop ? w * 0.11 : w * 0.45,
-      ),
-    ];
+    _columns = buildDeptTrackingPlutoColumns(
+      locale: _locale,
+      width: _width,
+      isDesktop: _isDesktop,
+      showActionColumn: true,
+      actionRenderer: _renderActionCell,
+    );
   }
 
-  String _situationLabel(String code) {
-    switch (code) {
-      case 'await_receive':
-        return _locale.deptTrackingSituationAwaitReceive;
-      case 'received_only':
-        return _locale.deptTrackingSituationReceivedOnly;
-      case 'received_sent':
-        return _locale.deptTrackingSituationReceivedSent;
-      default:
-        return _locale.deptTrackingSituationUnknown;
+  Widget _renderActionCell(PlutoColumnRendererContext ctx) {
+    final situation = ctx.cell.value?.toString() ?? '';
+    if (situation == 'received_sent') {
+      return const SizedBox.shrink();
+    }
+
+    final showSend = situation == 'received_only';
+    final key = ctx.row.cells[_lookupKeyField]?.value?.toString() ?? '';
+    final isBusy = _actionBusyKey == key;
+
+    return Center(
+      child: CustomElevatedButton(
+        text: showSend
+            ? _locale.deptTrackingSendOnly
+            : _locale.deptTrackingReceive,
+        color: showSend ? const Color(0xFF1565C0) : greenColor,
+        icon: showSend ? Icons.send_rounded : Icons.inbox_rounded,
+        width: _isDesktop ? _width * 0.085 : _width * 0.24,
+        height: 26,
+        fontSize: 12,
+        isLoading: isBusy,
+        onPressed: () {
+          if (isBusy || _actionBusyKey != null) return;
+          print('Action button pressed for key: $key, situation: $situation');
+          final item = _findDeptItem(key);
+          if (item != null) {
+            _onActionButtonPressed(item);
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> _onActionButtonPressed(TrackingResponseModel item) async {
+    final rowKey = item.routeTrackingKeyForGrid();
+    final activeStepKey = trackingStepForAction(item)?.txtKey?.trim() ?? '';
+    if (activeStepKey.isEmpty) {
+      CustomToastMessage.warning(context, _locale.deptTrackingNoRouteRef);
+      return;
+    }
+
+    setState(() => _actionBusyKey = rowKey);
+    try {
+      final flow = WorkFlowTemplateContoller();
+      final situation = item.activeStepSituationCode();
+      final dynamic res;
+
+      if (situation == 'received_only') {
+        // Grid quick send: empty notes; double-click dialog allows entering notes.
+        res = await flow.postDocumentTrackingSend(
+          stepKey: activeStepKey,
+          notes: '',
+        );
+      } else {
+        // Grid quick receive: lockup omitted (empty); lockup dialog kept commented above.
+        res = await flow.postDocumentTrackingReceive(
+          stepKey: activeStepKey,
+          locationCode: '',
+        );
+      }
+
+      if (!mounted) return;
+      if (res?.statusCode == 200) {
+        CustomToastMessage.success(context, _locale.updatedSuccess);
+        await _load();
+      } else {
+        CustomToastMessage.error(context, _locale.error);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _actionBusyKey = null);
+      }
     }
   }
 
-  String _routeOverviewCellText(String overview) {
-    final t = overview.trim();
-    return t.isEmpty ? '—' : t;
-  }
-
-  String _stepOrderCellText(String order) {
-    final t = order.trim();
-    return t.isEmpty ? '—' : t;
-  }
-
-  PlutoRow _deptTrackingRow(TrackingResponseModel e) {
-    final routeKey = e.routeTrackingKeyForGrid();
-    final t = e.tracking;
-    final stepDesc = e.activeStepDescriptionOnly();
-    final notesForCell = e.activeStepNotesOnly();
-    return PlutoRow(
-      cells: {
-        _lookupKeyField: PlutoCell(value: routeKey),
-        _activeStepNotesField: PlutoCell(value: notesForCell),
-        _routeNotesField: PlutoCell(value: e.tracking?.txtNotes ?? ''),
-        'activeStepSummary': PlutoCell(
-          value: _stepOrderCellText(e.activeStepOrderDisplay()),
-        ),
-        'stepSituation':
-            PlutoCell(value: _situationLabel(e.activeStepSituationCode())),
-        'txtStepDescription': PlutoCell(
-          value: stepDesc.isEmpty ? '—' : stepDesc,
-        ),
-        'txtCreatedBy': PlutoCell(value: t?.txtCreatedBy ?? ''),
-        'datCreatedAt': PlutoCell(
-            value: TrackingResponseModel.shortCreatedAt(t?.datCreatedAt)),
-        'routeOverview': PlutoCell(
-          value: _routeOverviewCellText(e.trackingRouteNotesText()),
-        ),
-      },
-    );
-  }
+  PlutoRow _deptTrackingRow(TrackingResponseModel e) =>
+      deptTrackingToPlutoRow(e, _locale);
 
   TrackingResponseModel? _findDeptItem(String key) {
     final k = key.trim();
@@ -328,15 +194,17 @@ class _DeptTrackingApprovalsScreenState
         CustomToastMessage.warning(context, _locale.deptTrackingNoRouteRef);
         return false;
       }
-      final lockupLocationCode =
-          await showSelectLockupForReceiveDialog(context);
-      if (!mounted) return false;
-      if (lockupLocationCode == null || lockupLocationCode.isEmpty) {
-        return false;
-      }
+      // Lockup selection dialog disabled — send empty location to API.
+      // To re-enable: import select_lockup_for_receive_dialog.dart and uncomment below.
+      // final lockupLocationCode =
+      //     await showSelectLockupForReceiveDialog(context);
+      // if (!mounted) return false;
+      // if (lockupLocationCode == null || lockupLocationCode.isEmpty) {
+      //   return false;
+      // }
       final res = await flow.postDocumentTrackingReceive(
         stepKey: activeStepKey,
-        locationCode: lockupLocationCode,
+        locationCode: '',
       );
       return res?.statusCode == 200;
     }
@@ -408,10 +276,25 @@ class _DeptTrackingApprovalsScreenState
                     color: primary,
                     icon: Icons.refresh_rounded,
                     width: _isDesktop ? _width * 0.09 : _width * 0.28,
-                    height: _height * 0.043,
+                    height: _height * 0.038,
                     fontSize: 14,
                     onPressed: () {
                       if (!_loading) _load();
+                    },
+                  ),
+                  const SizedBox(width: 10),
+                  // select all
+                  CustomElevatedButton(
+                    text: _locale.deptTrackingBulkReceive,
+                    color: greenColor,
+                    icon: Icons.inbox_outlined,
+                    width: _isDesktop ? _width * 0.12 : _width * 0.34,
+                    height: _height * 0.038,
+                    fontSize: 14,
+                    onPressed: () async {
+                      final refreshed =
+                          await showBulkReceiveFilesDialog(context);
+                      if (refreshed == true && mounted) _load();
                     },
                   ),
                 ],

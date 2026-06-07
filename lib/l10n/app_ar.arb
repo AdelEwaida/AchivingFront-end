@@ -205,6 +205,7 @@
   "addStep": "إضافة خطوة",
   "optional": "اختياري",
   "approvals": "تقرير الموافقات",
+  "notificationsPanel": "الإشعارات",
   "myApprovals": "موافقاتي",
   "viewApprovals": "عرض الموافقات",
   "submitforWorkflowApproval": "الإدراج ضمن الموافقات",
@@ -273,6 +274,16 @@
   "deptTrackingDocumentRef": "مرجع المستند",
   "deptTrackingTrackingRef": "مرجع المسار",
   "deptTrackingCurrentStepNo": "الخطوة الحالية",
+  "deptTrackingAction": "الإجراء",
+  "deptTrackingBulkReceive": "استلام عدة ملفات",
+  "deptTrackingBulkReceiveTitle": "استلام ملفات متعددة",
+  "deptTrackingRefNumberLabel": "رقم الاشارة",
+  "deptTrackingRefNumberHint": "أدخل رقم الاشارة",
+  "deptTrackingBulkReceiveSearchType": "البحث حسب",
+  "deptTrackingBulkReceiveSelectedFiles": "الملفات المحددة",
+  "deptTrackingBulkReceiveEmpty": "لم تُضَف ملفات بعد. أدخل رقم الاشارة واضغط Enter.",
+  "deptTrackingBulkReceiveNoSearchResults": "لا توجد نتائج لرقم الاشارة المدخل.",
+  "deptTrackingBulkReceiveConfirm": "استلام الكل",
   "deptTrackingRouteOverview": "اسم المسار",
   "deptTrackingRouteCreator": "منشئ المسار",
   "deptTrackingStepDetailsTitle": "خطوات المسار",
@@ -336,6 +347,51 @@
   "deleteDoneSuccess": "تم الحذف بنجاح",
   "currentLockupLocation": "الموقع الحالي",
   "currentLockupInTransitLabel": "في الطريق للاستلام للدائرة التالية",
+  "currentDepTrackLocation": "الدائرة الحالية",
+  "currentDepTrackReceivedAt": "تم الاستلام في دائرة {name}",
+  "@currentDepTrackReceivedAt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "currentDepTrackAwaitReceiveAt": "في انتظار الاستلام في الدائرة",
+  "currentDepTrackAwaitReceiveAtNamed": "في انتظار الاستلام في الدائرة {name}",
+  "@currentDepTrackAwaitReceiveAtNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "currentDepTrackReceivedInThisDept": "تم الاستلام في هذه الدائرة",
+  "currentDepTrackReceivedInThisDeptNamed": "تم الاستلام في هذه الدائرة {name}",
+  "@currentDepTrackReceivedInThisDeptNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "currentDepTrackInTransitToDept": "في الطريق للاستلام في الدائرة",
+  "currentDepTrackInTransitToDeptNamed": "في الطريق للاستلام في الدائرة {name}",
+  "@currentDepTrackInTransitToDeptNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "currentDepTrackFullyReceivedAt": "تم استلامها بالكامل عند الدائرة",
+  "currentDepTrackFullyReceivedAtNamed": "تم استلامها بالكامل عند الدائرة {name}",
+  "@currentDepTrackFullyReceivedAtNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "txtIn": "في",
   "createdBy": "أنشأ بواسطة",
   "byDate": "بتاريخ",
