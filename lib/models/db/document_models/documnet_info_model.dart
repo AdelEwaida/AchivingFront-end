@@ -207,6 +207,12 @@ class DocumentModel {
         'currentDepTrackName': PlutoCell(value: currentDepTrackName ?? ''),
         'txtCurrentLockup':
             PlutoCell(value: currentDepTrackDisplay(localizations)),
+        'depTrackDisplayStepJson': PlutoCell(
+          value: encodeTrackingStep(resolveCurrentDepTrackStep(this)),
+        ),
+        'depTrackSentStepJson': PlutoCell(
+          value: encodeTrackingStep(depTrackSentStepForDocument(this)),
+        ),
         // 'submitForWfApproval': PlutoCell(value: submitForWfApproval)
       },
     );

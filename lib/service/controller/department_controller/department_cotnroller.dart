@@ -20,6 +20,33 @@ class DepartmentController {
     return list;
   }
 
+  Future<List<DepartmentModel>> getAllDepartments() async {
+    final byKey = <String, DepartmentModel>{};
+    var page = 1;
+
+    while (page <= 100) {
+      final batch = await getDep(SearchModel(page: page));
+      if (batch.isEmpty) break;
+
+      for (final dept in batch) {
+        final key = (dept.txtKey ?? '').trim();
+        if (key.isNotEmpty) {
+          byKey[key] = dept;
+        }
+      }
+
+      page++;
+    }
+
+    final list = byKey.values.toList()
+      ..sort((a, b) {
+        final an = (a.txtDescription ?? '').trim().toLowerCase();
+        final bn = (b.txtDescription ?? '').trim().toLowerCase();
+        return an.compareTo(bn);
+      });
+    return list;
+  }
+
   Future<List<DepartmentModel>> search(SearchModel searchModel) async {
     List<DepartmentModel> list = [];
     await ApiService()

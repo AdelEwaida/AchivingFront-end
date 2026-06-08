@@ -5,7 +5,7 @@ import 'package:archiving_flutter_project/screens/workflow_document/dept_trackin
 import 'package:archiving_flutter_project/service/controller/work_flow_controllers/work_flow_template_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
-import 'package:archiving_flutter_project/widget/custom_drop_down_new.dart';
+import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
 import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
@@ -26,13 +26,15 @@ class _BulkReceiveFilesDialog extends StatefulWidget {
   const _BulkReceiveFilesDialog();
 
   @override
-  State<_BulkReceiveFilesDialog> createState() => _BulkReceiveFilesDialogState();
+  State<_BulkReceiveFilesDialog> createState() =>
+      _BulkReceiveFilesDialogState();
 }
 
 class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
   static const Color _headerBg = Color(0xFFF1F5F9);
   static const Color _textPrimary = Color(0xFF1E293B);
   static const Color _textMuted = Color(0xFF64748B);
+  static const double _inputHeight = 50;
 
   late AppLocalizations _locale;
   double _width = 0;
@@ -45,6 +47,7 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
 
   final List<TrackingResponseModel> _items = [];
   final Set<String> _addedIssueNos = {};
+  final Map<String, String> _itemIssueNoByKey = {};
   List<AwaitingReceiveIssueNoModel> _issueNoOptions = [];
   bool _loadingIssueNos = true;
   bool _searching = false;
@@ -226,12 +229,72 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
     );
   }
 
+  Widget _buildReferenceInputsRow() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: CustomTextField2(
+            width: double.infinity,
+            height: _inputHeight,
+            isReport: true,
+            enabled: !_searching && !_confirming,
+            controller: _refController,
+            focusNode: _refFocusNode,
+            autoFocus: true,
+            text: Text(_locale.deptTrackingRefNumberLabel),
+            customIcon: _searching
+                ? const Icon(Icons.hourglass_top_rounded)
+                : const Icon(Icons.tag_rounded),
+            onSubmitted: (_) => _addReferenceFromField(),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _loadingIssueNos
+              ? SizedBox(
+                  height: _inputHeight,
+                  child: Center(
+                    child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: greenColor,
+                      ),
+                    ),
+                  ),
+                )
+              : DropDown(
+                  key: ValueKey('bulk_issue_nos_${_items.length}'),
+                  width: double.infinity,
+                  height: _inputHeight,
+                  searchBox: false,
+                  isEnabled: !_searching && !_confirming,
+                  bordeText: _locale.issueNo,
+                  items: _filteredIssueNos,
+                  noDataString: _locale.noData,
+                  heightVal: _height * 0.28,
+                  popupTitle: _issueNoDropdownPopupTop(),
+                  customItemBuilder: _issueNoDropdownRow,
+                  onChanged: (value) {
+                    if (value is AwaitingReceiveIssueNoModel) {
+                      _addFromDropdown(value);
+                    }
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
   void _buildColumns() {
     _columns = buildDeptTrackingPlutoColumns(
       locale: _locale,
       width: _dialogContentWidth,
       isDesktop: _isDesktop,
       showRemoveColumn: true,
+      removeColumnAtStart: true,
       removeRenderer: _renderRemoveCell,
     );
   }
@@ -241,7 +304,7 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
         ctx.row.cells[deptTrackingLookupKeyField]?.value?.toString() ?? '';
     return Center(
       child: IconButton(
-        tooltip: _locale.cancel,
+        tooltip: _locale.delete,
         visualDensity: VisualDensity.compact,
         icon: const Icon(
           Icons.close_rounded,
@@ -255,8 +318,7 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
 
   PlutoRow _toPlutoRow(TrackingResponseModel item) {
     final row = deptTrackingToPlutoRow(item, _locale);
-    row.cells['remove'] =
-        PlutoCell(value: item.routeTrackingKeyForGrid());
+    row.cells['remove'] = PlutoCell(value: item.routeTrackingKeyForGrid());
     return row;
   }
 
@@ -275,12 +337,15 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
     String? sourceIssueNo,
   }) {
     var changed = false;
+    final issueNo = sourceIssueNo?.trim() ?? '';
     for (final item in results) {
       if (_hasItem(item)) continue;
       _items.add(item);
+      if (issueNo.isNotEmpty) {
+        _itemIssueNoByKey[item.routeTrackingKeyForGrid()] = issueNo;
+      }
       changed = true;
     }
-    final issueNo = sourceIssueNo?.trim() ?? '';
     if (issueNo.isNotEmpty && results.isNotEmpty) {
       _addedIssueNos.add(issueNo);
       changed = true;
@@ -296,8 +361,7 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
 
     setState(() => _searching = true);
     try {
-      final results =
-          await _controller.searchAwaitingReceive(issueNo: ref);
+      final results = await _controller.searchAwaitingReceive(issueNo: ref);
       if (!mounted) return;
       if (results.isEmpty) {
         CustomToastMessage.warning(
@@ -320,8 +384,7 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
 
     setState(() => _searching = true);
     try {
-      final results =
-          await _controller.searchAwaitingReceive(issueNo: issueNo);
+      final results = await _controller.searchAwaitingReceive(issueNo: issueNo);
       if (!mounted) return;
       _addSearchResults(results, sourceIssueNo: issueNo);
       setState(() => _dropdownSearchQuery = '');
@@ -332,7 +395,16 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
 
   void _removeItem(String key) {
     setState(() {
+      final issueNo = _itemIssueNoByKey.remove(key);
       _items.removeWhere((item) => item.routeTrackingKeyForGrid() == key);
+      if (issueNo != null &&
+          issueNo.isNotEmpty &&
+          !_items.any(
+            (item) =>
+                _itemIssueNoByKey[item.routeTrackingKeyForGrid()] == issueNo,
+          )) {
+        _addedIssueNos.remove(issueNo);
+      }
       _syncPlutoRows();
     });
   }
@@ -372,65 +444,20 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
     }
   }
 
-  double get _dialogContentWidth =>
-      _isDesktop ? _width * 0.88 : _width * 0.92;
+  double get _dialogWidth => _isDesktop ? _width * 0.74 : _width * 0.94;
+
+  double get _dialogContentWidth => _dialogWidth * 0.96;
 
   @override
   Widget build(BuildContext context) {
     return AppDialog(
       title: _locale.deptTrackingBulkReceiveTitle,
-      width: _isDesktop ? _width * 0.92 : _width * 0.98,
+      width: _dialogWidth,
       height: _height * 0.82,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          CustomTextField2(
-            width: double.infinity,
-            height: 50,
-            isReport: true,
-            enabled: !_searching && !_confirming,
-            controller: _refController,
-            focusNode: _refFocusNode,
-            autoFocus: true,
-            text: Text(_locale.deptTrackingRefNumberLabel),
-            customIcon: _searching
-                ? const Icon(Icons.hourglass_top_rounded)
-                : const Icon(Icons.tag_rounded),
-            onSubmitted: (_) => _addReferenceFromField(),
-          ),
-          const SizedBox(height: 14),
-          if (_loadingIssueNos)
-            SizedBox(
-              height: 50,
-              child: Center(
-                child: SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: greenColor,
-                  ),
-                ),
-              ),
-            )
-          else
-            NewCustomDropDown(
-              key: ValueKey('bulk_issue_nos_${_items.length}'),
-              searchBox: false,
-              isReports: true,
-              isEnabled: !_searching && !_confirming,
-              width: _dialogContentWidth,
-              heightVal: _height * 0.28,
-              bordeText: _locale.issueNo,
-              items: _filteredIssueNos,
-              popupTitle: _issueNoDropdownPopupTop(),
-              customItemBuilder: _issueNoDropdownRow,
-              onChanged: (value) {
-                if (value is AwaitingReceiveIssueNoModel) {
-                  _addFromDropdown(value);
-                }
-              },
-            ),
+          _buildReferenceInputsRow(),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -444,8 +471,7 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
               ),
               const SizedBox(width: 8),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: _headerBg,
                   borderRadius: BorderRadius.circular(999),
@@ -481,10 +507,16 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(_locale.cancel),
+        CustomElevatedButton(
+          text: _locale.close,
+          color: redColor,
+          icon: Icons.close_rounded,
+          width: _isDesktop ? 120 : 110,
+          height: 40,
+          fontSize: 13,
+          onPressed: _confirming ? () {} : () => Navigator.of(context).pop(),
         ),
+        SizedBox(width: 10),
         CustomElevatedButton(
           text: _locale.deptTrackingBulkReceiveConfirm,
           color: greenColor,
@@ -493,7 +525,8 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
           height: 40,
           fontSize: 13,
           isLoading: _confirming,
-          onPressed: _items.isEmpty || _confirming ? () {} : _confirmBulkReceive,
+          onPressed:
+              _items.isEmpty || _confirming ? () {} : _confirmBulkReceive,
         ),
       ],
     );

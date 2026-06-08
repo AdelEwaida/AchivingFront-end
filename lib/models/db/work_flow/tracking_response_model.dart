@@ -110,6 +110,13 @@ class TrackingResponseModel {
     return null;
   }
 
+  TrackingStepInfoModel? nextStepAfterActive() {
+    final active = activeStepDisplayed();
+    final order = active?.intStepOrder;
+    if (order == null) return null;
+    return _stepByOrder(order + 1);
+  }
+
   String activeStepNotesOnly() {
     final s = activeStepDisplayed();
     if (s == null) return '';
@@ -136,24 +143,6 @@ class TrackingResponseModel {
     if (hasR && hasOutboundSend) return 'received_sent';
     if (hasR) return 'received_only';
     return 'await_receive';
-  }
-
-  bool isActiveStepLastInRoute() {
-    final list = steps ?? [];
-    if (list.isEmpty) return true;
-    final orders = <int>[];
-    for (final s in list) {
-      final o = s.intStepOrder;
-      if (o != null) orders.add(o);
-    }
-    if (orders.isEmpty) {
-      return list.length <= 1;
-    }
-    final maxOrder = orders.reduce((a, b) => a > b ? a : b);
-    final active = activeStepDisplayed();
-    final cur = active?.intStepOrder ?? tracking?.intCurrentStep;
-    if (cur == null) return false;
-    return cur >= maxOrder;
   }
 
   String trackingOverallStatusCode() {

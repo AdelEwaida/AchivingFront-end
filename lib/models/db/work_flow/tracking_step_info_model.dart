@@ -47,7 +47,8 @@ class TrackingStepInfoModel {
       intStepOrder: _asInt(json['intStepOrder'] ?? json['stepOrder']),
       txtDeptcode:
           json['txtDeptcode']?.toString() ?? json['deptKey']?.toString(),
-      txtDeptName: json['txtDeptName']?.toString(),
+      txtDeptName: json['txtDeptName']?.toString() ??
+          json['deptName']?.toString(),
       intStatus: _asInt(json['intStatus']),
       txtReceivedBy: json['txtReceivedBy']?.toString(),
       datReceivedAt: json['datReceivedAt']?.toString(),

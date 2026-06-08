@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/db/department_models/department_model.dart';
 import '../../models/db/work_flow/tracking_step_info_model.dart';
+import '../../screens/file_screens/document_dep_track_display.dart';
 import '../../models/dto/searchs_model/search_model.dart';
 import '../../service/controller/department_controller/department_cotnroller.dart';
 import '../app_dialog.dart';
@@ -185,7 +186,7 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                     size: 13, color: Color(0xFF64748B)),
                 const SizedBox(width: 4),
                 Text(
-                  "${_locale.byDate}: ${_formatDate(item.tracking?.datCreatedAt)}",
+                  "${_locale.byDate}: ${formatTrackingStepDate(item.tracking?.datCreatedAt)}",
                   style:
                       const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
                 ),
@@ -283,64 +284,8 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                   ],
                 ),
 
-                // Received by
-                if (step.intStatus == 1 ||
-                    (step.txtReceivedBy != null &&
-                        step.txtReceivedBy!.isNotEmpty)) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.download_done_rounded,
-                          size: 12.5, color: Color(0xFF0D9B8A)),
-                      const SizedBox(width: 4),
-                      Text(
-                        "${_locale.receivedBy}: ${step.txtReceivedBy ?? ''}",
-                        style: const TextStyle(
-                            fontSize: 12.5, color: Color(0xFF0D9B8A)),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        "${_locale.txtIn}: ${step.txtLocationCode ?? ''}(${step.txtLocationName ?? ''})",
-                        style: const TextStyle(
-                            fontSize: 12.5, color: Color(0xFF0D9B8A)),
-                      ),
-                      if (step.datReceivedAt != null) ...[
-                        const SizedBox(width: 8),
-                        Text(
-                          _formatDate(step.datReceivedAt),
-                          style: const TextStyle(
-                              fontSize: 12.5, color: Color(0xFF64748B)),
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
-
-                // Sent by
-                if (step.intStatus == 1 ||
-                    (step.txtSentBy != null && step.txtSentBy!.isNotEmpty)) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.send_rounded,
-                          size: 12.5, color: Color(0xFF7C3AED)),
-                      const SizedBox(width: 4),
-                      Text(
-                        "${_locale.sentBy}: ${step.txtSentBy ?? ''}",
-                        style: const TextStyle(
-                            fontSize: 12.5, color: Color(0xFF7C3AED)),
-                      ),
-                      if (step.datSentAt != null) ...[
-                        const SizedBox(width: 8),
-                        Text(
-                          _formatDate(step.datSentAt),
-                          style: const TextStyle(
-                              fontSize: 12.5, color: Color(0xFF64748B)),
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
+                buildTrackingStepReceivedRow(step, _locale),
+                buildTrackingStepSentRow(step, _locale),
 
                 // Notes
                 if (step.txtNotes != null && step.txtNotes!.isNotEmpty) ...[
@@ -401,9 +346,6 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
         return _StepStatusInfo(Colors.blue, _locale.stepStatusReceived);
       case 3:
         return _StepStatusInfo(Colors.green, _locale.stepStatusSent);
-      case 4:
-        return _StepStatusInfo(
-            Color.fromARGB(255, 227, 146, 59), _locale.reiveAndSycleDone);
       default:
         return _StepStatusInfo(Colors.grey, "");
     }
@@ -433,26 +375,6 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
     );
   }
 
-  String _formatDate(String? raw) {
-    if (raw == null || raw.isEmpty) return "";
-
-    try {
-      final dt = DateTime.parse(raw);
-
-      final hour = dt.hour > 12
-          ? dt.hour - 12
-          : dt.hour == 0
-              ? 12
-              : dt.hour;
-
-      final period = dt.hour >= 12 ? "PM" : "AM";
-
-      return "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} "
-          "${hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')} $period";
-    } catch (_) {
-      return raw;
-    }
-  }
 }
 
 class _StepStatusInfo {

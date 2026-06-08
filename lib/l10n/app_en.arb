@@ -307,6 +307,17 @@
   "deptTrackingNoPreviewFile": "No PDF or image file to preview for this document.",
   "deptTrackingSendNotesLabel": "Notes (for send)",
   "deptTrackingSendNotesHint": "Sent to next department",
+  "deptTrackingSendNextDeptMessage": "The next step is department {name}",
+  "@deptTrackingSendNextDeptMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deptTrackingSendToNextDept": "Send to next department",
+  "deptTrackingSendChooseOtherDept": "Choose another department",
+  "deptTrackingSendDeptTitle": "You are on the final step of the tracking route. Select the department you wish to send the file to below.",
   "deptTrackingNoRouteRef": "No tracking (route) reference for this row.",
   "deptTrackingActiveStep": "Step number",
   "deptTrackingStepSituation": "Current step state",
@@ -369,8 +380,8 @@
       }
     }
   },
-  "currentDepTrackAwaitReceiveAt": "Awaiting receive at department",
-  "currentDepTrackAwaitReceiveAtNamed": "Awaiting receive at department {name}",
+  "currentDepTrackAwaitReceiveAt": "Awaiting receive by department",
+  "currentDepTrackAwaitReceiveAtNamed": "Awaiting receive by department {name}",
   "@currentDepTrackAwaitReceiveAtNamed": {
     "placeholders": {
       "name": {
@@ -378,8 +389,8 @@
       }
     }
   },
-  "currentDepTrackReceivedInThisDept": "Received at this department",
-  "currentDepTrackReceivedInThisDeptNamed": "Received at this department {name}",
+  "currentDepTrackReceivedInThisDept": "Received — awaiting send",
+  "currentDepTrackReceivedInThisDeptNamed": "Received at department {name} — awaiting send",
   "@currentDepTrackReceivedInThisDeptNamed": {
     "placeholders": {
       "name": {
@@ -387,8 +398,8 @@
       }
     }
   },
-  "currentDepTrackInTransitToDept": "On the way to receive at department",
-  "currentDepTrackInTransitToDeptNamed": "On the way to receive at department {name}",
+  "currentDepTrackInTransitToDept": "In transit — awaiting receive",
+  "currentDepTrackInTransitToDeptNamed": "In transit to department {name} — awaiting receive",
   "@currentDepTrackInTransitToDeptNamed": {
     "placeholders": {
       "name": {

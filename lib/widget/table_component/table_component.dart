@@ -466,7 +466,11 @@ class _TableComponentState extends State<TableComponent> {
         //         ? 55
         //         : 70,
         columnHeight: widget.columnHeight ?? 48,
-        columnFilterHeight: 30,
+        columnFilterHeight: 36,
+        defaultColumnFilterPadding:
+            const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        cellColorInEditState: Colors.white,
+        cellColorInReadOnlyState: Colors.white,
 
         columnTextStyle: const TextStyle(
             fontSize: 14,
@@ -476,7 +480,7 @@ class _TableComponentState extends State<TableComponent> {
         rowHeight: widget.rowsHeight ?? 52,
         cellTextStyle: const TextStyle(
           fontSize: 13,
-          color: Colors.white,
+          color: Color(0xFF111827),
         ),
       ),
     );
@@ -509,59 +513,7 @@ class _TableComponentState extends State<TableComponent> {
       //   ],
       // );
       // _locale.lastPricePurchase
-      polCols[i].titleSpan = TextSpan(
-        children: [
-          WidgetSpan(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      polCols[i].title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                polCols[i].title == "#"
-                    ? const SizedBox.shrink()
-                    : Row(
-                        children: [
-                          const SizedBox(width: 2),
-                          Container(
-                            width: 22,
-                            height: 22,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEFF6FF),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.filter_alt_outlined,
-                                size: 14,
-                                color: primary2,
-                              ),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              onPressed: () {
-                                showColumnAttributesPopup(
-                                    context, polCols[i], stateManager);
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 2),
-                        ],
-                      )
-              ],
-            ),
-          ),
-        ],
-      );
+      polCols[i].titleSpan = null;
       polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
       polCols[i].textAlign = PlutoColumnTextAlign.center;
       polCols[i].renderer = polCols[i].renderer ??

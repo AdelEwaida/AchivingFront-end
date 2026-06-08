@@ -2,7 +2,6 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import '../../utils/constants/colors.dart';
 
-
 // ── Design tokens (matching CustomDropDownSearch) ────────────────
 const Color _primary = Color(0xFF185FA5);
 const Color _primaryLight = Color(0x1A185FA5);
@@ -40,6 +39,9 @@ class DropDown extends StatefulWidget {
   bool? isEnabled;
   bool? isMandatory;
   String? noDataString;
+  final Widget Function(BuildContext context, dynamic item, bool isSelected)?
+      customItemBuilder;
+  final Widget? popupTitle;
 
   DropDown({
     Key? key,
@@ -69,6 +71,8 @@ class DropDown extends StatefulWidget {
     this.showBorder,
     this.noDataString,
     this.color,
+    this.customItemBuilder,
+    this.popupTitle,
   }) : super(key: key);
 
   @override
@@ -168,7 +172,6 @@ class _CustomDropDownState extends State<DropDown>
                 widget.onValidator == null ? null : widget.onValidator!(value),
             items: widget.items ?? [],
             asyncItems: widget.onSearch,
-
             itemAsString: (item) {
               if (item == null) return '';
               final sv = widget.selectedVal?.trim();
@@ -188,7 +191,6 @@ class _CustomDropDownState extends State<DropDown>
               ),
               onPressed: widget.onPressed ?? () {},
             ),
-
             dropdownDecoratorProps: DropDownDecoratorProps(
               baseStyle: TextStyle(fontSize: _fontSize, color: _textPrimary),
               dropdownSearchDecoration: InputDecoration(
@@ -197,7 +199,8 @@ class _CustomDropDownState extends State<DropDown>
                 labelText: _labelText,
                 alignLabelWithHint: true,
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
-                labelStyle: TextStyle(fontSize: _fontSize, color: _textSecondary),
+                labelStyle:
+                    TextStyle(fontSize: _fontSize, color: _textSecondary),
                 floatingLabelStyle: const TextStyle(
                   fontSize: 14,
                   color: _primary,
@@ -235,14 +238,18 @@ class _CustomDropDownState extends State<DropDown>
                 fillColor: _isEnabled ? Colors.white : _bgColor,
               ),
             ),
-
             popupProps: PopupProps.menu(
               fit: FlexFit.loose,
+              title: widget.popupTitle,
               onDismissed: () => setState(() => _isPopupOpen = false),
               searchDelay: const Duration(milliseconds: 200),
-              showSearchBox: widget.searchBox ?? true,
+              showSearchBox: widget.popupTitle != null
+                  ? false
+                  : (widget.searchBox ?? true),
               isFilterOnline: widget.onSearch != null,
-              constraints: BoxConstraints(maxHeight: popupHeight),
+              constraints: widget.popupTitle != null
+                  ? BoxConstraints.tightFor(height: popupHeight)
+                  : BoxConstraints(maxHeight: popupHeight),
 
               menuProps: MenuProps(
                 backgroundColor: _cardColor,
@@ -288,38 +295,39 @@ class _CustomDropDownState extends State<DropDown>
                 ),
               ),
 
-              itemBuilder: (context, item, isSelected) {
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 120),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? _primary.withOpacity(0.08)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListTile(
-                    dense: true,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                    leading: isSelected
-                        ? Icon(Icons.check_circle_rounded,
-                            color: _primary, size: _iconSize)
-                        : SizedBox(width: _iconSize),
-                    title: Text(
-                      item.toString(),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: _fontSize,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected ? _primary : _textPrimary,
+              itemBuilder: widget.customItemBuilder ??
+                  (context, item, isSelected) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 120),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? _primary.withOpacity(0.08)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ),
-                  ),
-                );
-              },
+                      child: ListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 2),
+                        leading: isSelected
+                            ? Icon(Icons.check_circle_rounded,
+                                color: _primary, size: _iconSize)
+                            : SizedBox(width: _iconSize),
+                        title: Text(
+                          item.toString(),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: _fontSize,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w400,
+                            color: isSelected ? _primary : _textPrimary,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
 
               // ── Empty state ──────────────────────────
               emptyBuilder: (context, searchEntry) => Center(
@@ -338,7 +346,6 @@ class _CustomDropDownState extends State<DropDown>
                 ),
               ),
             ),
-
             onBeforePopupOpening: (dynamic selected) async {
               setState(() => _isPopupOpen = true);
               if (widget.onBeforeOpening != null) {

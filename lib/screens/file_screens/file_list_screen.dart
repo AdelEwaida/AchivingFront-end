@@ -13,6 +13,7 @@ import 'package:archiving_flutter_project/models/db/actions_models/action_model.
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
+import 'package:archiving_flutter_project/screens/file_screens/document_dep_track_display.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_document_criterea.dart';
 import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
 import 'package:archiving_flutter_project/models/tree_model/my_node.dart';
@@ -509,12 +510,9 @@ class _FileListScreenState extends State<FileListScreen> {
 
                                   if (existingTrackings.isNotEmpty) {
                                     final bool canCreate =
-                                        existingTrackings.any((t) {
-                                      final steps = t.steps ?? [];
-
-                                      return steps
-                                          .any((step) => step.intStatus == 4);
-                                    });
+                                        existingTrackings.any(
+                                      (t) => t.tracking?.intStatus == 1,
+                                    );
 
                                     if (!canCreate) {
                                       if (!mounted) return;
@@ -805,6 +803,7 @@ class _FileListScreenState extends State<FileListScreen> {
         TableComponent(
           tableHeigt: height * 0.42,
           tableWidth: width * 0.98, // ← full width minus page padding
+          rowsHeight: 88,
           addReminder: context.read<DocumentListProvider>().isViewFile == true
               ? null
               : addRemider,
@@ -820,6 +819,7 @@ class _FileListScreenState extends State<FileListScreen> {
           genranlEdit: context.read<DocumentListProvider>().isViewFile == true
               ? null
               : editDocumentInfo,
+          refresh: refreshTable,
           plCols: polCols,
           mode: PlutoGridMode.selectWithOneTap,
           polRows: [],
@@ -1720,6 +1720,32 @@ class _FileListScreenState extends State<FileListScreen> {
     stateManager.setShowLoading(false);
   }
 
+  Future<void> refreshTable() async {
+    if (!_gridReady) return;
+    selectedRow = null;
+    stateManager.setShowLoading(true);
+    stateManager.removeAllRows();
+    stateManager.notifyListeners(true);
+
+    documentListProvider.setPage(1);
+    if (documentListProvider.isSearch ||
+        documentListProvider.issueNumber != null) {
+      documentListProvider.searchDocumentCriteria.page = 1;
+    } else {
+      documentListProvider.searchDocumentCriteria.page = -1;
+    }
+
+    final response = await fetch(PlutoInfinityScrollRowsRequest());
+    if (!mounted) return;
+    stateManager.appendRows(response.rows);
+    stateManager.notifyListeners(true);
+    stateManager.resetCurrentState();
+    stateManager.setShowLoading(false);
+    fileNumberDisplayed.value = stateManager.refRows.length;
+    getCount();
+    setState(() {});
+  }
+
   void uploadFile() async {
     if (selectedRow == null) return;
 
@@ -1995,10 +2021,25 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.currentDepTrackLocation,
         field: "txtCurrentLockup",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.14 : width * 0.28,
+        width: isDesktop ? width * 0.24 : width * 0.32,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
         readOnly: true,
+        renderer: (rendererContext) {
+          final main = rendererContext.cell.value?.toString() ?? '';
+          return buildDepTrackColumnCell(
+            mainLabel: main,
+            displayStep: decodeTrackingStep(
+              rendererContext.row.cells['depTrackDisplayStepJson']?.value
+                  ?.toString(),
+            ),
+            sentStep: decodeTrackingStep(
+              rendererContext.row.cells['depTrackSentStepJson']?.value
+                  ?.toString(),
+            ),
+            locale: _locale,
+          );
+        },
       ),
     ];
   }

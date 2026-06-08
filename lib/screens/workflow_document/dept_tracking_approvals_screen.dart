@@ -1,4 +1,5 @@
 import 'package:archiving_flutter_project/dialogs/document_dialogs/bulk_receive_files_dialog.dart';
+import 'package:archiving_flutter_project/dialogs/document_dialogs/dept_tracking_send_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_dialog.dart';
 import 'package:archiving_flutter_project/models/db/work_flow/tracking_response_model.dart';
 import 'package:archiving_flutter_project/screens/workflow_document/dept_tracking_pluto_mapper.dart';
@@ -116,11 +117,15 @@ class _DeptTrackingApprovalsScreenState
       final dynamic res;
 
       if (situation == 'received_only') {
-        // Grid quick send: empty notes; double-click dialog allows entering notes.
-        res = await flow.postDocumentTrackingSend(
-          stepKey: activeStepKey,
-          notes: '',
-        );
+        final sent = await _sendTracking(item);
+        if (!mounted) return;
+        if (sent == true) {
+          CustomToastMessage.success(context, _locale.updatedSuccess);
+          await _load();
+        } else if (sent == false) {
+          CustomToastMessage.error(context, _locale.error);
+        }
+        return;
       } else {
         // Grid quick receive: lockup omitted (empty); lockup dialog kept commented above.
         res = await flow.postDocumentTrackingReceive(
@@ -141,6 +146,36 @@ class _DeptTrackingApprovalsScreenState
         setState(() => _actionBusyKey = null);
       }
     }
+  }
+
+  /// null = cancelled, true = sent, false = API error
+  Future<bool?> _sendTracking(
+    TrackingResponseModel item, {
+    String initialNotes = '',
+  }) async {
+    final activeStepKey = trackingStepForAction(item)?.txtKey?.trim() ?? '';
+    if (activeStepKey.isEmpty) {
+      CustomToastMessage.warning(context, _locale.deptTrackingNoRouteRef);
+      return false;
+    }
+    final next = item.nextStepAfterActive();
+    final deptCode = (next?.txtDeptcode ?? '').trim();
+    final deptName = (next?.txtDeptName ?? '').trim();
+
+    final request = await showDeptTrackingSendDialog(
+      context,
+      defaultDeptCode: deptCode,
+      defaultDeptName: deptName,
+      initialNotes: initialNotes,
+    );
+    if (!mounted || request == null) return null;
+
+    final res = await WorkFlowTemplateContoller().postDocumentTrackingSend(
+      stepKey: activeStepKey,
+      deptCode: request.deptCode,
+      notes: request.notes,
+    );
+    return res?.statusCode == 200;
   }
 
   PlutoRow _deptTrackingRow(TrackingResponseModel e) =>
@@ -210,20 +245,12 @@ class _DeptTrackingApprovalsScreenState
     }
 
     Future<bool> send(String notes) async {
-      if (activeStepKey.isEmpty) {
-        CustomToastMessage.warning(context, _locale.deptTrackingNoRouteRef);
-        return false;
-      }
-      final res = await flow.postDocumentTrackingSend(
-        stepKey: activeStepKey,
-        notes: notes,
-      );
-      return res?.statusCode == 200;
+      final sent = await _sendTracking(item, initialNotes: notes);
+      return sent == true;
     }
 
     final situation = item.activeStepSituationCode();
     final hideDeptActions = situation == 'received_sent';
-    final receiveOnlyUi = situation == 'await_receive';
     final sendOnlyAfterReceived = situation == 'received_only';
 
     final reload = await showDialog<bool>(
@@ -237,7 +264,6 @@ class _DeptTrackingApprovalsScreenState
             : FileExplorerDeptTrackingExtras(
                 onReceiveTap: receive,
                 onSendTap: send,
-                receiveOnlyLastStep: receiveOnlyUi,
                 sendOnlyAfterReceived: sendOnlyAfterReceived,
               ),
       ),

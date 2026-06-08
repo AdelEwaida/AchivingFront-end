@@ -294,6 +294,17 @@
   "deptTrackingNoPreviewFile": "لا يوجد ملف PDF أو صورة للمعاينة لهذا المستند.",
   "deptTrackingSendNotesLabel": "ملاحظات الإرسال",
   "deptTrackingSendNotesHint": "تم الإرسال إلى الدائرة التالية",
+  "deptTrackingSendNextDeptMessage": "الخطوة التالية هي دائرة {name}",
+  "@deptTrackingSendNextDeptMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deptTrackingSendToNextDept": "إرسال للدائرة التالية",
+  "deptTrackingSendChooseOtherDept": "اختيار دائرة أخرى",
+  "deptTrackingSendDeptTitle": "أنت على آخر خطوة من مسار التتبع. يمكنك إرسال الملف إلى أي دائرة تختارها أدناه.",
   "deptTrackingNoRouteRef": "لا يوجد مرجع مسار لهذا السطر.",
   "deptTrackingActiveStep": "رقم الخطوة",
   "deptTrackingStepSituation": "وضع الخطوة الحالية",
@@ -348,7 +359,7 @@
   "currentLockupLocation": "الموقع الحالي",
   "currentLockupInTransitLabel": "في الطريق للاستلام للدائرة التالية",
   "currentDepTrackLocation": "الدائرة الحالية",
-  "currentDepTrackReceivedAt": "تم الاستلام في دائرة {name}",
+  "currentDepTrackReceivedAt": "تم الاستلام لدى دائرة {name}",
   "@currentDepTrackReceivedAt": {
     "placeholders": {
       "name": {
@@ -356,8 +367,8 @@
       }
     }
   },
-  "currentDepTrackAwaitReceiveAt": "في انتظار الاستلام في الدائرة",
-  "currentDepTrackAwaitReceiveAtNamed": "في انتظار الاستلام في الدائرة {name}",
+  "currentDepTrackAwaitReceiveAt": "في انتظار الاستلام من قبل دائرة",
+  "currentDepTrackAwaitReceiveAtNamed": "في انتظار الاستلام من قبل دائرة {name}",
   "@currentDepTrackAwaitReceiveAtNamed": {
     "placeholders": {
       "name": {
@@ -365,8 +376,8 @@
       }
     }
   },
-  "currentDepTrackReceivedInThisDept": "تم الاستلام في هذه الدائرة",
-  "currentDepTrackReceivedInThisDeptNamed": "تم الاستلام في هذه الدائرة {name}",
+  "currentDepTrackReceivedInThisDept": "تم الاستلام لدى دائرة — بانتظار الإرسال",
+  "currentDepTrackReceivedInThisDeptNamed": "تم الاستلام لدى دائرة {name} — بانتظار الإرسال",
   "@currentDepTrackReceivedInThisDeptNamed": {
     "placeholders": {
       "name": {
@@ -374,8 +385,8 @@
       }
     }
   },
-  "currentDepTrackInTransitToDept": "في الطريق للاستلام في الدائرة",
-  "currentDepTrackInTransitToDeptNamed": "في الطريق للاستلام في الدائرة {name}",
+  "currentDepTrackInTransitToDept": "في الطريق إلى دائرة — بانتظار الاستلام",
+  "currentDepTrackInTransitToDeptNamed": "في الطريق إلى دائرة {name} — بانتظار الاستلام",
   "@currentDepTrackInTransitToDeptNamed": {
     "placeholders": {
       "name": {
@@ -383,8 +394,8 @@
       }
     }
   },
-  "currentDepTrackFullyReceivedAt": "تم استلامها بالكامل عند الدائرة",
-  "currentDepTrackFullyReceivedAtNamed": "تم استلامها بالكامل عند الدائرة {name}",
+  "currentDepTrackFullyReceivedAt": "تم الاستلام بالكامل لدى دائرة",
+  "currentDepTrackFullyReceivedAtNamed": "تم الاستلام بالكامل لدى دائرة {name}",
   "@currentDepTrackFullyReceivedAtNamed": {
     "placeholders": {
       "name": {

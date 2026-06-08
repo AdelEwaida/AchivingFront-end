@@ -77,9 +77,10 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
   PlutoColumnRenderer? removeRenderer,
   bool showActionColumn = false,
   bool showRemoveColumn = false,
+  bool removeColumnAtStart = false,
 }) {
   final w = width;
-  final columns = <PlutoColumn>[
+  final hiddenColumns = <PlutoColumn>[
     PlutoColumn(
       readOnly: true,
       title: '',
@@ -124,18 +125,20 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
     ),
   ];
 
-  if (showActionColumn && actionRenderer != null) {
+  final columns = <PlutoColumn>[...hiddenColumns];
+
+  if (showRemoveColumn && removeRenderer != null && removeColumnAtStart) {
     columns.add(
       PlutoColumn(
         readOnly: true,
-        title: locale.deptTrackingAction,
-        field: 'action',
+        title: '',
+        field: 'remove',
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
-        width: isDesktop ? w * 0.1 : w * 0.3,
-        enableColumnDrag: false,
+        width: isDesktop ? w * 0.05 : w * 0.1,
         enableFilterMenuItem: false,
-        renderer: actionRenderer,
+        enableColumnDrag: false,
+        renderer: removeRenderer,
       ),
     );
   }
@@ -158,11 +161,12 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 hasName ? name : '—',
+                textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 13,
                   color: Color(0xFF1E293B),
@@ -173,6 +177,7 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
                 const SizedBox(height: 4),
                 Text(
                   '${locale.notes}: $notes',
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -228,11 +233,12 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 showDesc ? desc : '—',
+                textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 13,
                   color: Color(0xFF1E293B),
@@ -243,6 +249,7 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
                 const SizedBox(height: 4),
                 Text(
                   '${locale.deptTrackingStepNotesLabel} $notes',
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w400,
@@ -266,7 +273,23 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
     ),
   ]);
 
-  if (showRemoveColumn && removeRenderer != null) {
+  if (showActionColumn && actionRenderer != null) {
+    columns.add(
+      PlutoColumn(
+        readOnly: true,
+        title: locale.deptTrackingAction,
+        field: 'action',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.1 : w * 0.3,
+        enableColumnDrag: false,
+        enableFilterMenuItem: false,
+        renderer: actionRenderer,
+      ),
+    );
+  }
+
+  if (showRemoveColumn && removeRenderer != null && !removeColumnAtStart) {
     columns.add(
       PlutoColumn(
         readOnly: true,

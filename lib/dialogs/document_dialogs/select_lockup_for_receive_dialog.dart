@@ -1,6 +1,7 @@
 import 'package:archiving_flutter_project/dialogs/app_dialog.dart';
-import 'package:archiving_flutter_project/models/db/work_flow/lockup_location_model.dart';
-import 'package:archiving_flutter_project/service/controller/lockup_location_controller.dart';
+import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
+import 'package:archiving_flutter_project/models/dto/searchs_model/search_model.dart';
+import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
@@ -8,16 +9,21 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../widget/custom_drop_down.dart';
 
-Future<String?> showSelectLockupForReceiveDialog(BuildContext context) {
+Future<String?> showSelectLockupForReceiveDialog(
+  BuildContext context, {
+  String? dialogTitle,
+}) {
   return showDialog<String?>(
     context: context,
     barrierDismissible: false,
-    builder: (ctx) => const _SelectLockupForReceiveDialog(),
+    builder: (ctx) => _SelectLockupForReceiveDialog(dialogTitle: dialogTitle),
   );
 }
 
 class _SelectLockupForReceiveDialog extends StatefulWidget {
-  const _SelectLockupForReceiveDialog();
+  const _SelectLockupForReceiveDialog({this.dialogTitle});
+
+  final String? dialogTitle;
 
   @override
   State<_SelectLockupForReceiveDialog> createState() =>
@@ -26,10 +32,10 @@ class _SelectLockupForReceiveDialog extends StatefulWidget {
 
 class _SelectLockupForReceiveDialogState
     extends State<_SelectLockupForReceiveDialog> {
-  final LockupLocationController _controller = LockupLocationController();
+  final DepartmentController _controller = DepartmentController();
   bool _loading = true;
-  List<LockupLocationModel> _items = [];
-  String? _selectedCode;
+  List<DepartmentModel> _items = [];
+  String? _selectedKey;
 
   @override
   void initState() {
@@ -38,38 +44,35 @@ class _SelectLockupForReceiveDialogState
   }
 
   Future<void> _load() async {
-    final raw = await _controller.getAllLockupLocations();
+    final raw = await _controller.getDep(SearchModel(page: 1));
     if (!mounted) return;
-    final byCode = <String, LockupLocationModel>{};
+    final byKey = <String, DepartmentModel>{};
     for (final e in raw) {
-      final c = (e.lockupCode ?? '').trim();
-      if (c.isEmpty) continue;
-      byCode[c] = e;
+      final key = (e.txtKey ?? '').trim();
+      if (key.isEmpty) continue;
+      byKey[key] = e;
     }
-    final list = byCode.values.toList()
+    final list = byKey.values.toList()
       ..sort((a, b) {
-        final an = (a.name ?? '').trim().toLowerCase();
-        final bn = (b.name ?? '').trim().toLowerCase();
-        final c = an.compareTo(bn);
-        if (c != 0) return c;
-        return (a.lockupCode ?? '').compareTo(b.lockupCode ?? '');
+        final an = (a.txtDescription ?? '').trim().toLowerCase();
+        final bn = (b.txtDescription ?? '').trim().toLowerCase();
+        return an.compareTo(bn);
       });
     setState(() {
       _items = list;
-      _selectedCode = list.isEmpty ? null : list.first.lockupCode!.trim();
+      _selectedKey = list.isEmpty ? null : list.first.txtKey!.trim();
       _loading = false;
     });
   }
 
-  String _rowLabel(LockupLocationModel e) {
-    final name = (e.name ?? '').trim();
-    final code = (e.lockupCode ?? '').trim();
-    if (name.isEmpty) return code;
-    return '$name ($code)';
+  String _rowLabel(DepartmentModel e) {
+    final name = (e.txtDescription ?? '').trim();
+    if (name.isNotEmpty) return name;
+    return (e.txtKey ?? '').trim();
   }
 
   bool get _canConfirm =>
-      !_loading && _items.isNotEmpty && (_selectedCode?.isNotEmpty ?? false);
+      !_loading && _items.isNotEmpty && (_selectedKey?.isNotEmpty ?? false);
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +80,7 @@ class _SelectLockupForReceiveDialogState
     final size = MediaQuery.of(context).size;
 
     return AppDialog(
-      title: l10n.deptTrackingReceiveLockupTitle,
+      title: widget.dialogTitle ?? l10n.deptTrackingReceiveLockupTitle,
       width: size.width * 0.42,
       height: size.height * 0.38,
       content: _loading
@@ -89,7 +92,7 @@ class _SelectLockupForReceiveDialogState
               ? Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Text(
-                    l10n.deptTrackingReceiveNoLockups,
+                    l10n.noData,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 14, height: 1.35),
                   ),
@@ -100,31 +103,39 @@ class _SelectLockupForReceiveDialogState
                     width: double.infinity,
                     height: 50,
                     searchBox: true,
-                    bordeText: l10n.deptTrackingReceiveLockupLabel,
+                    bordeText: l10n.department,
                     initialValue: _items.firstWhere(
-                      (e) => e.lockupCode?.trim() == _selectedCode,
+                      (e) => e.txtKey?.trim() == _selectedKey,
                       orElse: () => _items.first,
                     ),
                     items: _items,
-                    selectedVal: _items
-                        .where((e) => e.lockupCode?.trim() == _selectedCode)
-                        .map((e) => _rowLabel(e))
-                        .firstOrNull,
+                    selectedVal: () {
+                      final match = _items
+                          .where((e) => e.txtKey?.trim() == _selectedKey);
+                      if (match.isEmpty) return null;
+                      return _rowLabel(match.first);
+                    }(),
                     noDataString: l10n.noData,
                     onChanged: (value) {
-                      if (value is LockupLocationModel) {
+                      if (value is DepartmentModel) {
                         setState(() {
-                          _selectedCode = value.lockupCode?.trim();
+                          _selectedKey = value.txtKey?.trim();
                         });
                       }
                     },
                   ),
                 ),
       actions: [
-        TextButton(
+        CustomElevatedButton(
+          text: l10n.close,
+          color: redColor,
+          icon: Icons.close_rounded,
+          width: 100,
+          height: 40,
+          fontSize: 14,
           onPressed: () => Navigator.of(context).pop(null),
-          child: Text(l10n.cancel),
         ),
+        SizedBox(width: 10),
         CustomElevatedButton(
           text: l10n.ok,
           color: greenColor,
@@ -133,7 +144,7 @@ class _SelectLockupForReceiveDialogState
           fontSize: 14,
           onPressed: () {
             if (!_canConfirm) return;
-            Navigator.of(context).pop(_selectedCode!.trim());
+            Navigator.of(context).pop(_selectedKey!.trim());
           },
         ),
       ],

@@ -39,14 +39,12 @@ class FileExplorerDeptTrackingExtras {
   FileExplorerDeptTrackingExtras({
     required this.onReceiveTap,
     required this.onSendTap,
-    this.receiveOnlyLastStep = false,
     this.sendOnlyAfterReceived = false,
   });
 
   final Future<bool> Function() onReceiveTap;
   final Future<bool> Function(String notes) onSendTap;
 
-  final bool receiveOnlyLastStep;
   final bool sendOnlyAfterReceived;
 }
 
@@ -179,40 +177,36 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
             const SizedBox(height: 14),
             const Divider(height: 1),
             const SizedBox(height: 12),
-            if (!widget.deptTrackingExtras!.receiveOnlyLastStep) ...[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.06),
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    _locale.deptTrackingSendNotesLabel,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF475569),
-                    ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: width * 0.06),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  _locale.deptTrackingSendNotesLabel,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF475569),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.06),
-                child: TextField(
-                  controller: _deptNotesController,
-                  maxLines: 2,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    hintText: _locale.deptTrackingSendNotesHint,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: width * 0.06),
+              child: TextField(
+                controller: _deptNotesController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: _locale.deptTrackingSendNotesHint,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
               ),
-              const SizedBox(height: 14),
-            ] else ...[
-              const SizedBox(height: 4),
-            ],
+            ),
+            const SizedBox(height: 14),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: _deptTrackingActionButtons(),
@@ -226,24 +220,6 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
 
   List<Widget> _deptTrackingActionButtons() {
     final x = widget.deptTrackingExtras!;
-    if (x.receiveOnlyLastStep) {
-      return [
-        CustomElevatedButton(
-          text: _locale.deptTrackingReceive,
-          color: greenColor,
-          icon: Icons.inbox_rounded,
-          width: isDesktop ? width * 0.14 : width * 0.42,
-          height: height * 0.046,
-          fontSize: 14,
-          isLoading: _dtReceiveBusy,
-          onPressed: () {
-            if (!_dtReceiveBusy && !_dtReceiveSendBusy && !_dtSendOnlyBusy) {
-              _onDeptReceive();
-            }
-          },
-        ),
-      ];
-    }
     if (x.sendOnlyAfterReceived) {
       return [
         CustomElevatedButton(

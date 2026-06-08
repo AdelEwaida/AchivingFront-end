@@ -135,11 +135,9 @@ class _SelectTrackingTemplateDialogState
         await _controller.getTrackingByDocument(widget.documentKey);
 
     if (existingTrackings.isNotEmpty) {
-      final bool canCreate = existingTrackings.any((t) {
-        final steps = t.steps ?? [];
-
-        return steps.any((step) => step.intStatus == 4);
-      });
+      final bool canCreate = existingTrackings.any(
+        (t) => t.tracking?.intStatus == 1,
+      );
       if (!canCreate) {
         if (!mounted) return;
         setState(() => isSaving = false);
