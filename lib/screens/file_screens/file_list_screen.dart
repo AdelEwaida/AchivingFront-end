@@ -2021,7 +2021,7 @@ class _FileListScreenState extends State<FileListScreen> {
         title: _locale.currentDepTrackLocation,
         field: "txtCurrentLockup",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.24 : width * 0.32,
+        width: isDesktop ? width * 0.30 : width * 0.38,
         backgroundColor: columnColors,
         enableFilterMenuItem: true,
         readOnly: true,
@@ -2038,6 +2038,9 @@ class _FileListScreenState extends State<FileListScreen> {
                   ?.toString(),
             ),
             locale: _locale,
+            receivedInDeptLabel: rendererContext
+                    .row.cells['depTrackInTransitAwaitingReceive']?.value ==
+                true,
           );
         },
       ),

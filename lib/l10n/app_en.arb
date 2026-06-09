@@ -350,6 +350,14 @@
   "deptTrackingReceiveNoLockups": "No lockup locations are configured.",
   "viewTracking": "View Tracking",
   "receivedBy": "Received By",
+  "inDepartmentNamed": "in department {name}",
+  "@inDepartmentNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sentBy": "Sent By",
   "trackingStatusPending": "Pending",
   "trackingStatusInProgress": "In Progress",

@@ -47,6 +47,26 @@ class DepartmentController {
     return list;
   }
 
+  Future<List<DepartmentModel>> getAllDepartmentsFromApi() async {
+    List<DepartmentModel> list = [];
+    await ApiService().getRequest(getAllDepApi).then((response) {
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+        if (jsonData is List) {
+          for (final item in jsonData) {
+            list.add(DepartmentModel.fromJson(item));
+          }
+        }
+      }
+    });
+    list.sort((a, b) {
+      final an = (a.txtDescription ?? '').trim().toLowerCase();
+      final bn = (b.txtDescription ?? '').trim().toLowerCase();
+      return an.compareTo(bn);
+    });
+    return list;
+  }
+
   Future<List<DepartmentModel>> search(SearchModel searchModel) async {
     List<DepartmentModel> list = [];
     await ApiService()

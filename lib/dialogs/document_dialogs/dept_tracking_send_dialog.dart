@@ -82,7 +82,7 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
 
     setState(() => _loadingDepts = true);
 
-    final list = await _controller.getAllDepartments();
+    final list = await _controller.getAllDepartmentsFromApi();
     if (!mounted) return;
 
     final defaultKey = widget.defaultDeptCode.trim();
@@ -165,7 +165,7 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final size = MediaQuery.of(context).size;
     final nextName = widget.defaultDeptName.trim().isEmpty
         ? widget.defaultDeptCode.trim()

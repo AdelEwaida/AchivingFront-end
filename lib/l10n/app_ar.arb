@@ -337,11 +337,19 @@
   "deptTrackingReceiveNoLockups": "لا توجد مواقع خزائن مُعرَّفة.",
   "viewTracking": "عرض المسار",
   "receivedBy": "استلم بواسطة",
+  "inDepartmentNamed": "في دائرة {name}",
+  "@inDepartmentNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "sentBy": "أرسل بواسطة",
   "trackingStatusPending": "قيد الانتظار",
   "trackingStatusInProgress": "قيد التنفيذ",
   "trackingStatusCompleted": "مكتمل",
-  "stepStatusNone": "بدون",
+  "stepStatusNone": "في الإنتظار",
   "stepStatusPending": "قيد الانتظار عند المستخدم",
   "stepStatusReceived": "تم الاستلام",
   "stepStatusSent": "تم الإرسال",

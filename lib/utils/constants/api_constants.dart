@@ -10,6 +10,7 @@ const deleteCategoryApi = "docCat/delete";
 ////departemnt api's
 const getDepPageApi = "docDept/searchCrit";
 const searchDepPageApi = "docDept/searchCrit";
+const getAllDepApi = "docDept/getAll";
 
 const getDepCountApi = "docDept/count";
 const insertDepApi = "docDept/insert";

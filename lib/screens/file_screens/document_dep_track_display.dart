@@ -9,6 +9,13 @@ String stepDeptDisplayName(TrackingStepInfoModel step) {
   return (step.txtDeptName ?? '').trim();
 }
 
+String formatInDepartmentLabel(AppLocalizations locale, String dept) {
+  if (locale.localeName.startsWith('ar')) {
+    return 'في دائرة $dept';
+  }
+  return 'in department $dept';
+}
+
 List<TrackingStepInfoModel> sortedTrackingSteps(DocumentModel document) {
   final steps = List<TrackingStepInfoModel>.from(document.trackingSteps ?? []);
   steps.sort(
@@ -34,6 +41,34 @@ String formatTrackingStepDate(String? raw) {
   } catch (_) {
     return raw;
   }
+}
+
+bool isDepTrackInTransitAwaitingReceive(DocumentModel document) {
+  final steps = sortedTrackingSteps(document);
+  for (int i = 0; i < steps.length - 1; i++) {
+    final currentStatus = steps[i].intStatus ?? 0;
+    final nextStatus = steps[i + 1].intStatus ?? 0;
+    if (currentStatus == 3 && nextStatus == 1) return true;
+  }
+  return false;
+}
+
+/// Step used for sent/received-by rows in the dep-track column.
+/// When in transit (sent → awaiting receive), uses the previous step that
+/// actually holds the sender/receiver info, not the pending destination step.
+TrackingStepInfoModel? resolveDepTrackInfoStep(DocumentModel document) {
+  final steps = sortedTrackingSteps(document);
+  if (steps.isEmpty) return null;
+
+  for (int i = 0; i < steps.length - 1; i++) {
+    final currentStatus = steps[i].intStatus ?? 0;
+    final nextStatus = steps[i + 1].intStatus ?? 0;
+    if (currentStatus == 3 && nextStatus == 1) {
+      return steps[i];
+    }
+  }
+
+  return resolveCurrentDepTrackStep(document);
 }
 
 TrackingStepInfoModel? resolveCurrentDepTrackStep(DocumentModel document) {
@@ -85,9 +120,10 @@ TrackingStepInfoModel? resolveDepTrackSentStep(
 }
 
 TrackingStepInfoModel? depTrackSentStepForDocument(DocumentModel document) {
-  final displayStep = resolveCurrentDepTrackStep(document);
-  if (displayStep == null) return null;
-  return resolveDepTrackSentStep(sortedTrackingSteps(document), displayStep);
+  final steps = sortedTrackingSteps(document);
+  final infoStep = resolveDepTrackInfoStep(document);
+  if (infoStep == null) return null;
+  return resolveDepTrackSentStep(steps, infoStep);
 }
 
 String encodeTrackingStep(TrackingStepInfoModel? step) {
@@ -120,18 +156,23 @@ bool shouldShowTrackingStepSentRow(TrackingStepInfoModel step) {
 
 Widget buildTrackingStepReceivedRow(
   TrackingStepInfoModel step,
-  AppLocalizations locale,
-) {
+  AppLocalizations locale, {
+  bool includeDeptInLabel = false,
+}) {
   if (!shouldShowTrackingStepReceivedRow(step)) {
     return const SizedBox.shrink();
   }
 
   final by = (step.txtReceivedBy ?? '').trim();
   final at = formatTrackingStepDate(step.datReceivedAt);
+  final dept = stepDeptDisplayName(step);
   if (by.isEmpty && at.isEmpty) return const SizedBox.shrink();
 
   final label = StringBuffer('${locale.receivedBy}:');
   if (by.isNotEmpty) label.write(' $by');
+  if (includeDeptInLabel && dept.isNotEmpty) {
+    label.write(' ${formatInDepartmentLabel(locale, dept)}');
+  }
   if (at.isNotEmpty) label.write(' ${locale.txtIn}: $at');
 
   return Padding(
@@ -244,17 +285,22 @@ Widget buildDepTrackColumnCell({
   required TrackingStepInfoModel? displayStep,
   required TrackingStepInfoModel? sentStep,
   required AppLocalizations locale,
+  bool receivedInDeptLabel = false,
 }) {
   final receivedRow = displayStep == null
       ? const SizedBox.shrink()
-      : buildTrackingStepReceivedRow(displayStep, locale);
-  final sentRow =
-      sentStep == null ? const SizedBox.shrink() : buildTrackingStepSentRow(sentStep, locale);
+      : buildTrackingStepReceivedRow(
+          displayStep,
+          locale,
+          includeDeptInLabel: receivedInDeptLabel,
+        );
+  final sentRow = sentStep == null
+      ? const SizedBox.shrink()
+      : buildTrackingStepSentRow(sentStep, locale);
 
-  final hasReceived = displayStep != null &&
-      shouldShowTrackingStepReceivedRow(displayStep);
-  final hasSent =
-      sentStep != null && shouldShowTrackingStepSentRow(sentStep);
+  final hasReceived =
+      displayStep != null && shouldShowTrackingStepReceivedRow(displayStep);
+  final hasSent = sentStep != null && shouldShowTrackingStepSentRow(sentStep);
 
   if (mainLabel.isEmpty && !hasReceived && !hasSent) {
     return const SizedBox.shrink();

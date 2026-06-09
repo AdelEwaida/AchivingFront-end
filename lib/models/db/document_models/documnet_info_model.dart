@@ -118,8 +118,8 @@ class DocumentModel {
       ..txtDocTrackingStatus = json['txtDocTrackingStatus']?.toString() ?? ""
       ..trackingSteps = json['trackingSteps'] is List
           ? (json['trackingSteps'] as List)
-              .map((e) => TrackingStepInfoModel.fromJson(
-                  e as Map<String, dynamic>))
+              .map((e) =>
+                  TrackingStepInfoModel.fromJson(e as Map<String, dynamic>))
               .toList()
           : null;
   }
@@ -208,10 +208,13 @@ class DocumentModel {
         'txtCurrentLockup':
             PlutoCell(value: currentDepTrackDisplay(localizations)),
         'depTrackDisplayStepJson': PlutoCell(
-          value: encodeTrackingStep(resolveCurrentDepTrackStep(this)),
+          value: encodeTrackingStep(resolveDepTrackInfoStep(this)),
         ),
         'depTrackSentStepJson': PlutoCell(
           value: encodeTrackingStep(depTrackSentStepForDocument(this)),
+        ),
+        'depTrackInTransitAwaitingReceive': PlutoCell(
+          value: isDepTrackInTransitAwaitingReceive(this),
         ),
         // 'submitForWfApproval': PlutoCell(value: submitForWfApproval)
       },
