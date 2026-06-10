@@ -205,6 +205,7 @@ class DocumentModel {
                 workflowStatus ?? -1, localizations)),
         'currentDepTrackCode': PlutoCell(value: currentDepTrackCode ?? ''),
         'currentDepTrackName': PlutoCell(value: currentDepTrackName ?? ''),
+        'actions': PlutoCell(value: ''),
         'txtCurrentLockup':
             PlutoCell(value: currentDepTrackDisplay(localizations)),
         'depTrackDisplayStepJson': PlutoCell(

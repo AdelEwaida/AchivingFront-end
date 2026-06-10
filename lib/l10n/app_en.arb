@@ -427,14 +427,16 @@
   "txtIn": "In",
   "createdBy": "Created by",
   "byDate": "Creation date",
+  "reports": "Reports",
+  "fileBarcode": "File Barcode",
   "reiveAndSycleDone": "Receive and sycle done",
   "departmentWorkFlow": "Department workflow",
   "addDepartmentWorkFlow": "Add department workflow",
   "editDepartmentWorkFlow": "Edit department workflow",
   "fileTrackingWorkflow": "File tracking workflow",
   "workflowName": "Workflow Name",
-  "cannotCreateNewTrackingUntilAllStepsComplete":"Cannot create a new tracking route for this document until the current route is completed.",
-  "create":"Create",
+  "cannotCreateNewTrackingUntilAllStepsComplete": "Cannot create a new tracking route for this document until the current route is completed.",
+  "create": "Create",
   "pleaseFillStepOrDelete": "Please fill step number {stepNumber} or delete it",
-      "createTrackingDocByDep": "Create Tracking Route by Department"
+  "createTrackingDocByDep": "Create Tracking Route by Department"
 }

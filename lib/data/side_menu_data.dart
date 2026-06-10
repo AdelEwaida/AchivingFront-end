@@ -18,6 +18,7 @@ import '../screens/actions_screens/daily_reminders.dart';
 import '../screens/change_password_screen.dart';
 import '../screens/file_screens/add_file_screen.dart';
 import '../screens/reports/dashboard_screen.dart';
+import '../screens/reports/doc_tracking_report.dart';
 import '../screens/user_screen/user_category_screen.dart';
 import '../screens/workflow/work_flow_screen.dart';
 import '../screens/workflow_document/department_workflow_screen.dart';
@@ -113,6 +114,16 @@ List<MenuModel> getMenus(
                   icon: Icons.people,
                   isParent: false,
                   pageNumber: 11,
+                  subMenuList: [
+                    // SubMenuModel(title: locale.addUser, pageNumber: 10),
+                    // SubMenuModel(title: locale.viewUser, pageNumber: 11),
+                  ],
+                  isOpened: false),
+                  MenuModel(
+                  title: locale.reports,
+                  icon: Icons.report,
+                  isParent: false,
+                  pageNumber: 25,
                   subMenuList: [
                     // SubMenuModel(title: locale.addUser, pageNumber: 10),
                     // SubMenuModel(title: locale.viewUser, pageNumber: 11),
@@ -573,6 +584,8 @@ Widget getScreenContent(int index) {
       return const FilesLocationScreen();
     case 23:
       return const DepartmentWorkFlowScreen();
+    case 24:
+      return const DocTrackingReport();
 
     // case 2:
     //   return UsersScreen();

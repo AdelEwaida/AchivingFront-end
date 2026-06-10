@@ -443,195 +443,88 @@ class _FileListScreenState extends State<FileListScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CustomElevatedButton(
-                              text: _locale.submitforWorkflowApproval,
-                              color: greenColor,
-                              icon: Icons.approval_rounded,
-                              width: isDesktop ? width * 0.13 : width * 0.19,
-                              height: height * 0.043,
-                              fontSize: 13,
-                              onPressed: () async {
-                                if (documentModel != null) {
-                                  var response = await documentsController
-                                      .createWorkFlowDocument(documentModel!);
-                                  if (response.statusCode == 200) {
-                                    // ignore: use_build_context_synchronously
-                                    showDialog(
-                                      // ignore: use_build_context_synchronously
-                                      context: context,
-                                      builder: (context) {
-                                        return ErrorDialog(
-                                          icon: Icons.done_all,
-                                          errorDetails: _locale.done,
-                                          errorTitle: _locale.editDoneSucess,
-                                          color: Colors.green,
-                                          statusCode: 200,
-                                        );
-                                      },
-                                    ).then((value) {
-                                      if (value) setState(() {});
-                                    });
-                                  }
-                                }
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            if (_isAdmin) ...[
-                              CustomElevatedButton(
-                                text: _locale.createTrackingDocByDep,
-                                color: Color.fromARGB(255, 196, 83, 177),
-                                icon: Icons.alt_route_rounded,
-                                width: isDesktop ? width * 0.13 : width * 0.19,
-                                height: height * 0.043,
-                                fontSize: 13,
-                                onPressed: () async {
-                                  if (documentModel == null) {
-                                    CustomToastMessage.warning(
-                                        context, _locale.pleaseSelectRow);
-                                    return;
-                                  }
+                            // CustomElevatedButton(
+                            //   text: _locale.submitforWorkflowApproval,
+                            //   color: greenColor,
+                            //   icon: Icons.approval_rounded,
+                            //   width: isDesktop ? width * 0.13 : width * 0.19,
+                            //   height: height * 0.043,
+                            //   fontSize: 13,
+                            //   onPressed: () async {
+                            //     if (documentModel != null) {
+                            //       var response = await documentsController
+                            //           .createWorkFlowDocument(documentModel!);
+                            //       if (response.statusCode == 200) {
+                            //         // ignore: use_build_context_synchronously
+                            //         showDialog(
+                            //           // ignore: use_build_context_synchronously
+                            //           context: context,
+                            //           builder: (context) {
+                            //             return ErrorDialog(
+                            //               icon: Icons.done_all,
+                            //               errorDetails: _locale.done,
+                            //               errorTitle: _locale.editDoneSucess,
+                            //               color: Colors.green,
+                            //               statusCode: 200,
+                            //             );
+                            //           },
+                            //         ).then((value) {
+                            //           if (value) setState(() {});
+                            //         });
+                            //       }
+                            //     }
+                            //   },
+                            // ),
 
-                                  final TrackingType? choice =
-                                      await showDialog<TrackingType>(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) =>
-                                        const TrackingTypeSelectionDialog(),
-                                  );
+                            // CustomElevatedButton(
+                            //   text: _locale.viewApprovals,
+                            //   color: primary,
+                            //   icon: Icons.visibility_rounded,
+                            //   width: isDesktop ? width * 0.1 : width * 0.19,
+                            //   height: height * 0.043,
+                            //   fontSize: 13,
+                            //   onPressed: () async {
+                            //     if (documentModel != null) {
+                            //       List<WorkFlowDocumentInfo> result =
+                            //           await WorkFlowTemplateContoller()
+                            //               .getWorkFlowDocumentInfo(
+                            //                   WorkFlowDocumentModel(
+                            //                       documentCode:
+                            //                           documentModel!.txtKey));
 
-                                  if (choice == null || !mounted) return;
+                            //       if (result.isEmpty) {
+                            //         // ignore: use_build_context_synchronously
+                            //         showDialog(
+                            //           context: context,
+                            //           builder: (context) {
+                            //             return ErrorDialog(
+                            //               icon: Icons.error,
+                            //               errorDetails: _locale.error,
+                            //               errorTitle:
+                            //                   _locale.noWorkFlowAvailable,
+                            //               color: Colors.red,
+                            //               statusCode: 400,
+                            //             );
+                            //           },
+                            //         );
+                            //         return;
+                            //       }
 
-// ── CHECK for BOTH options ──────────────────────────────────────
-                                  final List<TrackingResponseModel>
-                                      existingTrackings =
-                                      await WorkFlowTemplateContoller()
-                                          .getTrackingByDocument(
-                                              documentModel!.txtKey ?? "");
-
-                                  if (existingTrackings.isNotEmpty) {
-                                    final bool canCreate =
-                                        existingTrackings.any(
-                                      (t) => t.tracking?.intStatus == 1,
-                                    );
-
-                                    if (!canCreate) {
-                                      if (!mounted) return;
-                                      showDialog(
-                                        context: context,
-                                        builder: (_) => ErrorDialog(
-                                          icon: Icons.block_rounded,
-                                          errorDetails:
-                                              "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
-                                          errorTitle: _locale.error,
-                                          color: Colors.red,
-                                          statusCode: 400,
-                                        ),
-                                      );
-                                      return;
-                                    }
-                                  }
-// ───────────────────────────────────────────────────────────────
-
-                                  if (choice == TrackingType.createTracking) {
-                                    await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) =>
-                                          CreateTrackingDocDialog(
-                                        documentKey:
-                                            documentModel!.txtKey ?? "",
-                                      ),
-                                    );
-                                  } else {
-                                    await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) =>
-                                          SelectTrackingTemplateDialog(
-                                        documentKey:
-                                            documentModel!.txtKey ?? "",
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                              const SizedBox(width: 8),
-                              CustomElevatedButton(
-                                text: _locale.viewTracking,
-                                color: const Color(0xFF7C3AED),
-                                icon: Icons.alt_route_rounded,
-                                width: isDesktop ? width * 0.13 : width * 0.19,
-                                height: height * 0.043,
-                                fontSize: 13,
-                                onPressed: () async {
-                                  if (documentModel != null) {
-                                    await showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return ViewTrackingDialog(
-                                          documentKey:
-                                              documentModel!.txtKey ?? "",
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    CustomToastMessage.warning(
-                                        context, _locale.pleaseSelectRow);
-                                  }
-                                },
-                              ),
-                              const SizedBox(width: 8),
-                            ],
-                            CustomElevatedButton(
-                              text: _locale.viewApprovals,
-                              color: primary,
-                              icon: Icons.visibility_rounded,
-                              width: isDesktop ? width * 0.1 : width * 0.19,
-                              height: height * 0.043,
-                              fontSize: 13,
-                              onPressed: () async {
-                                if (documentModel != null) {
-                                  List<WorkFlowDocumentInfo> result =
-                                      await WorkFlowTemplateContoller()
-                                          .getWorkFlowDocumentInfo(
-                                              WorkFlowDocumentModel(
-                                                  documentCode:
-                                                      documentModel!.txtKey));
-
-                                  if (result.isEmpty) {
-                                    // ignore: use_build_context_synchronously
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return ErrorDialog(
-                                          icon: Icons.error,
-                                          errorDetails: _locale.error,
-                                          errorTitle:
-                                              _locale.noWorkFlowAvailable,
-                                          color: Colors.red,
-                                          statusCode: 400,
-                                        );
-                                      },
-                                    );
-                                    return;
-                                  }
-
-                                  // ignore: use_build_context_synchronously
-                                  await showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) {
-                                      return EditTemplateDocumentDialog(
-                                        workFlowTemplateBody: result,
-                                      );
-                                    },
-                                  ).then((value) {
-                                    if (value == true) {}
-                                  });
-                                }
-                              },
-                            ),
+                            //       // ignore: use_build_context_synchronously
+                            //       await showDialog(
+                            //         barrierDismissible: false,
+                            //         context: context,
+                            //         builder: (context) {
+                            //           return EditTemplateDocumentDialog(
+                            //             workFlowTemplateBody: result,
+                            //           );
+                            //         },
+                            //       ).then((value) {
+                            //         if (value == true) {}
+                            //       });
+                            //     }
+                            //   },
+                            // ),
                           ],
                         ),
                       ),
@@ -1262,6 +1155,28 @@ class _FileListScreenState extends State<FileListScreen> {
     });
   }
 
+  void _openViewTrackingDialog(String documentKey) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return ViewTrackingDialog(
+          documentKey: documentKey,
+        );
+      },
+    );
+  }
+
+  void viewTracking() {
+    final documentKey = selectedRow?.cells['txtKey']?.value?.toString() ?? '';
+    if (documentKey.isEmpty) {
+      CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+      return;
+    }
+
+    _openViewTrackingDialog(documentKey);
+  }
+
   void addRemider() {
     if (selectedRow != null) {
       ActionModel actionModel = ActionModel();
@@ -1882,15 +1797,6 @@ class _FileListScreenState extends State<FileListScreen> {
         },
       ),
       PlutoColumn(
-        title: _locale.description,
-        field: "txtDescription",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.16 : width * 0.4,
-        backgroundColor: columnColors,
-        enableFilterMenuItem: true,
-        readOnly: true,
-      ),
-      PlutoColumn(
         title: _locale.issueNo,
         field: "txtIssueno",
         type: PlutoColumnType.text(),
@@ -1899,91 +1805,113 @@ class _FileListScreenState extends State<FileListScreen> {
         enableFilterMenuItem: true,
         readOnly: true,
       ),
+      //***************************************** */
+      // PlutoColumn(
+      //   title: _locale.fileBarcode,
+      //   field: "txtIssueno",
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.12 : width * 0.2,
+      //   backgroundColor: columnColors,
+      //   enableFilterMenuItem: true,
+      //   readOnly: true,
+      // ),
+      //***************************************** */
       PlutoColumn(
-        title: _locale.status,
-        field: "workflowStatus",
-        readOnly: true,
+        title: _locale.description,
+        field: "txtDescription",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.08 : width * 0.2,
+        width: isDesktop ? width * 0.16 : width * 0.4,
         backgroundColor: columnColors,
-        renderer: (rendererContext) {
-          String statusText = rendererContext.cell.value?.toString() ?? "";
-
-          // Return empty cell if null or empty
-          if (statusText.isEmpty || statusText == "null") {
-            return const SizedBox.shrink();
-          }
-
-          Color backgroundColor;
-          IconData? icon;
-
-          if (statusText == _locale.approved) {
-            backgroundColor = Colors.green;
-            icon = Icons.check_circle_rounded;
-          } else if (statusText == _locale.rejected) {
-            backgroundColor = Colors.red;
-            icon = Icons.cancel_rounded;
-          } else if (statusText == _locale.pending) {
-            backgroundColor = Colors.orange;
-            icon = Icons.hourglass_top_rounded;
-          } else {
-            return const SizedBox.shrink(); // unknown status → show nothing
-          }
-          return Center(
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    backgroundColor,
-                    backgroundColor == Colors.grey
-                        ? Colors.grey.shade600
-                        : backgroundColor == Colors.green
-                            ? Colors.green.shade700
-                            : backgroundColor == Colors.red
-                                ? Colors.red.shade700
-                                : Colors.orange.shade700,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(99),
-                boxShadow: [
-                  BoxShadow(
-                    color: backgroundColor.withOpacity(0.35),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon!, color: Colors.white, size: 12),
-                    const SizedBox(width: 4),
-                  ],
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      statusText,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+        enableFilterMenuItem: true,
+        readOnly: true,
       ),
+      
+      // PlutoColumn(
+      //   title: _locale.status,
+      //   field: "workflowStatus",
+      //   readOnly: true,
+      //   type: PlutoColumnType.text(),
+      //   width: isDesktop ? width * 0.08 : width * 0.2,
+      //   backgroundColor: columnColors,
+      //   renderer: (rendererContext) {
+      //     String statusText = rendererContext.cell.value?.toString() ?? "";
+
+      //     // Return empty cell if null or empty
+      //     if (statusText.isEmpty || statusText == "null") {
+      //       return const SizedBox.shrink();
+      //     }
+
+      //     Color backgroundColor;
+      //     IconData? icon;
+
+      //     if (statusText == _locale.approved) {
+      //       backgroundColor = Colors.green;
+      //       icon = Icons.check_circle_rounded;
+      //     } else if (statusText == _locale.rejected) {
+      //       backgroundColor = Colors.red;
+      //       icon = Icons.cancel_rounded;
+      //     } else if (statusText == _locale.pending) {
+      //       backgroundColor = Colors.orange;
+      //       icon = Icons.hourglass_top_rounded;
+      //     } else {
+      //       return const SizedBox.shrink(); // unknown status → show nothing
+      //     }
+      //     return Center(
+      //       child: AnimatedContainer(
+      //         duration: const Duration(milliseconds: 200),
+      //         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      //         decoration: BoxDecoration(
+      //           gradient: LinearGradient(
+      //             colors: [
+      //               backgroundColor,
+      //               backgroundColor == Colors.grey
+      //                   ? Colors.grey.shade600
+      //                   : backgroundColor == Colors.green
+      //                       ? Colors.green.shade700
+      //                       : backgroundColor == Colors.red
+      //                           ? Colors.red.shade700
+      //                           : Colors.orange.shade700,
+      //             ],
+      //             begin: Alignment.topLeft,
+      //             end: Alignment.bottomRight,
+      //           ),
+      //           borderRadius: BorderRadius.circular(99),
+      //           boxShadow: [
+      //             BoxShadow(
+      //               color: backgroundColor.withOpacity(0.35),
+      //               blurRadius: 6,
+      //               offset: const Offset(0, 2),
+      //             ),
+      //           ],
+      //         ),
+      //         child: Row(
+      //           mainAxisSize: MainAxisSize.min,
+      //           mainAxisAlignment: MainAxisAlignment.center,
+      //           children: [
+      //             if (icon != null) ...[
+      //               Icon(icon!, color: Colors.white, size: 12),
+      //               const SizedBox(width: 4),
+      //             ],
+      //             const SizedBox(width: 4),
+      //             Flexible(
+      //               child: Text(
+      //                 statusText,
+      //                 overflow: TextOverflow.ellipsis,
+      //                 style: const TextStyle(
+      //                   color: Colors.white,
+      //                   fontSize: 11,
+      //                   fontWeight: FontWeight.w600,
+      //                   letterSpacing: 0.2,
+      //                 ),
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //     );
+      //   },
+      // ),
+
       PlutoColumn(
         title: _locale.issueDate,
         field: "datIssuedate",
@@ -2027,21 +1955,120 @@ class _FileListScreenState extends State<FileListScreen> {
         readOnly: true,
         renderer: (rendererContext) {
           final main = rendererContext.cell.value?.toString() ?? '';
-          return buildDepTrackColumnCell(
-            mainLabel: main,
-            displayStep: decodeTrackingStep(
-              rendererContext.row.cells['depTrackDisplayStepJson']?.value
-                  ?.toString(),
+          final documentKey =
+              rendererContext.row.cells['txtKey']?.value?.toString() ?? '';
+          return MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: InkWell(
+              onTap: documentKey.isEmpty
+                  ? null
+                  : () => _openViewTrackingDialog(documentKey),
+              child: buildDepTrackColumnCell(
+                mainLabel: main,
+                displayStep: decodeTrackingStep(
+                  rendererContext.row.cells['depTrackDisplayStepJson']?.value
+                      ?.toString(),
+                ),
+                sentStep: decodeTrackingStep(
+                  rendererContext.row.cells['depTrackSentStepJson']?.value
+                      ?.toString(),
+                ),
+                locale: _locale,
+                receivedInDeptLabel: rendererContext
+                        .row.cells['depTrackInTransitAwaitingReceive']?.value ==
+                    true,
+              ),
             ),
-            sentStep: decodeTrackingStep(
-              rendererContext.row.cells['depTrackSentStepJson']?.value
-                  ?.toString(),
-            ),
-            locale: _locale,
-            receivedInDeptLabel: rendererContext
-                    .row.cells['depTrackInTransitAwaitingReceive']?.value ==
-                true,
           );
+        },
+      ),
+      PlutoColumn(
+        title: 'الإجراءات',
+        field: 'actions',
+        readOnly: true,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.14 : width * 0.22,
+        backgroundColor: columnColors,
+        enableRowDrag: false,
+        renderer: (rendererContext) {
+          try {
+            final DocumentModel doc =
+                DocumentModel.fromPlutoRow(rendererContext.row, _locale);
+
+            if (active != "1" || !_isAdmin) return const SizedBox.shrink();
+
+            return Center(
+              child: CustomElevatedButton(
+                text: _locale.createTrackingDocByDep,
+                color: const Color.fromARGB(255, 196, 83, 177),
+                icon: Icons.alt_route_rounded,
+                width: isDesktop ? width * 0.12 : width * 0.18,
+                height: height * 0.038,
+                fontSize: 12,
+                onPressed: () async {
+                  if ((doc.txtKey ?? '').isEmpty) {
+                    CustomToastMessage.warning(
+                        context, _locale.pleaseSelectRow);
+                    return;
+                  }
+
+                  final TrackingType? choice = await showDialog<TrackingType>(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) => const TrackingTypeSelectionDialog(),
+                  );
+
+                  if (choice == null || !mounted) return;
+
+                  final List<TrackingResponseModel> existingTrackings =
+                      await WorkFlowTemplateContoller()
+                          .getTrackingByDocument(doc.txtKey ?? "");
+
+                  if (existingTrackings.isNotEmpty) {
+                    final bool canCreate = existingTrackings.any(
+                      (t) => t.tracking?.intStatus == 1,
+                    );
+
+                    if (!canCreate) {
+                      if (!mounted) return;
+                      showDialog(
+                        context: context,
+                        builder: (_) => ErrorDialog(
+                          icon: Icons.block_rounded,
+                          errorDetails:
+                              "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
+                          errorTitle: _locale.error,
+                          color: Colors.red,
+                          statusCode: 400,
+                        ),
+                      );
+                      return;
+                    }
+                  }
+
+                  if (choice == TrackingType.createTracking) {
+                    await showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) => CreateTrackingDocDialog(
+                        documentKey: doc.txtKey ?? "",
+                      ),
+                    );
+                  } else {
+                    await showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) => SelectTrackingTemplateDialog(
+                        documentKey: doc.txtKey ?? "",
+                      ),
+                    );
+                  }
+                },
+              ),
+            );
+          } catch (e) {
+            return const SizedBox.shrink();
+          }
         },
       ),
     ];
