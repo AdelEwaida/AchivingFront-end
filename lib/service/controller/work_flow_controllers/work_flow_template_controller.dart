@@ -231,11 +231,17 @@ class WorkFlowTemplateContoller {
 
   Future<List<TrackingResponseModel>> searchAwaitingReceive({
     String? issueNo,
+    String? barcode,
   }) async {
-    final trimmed = issueNo?.trim() ?? '';
+    final issueTrimmed = issueNo?.trim() ?? '';
+    final barcodeTrimmed = barcode?.trim() ?? '';
+    final body = <String, dynamic>{};
+    if (issueTrimmed.isNotEmpty) body['issueNo'] = issueTrimmed;
+    if (barcodeTrimmed.isNotEmpty) body['barcode'] = barcodeTrimmed;
+
     final response = await ApiService().postRequest(
       searchAwaitingReceiveApi,
-      {'issueNo': trimmed.isEmpty ? null : trimmed},
+      body,
     );
     if (response == null || response.statusCode != 200) {
       return [];

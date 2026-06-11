@@ -126,6 +126,26 @@ TrackingStepInfoModel? depTrackSentStepForDocument(DocumentModel document) {
   return resolveDepTrackSentStep(steps, infoStep);
 }
 
+/// Step eligible for send (received, not yet sent) — same rule as dept approvals.
+TrackingStepInfoModel? documentTrackingStepForSend(DocumentModel document) {
+  final step = resolveCurrentDepTrackStep(document);
+  if (step == null) return null;
+  if ((step.intStatus ?? 0) == 2) return step;
+  return null;
+}
+
+TrackingStepInfoModel? documentNextStepAfter(
+  DocumentModel document,
+  TrackingStepInfoModel active,
+) {
+  final order = active.intStepOrder;
+  if (order == null) return null;
+  for (final step in sortedTrackingSteps(document)) {
+    if (step.intStepOrder == order + 1) return step;
+  }
+  return null;
+}
+
 String encodeTrackingStep(TrackingStepInfoModel? step) {
   if (step == null) return '';
   return jsonEncode(step.toJson());

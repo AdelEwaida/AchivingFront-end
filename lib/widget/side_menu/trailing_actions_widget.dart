@@ -7,14 +7,16 @@ import 'package:flutter/material.dart';
 
 class TrailingActions extends StatelessWidget {
   final String userRole;
-  final String active;
+  final String workflowActive;
+  final String docTrackingActive;
 
   final VoidCallback onExportExcel;
 
   const TrailingActions({
     super.key,
     required this.userRole,
-    required this.active,
+    required this.workflowActive,
+    required this.docTrackingActive,
     required this.onExportExcel,
   });
 
@@ -24,6 +26,8 @@ class TrailingActions extends StatelessWidget {
   Widget build(BuildContext context) {
     final String normalizedRole = userRole.trim().toUpperCase();
     final bool isAdmin = normalizedRole == USERTYPEADMIN;
+    final bool showNotifications =
+        workflowActive == "1" || docTrackingActive == "1";
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -41,8 +45,8 @@ class TrailingActions extends StatelessWidget {
               iconColor: const Color(0xFFFFF176),
               onPressed: onExportExcel,
             ),
-          if (isAdmin && active == "1") const SizedBox(width: actionGap),
-          if (active == "1") NotificationIcon(),
+          if (isAdmin && showNotifications) const SizedBox(width: actionGap),
+          if (showNotifications) NotificationIcon(),
         ],
       ),
     );

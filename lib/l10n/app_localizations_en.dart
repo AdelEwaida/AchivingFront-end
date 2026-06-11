@@ -416,6 +416,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin => 'admin';
 
   @override
+  String get reports => 'Reports';
+
+  @override
   String get userCode => 'User Code';
 
   @override
@@ -714,4 +717,26 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get documentTrackingReport => 'Document Tracking Report';
+
+  @override
+  String get fileStatus => 'File Status';
+
+  @override
+  String get fileStatusReceived => 'Received';
+
+  @override
+  String get fileStatusNotReceived => 'Not Received';
+
+  @override
+  String get downloadPdf => 'Download PDF';
+
+  @override
+  String get docTrackingReportPdfPending =>
+      'PDF export will be available when the API is ready.';
+
+  @override
+  String get archivedPagesCount => 'Archived Pages';
 }

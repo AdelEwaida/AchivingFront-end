@@ -7,6 +7,7 @@ class SearchDocumentCriteria {
   String? otherRef;
   String? organization;
   String? issueNo;
+  String? barcode;
   String? following;
   int? type;
   String? lastUpdateUser;
@@ -33,6 +34,7 @@ class SearchDocumentCriteria {
     this.otherRef,
     this.organization,
     this.issueNo,
+    this.barcode,
     this.following,
     this.type,
     this.lastUpdateUser,
@@ -61,6 +63,7 @@ class SearchDocumentCriteria {
       otherRef: json['otherRef'] ?? "",
       organization: json['organization'] ?? "",
       issueNo: json['issueNo'] ?? "",
+      barcode: json['barcode'] ?? "",
       following: json['following'] ?? "",
       type: json['type'] ?? -1,
       lastUpdateUser: json['lastUpdateUser'] ?? "",
@@ -90,6 +93,7 @@ class SearchDocumentCriteria {
       'otherRef': otherRef ?? "",
       'organization': organization ?? "",
       'issueNo': issueNo ?? "",
+      'barcode': barcode ?? "",
       'following': following ?? "",
       'type': type ?? -1,
       'lastUpdateUser': lastUpdateUser ?? "",

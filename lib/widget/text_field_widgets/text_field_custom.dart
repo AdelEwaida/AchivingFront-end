@@ -31,6 +31,7 @@ class TextFieldCustom extends StatefulWidget {
   Function(String)? onFieldSubmitted;
   TextStyle? style;
   int? maxLines;
+  bool? autofocus;
   // dynamic? pre;
   TextFieldCustom(
       {Key? key,
@@ -58,7 +59,8 @@ class TextFieldCustom extends StatefulWidget {
       this.style,
       this.onFieldSubmitted,
       this.maxLines,
-      this.obscureText})
+      this.obscureText,
+      this.autofocus})
       : super(key: key);
 
   @override
@@ -79,6 +81,7 @@ class _TextFieldCustomState extends State<TextFieldCustom> {
       width: widget.width,
       height: widget.height,
       child: TextFormField(
+        autofocus: widget.autofocus ?? false,
         cursorColor: primary,
         textDirection: TextDirection.rtl,
         onTap: () {

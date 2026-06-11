@@ -164,8 +164,13 @@ class _CustomDropDownState extends State<DropDown>
           child: DropdownSearch<dynamic>(
             clearButtonProps: ClearButtonProps(
               alignment: Alignment.center,
-              isVisible: widget.visiableClearIcon ?? false,
+              isVisible: (widget.visiableClearIcon ?? false) &&
+                  widget.initialValue != null,
               icon: Icon(Icons.close_rounded, color: redColor, size: 14),
+              onPressed: () {
+                widget.onClearIconPressed?.call();
+                widget.onChanged(null);
+              },
             ),
             enabled: _isEnabled,
             validator: (value) =>

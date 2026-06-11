@@ -4,6 +4,7 @@ enum AssistantSearchField {
   keyword,
   ref1,
   ref2,
+  barcode,
   userCode,
 }
 
@@ -68,6 +69,13 @@ const List<AssistantSearchFieldInfo> kAssistantSearchFields = [
     labelEn: 'User code',
     valuePromptAr: 'اكتب كود المستخدم:',
     valuePromptEn: 'Enter the user code:',
+  ),
+  AssistantSearchFieldInfo(
+    field: AssistantSearchField.barcode,
+    labelAr: 'باركود الملف',
+    labelEn: 'Barcode',
+    valuePromptAr: 'اكتب الباركود:',
+    valuePromptEn: 'Enter the barcode:',
   ),
 ];
 

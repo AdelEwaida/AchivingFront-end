@@ -416,6 +416,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get admin => 'مدير';
 
   @override
+  String get reports => 'التقارير';
+
+  @override
   String get userCode => 'كود المستخدم';
 
   @override
@@ -714,4 +717,26 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get documentTrackingReport => 'تقرير تتبع الملفات';
+
+  @override
+  String get fileStatus => 'حالة الملف';
+
+  @override
+  String get fileStatusReceived => 'مستلم';
+
+  @override
+  String get fileStatusNotReceived => 'غير مستلم';
+
+  @override
+  String get downloadPdf => 'تحميل PDF';
+
+  @override
+  String get docTrackingReportPdfPending =>
+      'تصدير PDF سيكون متاحاً عند جاهزية الـ API.';
+
+  @override
+  String get archivedPagesCount => 'عدد الصفحات المؤرشفة';
 }

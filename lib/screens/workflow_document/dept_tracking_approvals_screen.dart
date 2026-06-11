@@ -11,6 +11,7 @@ import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
+import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -37,6 +38,8 @@ class _DeptTrackingApprovalsScreenState
   int _gridEpoch = 0;
   String? _actionBusyKey;
   List<TrackingResponseModel> _items = [];
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void didChangeDependencies() {
@@ -66,7 +69,30 @@ class _DeptTrackingApprovalsScreenState
       isDesktop: _isDesktop,
       showActionColumn: true,
       actionRenderer: _renderActionCell,
+      showDocumentLookupColumns: true,
+      hideRouteOverviewColumn: true,
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _runSearch() async {
+    if (_loading) return;
+    final query = _searchController.text.trim();
+    if (query.isEmpty) {
+      await _load();
+      return;
+    }
+    if (RegExp(r'^\d+$').hasMatch(query)) {
+      await _load(barcode: query);
+    } else {
+      await _load(issueNo: query);
+    }
   }
 
   Widget _renderActionCell(PlutoColumnRendererContext ctx) {
@@ -121,7 +147,7 @@ class _DeptTrackingApprovalsScreenState
         if (!mounted) return;
         if (sent == true) {
           CustomToastMessage.success(context, _locale.updatedSuccess);
-          await _load();
+          await _runSearch();
         } else if (sent == false) {
           CustomToastMessage.error(context, _locale.error);
         }
@@ -137,7 +163,7 @@ class _DeptTrackingApprovalsScreenState
       if (!mounted) return;
       if (res?.statusCode == 200) {
         CustomToastMessage.success(context, _locale.updatedSuccess);
-        await _load();
+        await _runSearch();
       } else {
         CustomToastMessage.error(context, _locale.error);
       }
@@ -191,9 +217,12 @@ class _DeptTrackingApprovalsScreenState
     return null;
   }
 
-  Future<void> _load() async {
+  Future<void> _load({String? issueNo, String? barcode}) async {
     setState(() => _loading = true);
-    final list = await _controller.getAwaitingReceiveTracking();
+    final list = await _controller.searchAwaitingReceive(
+      issueNo: issueNo,
+      barcode: barcode,
+    );
     if (!mounted) return;
     setState(() {
       _items = list;
@@ -201,12 +230,28 @@ class _DeptTrackingApprovalsScreenState
       _loading = false;
       _gridEpoch++;
     });
+    _requestSearchFocus();
+  }
+
+  void _requestSearchFocus() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (_searchFocusNode.canRequestFocus) {
+          _searchFocusNode.requestFocus();
+        }
+      });
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _requestSearchFocus();
+      _load();
+    });
   }
 
   Future<void> _openFileExplorerLikeFileList(TrackingResponseModel item) async {
@@ -272,7 +317,7 @@ class _DeptTrackingApprovalsScreenState
     if (reload == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _load();
+          if (mounted) _runSearch();
         });
       });
     }
@@ -296,20 +341,32 @@ class _DeptTrackingApprovalsScreenState
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Row(
+                textDirection: TextDirection.rtl,
                 children: [
-                  CustomElevatedButton(
-                    text: _locale.refresh,
-                    color: primary,
-                    icon: Icons.refresh_rounded,
-                    width: _isDesktop ? _width * 0.09 : _width * 0.28,
-                    height: _height * 0.038,
-                    fontSize: 14,
-                    onPressed: () {
-                      if (!_loading) _load();
-                    },
+                  SizedBox(
+                    width: _isDesktop ? _width * 0.28 : _width * 0.46,
+                    child: CustomTextField2(
+                      controller: _searchController,
+                      focusNode: _searchFocusNode,
+                      autoFocus: true,
+                      height: _height * 0.048,
+                      width: double.infinity,
+                      isReport: true,
+                      text: Text(
+                        _locale.deptTrackingIssueOrBarcodeSearchHint(
+                          _locale.issueNo,
+                          _locale.fileBarcode,
+                        ),
+                      ),
+                      onSubmitted: (_) => _runSearch(),
+                      customIconSuffix: IconButton(
+                        icon: const Icon(Icons.search_rounded, size: 20),
+                        color: primary,
+                        onPressed: _runSearch,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 10),
-                  // select all
                   CustomElevatedButton(
                     text: _locale.deptTrackingBulkReceive,
                     color: greenColor,
@@ -320,7 +377,21 @@ class _DeptTrackingApprovalsScreenState
                     onPressed: () async {
                       final refreshed =
                           await showBulkReceiveFilesDialog(context);
-                      if (refreshed == true && mounted) _load();
+                      if (refreshed == true && mounted) {
+                        await _runSearch();
+                      }
+                    },
+                  ),
+                  const Spacer(),
+                  CustomElevatedButton(
+                    text: _locale.refresh,
+                    color: primary,
+                    icon: Icons.refresh_rounded,
+                    width: _isDesktop ? _width * 0.09 : _width * 0.22,
+                    height: _height * 0.038,
+                    fontSize: 14,
+                    onPressed: () {
+                      if (!_loading) _runSearch();
                     },
                   ),
                 ],
@@ -342,6 +413,7 @@ class _DeptTrackingApprovalsScreenState
                     onLoaded: (e) {
                       _stateManager = e.stateManager;
                       _stateManager?.setShowColumnFilter(true);
+                      _requestSearchFocus();
                     },
                     doubleTab: (event) {
                       final key =

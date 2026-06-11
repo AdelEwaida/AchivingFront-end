@@ -20,10 +20,16 @@ TrackingStepInfoModel? trackingStepForAction(TrackingResponseModel item) {
 class TrackingResponseModel {
   TrackingInfoModel? tracking;
   List<TrackingStepInfoModel>? steps;
+  String? issueNo;
+  String? barcode;
+  String? docDescription;
 
   TrackingResponseModel({
     this.tracking,
     this.steps,
+    this.issueNo,
+    this.barcode,
+    this.docDescription,
   });
 
   factory TrackingResponseModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +43,9 @@ class TrackingResponseModel {
                   TrackingStepInfoModel.fromJson(s as Map<String, dynamic>))
               .toList()
           : null,
+      issueNo: json['issueNo']?.toString(),
+      barcode: json['barcode']?.toString(),
+      docDescription: json['docDescription']?.toString(),
     );
   }
 
@@ -44,6 +53,9 @@ class TrackingResponseModel {
     return {
       'tracking': tracking?.toJson(),
       'steps': steps?.map((s) => s.toJson()).toList(),
+      'issueNo': issueNo,
+      'barcode': barcode,
+      'docDescription': docDescription,
     };
   }
 

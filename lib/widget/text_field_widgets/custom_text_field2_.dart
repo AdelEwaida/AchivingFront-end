@@ -135,6 +135,7 @@ class _CustomTextField2State extends State<CustomTextField2> {
         // ← NO decoration here — OutlineInputBorder handles the border
         child: TextFieldCustom(
           focusNode: _internalFocus,
+          autofocus: widget.autoFocus ?? false,
           width: widget.width,
           height: widget.height,
           controller: widget.controller,

@@ -292,6 +292,17 @@
   "deptTrackingBulkReceiveTitle": "Receive multiple files",
   "deptTrackingRefNumberLabel": "Reference number",
   "deptTrackingRefNumberHint": "Enter reference and press Enter",
+  "deptTrackingIssueOrBarcodeSearchHint": "{issueNo} / {fileBarcode}",
+  "@deptTrackingIssueOrBarcodeSearchHint": {
+    "placeholders": {
+      "issueNo": {
+        "type": "String"
+      },
+      "fileBarcode": {
+        "type": "String"
+      }
+    }
+  },
   "deptTrackingBulkReceiveSearchType": "Search by",
   "deptTrackingBulkReceiveSelectedFiles": "Selected files",
   "deptTrackingBulkReceiveEmpty": "No files added yet. Enter a reference number and press Enter.",
@@ -438,5 +449,12 @@
   "cannotCreateNewTrackingUntilAllStepsComplete": "Cannot create a new tracking route for this document until the current route is completed.",
   "create": "Create",
   "pleaseFillStepOrDelete": "Please fill step number {stepNumber} or delete it",
-  "createTrackingDocByDep": "Create Tracking Route by Department"
+  "createTrackingDocByDep": "Create Tracking Route by Department",
+  "documentTrackingReport": "Document Tracking Report",
+  "fileStatus": "File Status",
+  "fileStatusReceived": "Received",
+  "fileStatusNotReceived": "Not Received",
+  "downloadPdf": "Download PDF",
+  "docTrackingReportPdfPending": "PDF export will be available when the API is ready.",
+  "archivedPagesCount": "Archived Pages"
 }

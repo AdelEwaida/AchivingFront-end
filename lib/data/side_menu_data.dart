@@ -28,8 +28,8 @@ import '../screens/workflow_document/user_workflow_settings.dart';
 import '../screens/workflow_document/dept_tracking_approvals_screen.dart';
 import '../screens/workflow_document/work_flow_document.dart';
 
-List<MenuModel> getMenus(
-    AppLocalizations locale, String type, String workFlowActive) {
+List<MenuModel> getMenus(AppLocalizations locale, String type,
+    String workFlowActive, String docTrackingActive) {
   List<MenuModel> menus = type == USERTYPEADMIN
       ? workFlowActive == "1"
           ? [
@@ -60,15 +60,15 @@ List<MenuModel> getMenus(
                 // route: mainScreenRoute,
                 subMenuList: [],
               ),
-              MenuModel(
-                title: locale.deptApprovals,
-                icon: Icons.account_tree_outlined,
-                pageNumber: 21,
-                isOpened: true,
-                isParent: false,
-                // route: mainScreenRoute,
-                subMenuList: [],
-              ),
+              if (docTrackingActive == "1")
+                MenuModel(
+                  title: locale.deptApprovals,
+                  icon: Icons.account_tree_outlined,
+                  pageNumber: 21,
+                  isOpened: true,
+                  isParent: false,
+                  subMenuList: [],
+                ),
               MenuModel(
                 title: locale.dailyReminders,
                 icon: Icons.notifications,
@@ -91,9 +91,11 @@ List<MenuModel> getMenus(
                     SubMenuModel(title: locale.listOfDepartment, pageNumber: 3),
                     SubMenuModel(title: locale.listOfReminders, pageNumber: 4),
                     SubMenuModel(title: locale.workFlow, pageNumber: 9),
-                    SubMenuModel(title: locale.fileLocations, pageNumber: 22),
-                    SubMenuModel(
-                        title: locale.fileTrackingWorkflow, pageNumber: 23),
+                    if (docTrackingActive == "1") ...[
+                      SubMenuModel(title: locale.fileLocations, pageNumber: 22),
+                      SubMenuModel(
+                          title: locale.fileTrackingWorkflow, pageNumber: 23),
+                    ],
                     // SubMenuModel(
                     //     title: locale.workFlowSettings, pageNumber: 16),
                   ],
@@ -119,16 +121,15 @@ List<MenuModel> getMenus(
                     // SubMenuModel(title: locale.viewUser, pageNumber: 11),
                   ],
                   isOpened: false),
-                  MenuModel(
+              if (docTrackingActive == "1")
+                MenuModel(
                   title: locale.reports,
                   icon: Icons.report,
                   isParent: false,
                   pageNumber: 25,
-                  subMenuList: [
-                    // SubMenuModel(title: locale.addUser, pageNumber: 10),
-                    // SubMenuModel(title: locale.viewUser, pageNumber: 11),
-                  ],
-                  isOpened: false),
+                  subMenuList: const [],
+                  isOpened: false,
+                ),
               MenuModel(
                   title: locale.userCategories,
                   icon: Icons.supervised_user_circle_sharp,
@@ -168,14 +169,15 @@ List<MenuModel> getMenus(
                 // route: mainScreenRoute,
                 subMenuList: [],
               ),
-              MenuModel(
-                title: locale.deptApprovals,
-                icon: Icons.account_tree_outlined,
-                pageNumber: 21,
-                isOpened: true,
-                isParent: false,
-                subMenuList: [],
-              ),
+              if (docTrackingActive == "1")
+                MenuModel(
+                  title: locale.deptApprovals,
+                  icon: Icons.account_tree_outlined,
+                  pageNumber: 21,
+                  isOpened: true,
+                  isParent: false,
+                  subMenuList: [],
+                ),
               MenuModel(
                   title: locale.systemSetup,
                   icon: Icons.settings,
@@ -214,6 +216,15 @@ List<MenuModel> getMenus(
                     // SubMenuModel(title: locale.viewUser, pageNumber: 11),
                   ],
                   isOpened: false),
+              if (docTrackingActive == "1")
+                MenuModel(
+                  title: locale.reports,
+                  icon: Icons.report,
+                  isParent: false,
+                  pageNumber: 25,
+                  subMenuList: const [],
+                  isOpened: false,
+                ),
               MenuModel(
                   title: locale.userCategories,
                   icon: Icons.supervised_user_circle_sharp,
@@ -337,14 +348,24 @@ List<MenuModel> getMenus(
                     isParent: false,
                     subMenuList: [],
                   ),
-                  MenuModel(
-                    title: locale.deptApprovals,
-                    icon: Icons.account_tree_outlined,
-                    pageNumber: 21,
-                    isOpened: true,
-                    isParent: false,
-                    subMenuList: [],
-                  ),
+                  if (docTrackingActive == "1")
+                    MenuModel(
+                      title: locale.deptApprovals,
+                      icon: Icons.account_tree_outlined,
+                      pageNumber: 21,
+                      isOpened: true,
+                      isParent: false,
+                      subMenuList: [],
+                    ),
+                  if (docTrackingActive == "1")
+                    MenuModel(
+                      title: locale.reports,
+                      icon: Icons.report,
+                      isParent: false,
+                      pageNumber: 25,
+                      subMenuList: const [],
+                      isOpened: false,
+                    ),
                   MenuModel(
                       title: locale.listOfReminders,
                       icon: Icons.remember_me,
@@ -384,14 +405,24 @@ List<MenuModel> getMenus(
                     // route: mainScreenRoute,
                     subMenuList: [],
                   ),
-                  MenuModel(
-                    title: locale.deptApprovals,
-                    icon: Icons.account_tree_outlined,
-                    pageNumber: 21,
-                    isOpened: true,
-                    isParent: false,
-                    subMenuList: [],
-                  ),
+                  if (docTrackingActive == "1")
+                    MenuModel(
+                      title: locale.deptApprovals,
+                      icon: Icons.account_tree_outlined,
+                      pageNumber: 21,
+                      isOpened: true,
+                      isParent: false,
+                      subMenuList: [],
+                    ),
+                  if (docTrackingActive == "1")
+                    MenuModel(
+                      title: locale.reports,
+                      icon: Icons.report,
+                      isParent: false,
+                      pageNumber: 25,
+                      subMenuList: const [],
+                      isOpened: false,
+                    ),
                   MenuModel(
                       title: locale.listOfReminders,
                       icon: Icons.remember_me,
@@ -450,14 +481,15 @@ List<MenuModel> getMenus(
                         // route: mainScreenRoute,
                         subMenuList: [],
                       ),
-                      MenuModel(
-                        title: locale.deptApprovals,
-                        icon: Icons.account_tree_outlined,
-                        pageNumber: 21,
-                        isOpened: true,
-                        isParent: false,
-                        subMenuList: [],
-                      ),
+                      if (docTrackingActive == "1")
+                        MenuModel(
+                          title: locale.deptApprovals,
+                          icon: Icons.account_tree_outlined,
+                          pageNumber: 21,
+                          isOpened: true,
+                          isParent: false,
+                          subMenuList: [],
+                        ),
                       MenuModel(
                           title: locale.listOfReminders,
                           icon: Icons.remember_me,
@@ -498,14 +530,15 @@ List<MenuModel> getMenus(
                         // route: mainScreenRoute,
                         subMenuList: [],
                       ),
-                      MenuModel(
-                        title: locale.deptApprovals,
-                        icon: Icons.account_tree_outlined,
-                        pageNumber: 21,
-                        isOpened: true,
-                        isParent: false,
-                        subMenuList: [],
-                      ),
+                      if (docTrackingActive == "1")
+                        MenuModel(
+                          title: locale.deptApprovals,
+                          icon: Icons.account_tree_outlined,
+                          pageNumber: 21,
+                          isOpened: true,
+                          isParent: false,
+                          subMenuList: [],
+                        ),
                       MenuModel(
                           title: locale.listOfReminders,
                           icon: Icons.remember_me,
@@ -585,6 +618,8 @@ Widget getScreenContent(int index) {
     case 23:
       return const DepartmentWorkFlowScreen();
     case 24:
+      return const DocTrackingReport();
+    case 25:
       return const DocTrackingReport();
 
     // case 2:

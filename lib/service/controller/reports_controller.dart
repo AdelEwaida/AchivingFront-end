@@ -5,6 +5,8 @@ import 'package:archiving_flutter_project/utils/constants/api_constants.dart';
 import '../../models/db/doc_cat_report_model.dart';
 import '../../models/db/doc_dept_report_model.dart';
 import '../../models/db/user_doc_report_model.dart';
+import '../../models/db/doc_tracking_report_row_model.dart';
+import '../../models/dto/doc_tracking_report_criteria.dart';
 import '../../models/dto/reports_criteria.dart';
 
 class ReportsController {
@@ -49,6 +51,23 @@ class ReportsController {
         }
       }
     });
+    return list;
+  }
+
+  Future<List<DocTrackingReportRowModel>> getDocTrackingReport(
+      DocTrackingReportCriteria criteria) async {
+    final list = <DocTrackingReportRowModel>[];
+    final response =
+        await ApiService().postRequest(getDocTrackingReportApi, criteria);
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
+      if (jsonData is List) {
+        for (final item in jsonData) {
+          list.add(DocTrackingReportRowModel.fromJson(
+              item as Map<String, dynamic>));
+        }
+      }
+    }
     return list;
   }
 }

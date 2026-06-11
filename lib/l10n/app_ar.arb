@@ -280,6 +280,17 @@
   "deptTrackingBulkReceiveTitle": "استلام ملفات متعددة",
   "deptTrackingRefNumberLabel": "رقم الاشارة",
   "deptTrackingRefNumberHint": "أدخل رقم الاشارة",
+  "deptTrackingIssueOrBarcodeSearchHint": "{issueNo} / {fileBarcode}",
+  "@deptTrackingIssueOrBarcodeSearchHint": {
+    "placeholders": {
+      "issueNo": {
+        "type": "String"
+      },
+      "fileBarcode": {
+        "type": "String"
+      }
+    }
+  },
   "deptTrackingBulkReceiveSearchType": "البحث حسب",
   "deptTrackingBulkReceiveSelectedFiles": "الملفات المحددة",
   "deptTrackingBulkReceiveEmpty": "لم تُضَف ملفات بعد. أدخل رقم الاشارة واضغط Enter.",
@@ -425,5 +436,12 @@
   "cannotCreateNewTrackingUntilAllStepsComplete": "لا يمكن انشاء مسار جديد الا عند الانتهاء من جميع خطواط المسار المفتوح",
   "create": "إنشاء",
   "pleaseFillStepOrDelete": "يرجى ملء الخطوة رقم {stepNumber} أو حذفها",
-    "createTrackingDocByDep": "إنشاء مسار عبر الدوائر"
+    "createTrackingDocByDep": "إنشاء مسار عبر الدوائر",
+  "documentTrackingReport": "تقرير تتبع الملفات",
+  "fileStatus": "حالة الملف",
+  "fileStatusReceived": "مستلم",
+  "fileStatusNotReceived": "غير مستلم",
+  "downloadPdf": "تحميل PDF",
+  "docTrackingReportPdfPending": "تصدير PDF سيكون متاحاً عند جاهزية الـ API.",
+  "archivedPagesCount": "عدد الصفحات المؤرشفة"
 }

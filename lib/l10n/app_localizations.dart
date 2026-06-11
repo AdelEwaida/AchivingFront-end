@@ -905,6 +905,12 @@ abstract class AppLocalizations {
   /// **'admin'**
   String get admin;
 
+  /// No description provided for @reports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reports;
+
   /// No description provided for @userCode.
   ///
   /// In en, this message translates to:
@@ -1486,6 +1492,20 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0 {No files were packed.} one {1 file has been packed into {zipName}.} other {{count} files have been packed into {zipName}.}}'**
   String filesPackedIntoZip(int count, String zipName);
+
+  String get documentTrackingReport;
+
+  String get fileStatus;
+
+  String get fileStatusReceived;
+
+  String get fileStatusNotReceived;
+
+  String get downloadPdf;
+
+  String get docTrackingReportPdfPending;
+
+  String get archivedPagesCount;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

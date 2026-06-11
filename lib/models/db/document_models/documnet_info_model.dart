@@ -40,6 +40,8 @@ class DocumentModel {
   String? currentDepTrackName;
   String? txtDocTrackingStatus;
   List<TrackingStepInfoModel>? trackingSteps;
+  int? archivedPagesCount;
+  String? txtBarcode;
   DocumentModel(
       {this.txtKey,
       this.txtDescription,
@@ -73,7 +75,9 @@ class DocumentModel {
       this.deptKey,
       this.workflowStatus,
       this.currentDepTrackCode,
-      this.currentDepTrackName});
+      this.currentDepTrackName,
+      this.archivedPagesCount,
+      this.txtBarcode});
 
   factory DocumentModel.fromJson(Map<String, dynamic> json) {
     return DocumentModel(
@@ -114,7 +118,16 @@ class DocumentModel {
           return int.tryParse(ws.toString()) ?? -1;
         }(),
         currentDepTrackCode: json['currentDepTrackCode']?.toString() ?? "",
-        currentDepTrackName: json['currentDepTrackName']?.toString() ?? "")
+        currentDepTrackName: json['currentDepTrackName']?.toString() ?? "",
+        archivedPagesCount: () {
+          final value = json['archivedPagesCount'] ?? json['intArchivedPages'];
+          if (value == null) return null;
+          if (value is int) return value;
+          return int.tryParse(value.toString());
+        }(),
+        txtBarcode: json['txtBarcode']?.toString() ??
+            json['barcode']?.toString() ??
+            "")
       ..txtDocTrackingStatus = json['txtDocTrackingStatus']?.toString() ?? ""
       ..trackingSteps = json['trackingSteps'] is List
           ? (json['trackingSteps'] as List)
@@ -162,7 +175,9 @@ class DocumentModel {
       "deptKey": deptKey ?? "",
       'workflowStatus': workflowStatus ?? -1,
       'currentDepTrackCode': currentDepTrackCode ?? "",
-      'currentDepTrackName': currentDepTrackName ?? ""
+      'currentDepTrackName': currentDepTrackName ?? "",
+      'archivedPagesCount': archivedPagesCount,
+      'txtBarcode': txtBarcode ?? "",
     };
   }
 
@@ -217,6 +232,10 @@ class DocumentModel {
         'depTrackInTransitAwaitingReceive': PlutoCell(
           value: isDepTrackInTransitAwaitingReceive(this),
         ),
+        'archivedPagesCount': PlutoCell(
+          value: archivedPagesCount != null ? archivedPagesCount : '...',
+        ),
+        'txtBarcode': PlutoCell(value: txtBarcode ?? ''),
         // 'submitForWfApproval': PlutoCell(value: submitForWfApproval)
       },
     );
@@ -260,6 +279,13 @@ class DocumentModel {
           row.cells['workflowStatus']?.value ?? -1, localizations),
       currentDepTrackCode: row.cells['currentDepTrackCode']?.value?.toString(),
       currentDepTrackName: row.cells['currentDepTrackName']?.value?.toString(),
+      archivedPagesCount: () {
+        final value = row.cells['archivedPagesCount']?.value;
+        if (value == null || value == '...') return null;
+        if (value is int) return value;
+        return int.tryParse(value.toString());
+      }(),
+      txtBarcode: row.cells['txtBarcode']?.value?.toString(),
       // submitForWfApproval: row.cells['submitForWfApproval']?.value
     );
   }

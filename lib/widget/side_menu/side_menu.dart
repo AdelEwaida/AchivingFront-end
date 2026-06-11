@@ -37,7 +37,8 @@ class _SideMenuState extends State<SideMenu> {
   PackageInfo? packageInfo;
   late ScreenContentProvider screenProvider;
   List<MenuModel> menuList = [];
-  String? active;
+  String? workflowActive;
+  String? docTrackingActive;
   String? userRole;
   final Map<int, GlobalKey> _submenuArrowKeys = {};
 
@@ -47,24 +48,27 @@ class _SideMenuState extends State<SideMenu> {
     _locale = AppLocalizations.of(context)!;
     packageInfo = await PackageInfo.fromPlatform();
 
-    final setup = await SetupController().getSetup();
-    if (setup != null) {
-      await storage.write(
-        key: StorageKeys.bolActive,
-        value: setup.bolActive.toString(),
-      );
-    } else {
+    await SetupController().cacheSetupFlags(storage);
+
+    workflowActive = await storage.read(key: StorageKeys.workflowActive) ??
+        await storage.read(key: StorageKeys.bolActive);
+    docTrackingActive =
+        await storage.read(key: StorageKeys.docTrackingActive) ?? '0';
+    if (workflowActive == null) {
       if (context.mounted && Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
       return;
     }
-
-    active = await storage.read(key: StorageKeys.bolActive);
     userRole = await storage.read(key: "roles");
 
-    if (userRole != null && active != null) {
-      menuList = getMenus(_locale, userRole!, active!);
+    if (userRole != null) {
+      menuList = getMenus(
+        _locale,
+        userRole!,
+        workflowActive!,
+        docTrackingActive!,
+      );
       if (mounted) {
         setState(() {});
       }
@@ -141,7 +145,8 @@ class _SideMenuState extends State<SideMenu> {
   Widget _buildTrailingActions() {
     return TrailingActions(
       userRole: userRole ?? "-1",
-      active: active ?? "0",
+      workflowActive: workflowActive ?? "0",
+      docTrackingActive: docTrackingActive ?? "0",
       onExportExcel: () {
         showDialog(
           context: context,

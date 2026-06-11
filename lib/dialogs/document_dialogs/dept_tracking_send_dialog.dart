@@ -180,14 +180,14 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              _hasDefaultNext
-                  ? l10n.deptTrackingSendNextDeptMessage(nextName)
-                  : l10n.deptTrackingSendDeptTitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, height: 1.4),
-            ),
-            const SizedBox(height: 20),
+            // Text(
+            //   _hasDefaultNext
+            //       ? l10n.deptTrackingSendNextDeptMessage(nextName)
+            //       : l10n.deptTrackingSendDeptTitle,
+            //   textAlign: TextAlign.center,
+            //   style: const TextStyle(fontSize: 14, height: 1.4),
+            // ),
+            // const SizedBox(height: 20),
             if (_hasDefaultNext)
               Row(
                 children: [

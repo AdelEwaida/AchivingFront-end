@@ -422,7 +422,7 @@ class _UserWorkFlowSettings extends State<UserWorkFlowSettings> {
                   ));
 
                   if (result) {
-                    // Update the cell value in the state manager
+                    await setupController.cacheSetupFlags(storage);
                     rendererContext.stateManager.changeCellValue(
                       rendererContext.cell,
                       value ? _locale.active : _locale.notActive,

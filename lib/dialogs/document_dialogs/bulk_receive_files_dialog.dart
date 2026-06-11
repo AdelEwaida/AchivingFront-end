@@ -242,7 +242,12 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
             controller: _refController,
             focusNode: _refFocusNode,
             autoFocus: true,
-            text: Text(_locale.deptTrackingRefNumberLabel),
+            text: Text(
+              _locale.deptTrackingIssueOrBarcodeSearchHint(
+                _locale.issueNo,
+                _locale.fileBarcode,
+              ),
+            ),
             customIcon: _searching
                 ? const Icon(Icons.hourglass_top_rounded)
                 : const Icon(Icons.tag_rounded),
@@ -361,7 +366,9 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
 
     setState(() => _searching = true);
     try {
-      final results = await _controller.searchAwaitingReceive(issueNo: ref);
+      final results = RegExp(r'^\d+$').hasMatch(ref)
+          ? await _controller.searchAwaitingReceive(barcode: ref)
+          : await _controller.searchAwaitingReceive(issueNo: ref);
       if (!mounted) return;
       if (results.isEmpty) {
         CustomToastMessage.warning(
@@ -370,7 +377,10 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
         );
         return;
       }
-      _addSearchResults(results, sourceIssueNo: ref);
+      final sourceIssueNo = (results.first.issueNo ?? '').trim().isNotEmpty
+          ? results.first.issueNo!.trim()
+          : ref;
+      _addSearchResults(results, sourceIssueNo: sourceIssueNo);
       _refController.clear();
     } finally {
       if (mounted) setState(() => _searching = false);

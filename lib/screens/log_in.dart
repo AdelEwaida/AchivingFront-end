@@ -841,10 +841,7 @@ class _LogInScreenState extends State<LoginScreen>
         .logInPost(userModel, AppLocalizations.of(context)!)
         .then((value) async {
       if (value) {
-        await SetupController().getSetupList().then((v) async {
-          int bolActive = v!.first.bolActive!;
-          await storage.write(key: "bolActive", value: bolActive.toString());
-        });
+        await SetupController().cacheSetupFlags(storage);
         await storage.read(key: "roles").then((value1) {
           if (value1 == USERTYPEADMIN) {
             context.read<ScreenContentProvider>().setPage1(0);

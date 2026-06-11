@@ -65,6 +65,17 @@ PlutoRow deptTrackingToPlutoRow(
       'routeOverview': PlutoCell(
         value: _routeOverviewCellText(item.trackingRouteNotesText()),
       ),
+      'issueNo': PlutoCell(value: (item.issueNo ?? '').trim().isEmpty
+          ? '—'
+          : item.issueNo!.trim()),
+      'txtBarcode': PlutoCell(value: (item.barcode ?? '').trim().isEmpty
+          ? '—'
+          : item.barcode!.trim()),
+      'docDescription': PlutoCell(
+        value: (item.docDescription ?? '').trim().isEmpty
+            ? '—'
+            : item.docDescription!.trim(),
+      ),
     },
   );
 }
@@ -78,6 +89,8 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
   bool showActionColumn = false,
   bool showRemoveColumn = false,
   bool removeColumnAtStart = false,
+  bool showDocumentLookupColumns = false,
+  bool hideRouteOverviewColumn = false,
 }) {
   final w = width;
   final hiddenColumns = <PlutoColumn>[
@@ -143,54 +156,78 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
     );
   }
 
+  if (showDocumentLookupColumns) {
+    columns.addAll([
+      PlutoColumn(
+        readOnly: true,
+        title: locale.issueNo,
+        field: 'issueNo',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.09 : w * 0.28,
+      ),
+      PlutoColumn(
+        readOnly: true,
+        title: locale.fileBarcode,
+        field: 'txtBarcode',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.09 : w * 0.28,
+      ),
+    ]);
+  }
+
   columns.addAll([
-    PlutoColumn(
-      readOnly: true,
-      title: locale.deptTrackingRouteOverview,
-      field: 'routeOverview',
-      backgroundColor: columnColors,
-      type: PlutoColumnType.text(),
-      width: isDesktop ? w * 0.12 : w * 0.95,
-      renderer: (PlutoColumnRendererContext ctx) {
-        final name = ctx.cell.value?.toString().trim() ?? '';
-        final notes =
-            ctx.row.cells[deptTrackingRouteNotesField]?.value?.toString().trim() ??
-                '';
-        final hasName = name.isNotEmpty && name != '—';
-        final hasNotes = notes.isNotEmpty;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                hasName ? name : '—',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF1E293B),
-                  height: 1.25,
-                ),
-              ),
-              if (hasNotes) ...[
-                const SizedBox(height: 4),
+    if (!hideRouteOverviewColumn)
+      PlutoColumn(
+        readOnly: true,
+        title: locale.deptTrackingRouteOverview,
+        field: 'routeOverview',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.12 : w * 0.95,
+        renderer: (PlutoColumnRendererContext ctx) {
+          final name = ctx.cell.value?.toString().trim() ?? '';
+          final notes = ctx.row.cells[deptTrackingRouteNotesField]
+                  ?.value
+                  ?.toString()
+                  .trim() ??
+              '';
+          final hasName = name.isNotEmpty && name != '—';
+          final hasNotes = notes.isNotEmpty;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Text(
-                  '${locale.notes}: $notes',
+                  hasName ? name : '—',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: deptTrackingStepNotesMuted,
-                    height: 1.3,
+                    fontSize: 13,
+                    color: Color(0xFF1E293B),
+                    height: 1.25,
                   ),
                 ),
+                if (hasNotes) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '${locale.notes}: $notes',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: deptTrackingStepNotesMuted,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
               ],
-            ],
-          ),
-        );
-      },
-    ),
+            ),
+          );
+        },
+      ),
     PlutoColumn(
       readOnly: true,
       title: locale.dateCreated,
