@@ -351,6 +351,14 @@ class _UserScreenState extends State<UserScreen> {
       ),
       PlutoColumn(
         enableFilterMenuItem: true,
+        title: _locale.userRefName,
+        field: "txtReferenceUsername",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.13 : width * 0.2,
+        backgroundColor: columnColors,
+      ),
+      PlutoColumn(
+        enableFilterMenuItem: true,
         title: _locale.type,
         field: "intType",
         type: PlutoColumnType.text(),

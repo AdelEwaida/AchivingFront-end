@@ -15,6 +15,58 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../columns_dialog.dart';
 
+class _ColumnTitleLabel extends StatelessWidget {
+  const _ColumnTitleLabel({
+    required this.title,
+    required this.style,
+    required this.maxWidth,
+  });
+
+  final String title;
+  final TextStyle style;
+  final double maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    final isOverflowing = _isTextOverflowing(
+      context: context,
+      maxWidth: maxWidth,
+    );
+
+    final label = Text(
+      title,
+      style: style,
+      maxLines: 1,
+      softWrap: false,
+      overflow: isOverflowing ? TextOverflow.ellipsis : TextOverflow.visible,
+      textAlign: TextAlign.center,
+    );
+
+    if (!isOverflowing) return label;
+
+    return Tooltip(
+      message: title,
+      waitDuration: const Duration(milliseconds: 300),
+      child: label,
+    );
+  }
+
+  bool _isTextOverflowing({
+    required BuildContext context,
+    required double maxWidth,
+  }) {
+    if (!maxWidth.isFinite || maxWidth <= 0) return false;
+
+    final textPainter = TextPainter(
+      text: TextSpan(text: title, style: style),
+      maxLines: 1,
+      textDirection: Directionality.of(context),
+    )..layout(maxWidth: double.infinity);
+
+    return textPainter.width > maxWidth;
+  }
+}
+
 // ignore: must_be_immutable
 class TableComponent extends StatefulWidget {
   final List<PlutoColumn> plCols;
@@ -135,6 +187,14 @@ class _TableComponentState extends State<TableComponent> {
   double scrollThickness = 10;
   double scrollRadius = 10;
   int? _selectedRowIdx;
+  PlutoGridStateManager? _gridStateManager;
+  VoidCallback? _columnResizeListener;
+  TextStyle _columnTitleStyle = const TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: Colors.white,
+    letterSpacing: 0.3,
+  );
   late final PlutoGridStateManager stateManager;
   late AppLocalizations locale;
   List<PlutoRow> tempRow = [];
@@ -156,7 +216,54 @@ class _TableComponentState extends State<TableComponent> {
 
   @override
   void dispose() {
+    if (_gridStateManager != null && _columnResizeListener != null) {
+      _gridStateManager!.resizingChangeNotifier
+          .removeListener(_columnResizeListener!);
+    }
     super.dispose();
+  }
+
+  double _titleAvailableWidth(PlutoColumn column) {
+    final filterSpace = column.enableFilterMenuItem ? 36.0 : 12.0;
+    return (column.width - filterSpace).clamp(8.0, double.infinity);
+  }
+
+  void _applyColumnTitleSpans(List<PlutoColumn> columns) {
+    for (final column in columns) {
+      final availableWidth = _titleAvailableWidth(column);
+      column.titleSpan = TextSpan(
+        children: [
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: SizedBox(
+              width: availableWidth,
+              child: _ColumnTitleLabel(
+                title: column.title,
+                style: _columnTitleStyle,
+                maxWidth: availableWidth,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
+  void _setupColumnResizeListener(PlutoGridStateManager sm) {
+    if (_gridStateManager == sm && _columnResizeListener != null) return;
+
+    if (_gridStateManager != null && _columnResizeListener != null) {
+      _gridStateManager!.resizingChangeNotifier
+          .removeListener(_columnResizeListener!);
+    }
+
+    _gridStateManager = sm;
+    _columnResizeListener = () {
+      if (!mounted) return;
+      _applyColumnTitleSpans(sm.columns);
+      sm.notifyListeners();
+    };
+    sm.resizingChangeNotifier.addListener(_columnResizeListener!);
   }
 
   void showColumnAttributesPopup(BuildContext context, PlutoColumn column,
@@ -490,6 +597,8 @@ class _TableComponentState extends State<TableComponent> {
       LogicalKeySet(LogicalKeyboardKey.arrowDown):
           const PlutoGridActionMoveCellFocus(PlutoMoveDirection.down),
     });
+    _columnTitleStyle = configuration.style.columnTextStyle;
+    _applyColumnTitleSpans(polCols);
     for (int i = 0; i < polCols.length; i++) {
       polCols[i].backgroundColor = Color(0xff1c5179);
       int length = polCols[i].title.split(" ").length;
@@ -513,7 +622,6 @@ class _TableComponentState extends State<TableComponent> {
       //   ],
       // );
       // _locale.lastPricePurchase
-      polCols[i].titleSpan = null;
       polCols[i].titleTextAlign = PlutoColumnTextAlign.center;
       polCols[i].textAlign = PlutoColumnTextAlign.center;
       polCols[i].renderer = polCols[i].renderer ??
@@ -579,6 +687,7 @@ class _TableComponentState extends State<TableComponent> {
                     : null,
                 onLoaded: (event) {
                   stateManager = event.stateManager;
+                  _setupColumnResizeListener(event.stateManager);
                   if (widget.onLoaded != null) {
                     widget.onLoaded!(event);
                   }

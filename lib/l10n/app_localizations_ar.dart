@@ -485,6 +485,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get refNumber => 'رقم المرجع';
 
   @override
+  String get refNumberAlreadyExists => 'رقم المرجع موجود';
+
+  @override
   String get userRefName => 'الاسم المرجعي للمستخدم';
 
   @override

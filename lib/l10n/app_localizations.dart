@@ -1043,6 +1043,12 @@ abstract class AppLocalizations {
   /// **'Reference Number'**
   String get refNumber;
 
+  /// No description provided for @refNumberAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference number already exists'**
+  String get refNumberAlreadyExists;
+
   /// No description provided for @userRefName.
   ///
   /// In en, this message translates to:

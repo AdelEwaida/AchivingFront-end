@@ -63,9 +63,9 @@ import '../../models/db/work_flow/work_flow_document_info.dart';
 import '../../service/controller/users_controller/user_controller.dart';
 import '../../service/controller/work_flow_controllers/setup_controller.dart';
 import '../../utils/constants/setup_constants.dart';
+import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../../utils/func/setup_utils.dart';
 import '../../service/controller/work_flow_controllers/work_flow_template_controller.dart';
-import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../../widget/custom_drop_down_new.dart';
 import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/dashboard_components/custom_elevated_button.dart';
@@ -322,12 +322,6 @@ class _FileListScreenState extends State<FileListScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      storage.read(key: 'roles').then((value) {
-        if (!mounted) return;
-        setState(() {
-          _userRole = value ?? '';
-        });
-      });
       context.read<DocumentListProvider>().registerAssistantSearchHandler(
             _runAssistantSearch,
           );
@@ -378,7 +372,10 @@ class _FileListScreenState extends State<FileListScreen> {
     final wf = setupList.bolActiveFor(SetupPropertyNames.workflow).toString();
     final dt =
         setupList.bolActiveFor(SetupPropertyNames.docTracking).toString();
-    if (wf != workflowActive || dt != docTrackingActive) {
+    final role = (await storage.read(key: 'roles')) ?? '';
+    final roleChanged = role != _userRole;
+    _userRole = role;
+    if (wf != workflowActive || dt != docTrackingActive || roleChanged) {
       workflowActive = wf;
       docTrackingActive = dt;
       fillColumnTable();
@@ -705,7 +702,7 @@ class _FileListScreenState extends State<FileListScreen> {
     return Column(
       children: [
         TableComponent(
-          key: ValueKey('$workflowActive-$docTrackingActive'),
+          key: ValueKey('$workflowActive-$docTrackingActive-$_isAdmin'),
           tableHeigt: height * 0.42,
           tableWidth: width * 0.98, // ← full width minus page padding
           rowsHeight: 88,
@@ -2083,7 +2080,7 @@ class _FileListScreenState extends State<FileListScreen> {
             );
           },
         ),
-      if (docTrackingActive == "1")
+      if (docTrackingActive == "1" && _isAdmin)
         PlutoColumn(
           title: _locale.currentDepTrackLocation,
           field: "txtCurrentLockup",
@@ -2134,10 +2131,6 @@ class _FileListScreenState extends State<FileListScreen> {
             try {
               final DocumentModel doc =
                   DocumentModel.fromPlutoRow(rendererContext.row, _locale);
-
-              if (!_isAdmin) {
-                return const SizedBox.shrink();
-              }
 
 //               return Center(
 //                 child: Row(

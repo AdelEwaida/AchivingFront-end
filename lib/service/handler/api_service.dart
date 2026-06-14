@@ -659,6 +659,9 @@ class ApiService {
         return response;
       } else if (api == createTrackingDocs && response.statusCode == 406) {
         return response;
+      } else if ((api == inseartCategoryApi || api == updateCategoryApi) &&
+          response.statusCode == 406) {
+        return response;
       } else if (response.statusCode != 200) {
         if (response.body == "Wrong Credentials") {
           return response;

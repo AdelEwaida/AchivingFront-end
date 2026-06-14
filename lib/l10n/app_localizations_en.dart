@@ -485,6 +485,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get refNumber => 'Reference Number';
 
   @override
+  String get refNumberAlreadyExists => 'Reference number already exists';
+
+  @override
   String get userRefName => 'User Reference Name';
 
   @override

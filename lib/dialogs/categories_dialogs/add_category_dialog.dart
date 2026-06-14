@@ -2,6 +2,7 @@ import 'package:archiving_flutter_project/dialogs/app_dialog.dart';
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
 import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_category_model.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
+import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -175,9 +176,14 @@ class _AdvanceSearchLogsDialogState extends State<AddCategoryDialog>
         shortCode: "");
 
     var response = await categoriesController.addCategory(insertCategoryModel);
+    if (!mounted) return;
+
     if (response.statusCode == 200) {
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context, true);
+      CustomToastMessage.success(context, _locale.addDoneSucess).then((_) {
+        Navigator.pop(context, true);
+      });
+    } else if (response.statusCode == 406) {
+      CustomToastMessage.error(context, _locale.refNumberAlreadyExists);
     }
   }
 }

@@ -214,7 +214,7 @@ class _OfficeScreenState extends State<ActionScreen> {
                   );
                 },
               ).then((value) {
-                if (value) {
+                if (value == true) {
                   reloadData();
                 }
               });
@@ -273,7 +273,7 @@ class _OfficeScreenState extends State<ActionScreen> {
         );
       },
     ).then((value) {
-      if (value) {
+      if (value == true) {
         reloadData();
       }
     });
@@ -325,12 +325,13 @@ class _OfficeScreenState extends State<ActionScreen> {
                   selectedRow!.cells['txtDescription']!.value));
         },
       ).then((value) async {
-        if (value) {
+        if (value == true) {
           await actionController
               .deleteAction(
                   ActionModel(txtKey: selectedRow!.cells['txtKey']!.value))
               .then((value) {
             if (value.statusCode == 200) {
+              CustomToastMessage.success(context, _locale.deleteDoneSuccess);
               reloadData();
             }
           });
@@ -371,7 +372,7 @@ class _OfficeScreenState extends State<ActionScreen> {
           );
         },
       ).then((value) {
-        if (value) {
+        if (value == true) {
           reloadData();
         }
       });

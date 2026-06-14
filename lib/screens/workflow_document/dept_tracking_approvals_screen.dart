@@ -9,6 +9,7 @@ import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.dart';
+import 'package:archiving_flutter_project/widget/dashboard_components/app_bar_title.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:archiving_flutter_project/widget/table_component/table_component.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_text_field2_.dart';
@@ -411,6 +412,13 @@ class _DeptTrackingApprovalsScreenState
                     tableWidth: _width,
                     plCols: _columns,
                     mode: PlutoGridMode.selectWithOneTap,
+                    appBarTitleWidget: Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: AppBarTitle(
+                        title: _locale.deptApprovals,
+                        icon: Icons.notification_important,
+                      ),
+                    ),
                     polRows: _rows,
                     onLoaded: (e) {
                       _stateManager = e.stateManager;

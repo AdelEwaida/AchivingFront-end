@@ -28,7 +28,7 @@ import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../../utils/func/converters.dart';
-import '../../utils/func/file_barcode_utils.dart';
+// import '../../utils/func/file_barcode_utils.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/custom_drop_down.dart';
 import '../../widget/dashboard_components/custom_elevated_button.dart';
@@ -98,7 +98,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
   List<dynamic> _cachedScanners = [];
   bool _loadedScanners = false;
   int scannerIndex = 0;
-  bool _fileBarcodeAllocated = false;
+  // bool _fileBarcodeAllocated = false;
 
   @override
   void initState() {
@@ -142,15 +142,15 @@ class _AddFileScreenState extends State<AddFileScreen> {
     active = (await storage.read(key: StorageKeys.workflowActive)) ??
         (await storage.read(key: StorageKeys.bolActive)) ??
         '0';
-    await _ensureFileBarcode();
+    // await _ensureFileBarcode();
     super.didChangeDependencies();
   }
 
   Future<void> _ensureFileBarcode() async {
-    if (_fileBarcodeAllocated) return;
-    _fileBarcodeAllocated = true;
-    fileBarcodeController.text = await FileBarcodeUtils.allocateNext(storage);
-    if (mounted) setState(() {});
+    // if (_fileBarcodeAllocated) return;
+    // _fileBarcodeAllocated = true;
+    // fileBarcodeController.text = await FileBarcodeUtils.allocateNext(storage);
+    // if (mounted) setState(() {});
   }
 
   @override
@@ -792,6 +792,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     fileDateController.clear();
     issueNoController.clear();
     arrivalDateController.clear();
+    fileBarcodeController.clear();
     fileNameController.clear();
     selectedDep = "";
     selectedCat = "";
@@ -805,7 +806,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     arrivalDateController.text =
         Converters.formatDate2(DateTime.now().toString());
     fileDateController.text = Converters.formatDate2(DateTime.now().toString());
-    fileBarcodeController.text = await FileBarcodeUtils.allocateNext(storage);
+    // fileBarcodeController.text = await FileBarcodeUtils.allocateNext(storage);
     setState(() {});
   }
 }

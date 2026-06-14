@@ -3,6 +3,7 @@ import 'package:archiving_flutter_project/models/dto/category_dto_model/insert_c
 import 'package:archiving_flutter_project/models/tree_model/my_node.dart';
 import 'package:archiving_flutter_project/models/tree_model/tree_tile.dart';
 import 'package:archiving_flutter_project/service/controller/categories_controllers/categories_controller.dart';
+import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +83,7 @@ class DealClassificationTreeScreenState
   double screenHeight = 0;
   DocumentCategory? selectedCategory;
   late final TreeController<MyNode> treeController;
+  int _treeRefreshKey = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +140,9 @@ class DealClassificationTreeScreenState
                             reloadData();
                           }
                         });
+                      } else {
+                        CustomToastMessage.error(
+                            context, _locale.pleaseSelectACategory);
                       }
                     },
                   ),
@@ -206,7 +211,7 @@ class DealClassificationTreeScreenState
                   child: Stack(
                     children: [
                       TreeView<MyNode>(
-                        key: ValueKey(treeController),
+                        key: ValueKey(_treeRefreshKey),
                         treeController: treeController,
                         nodeBuilder:
                             (BuildContext context, TreeEntry<MyNode> entry) {
@@ -262,6 +267,7 @@ class DealClassificationTreeScreenState
                 shortCode: selectedCategory!.docCatParent!.txtShortcode!))
             .then((value) {
           if (value.statusCode == 200) {
+            CustomToastMessage.success(context, _locale.deleteDoneSuccess);
             reloadData();
           }
         });
@@ -271,27 +277,84 @@ class DealClassificationTreeScreenState
 
   Future<void> reloadData() async {
     final expansionState = storeExpansionState();
+    final parentShortCode = selectedCategory?.docCatParent?.txtShortcode;
 
     setState(() {
       isLoading = true;
     });
 
-    campClassificationList = await categoriesController.getCategoriesTree();
+    try {
+      campClassificationList = await categoriesController.getCategoriesTree();
 
-    treeNodes.clear();
-    convertToTreeList(campClassificationList);
-    selectedCategory = null;
+      treeNodes.clear();
+      for (int i = 0; i < campClassificationList.length; i++) {
+        treeNodes.add(getNodes(campClassificationList[i]));
+      }
 
-    children = [];
-    for (int i = 0; i < campClassificationList.length; i++) {
-      children.addAll(getChildren(campClassificationList[i]));
+      children = [];
+      for (int i = 0; i < campClassificationList.length; i++) {
+        children.addAll(getChildren(campClassificationList[i]));
+      }
+
+      roots = <MyNode>[
+        MyNode(title: '/', children: treeNodes, extra: null, isRoot: true),
+      ];
+      treeController.roots = roots;
+
+      restoreExpansionState(expansionState);
+
+      if (parentShortCode != null) {
+        selectedCategory =
+            findCategoryByShortCode(campClassificationList, parentShortCode);
+        if (selectedCategory != null) {
+          selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
+          selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+          expandCategoryNode(roots.first, parentShortCode);
+        } else {
+          selectedCategory = null;
+        }
+      } else {
+        selectedCategory = null;
+      }
+
+      _treeRefreshKey++;
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
+  }
 
-    restoreExpansionState(expansionState);
+  DocumentCategory? findCategoryByShortCode(
+      List<DocumentCategory> categories, String shortCode) {
+    for (final category in categories) {
+      if (category.docCatParent?.txtShortcode == shortCode) {
+        return category;
+      }
+      if (category.docCatChildren != null &&
+          category.docCatChildren!.isNotEmpty) {
+        final found =
+            findCategoryByShortCode(category.docCatChildren!, shortCode);
+        if (found != null) {
+          return found;
+        }
+      }
+    }
+    return null;
+  }
 
-    setState(() {
-      isLoading = false;
-    });
+  void expandCategoryNode(MyNode node, String shortCode) {
+    if (node.extra != null &&
+        (node.extra as DocumentCategory).docCatParent?.txtShortcode ==
+            shortCode) {
+      treeController.setExpansionState(node, true);
+      return;
+    }
+    for (final child in node.children) {
+      expandCategoryNode(child, shortCode);
+    }
   }
 
   Map<String, bool> storeExpansionState() {

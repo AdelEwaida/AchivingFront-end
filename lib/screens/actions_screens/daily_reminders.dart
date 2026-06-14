@@ -7,6 +7,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../service/controller/actions_controllers/action_controller.dart';
 import '../../utils/func/dates_controller.dart';
+import '../../widget/dashboard_components/app_bar_title.dart';
 
 class DailyReminders extends StatefulWidget {
   const DailyReminders({super.key});
@@ -81,6 +82,13 @@ class _DailyRemindersState extends State<DailyReminders> {
           children: [
             
             TableComponent(
+              appBarTitleWidget: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: AppBarTitle(
+                  title: _locale.dailyReminders,
+                  icon: Icons.notification_important,
+                ),
+              ),
               // key: UniqueKey(),
               isWhiteText: true,
               tableHeigt: height * 0.75,
@@ -105,6 +113,7 @@ class _DailyRemindersState extends State<DailyReminders> {
               },
             ),
             Padding(
+              
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,

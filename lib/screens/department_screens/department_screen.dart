@@ -277,6 +277,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
                   DepartmentModel(txtKey: selectedRow!.cells['txtKey']!.value))
               .then((value) {
             if (value.statusCode == 200) {
+              CustomToastMessage.success(context, _locale.deleteDoneSuccess);
               reloadData();
             }
           });
