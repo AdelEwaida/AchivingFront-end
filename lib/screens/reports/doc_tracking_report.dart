@@ -1,8 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
 import 'package:archiving_flutter_project/models/dto/doc_tracking_report_criteria.dart';
+import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
 import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/service/controller/reports_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
+import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/custom_drop_down.dart';
@@ -57,8 +61,11 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
 
   String _selectedDeptKey = '';
   String _selectedStatusCode = '';
+  String _appliedStatusCode = '';
   bool _filtersLoaded = false;
   bool _loading = false;
+  bool _exportingPdf = false;
+  bool _initialSearchDone = false;
   int _gridEpoch = 0;
   PlutoGridStateManager? _stateManager;
 
@@ -85,10 +92,20 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
         code: 'not_received',
         label: _locale.fileStatusNotReceived,
       ),
+      _FileStatusOption(
+        code: 'sent',
+        label: _locale.fileStatusSent,
+      ),
     ];
     _buildColumns();
     _syncColumnsToGrid();
-    _loadFilters();
+    _loadFilters().then((_) {
+      if (!mounted || _initialSearchDone) return;
+      _initialSearchDone = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _searchReport();
+      });
+    });
   }
 
   @override
@@ -109,19 +126,34 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
   }
 
   void _buildColumns() {
-    final colWidth = _isDesktop ? _width * 0.16 : _width * 0.32;
-    _columns = List.generate(
-      5,
-      (index) => PlutoColumn(
+    final showReceivedColumns =
+        _appliedStatusCode != 'not_received' && _appliedStatusCode != 'sent';
+    final colWidth = _isDesktop ? _width * 0.105 : _width * 0.34;
+
+    PlutoColumn col(String title, String field) {
+      return PlutoColumn(
         readOnly: true,
-        title: '--',
-        field: 'col${index + 1}',
+        title: title,
+        field: field,
         backgroundColor: columnColors,
         type: PlutoColumnType.text(),
         width: colWidth,
-        enableFilterMenuItem: true,
-      ),
-    );
+        enableFilterMenuItem: false,
+      );
+    }
+
+    _columns = [
+      col(_locale.fileBarcode, 'barcode'),
+      col(_locale.issueNo, 'issueNo'),
+      col(_locale.department, 'deptName'),
+      col(_locale.fileStatus, 'fileStatus'),
+      col(_locale.deptTrackingSentBy, 'sentBy'),
+      col(_locale.deptTrackingSentAt, 'sentAt'),
+      if (showReceivedColumns) ...[
+        col(_locale.receivedBy, 'receivedBy'),
+        col(_locale.deptTrackingReceivedAt, 'receivedAt'),
+      ],
+    ];
   }
 
   _FileStatusOption? get _selectedStatusOption {
@@ -150,11 +182,20 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
   }
 
   DocTrackingReportCriteria _buildCriteria() {
+    int? status;
+    if (_selectedStatusCode == 'received') {
+      status = 2;
+    } else if (_selectedStatusCode == 'not_received') {
+      status = 1;
+    } else if (_selectedStatusCode == 'sent') {
+      status = 3;
+    }
+
     return DocTrackingReportCriteria(
       fromDate: _fromDateController.text.trim(),
       toDate: _toDateController.text.trim(),
-      status: _selectedStatusCode,
-      dept: _selectedDeptKey,
+      status: status,
+      deptKey: _selectedDeptKey,
     );
   }
 
@@ -176,6 +217,8 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
       if (!mounted) return;
       setState(() {
         _lastCriteria = criteria;
+        _appliedStatusCode = _selectedStatusCode;
+        _buildColumns();
         _rows = items.map((item) => item.toPlutoRow()).toList();
         _gridEpoch++;
         _loading = false;
@@ -187,10 +230,48 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
     }
   }
 
-  void _onDownloadPdf() {
+  Future<void> _onDownloadPdf() async {
+    if (_loading || _exportingPdf) return;
+
     final criteria = _lastCriteria ?? _buildCriteria();
-    final _ = criteria.toJson();
-    CustomToastMessage.warning(context, _locale.docTrackingReportPdfPending);
+    if (criteria.fromDate == null ||
+        criteria.fromDate!.isEmpty ||
+        criteria.toDate == null ||
+        criteria.toDate!.isEmpty) {
+      CustomToastMessage.error(context, _locale.fillRequiredFields);
+      return;
+    }
+
+    setState(() => _exportingPdf = true);
+    openLoadinDialog(context);
+    try {
+      final bytes = await _reportsController.getDocTrackingReportPdf(criteria);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+
+      if (bytes == null || bytes.isEmpty) {
+        CustomToastMessage.error(context, _locale.error);
+        return;
+      }
+
+      await showDialog(
+        context: context,
+        builder: (_) => PdfPreview1(
+          pdfFile: Uint8List.fromList(bytes),
+          fileName: 'tracking-report.pdf',
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+      CustomToastMessage.error(context, _locale.error);
+    } finally {
+      if (mounted) {
+        setState(() => _exportingPdf = false);
+      }
+    }
   }
 
   Widget _filterField(Widget child) {
@@ -271,7 +352,7 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
                   dateWidth: double.infinity,
                   dateControllerToCompareWith: _fromDateController,
                   readOnly: false,
-                  isInitiaDate: true,
+                  isInitiaDate: false,
                   onValue: (isValid, value) {
                     if (isValid) _toDateController.text = value;
                   },
@@ -343,7 +424,8 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
                   width: _isDesktop ? _width * 0.10 : _width * 0.28,
                   height: _height * 0.055,
                   fontSize: 13,
-                  onPressed: _loading ? () {} : _onDownloadPdf,
+                  isLoading: _exportingPdf,
+                  onPressed: (_loading || _exportingPdf) ? () {} : _onDownloadPdf,
                 ),
               ),
             ],
@@ -384,7 +466,7 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
                     mode: PlutoGridMode.selectWithOneTap,
                     onLoaded: (event) {
                       _stateManager = event.stateManager;
-                      _stateManager?.setShowColumnFilter(true);
+                      _stateManager?.setShowColumnFilter(false);
                       _syncColumnsToGrid();
                     },
                   ),

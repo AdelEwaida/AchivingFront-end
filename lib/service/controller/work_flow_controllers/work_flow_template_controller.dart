@@ -278,11 +278,13 @@ class WorkFlowTemplateContoller {
   Future postDocumentTrackingSend({
     required String stepKey,
     required String deptCode,
+    required String documentCode,
     String notes = '',
   }) async {
     return ApiService().postRequest(trackingSendApi, {
       'stepKey': stepKey,
       'deptCode': deptCode,
+      'documentCode': documentCode,
       'notes': notes,
     });
   }

@@ -731,6 +731,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fileStatusNotReceived => 'غير مستلم';
 
   @override
+  String get fileStatusSent => 'مرسلة';
+
+  @override
   String get downloadPdf => 'تحميل PDF';
 
   @override

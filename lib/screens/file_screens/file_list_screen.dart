@@ -47,9 +47,12 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 import 'dart:html' as html;
 // import '../../dialogs/template_work_flow/create_tracking_doc_dialog.dart';
+import '../../dialogs/template_work_flow/create_tracking_doc_dialog.dart';
 import '../../dialogs/template_work_flow/edit_template_document_dialog.dart';
 // import '../../dialogs/template_work_flow/select_tracking_template_dialog.dart';
 // import '../../dialogs/template_work_flow/tracking_type_selection_dialog.dart';
+import '../../dialogs/template_work_flow/select_tracking_template_dialog.dart';
+import '../../dialogs/template_work_flow/tracking_type_selection_dialog.dart';
 import '../../dialogs/template_work_flow/view_tracking_dialog.dart';
 import '../../models/db/categories_models/doc_cat_parent.dart';
 import '../../models/db/user_models/department_user_model.dart';
@@ -372,8 +375,7 @@ class _FileListScreenState extends State<FileListScreen> {
     }
 
     final setupList = await SetupController().getSetupList();
-    final wf =
-        setupList.bolActiveFor(SetupPropertyNames.workflow).toString();
+    final wf = setupList.bolActiveFor(SetupPropertyNames.workflow).toString();
     final dt =
         setupList.bolActiveFor(SetupPropertyNames.docTracking).toString();
     if (wf != workflowActive || dt != docTrackingActive) {
@@ -491,7 +493,6 @@ class _FileListScreenState extends State<FileListScreen> {
                                 }
                               },
                             ),
-
                             CustomElevatedButton(
                               text: _locale.viewApprovals,
                               color: primary,
@@ -1192,6 +1193,7 @@ class _FileListScreenState extends State<FileListScreen> {
     final res = await WorkFlowTemplateContoller().postDocumentTrackingSend(
       stepKey: activeStepKey,
       deptCode: request.deptCode,
+      documentCode: docKey,
       notes: request.notes,
     );
     if (!mounted) return;
@@ -2121,106 +2123,200 @@ class _FileListScreenState extends State<FileListScreen> {
         ),
       if (docTrackingActive == "1")
         PlutoColumn(
-        title: 'الإجراءات',
-        field: 'actions',
-        readOnly: true,
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.09 : width * 0.16,
-        backgroundColor: columnColors,
-        enableRowDrag: false,
-        renderer: (rendererContext) {
-          try {
-            final DocumentModel doc =
-                DocumentModel.fromPlutoRow(rendererContext.row, _locale);
+          title: 'الإجراءات',
+          field: 'actions',
+          readOnly: true,
+          type: PlutoColumnType.text(),
+          width: isDesktop ? width * 0.09 : width * 0.16,
+          backgroundColor: columnColors,
+          enableRowDrag: false,
+          renderer: (rendererContext) {
+            try {
+              final DocumentModel doc =
+                  DocumentModel.fromPlutoRow(rendererContext.row, _locale);
 
-            if (!_isAdmin) {
+              if (!_isAdmin) {
+                return const SizedBox.shrink();
+              }
+
+//               return Center(
+//                 child: Row(
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     CustomElevatedButton(
+//                       text: _locale.deptTrackingSendOnly,
+//                       color: const Color(0xFF1565C0),
+//                       icon: Icons.send_rounded,
+//                       width: isDesktop ? width * 0.075 : width * 0.13,
+//                       height: height * 0.038,
+//                       fontSize: 11,
+//                       onPressed: () => _sendDocumentDeptTracking(doc),
+//                     ),
+//                     const SizedBox(width: 6),
+//                     CustomElevatedButton(
+//                       text: _locale.createTrackingDocByDep,
+//                       color: const Color.fromARGB(255, 196, 83, 177),
+//                       icon: Icons.alt_route_rounded,
+//                       width: isDesktop ? width * 0.12 : width * 0.18,
+//                       height: height * 0.038,
+//                       fontSize: 12,
+//                       onPressed: () async {
+//                         if (documentModel == null) {
+//                           CustomToastMessage.warning(
+//                               context, _locale.pleaseSelectRow);
+//                           return;
+//                         }
+
+//                         final TrackingType? choice =
+//                             await showDialog<TrackingType>(
+//                           barrierDismissible: false,
+//                           context: context,
+//                           builder: (context) =>
+//                               const TrackingTypeSelectionDialog(),
+//                         );
+
+//                         if (choice == null || !mounted) return;
+
+// // ── CHECK for BOTH options ──────────────────────────────────────
+//                         final List<TrackingResponseModel> existingTrackings =
+//                             await WorkFlowTemplateContoller()
+//                                 .getTrackingByDocument(
+//                                     documentModel!.txtKey ?? "");
+
+//                         if (existingTrackings.isNotEmpty) {
+//                           final bool canCreate = existingTrackings.any(
+//                             (t) => t.tracking?.intStatus == 1,
+//                           );
+
+//                           if (!canCreate) {
+//                             if (!mounted) return;
+//                             showDialog(
+//                               context: context,
+//                               builder: (_) => ErrorDialog(
+//                                 icon: Icons.block_rounded,
+//                                 errorDetails:
+//                                     "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
+//                                 errorTitle: _locale.error,
+//                                 color: Colors.red,
+//                                 statusCode: 400,
+//                               ),
+//                             );
+//                             return;
+//                           }
+//                         }
+// // ───────────────────────────────────────────────────────────────
+
+//                         if (choice == TrackingType.createTracking) {
+//                           await showDialog(
+//                             barrierDismissible: false,
+//                             context: context,
+//                             builder: (context) => CreateTrackingDocDialog(
+//                               documentKey: documentModel!.txtKey ?? "",
+//                             ),
+//                           );
+//                         } else {
+//                           await showDialog(
+//                             barrierDismissible: false,
+//                             context: context,
+//                             builder: (context) => SelectTrackingTemplateDialog(
+//                               documentKey: documentModel!.txtKey ?? "",
+//                             ),
+//                           );
+//                         }
+//                       },
+//                     ),
+//                   ],
+//                 ),
+//               );
+
+
+
+
+              return Center(
+                child: CustomElevatedButton(
+                  text: _locale.deptTrackingSendOnly,
+                  color: const Color(0xFF1565C0),
+                  icon: Icons.send_rounded,
+                  width: isDesktop ? width * 0.075 : width * 0.13,
+                  height: height * 0.038,
+                  fontSize: 11,
+                  onPressed: () => _sendDocumentDeptTracking(doc),
+                ),
+                // const SizedBox(width: 6),
+                // CustomElevatedButton(
+                //   text: _locale.createTrackingDocByDep,
+                //   color: const Color.fromARGB(255, 196, 83, 177),
+                //   icon: Icons.alt_route_rounded,
+                //   width: isDesktop ? width * 0.12 : width * 0.18,
+                //   height: height * 0.038,
+                //   fontSize: 12,
+                //   onPressed: () async {
+                //     if ((doc.txtKey ?? '').isEmpty) {
+                //       CustomToastMessage.warning(
+                //           context, _locale.pleaseSelectRow);
+                //       return;
+                //     }
+                //
+                //     final TrackingType? choice = await showDialog<TrackingType>(
+                //       barrierDismissible: false,
+                //       context: context,
+                //       builder: (context) => const TrackingTypeSelectionDialog(),
+                //     );
+                //
+                //     if (choice == null || !mounted) return;
+                //
+                //     final List<TrackingResponseModel> existingTrackings =
+                //         await WorkFlowTemplateContoller()
+                //             .getTrackingByDocument(doc.txtKey ?? "");
+                //
+                //     if (existingTrackings.isNotEmpty) {
+                //       final bool canCreate = existingTrackings.any(
+                //         (t) => t.tracking?.intStatus == 1,
+                //       );
+                //
+                //       if (!canCreate) {
+                //         if (!mounted) return;
+                //         showDialog(
+                //           context: context,
+                //           builder: (_) => ErrorDialog(
+                //             icon: Icons.block_rounded,
+                //             errorDetails:
+                //                 "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
+                //             errorTitle: _locale.error,
+                //             color: Colors.red,
+                //             statusCode: 400,
+                //           ),
+                //         );
+                //         return;
+                //       }
+                //     }
+                //
+                //     if (choice == TrackingType.createTracking) {
+                //       await showDialog(
+                //         barrierDismissible: false,
+                //         context: context,
+                //         builder: (context) => CreateTrackingDocDialog(
+                //           documentKey: doc.txtKey ?? "",
+                //         ),
+                //       );
+                //     } else {
+                //       await showDialog(
+                //         barrierDismissible: false,
+                //         context: context,
+                //         builder: (context) => SelectTrackingTemplateDialog(
+                //           documentKey: doc.txtKey ?? "",
+                //         ),
+                //       );
+                //     }
+                //   },
+                // ),
+
+              );
+            } catch (e) {
               return const SizedBox.shrink();
             }
-
-            return Center(
-              child: CustomElevatedButton(
-                text: _locale.deptTrackingSendOnly,
-                color: const Color(0xFF1565C0),
-                icon: Icons.send_rounded,
-                width: isDesktop ? width * 0.075 : width * 0.13,
-                height: height * 0.038,
-                fontSize: 11,
-                onPressed: () => _sendDocumentDeptTracking(doc),
-              ),
-              // const SizedBox(width: 6),
-              // CustomElevatedButton(
-              //   text: _locale.createTrackingDocByDep,
-              //   color: const Color.fromARGB(255, 196, 83, 177),
-              //   icon: Icons.alt_route_rounded,
-              //   width: isDesktop ? width * 0.12 : width * 0.18,
-              //   height: height * 0.038,
-              //   fontSize: 12,
-              //   onPressed: () async {
-              //     if ((doc.txtKey ?? '').isEmpty) {
-              //       CustomToastMessage.warning(
-              //           context, _locale.pleaseSelectRow);
-              //       return;
-              //     }
-              //
-              //     final TrackingType? choice = await showDialog<TrackingType>(
-              //       barrierDismissible: false,
-              //       context: context,
-              //       builder: (context) => const TrackingTypeSelectionDialog(),
-              //     );
-              //
-              //     if (choice == null || !mounted) return;
-              //
-              //     final List<TrackingResponseModel> existingTrackings =
-              //         await WorkFlowTemplateContoller()
-              //             .getTrackingByDocument(doc.txtKey ?? "");
-              //
-              //     if (existingTrackings.isNotEmpty) {
-              //       final bool canCreate = existingTrackings.any(
-              //         (t) => t.tracking?.intStatus == 1,
-              //       );
-              //
-              //       if (!canCreate) {
-              //         if (!mounted) return;
-              //         showDialog(
-              //           context: context,
-              //           builder: (_) => ErrorDialog(
-              //             icon: Icons.block_rounded,
-              //             errorDetails:
-              //                 "${_locale.cannotCreateNewTrackingUntilAllStepsComplete}",
-              //             errorTitle: _locale.error,
-              //             color: Colors.red,
-              //             statusCode: 400,
-              //           ),
-              //         );
-              //         return;
-              //       }
-              //     }
-              //
-              //     if (choice == TrackingType.createTracking) {
-              //       await showDialog(
-              //         barrierDismissible: false,
-              //         context: context,
-              //         builder: (context) => CreateTrackingDocDialog(
-              //           documentKey: doc.txtKey ?? "",
-              //         ),
-              //       );
-              //     } else {
-              //       await showDialog(
-              //         barrierDismissible: false,
-              //         context: context,
-              //         builder: (context) => SelectTrackingTemplateDialog(
-              //           documentKey: doc.txtKey ?? "",
-              //         ),
-              //       );
-              //     }
-              //   },
-              // ),
-            );
-          } catch (e) {
-            return const SizedBox.shrink();
-          }
-        },
-      ),
+          },
+        ),
     ];
   }
 

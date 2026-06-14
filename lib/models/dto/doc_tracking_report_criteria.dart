@@ -1,22 +1,25 @@
 class DocTrackingReportCriteria {
   String? fromDate;
   String? toDate;
-  String? status;
-  String? dept;
+  int? status;
+  String? deptKey;
 
   DocTrackingReportCriteria({
     this.fromDate,
     this.toDate,
     this.status,
-    this.dept,
+    this.deptKey,
   });
 
   Map<String, dynamic> toJson() {
-    return {
+    final data = <String, dynamic>{
       'fromDate': fromDate ?? '',
       'toDate': toDate ?? '',
-      'status': status ?? '',
-      'dept': dept ?? '',
+      'deptKey': deptKey ?? '',
     };
+    if (status != null) {
+      data['status'] = status;
+    }
+    return data;
   }
 }

@@ -731,6 +731,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fileStatusNotReceived => 'Not Received';
 
   @override
+  String get fileStatusSent => 'Sent';
+
+  @override
   String get downloadPdf => 'Download PDF';
 
   @override

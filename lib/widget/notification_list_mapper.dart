@@ -19,18 +19,21 @@ class NotificationEntry {
   final TrackingResponseModel? deptTracking;
 }
 
+String deptTrackingNotificationTitle(TrackingResponseModel item) {
+  final route = item.trackingRouteNotesText();
+  if (route.isNotEmpty) return route;
+  final lookup = item.documentIssueBarcodeLabel();
+  if (lookup.isNotEmpty) return lookup;
+  return (item.docDescription ?? '').trim();
+}
+
 String notificationEntryTitle(NotificationEntry entry) {
   switch (entry.kind) {
     case NotificationKind.workflowApproval:
       final w = entry.workflow!;
       return '${w.txtTemplateName ?? ''} - ${w.txtDeptName ?? ''}'.trim();
     case NotificationKind.deptTrackingReceive:
-      final item = entry.deptTracking!;
-      final route = item.trackingRouteNotesText();
-      final step = item.activeStepDescriptionOnly();
-      if (route.isNotEmpty && step.isNotEmpty) return '$route - $step';
-      if (route.isNotEmpty) return route;
-      return step;
+      return deptTrackingNotificationTitle(entry.deptTracking!);
   }
 }
 
@@ -39,7 +42,7 @@ String notificationEntryTooltip(NotificationEntry entry) {
     case NotificationKind.workflowApproval:
       return entry.workflow?.txtTemplateName ?? '';
     case NotificationKind.deptTrackingReceive:
-      return entry.deptTracking?.trackingRouteNotesText() ?? '';
+      return deptTrackingNotificationTitle(entry.deptTracking!);
   }
 }
 

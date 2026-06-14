@@ -27,8 +27,8 @@ String _routeOverviewCellText(String overview) {
   return t.isEmpty ? '—' : t;
 }
 
-String _stepOrderCellText(String order) {
-  final t = order.trim();
+String _emptyCellText(String value) {
+  final t = value.trim();
   return t.isEmpty ? '—' : t;
 }
 
@@ -46,7 +46,7 @@ PlutoRow deptTrackingToPlutoRow(
       deptTrackingActiveStepNotesField: PlutoCell(value: notesForCell),
       deptTrackingRouteNotesField: PlutoCell(value: item.tracking?.txtNotes ?? ''),
       'activeStepSummary': PlutoCell(
-        value: _stepOrderCellText(item.activeStepOrderDisplay()),
+        value: _emptyCellText(item.activeStepOrderDisplay()),
       ),
       'stepSituation': PlutoCell(
         value: deptTrackingSituationLabel(
@@ -76,6 +76,9 @@ PlutoRow deptTrackingToPlutoRow(
             ? '—'
             : item.docDescription!.trim(),
       ),
+      'datSentAt': PlutoCell(value: _emptyCellText(item.gridSentAtDisplay())),
+      'txtSentBy': PlutoCell(value: _emptyCellText(item.gridSentByDisplay())),
+      'stepNotes': PlutoCell(value: _emptyCellText(item.activeStepNotesOnly())),
     },
   );
 }
@@ -91,6 +94,7 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
   bool removeColumnAtStart = false,
   bool showDocumentLookupColumns = false,
   bool hideRouteOverviewColumn = false,
+  bool approvalsGridLayout = false,
 }) {
   final w = width;
   final hiddenColumns = <PlutoColumn>[
@@ -156,7 +160,7 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
     );
   }
 
-  if (showDocumentLookupColumns) {
+  if (showDocumentLookupColumns && !approvalsGridLayout) {
     columns.addAll([
       PlutoColumn(
         readOnly: true,
@@ -177,7 +181,59 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
     ]);
   }
 
-  columns.addAll([
+  if (approvalsGridLayout) {
+    columns.addAll([
+      PlutoColumn(
+        readOnly: true,
+        title: locale.issueNo,
+        field: 'issueNo',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.08 : w * 0.22,
+      ),
+      PlutoColumn(
+        readOnly: true,
+        title: locale.fileBarcode,
+        field: 'txtBarcode',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.08 : w * 0.22,
+      ),
+      PlutoColumn(
+        readOnly: true,
+        title: locale.deptTrackingSentAt,
+        field: 'datSentAt',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.1 : w * 0.28,
+      ),
+      PlutoColumn(
+        readOnly: true,
+        title: locale.deptTrackingSentBy,
+        field: 'txtSentBy',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.09 : w * 0.24,
+      ),
+      PlutoColumn(
+        readOnly: true,
+        title: locale.notes,
+        field: 'stepNotes',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.12 : w * 0.32,
+      ),
+      PlutoColumn(
+        readOnly: true,
+        title: locale.deptTrackingStepSituation,
+        field: 'stepSituation',
+        backgroundColor: columnColors,
+        type: PlutoColumnType.text(),
+        width: isDesktop ? w * 0.11 : w * 0.28,
+      ),
+    ]);
+  } else {
+    columns.addAll([
     if (!hideRouteOverviewColumn)
       PlutoColumn(
         readOnly: true,
@@ -309,6 +365,7 @@ List<PlutoColumn> buildDeptTrackingPlutoColumns({
       width: isDesktop ? w * 0.11 : w * 0.45,
     ),
   ]);
+  }
 
   if (showActionColumn && actionRenderer != null) {
     columns.add(

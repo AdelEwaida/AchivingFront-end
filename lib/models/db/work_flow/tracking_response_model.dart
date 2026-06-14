@@ -33,6 +33,12 @@ class TrackingResponseModel {
   });
 
   factory TrackingResponseModel.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic>? docMap;
+    final document = json['document'];
+    if (document is Map) {
+      docMap = Map<String, dynamic>.from(document);
+    }
+
     return TrackingResponseModel(
       tracking: json['tracking'] != null
           ? TrackingInfoModel.fromJson(json['tracking'] as Map<String, dynamic>)
@@ -43,10 +49,44 @@ class TrackingResponseModel {
                   TrackingStepInfoModel.fromJson(s as Map<String, dynamic>))
               .toList()
           : null,
-      issueNo: json['issueNo']?.toString(),
-      barcode: json['barcode']?.toString(),
-      docDescription: json['docDescription']?.toString(),
+      issueNo: _readJsonText(json, docMap, const [
+        'issueNo',
+        'txtIssueno',
+        'issue_no',
+      ]),
+      barcode: _readJsonText(json, docMap, const [
+        'barcode',
+        'txtBarcode',
+        'fileBarcode',
+      ]),
+      docDescription: _readJsonText(json, docMap, const [
+        'docDescription',
+        'txtDescription',
+        'description',
+      ]),
     );
+  }
+
+  static String? _readJsonText(
+    Map<String, dynamic> json,
+    Map<String, dynamic>? docMap,
+    List<String> keys,
+  ) {
+    for (final key in keys) {
+      final value = json[key]?.toString().trim();
+      if (value != null && value.isNotEmpty && value != 'null') {
+        return value;
+      }
+    }
+    if (docMap != null) {
+      for (final key in keys) {
+        final value = docMap[key]?.toString().trim();
+        if (value != null && value.isNotEmpty && value != 'null') {
+          return value;
+        }
+      }
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {
@@ -67,6 +107,15 @@ class TrackingResponseModel {
   }
 
   String trackingRouteNotesText() => (tracking?.name ?? '').trim();
+
+  String documentIssueBarcodeLabel() {
+    final issue = (issueNo ?? '').trim();
+    final bc = (barcode ?? '').trim();
+    if (issue.isNotEmpty && bc.isNotEmpty) return '$issue - $bc';
+    if (issue.isNotEmpty) return issue;
+    if (bc.isNotEmpty) return bc;
+    return '';
+  }
 
   String routeOverviewText() {
     final list = List<TrackingStepInfoModel>.from(steps ?? [])
@@ -139,6 +188,33 @@ class TrackingResponseModel {
       return (_stepByOrder(order - 1)?.txtNotes ?? '').trim();
     }
     return '';
+  }
+
+  TrackingStepInfoModel? previousStepBeforeActive() {
+    final active = activeStepDisplayed();
+    final order = active?.intStepOrder;
+    if (order == null || order <= 1) return null;
+    return _stepByOrder(order - 1);
+  }
+
+  String gridSentByDisplay() {
+    final active = activeStepDisplayed();
+    if (active == null) return '';
+    final fromActive = (active.txtSentBy ?? '').trim();
+    if (fromActive.isNotEmpty) return fromActive;
+    return (previousStepBeforeActive()?.txtSentBy ?? '').trim();
+  }
+
+  String gridSentAtDisplay() {
+    final active = activeStepDisplayed();
+    if (active == null) return '';
+    final fromActive = (active.datSentAt ?? '').trim();
+    if (fromActive.isNotEmpty) {
+      return shortCreatedAt(fromActive);
+    }
+    final fromPrev = (previousStepBeforeActive()?.datSentAt ?? '').trim();
+    if (fromPrev.isEmpty) return '';
+    return shortCreatedAt(fromPrev);
   }
 
   String activeStepSituationCode() {

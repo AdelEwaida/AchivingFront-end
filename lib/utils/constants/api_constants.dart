@@ -74,7 +74,8 @@ const getScanedImageApi = "users/scanProcess";
 const getUserDocsAPI = "report/userDocs";
 const getDocsByCat = "report/docsByCat";
 const getDocsByDept = "report/docsByDept";
-const getDocTrackingReportApi = "report/documentTracking";
+const getDocTrackingReportApi = "tracking-report";
+const getDocTrackingReportPdfApi = "tracking-report/pdf";
 //'
 const whatsAppSendPath = "send/whatsup";
 const emailPath = "send/email";

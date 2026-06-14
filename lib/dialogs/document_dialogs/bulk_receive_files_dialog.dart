@@ -301,6 +301,7 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
       showRemoveColumn: true,
       removeColumnAtStart: true,
       removeRenderer: _renderRemoveCell,
+      approvalsGridLayout: true,
     );
   }
 

@@ -710,5 +710,46 @@ class ApiService {
     }
   }
 
+  Future<http.Response> postRequestPdf(String api, dynamic toJson) async {
+    String? token = await storage.read(key: 'jwt');
+    final requestUrl = "$urlServer/$api";
+    try {
+      final response = await http.post(
+        Uri.parse(requestUrl),
+        headers: {
+          "Accept": "application/pdf, */*",
+          "Content-type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: json.encode(toJson),
+      );
+
+      if (response.statusCode == 417 || response.statusCode == 401) {
+        final context = navigatorKey.currentState!.overlay!.context;
+        await storage.delete(key: "jwt").then((value) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (builder) {
+              return ErrorDialog(
+                icon: Icons.error_outline,
+                errorDetails:
+                    AppLocalizations.of(context)!.expiredSessionLoginDialog,
+                errorTitle: AppLocalizations.of(context)!.error,
+                color: Colors.red,
+                statusCode: 401,
+              );
+            },
+          );
+        });
+      }
+
+      return response;
+    } catch (e) {
+      print("e.toString() ${e.toString()}");
+      rethrow;
+    }
+  }
+
   checkErrorDec(http.Response response) {}
 }

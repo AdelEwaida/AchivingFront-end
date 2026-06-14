@@ -117,6 +117,9 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
   }
 
   Widget _buildTrackingCard(TrackingResponseModel item) {
+    final routeName = (item.tracking?.name ?? '').trim();
+    final hasRouteName = routeName.isNotEmpty;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -134,70 +137,66 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Tracking header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF185FA5).withOpacity(0.05),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+          if (hasRouteName) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF185FA5).withOpacity(0.05),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+                border: const Border(
+                  bottom: BorderSide(color: Color(0xFFE2E8F0)),
+                ),
               ),
-              border: const Border(
-                bottom: BorderSide(color: Color(0xFFE2E8F0)),
-              ),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.route_rounded,
-                    color: Color(0xFF185FA5), size: 16),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    item.tracking?.name ?? "",
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1A2340),
+              child: Row(
+                children: [
+                  const Icon(Icons.route_rounded,
+                      color: Color(0xFF185FA5), size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      routeName,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1A2340),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                // _buildTrackingStatusChip(item.tracking?.intStatus),
-              ],
+                  const SizedBox(width: 8),
+                ],
+              ),
             ),
-          ),
-
-          // Meta row
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            child: Row(
-              children: [
-                const Icon(Icons.person_outline,
-                    size: 13, color: Color(0xFF64748B)),
-                const SizedBox(width: 4),
-                Text(
-                  "${_locale.createdBy}: ${item.tracking?.txtCreatedBy ?? ""}",
-                  style:
-                      const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-                ),
-                const SizedBox(width: 16),
-                const Icon(Icons.calendar_today_outlined,
-                    size: 13, color: Color(0xFF64748B)),
-                const SizedBox(width: 4),
-                Text(
-                  "${_locale.byDate}: ${formatTrackingStepDate(item.tracking?.datCreatedAt)}",
-                  style:
-                      const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.person_outline,
+                      size: 13, color: Color(0xFF64748B)),
+                  const SizedBox(width: 4),
+                  Text(
+                    "${_locale.createdBy}: ${item.tracking?.txtCreatedBy ?? ""}",
+                    style: const TextStyle(
+                        fontSize: 12, color: Color(0xFF64748B)),
+                  ),
+                  const SizedBox(width: 16),
+                  const Icon(Icons.calendar_today_outlined,
+                      size: 13, color: Color(0xFF64748B)),
+                  const SizedBox(width: 4),
+                  Text(
+                    "${_locale.byDate}: ${formatTrackingStepDate(item.tracking?.datCreatedAt)}",
+                    style: const TextStyle(
+                        fontSize: 12, color: Color(0xFF64748B)),
+                  ),
+                ],
+              ),
             ),
-          ),
-
-          // Steps
+          ],
           if (item.steps != null && item.steps!.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+              padding: EdgeInsets.fromLTRB(14, hasRouteName ? 0 : 14, 14, 14),
               child: Column(
                 children: (item.steps!.toList()
                       ..sort((a, b) =>
@@ -213,6 +212,8 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
 
   Widget _buildStepCard(TrackingStepInfoModel step) {
     final statusInfo = _stepStatusInfo(step.intStatus);
+    final stepDescription = (step.txtStepDescription ?? '').trim();
+    final hasStepDescription = stepDescription.isNotEmpty;
 
     return Container(
       margin: const EdgeInsets.only(top: 8),
@@ -225,7 +226,6 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Step number bubble
           Container(
             width: 28,
             height: 28,
@@ -249,18 +249,19 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Description + status
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
-                        step.txtStepDescription ?? "",
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF1A2340),
-                        ),
-                      ),
+                      child: hasStepDescription
+                          ? Text(
+                              stepDescription,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1A2340),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
                     ),
                     const SizedBox(width: 8),
                     _buildStepStatusChip(statusInfo),
@@ -268,7 +269,6 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                 ),
                 const SizedBox(height: 6),
 
-                // Dept code
                 Row(
                   children: [
                     const Icon(Icons.account_balance_outlined,

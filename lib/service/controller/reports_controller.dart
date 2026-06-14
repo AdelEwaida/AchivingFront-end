@@ -58,7 +58,7 @@ class ReportsController {
       DocTrackingReportCriteria criteria) async {
     final list = <DocTrackingReportRowModel>[];
     final response =
-        await ApiService().postRequest(getDocTrackingReportApi, criteria);
+        await ApiService().postRequest(getDocTrackingReportApi, criteria.toJson());
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(utf8.decode(response.bodyBytes));
       if (jsonData is List) {
@@ -69,5 +69,15 @@ class ReportsController {
       }
     }
     return list;
+  }
+
+  Future<List<int>?> getDocTrackingReportPdf(
+      DocTrackingReportCriteria criteria) async {
+    final response = await ApiService()
+        .postRequestPdf(getDocTrackingReportPdfApi, criteria.toJson());
+    if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
+      return response.bodyBytes;
+    }
+    return null;
   }
 }

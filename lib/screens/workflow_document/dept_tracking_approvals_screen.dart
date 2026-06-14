@@ -69,8 +69,7 @@ class _DeptTrackingApprovalsScreenState
       isDesktop: _isDesktop,
       showActionColumn: true,
       actionRenderer: _renderActionCell,
-      showDocumentLookupColumns: true,
-      hideRouteOverviewColumn: true,
+      approvalsGridLayout: true,
     );
   }
 
@@ -196,9 +195,12 @@ class _DeptTrackingApprovalsScreenState
     );
     if (!mounted || request == null) return null;
 
+    final documentCode =
+        (item.tracking?.txtDocumentcode ?? '').trim();
     final res = await WorkFlowTemplateContoller().postDocumentTrackingSend(
       stepKey: activeStepKey,
       deptCode: request.deptCode,
+      documentCode: documentCode,
       notes: request.notes,
     );
     return res?.statusCode == 200;

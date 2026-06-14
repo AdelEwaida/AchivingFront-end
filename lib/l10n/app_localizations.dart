@@ -1501,6 +1501,12 @@ abstract class AppLocalizations {
 
   String get fileStatusNotReceived;
 
+  /// No description provided for @fileStatusSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get fileStatusSent;
+
   String get downloadPdf;
 
   String get docTrackingReportPdfPending;

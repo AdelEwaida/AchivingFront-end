@@ -287,7 +287,7 @@
   "deptTrackingDocumentRef": "Document ref.",
   "deptTrackingTrackingRef": "Tracking ref.",
   "deptTrackingCurrentStepNo": "Current step",
-  "deptTrackingAction": "Action",
+  "deptTrackingAction": "Actions",
   "deptTrackingBulkReceive": "Receive multiple",
   "deptTrackingBulkReceiveTitle": "Receive multiple files",
   "deptTrackingRefNumberLabel": "Reference number",
@@ -454,6 +454,7 @@
   "fileStatus": "File Status",
   "fileStatusReceived": "Received",
   "fileStatusNotReceived": "Not Received",
+  "fileStatusSent": "Sent",
   "downloadPdf": "Download PDF",
   "docTrackingReportPdfPending": "PDF export will be available when the API is ready.",
   "archivedPagesCount": "Archived Pages"

@@ -61,8 +61,9 @@ class _NotificationIconState extends State<NotificationIcon> {
     }
 
     try {
+      // Same source as dept approvals page — includes issueNo + barcode.
       final deptTrackingResult =
-          await workFlowTemplateContoller.getAwaitingReceiveTracking();
+          await workFlowTemplateContoller.searchAwaitingReceive();
       entries.addAll(
         deptTrackingResult.map((item) => NotificationEntry.deptTracking(item)),
       );
@@ -184,6 +185,7 @@ class _NotificationIconState extends State<NotificationIcon> {
                                 );
                                 final statusColor =
                                     notificationEntryStatusColor(entry);
+                                final titleText = notificationEntryTitle(entry);
 
                                 return Card(
                                   margin:
@@ -199,37 +201,33 @@ class _NotificationIconState extends State<NotificationIcon> {
                                     ),
                                     title: Tooltip(
                                       message: notificationEntryTooltip(entry),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              notificationEntryTitle(entry),
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 4,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: statusColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: Text(
-                                              statusLabel,
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                      child: Text(
+                                        titleText,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF1E293B),
+                                        ),
+                                      ),
+                                    ),
+                                    trailing: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: statusColor,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        statusLabel,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
