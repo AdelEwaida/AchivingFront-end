@@ -33,6 +33,7 @@ const uplodeFileInDocApi = "docFilesTrans/uploadFile";
 const updateDoc = "docInfo/update";
 const searchDocCritereaFile = "docInfo/searchCrit";
 const searchByContentApi = "docInfo/searchByContent";
+const searchByContentTotalCountApi = "docInfo/searchByContentTotalCount";
 // const getInfoCount = "docInfo/count";
 const searchDocCountFile = "docInfo/searchCrit/count";
 const searchByContentDocCountFile = "docInfo/searchCrit/count";

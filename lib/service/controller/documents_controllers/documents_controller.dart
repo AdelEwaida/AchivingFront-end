@@ -206,6 +206,20 @@ class DocumentsController {
   //       statusCode: response.statusCode, scannedImage: scannedImage);
   // }
 
+  Future<int> getSearchByContentTotalCount(String searchField) async {
+    int itemCount = 0;
+    await ApiService()
+        .postRequest(searchByContentTotalCountApi, {
+      'searchField': searchField,
+    }).then((value) {
+      if (value.statusCode == 200) {
+        var jsonData = jsonDecode(utf8.decode(value.bodyBytes));
+        itemCount = CountModel.fromJson(jsonData).count!;
+      }
+    });
+    return itemCount;
+  }
+
   Future<int> getDocInfoCount(
       SearchDocumentCriteria searchDocumentCriteria) async {
     var api = searchByContentDocCountFile;

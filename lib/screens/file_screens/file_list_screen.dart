@@ -117,7 +117,7 @@ class _FileListScreenState extends State<FileListScreen> {
 
   TextEditingController sortedByController = TextEditingController();
   String selectedDep = "";
-  int selectedSortedType = -1;
+  int selectedSortedType = 1;
   List<DepartmentModel> listOfDep = [];
   late PlutoGridStateManager stateManager;
   DocumentModel? documentModel;
@@ -195,7 +195,7 @@ class _FileListScreenState extends State<FileListScreen> {
     if (keep != AssistantSearchField.ref2) ref2Controller.clear();
     if (keep != AssistantSearchField.userCode) userCodeController.clear();
     selectedDep = "";
-    selectedSortedType = -1;
+    selectedSortedType = 1;
     calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
     calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
     classificationController.clear();
@@ -343,6 +343,15 @@ class _FileListScreenState extends State<FileListScreen> {
       documentListProvider = context.read<DocumentListProvider>();
       calssificatonNameAndCodeProvider =
           context.read<CalssificatonNameAndCodeProvider>();
+
+      if (documentListProvider.issueNumber == null) {
+        documentListProvider.searchDocumentCriteria.fromIssueDate =
+            fromDateController.text;
+        documentListProvider.searchDocumentCriteria.toIssueDate =
+            toDateController.text;
+        documentListProvider.searchDocumentCriteria.sortedBy =
+            selectedSortedType;
+      }
 
       if (treeNodes.isEmpty) {
         roots = <MyNode>[
@@ -1343,9 +1352,7 @@ class _FileListScreenState extends State<FileListScreen> {
                     onChanged: (value) {
                       selectedSortedType = getSortedByTyepsCode(_locale, value);
                     },
-                    initialValue: selectedSortedType == -1
-                        ? null
-                        : getSortedByTyepsByCode(_locale, selectedSortedType),
+                    initialValue: getSortedByTyepsByCode(_locale, selectedSortedType),
                     bordeText: _locale.sortedBy,
                     items: getSortedByTyeps(_locale),
                     width:
@@ -1602,7 +1609,7 @@ class _FileListScreenState extends State<FileListScreen> {
     organizationController.clear();
     followingController.clear();
     selectedDep = "";
-    selectedSortedType = -1;
+    selectedSortedType = 1;
 
     documentListProvider.setIssueNumber(null);
     documentListProvider.setIsSearch(false);
@@ -1613,6 +1620,7 @@ class _FileListScreenState extends State<FileListScreen> {
       page: 1,
       fromIssueDate: fromDateController.text,
       toIssueDate: toDateController.text,
+      sortedBy: selectedSortedType,
     );
     print(initialCriteria.toJson());
 
@@ -2405,6 +2413,8 @@ class _FileListScreenState extends State<FileListScreen> {
             documentListProvider.issueNumber != null
                 ? null
                 : toDateController.text;
+        documentListProvider.searchDocumentCriteria.sortedBy =
+            selectedSortedType;
         List<DocumentModel> result = await documentsController
             .searchDocCriterea(documentListProvider.searchDocumentCriteria);
 
@@ -2708,10 +2718,8 @@ class _FileListScreenState extends State<FileListScreen> {
                           key: const ValueKey('filter_sort_dropdown'),
                           onChanged: (value) => selectedSortedType =
                               getSortedByTyepsCode(_locale, value),
-                          initialValue: selectedSortedType == -1
-                              ? null
-                              : getSortedByTyepsByCode(
-                                  _locale, selectedSortedType),
+                          initialValue: getSortedByTyepsByCode(
+                              _locale, selectedSortedType),
                           bordeText: _locale.sortedBy,
                           items: getSortedByTyeps(_locale),
                           width: double.infinity,

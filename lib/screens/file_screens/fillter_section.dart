@@ -48,7 +48,7 @@ class _FillterFileSectionState extends State<FillterFileSection> {
   TextEditingController followingController = TextEditingController();
   TextEditingController sortedByController = TextEditingController();
   String selectedDep = "";
-  int selectedSortedType = -1;
+  int selectedSortedType = 1;
   DocumentsController documentsController = DocumentsController();
   late DocumentListProvider documentListProvider;
   late CalssificatonNameAndCodeProvider calssificatonNameAndCodeProvider;
@@ -179,9 +179,8 @@ class _FillterFileSectionState extends State<FillterFileSection> {
                     onChanged: (value) {
                       selectedSortedType = getSortedByTyepsCode(_locale, value);
                     },
-                    initialValue: selectedSortedType == -1
-                        ? null
-                        : getSortedByTyepsByCode(_locale, selectedSortedType),
+                    initialValue:
+                        getSortedByTyepsByCode(_locale, selectedSortedType),
                     bordeText: _locale.sortedBy,
                     items: getSortedByTyeps(_locale),
                     width:

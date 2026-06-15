@@ -45,9 +45,20 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
   ValueNotifier isSearch = ValueNotifier(false);
   ValueNotifier pageLis = ValueNotifier(1);
   ValueNotifier totalDocCount = ValueNotifier(0);
+  String _activeSearchField = '';
+
+  SearchDocumentCriteria _buildSearchCriteria() {
+    return SearchDocumentCriteria(
+      searchField: isSearch.value ? _activeSearchField : '',
+      page: pageLis.value,
+    );
+  }
+
   getCount() {
     documentsController
-        .getDocInfoCount(SearchDocumentCriteria(page: -1))
+        .getSearchByContentTotalCount(
+          isSearch.value ? _activeSearchField : '',
+        )
         .then((value) {
       totalDocCount.value = value;
     });
@@ -328,7 +339,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         title: _locale.description,
         field: "txtDescription",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.16 : width * 0.4,
+        width: isDesktop ? width * 0.14 : width * 0.4,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
@@ -336,7 +347,31 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         title: _locale.issueNo,
         field: "txtIssueno",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.28 : width * 0.2,
+        width: isDesktop ? width * 0.11 : width * 0.2,
+        backgroundColor: columnColors,
+      ),
+      PlutoColumn(
+        enableFilterMenuItem: true,
+        title: _locale.userCode,
+        field: "txtUsercode",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.09 : width * 0.16,
+        backgroundColor: columnColors,
+      ),
+      PlutoColumn(
+        enableFilterMenuItem: true,
+        title: _locale.department,
+        field: "txtDept",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.08 : width * 0.16,
+        backgroundColor: columnColors,
+      ),
+      PlutoColumn(
+        enableFilterMenuItem: true,
+        title: _locale.fileName,
+        field: "fileName",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.14 : width * 0.22,
         backgroundColor: columnColors,
       ),
       PlutoColumn(
@@ -344,38 +379,36 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         title: _locale.dateCreated,
         field: "datIssuedate",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.35 : width * 0.2,
+        width: isDesktop ? width * 0.10 : width * 0.2,
         backgroundColor: columnColors,
       ),
     ]);
   }
 
   search(String text) async {
-    isSearch.value = true;
-    print(text);
-    if (text.trim().isEmpty) {
+    final query = text.trim();
+    if (query.isEmpty) {
       isSearch.value = false;
+      _activeSearchField = '';
+      pageLis.value = 1;
       stateManager!.removeAllRows();
-      stateManager!.appendRows(rowList);
-    } else if (isSearch.value) {
-      List<DocumentModel> result = [];
-      List<PlutoRow> topList = [];
-      result = await documentsController.searchByContent(
-          SearchDocumentCriteria(searchField: text.trim(), page: -1));
-      if (documentListProvider.searchDocumentCriteria.page! >= 1) {
-        documentListProvider.searchDocumentCriteria.page =
-            documentListProvider.searchDocumentCriteria.page! + 1;
-      } else {
-        stateManager!.removeAllRows();
-        // rowList.clear();
-        // rowList = [];
-      }
-      for (int i = 0; i < result.length; i++) {
-        // rowList.add(result[i].toPlutoRow(i + 1));
-        topList.add(result[i].toPlutoRow(rowList.length, _locale));
-      }
-      stateManager!.removeAllRows();
-      stateManager!.appendRows(topList);
+      stateManager!.appendRows(List<PlutoRow>.from(rowList));
+      getCount();
+      return;
+    }
+
+    isSearch.value = true;
+    _activeSearchField = query;
+    pageLis.value = 1;
+    stateManager!.removeAllRows();
+    stateManager!.setShowLoading(true);
+    try {
+      final response = await fetch(PlutoInfinityScrollRowsRequest());
+      if (!mounted) return;
+      stateManager!.appendRows(response.rows);
+      getCount();
+    } finally {
+      stateManager!.setShowLoading(false);
     }
   }
 
@@ -394,35 +427,26 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
 
   Future<PlutoInfinityScrollRowsResponse> fetch(
       PlutoInfinityScrollRowsRequest request) async {
-    bool isLast = false;
+    final currentPage = pageLis.value;
+    final result = await documentsController.searchByContent(_buildSearchCriteria());
 
-    if (!isSearch.value) {
-      List<DocumentModel> result = [];
-      List<PlutoRow> topList = [];
+    final existingCount =
+        isSearch.value ? (stateManager?.refRows.length ?? 0) : rowList.length;
+    final topList = <PlutoRow>[];
 
-      // Fetch data for current page
-      result = await documentsController
-          .searchDocCriterea(SearchDocumentCriteria(page: pageLis.value));
-
-      // Convert to PlutoRows
-      for (int i = 0; i < result.length; i++) {
-        final index = rowList.length + 1;
-        final row = result[i].toPlutoRow(index, _locale);
+    for (int i = 0; i < result.length; i++) {
+      final row = result[i].toPlutoRow(existingCount + i + 1, _locale);
+      topList.add(row);
+      if (!isSearch.value) {
         rowList.add(row);
-        topList.add(row);
       }
-
-      // Increment page number for next fetch
-      pageLis.value++;
-
-      // If no more rows returned, set isLast to true
-      if (result.isEmpty) {
-        isLast = true;
-      }
-
-      return PlutoInfinityScrollRowsResponse(isLast: isLast, rows: topList);
     }
 
-    return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
+    pageLis.value = currentPage + 1;
+
+    return PlutoInfinityScrollRowsResponse(
+      isLast: result.isEmpty,
+      rows: topList,
+    );
   }
 }
