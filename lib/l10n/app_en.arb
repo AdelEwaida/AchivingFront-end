@@ -442,6 +442,7 @@
   "byDate": "Creation date",
   "reports": "Reports",
   "fileBarcode": "File Barcode",
+  "barcodeAlreadyExists": "Barcode already exists",
   "reiveAndSycleDone": "Receive and sycle done",
   "departmentWorkFlow": "Department workflow",
   "addDepartmentWorkFlow": "Add department workflow",

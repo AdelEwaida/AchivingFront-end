@@ -1518,6 +1518,8 @@ abstract class AppLocalizations {
   String get docTrackingReportPdfPending;
 
   String get archivedPagesCount;
+
+  String get barcodeAlreadyExists;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

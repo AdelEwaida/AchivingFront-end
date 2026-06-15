@@ -429,6 +429,7 @@
   "createdBy": "أنشأ بواسطة",
   "byDate": "بتاريخ",
   "fileBarcode": "باركود الملف",
+  "barcodeAlreadyExists": "الباركود موجود مسبقاً",
   "reiveAndSycleDone": "تم الاستلام وانتهاء المسار",
   "departmentWorkFlow": "إنشاء مسار تلقائي من مخطط جاهز",
   "addDepartmentWorkFlow": "إضافة مخطط سير عمل خاص بالدائرة",

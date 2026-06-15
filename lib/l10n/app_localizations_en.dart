@@ -745,4 +745,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get archivedPagesCount => 'Archived Pages';
+
+  @override
+  String get barcodeAlreadyExists => 'Barcode already exists';
 }

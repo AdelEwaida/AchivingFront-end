@@ -745,4 +745,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get archivedPagesCount => 'عدد الصفحات المؤرشفة';
+
+  @override
+  String get barcodeAlreadyExists => 'الباركود موجود مسبقاً';
 }

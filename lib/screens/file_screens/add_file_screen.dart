@@ -763,19 +763,10 @@ class _AddFileScreenState extends State<AddFileScreen> {
 
     await documentsController.addDocument(documentFileRequest).then((value) {
       if (value.statusCode == 200) {
-                                      CustomToastMessage.success(context, _locale.addDoneSucess)
+        CustomToastMessage.success(context, _locale.addDoneSucess)
             .then((_) => resetForm());
-
-        // showDialog(
-        //   context: context,
-        //   builder: (context) => ErrorDialog(
-        //     icon: Icons.done_all,
-        //     errorDetails: _locale.done,
-        //     errorTitle: _locale.addDoneSucess,
-        //     color: Colors.green,
-        //     statusCode: 200,
-        //   ),
-        // ).then((_) => resetForm());
+      } else if (value.statusCode == 406) {
+        CustomToastMessage.error(context, _locale.barcodeAlreadyExists);
       }
     });
 
