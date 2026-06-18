@@ -54,7 +54,6 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
   List<DepartmentModel> _departments = [];
   List<_FileStatusOption> _statusOptions = [];
   List<PlutoColumn> _columns = [];
-  List<PlutoRow> _rows = [];
 
   final ReportsController _reportsController = ReportsController();
   DocTrackingReportCriteria? _lastCriteria;
@@ -66,6 +65,8 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
   bool _loading = false;
   bool _exportingPdf = false;
   bool _initialSearchDone = false;
+  bool _fetchEnabled = false;
+  int _currentPage = 1;
   int _gridEpoch = 0;
   PlutoGridStateManager? _stateManager;
 
@@ -181,7 +182,7 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
     _stateManager!.notifyListeners(true);
   }
 
-  DocTrackingReportCriteria _buildCriteria() {
+  DocTrackingReportCriteria _buildCriteria({int? page}) {
     int? status;
     if (_selectedStatusCode == 'received') {
       status = 2;
@@ -196,13 +197,25 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
       toDate: _toDateController.text.trim(),
       status: status,
       deptKey: _selectedDeptKey,
+      page: page,
+    );
+  }
+
+  DocTrackingReportCriteria? _criteriaForFetch() {
+    if (_lastCriteria == null) return null;
+    return DocTrackingReportCriteria(
+      fromDate: _lastCriteria!.fromDate,
+      toDate: _lastCriteria!.toDate,
+      status: _lastCriteria!.status,
+      deptKey: _lastCriteria!.deptKey,
+      page: _currentPage,
     );
   }
 
   Future<void> _searchReport() async {
     if (_loading) return;
 
-    final criteria = _buildCriteria();
+    final criteria = _buildCriteria(page: 1);
     if (criteria.fromDate == null ||
         criteria.fromDate!.isEmpty ||
         criteria.toDate == null ||
@@ -211,29 +224,77 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
       return;
     }
 
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _lastCriteria = criteria;
+      _appliedStatusCode = _selectedStatusCode;
+      _currentPage = 1;
+      _fetchEnabled = true;
+      _buildColumns();
+      _gridEpoch++;
+    });
+  }
+
+  PlutoInfinityScrollRows _lazyLoadingFooter(
+      PlutoGridStateManager stateManager) {
+    return PlutoInfinityScrollRows(
+      initialFetch: true,
+      fetchWithSorting: false,
+      fetchWithFiltering: false,
+      fetch: _fetchReportRows,
+      stateManager: stateManager,
+    );
+  }
+
+  Future<PlutoInfinityScrollRowsResponse> _fetchReportRows(
+      PlutoInfinityScrollRowsRequest request) async {
+    if (!_fetchEnabled) {
+      return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
+    }
+
+    final criteria = _criteriaForFetch();
+    if (criteria == null) {
+      return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
+    }
+
+    final pageToFetch = _currentPage;
+    _stateManager?.setShowLoading(true);
+
     try {
       final items = await _reportsController.getDocTrackingReport(criteria);
-      if (!mounted) return;
-      setState(() {
-        _lastCriteria = criteria;
-        _appliedStatusCode = _selectedStatusCode;
-        _buildColumns();
-        _rows = items.map((item) => item.toPlutoRow()).toList();
-        _gridEpoch++;
-        _loading = false;
-      });
+      if (!mounted) {
+        return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
+      }
+
+      final rows = items.map((item) => item.toPlutoRow()).toList();
+      _currentPage = pageToFetch + 1;
+
+      if (pageToFetch == 1) {
+        setState(() => _loading = false);
+      }
+
+      return PlutoInfinityScrollRowsResponse(
+        isLast: items.isEmpty,
+        rows: rows,
+      );
     } catch (_) {
-      if (!mounted) return;
-      setState(() => _loading = false);
-      CustomToastMessage.error(context, _locale.error);
+      if (!mounted) {
+        return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
+      }
+      if (pageToFetch == 1) {
+        setState(() => _loading = false);
+        CustomToastMessage.error(context, _locale.error);
+      }
+      return PlutoInfinityScrollRowsResponse(isLast: true, rows: []);
+    } finally {
+      _stateManager?.setShowLoading(false);
     }
   }
 
   Future<void> _onDownloadPdf() async {
     if (_loading || _exportingPdf) return;
 
-    final criteria = _lastCriteria ?? _buildCriteria();
+    final criteria = _lastCriteria ?? _buildCriteria(page: 1);
     if (criteria.fromDate == null ||
         criteria.fromDate!.isEmpty ||
         criteria.toDate == null ||
@@ -462,8 +523,9 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
                     tableHeigt: _height * 0.66,
                     tableWidth: _width,
                     plCols: _columns,
-                    polRows: _rows,
+                    polRows: <PlutoRow>[],
                     mode: PlutoGridMode.selectWithOneTap,
+                    footerBuilder: _lazyLoadingFooter,
                     onLoaded: (event) {
                       _stateManager = event.stateManager;
                       _stateManager?.setShowColumnFilter(false);

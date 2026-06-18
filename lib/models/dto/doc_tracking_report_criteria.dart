@@ -3,15 +3,17 @@ class DocTrackingReportCriteria {
   String? toDate;
   int? status;
   String? deptKey;
+  int? page;
 
   DocTrackingReportCriteria({
     this.fromDate,
     this.toDate,
     this.status,
     this.deptKey,
+    this.page,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool includePage = true}) {
     final data = <String, dynamic>{
       'fromDate': fromDate ?? '',
       'toDate': toDate ?? '',
@@ -19,6 +21,9 @@ class DocTrackingReportCriteria {
     };
     if (status != null) {
       data['status'] = status;
+    }
+    if (includePage && page != null) {
+      data['page'] = page;
     }
     return data;
   }
