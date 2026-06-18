@@ -225,6 +225,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportToExcel => 'Export To Excel';
 
   @override
+  String get importFromExcel => 'Import from Excel';
+
+  @override
   String get advanceSearch => 'Advance Search';
 
   @override

@@ -225,6 +225,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exportToExcel => 'تصدير الى اكسل';
 
   @override
+  String get importFromExcel => 'استيراد من اكسل';
+
+  @override
   String get advanceSearch => 'بحث متقدم';
 
   @override

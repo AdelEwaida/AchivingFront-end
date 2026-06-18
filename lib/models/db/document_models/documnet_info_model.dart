@@ -232,8 +232,8 @@ class DocumentModel {
         'depTrackInTransitAwaitingReceive': PlutoCell(
           value: isDepTrackInTransitAwaitingReceive(this),
         ),
-        'archivedPagesCount': PlutoCell(
-          value: archivedPagesCount != null ? archivedPagesCount : '...',
+        'hasTrackingSteps': PlutoCell(
+          value: (trackingSteps ?? []).isNotEmpty,
         ),
         'txtBarcode': PlutoCell(value: txtBarcode ?? ''),
         // 'submitForWfApproval': PlutoCell(value: submitForWfApproval)
@@ -279,12 +279,6 @@ class DocumentModel {
           row.cells['workflowStatus']?.value ?? -1, localizations),
       currentDepTrackCode: row.cells['currentDepTrackCode']?.value?.toString(),
       currentDepTrackName: row.cells['currentDepTrackName']?.value?.toString(),
-      archivedPagesCount: () {
-        final value = row.cells['archivedPagesCount']?.value;
-        if (value == null || value == '...') return null;
-        if (value is int) return value;
-        return int.tryParse(value.toString());
-      }(),
       txtBarcode: row.cells['txtBarcode']?.value?.toString(),
       // submitForWfApproval: row.cells['submitForWfApproval']?.value
     );

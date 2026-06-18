@@ -22,6 +22,7 @@ import '../../utils/func/responsive.dart';
 import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/custom_drop_down.dart';
 import '../../widget/custom_drop_down2.dart';
+import '../../widget/dashboard_components/custom_elevated_button.dart';
 import '../../widget/date_time_component.dart';
 import '../../widget/dialog_widgets/title_dialog_widget.dart';
 import '../../widget/text_field_widgets/custom_text_field2_.dart';
@@ -81,19 +82,28 @@ class _AddFileDialogState extends State<AddFileDialog> {
                 SizedBox(
                   width: isDesktop ? width * 0.12 : width * 0.5,
                   height: height * 0.05,
-                  child: ElevatedButton(
+                  child: CustomElevatedButton(
+                    text: _locale.save,
+                    color: const Color(0xFF1565C0),
+                    icon: Icons.save,
+                    width: 110,
+                    height: 40,
+                    fontSize: 14,
                     onPressed: saveDocument,
-                    style: customButtonStyle(
-                      context,
-                      Size(double.infinity, double.infinity),
-                      14,
-                      primary,
-                    ),
-                    child: Text(
-                      _locale.save,
-                      style: const TextStyle(color: whiteColor),
-                    ),
                   ),
+                  // child: ElevatedButton(
+                  //   onPressed: saveDocument,
+                  //   style: customButtonStyle(
+                  //     context,
+                  //     Size(double.infinity, double.infinity),
+                  //     14,
+                  //     primary,
+                  //   ),
+                  //   child: Text(
+                  //     _locale.save,
+                  //     style: const TextStyle(color: whiteColor),
+                  //   ),
+                  // ),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -153,10 +163,23 @@ class _AddFileDialogState extends State<AddFileDialog> {
             isDesktop,
             isDesktop ? 0.28 : 0.7,
             true,
+            showClearButton: true,
+            onClearPressed: _clearSelectedFiles,
           ),
         ),
       ],
     );
+  }
+
+  void _clearSelectedFiles() {
+    setState(() {
+      filesName.clear();
+      filesBlobs.clear();
+      sizes.clear();
+      fileNameController.clear();
+      txtFilename = null;
+      dblFilesize = null;
+    });
   }
 
   List<String> filesBlobs = [];
@@ -220,7 +243,8 @@ class _AddFileDialogState extends State<AddFileDialog> {
   }
 
   Widget customTextField(String hint, TextEditingController controller,
-      bool isDesktop, double width1, bool isMandetory) {
+      bool isDesktop, double width1, bool isMandetory,
+      {bool? showClearButton, VoidCallback? onClearPressed}) {
     double height = MediaQuery.of(context).size.height * 0.3;
     return CustomTextField2(
       readOnly: hint == _locale.fileName ? true : false,
@@ -229,6 +253,8 @@ class _AddFileDialogState extends State<AddFileDialog> {
       width: width * width1,
       height: height * 0.15,
       text: Text(hint),
+      showClearButton: showClearButton,
+      onClearPressed: onClearPressed,
       controller: controller,
       onSubmitted: (text) {},
       onChanged: (value) {},
@@ -237,6 +263,11 @@ class _AddFileDialogState extends State<AddFileDialog> {
 
   void saveDocument() async {
     if (saving) return;
+
+    if (filesBlobs.isEmpty || fileNameController.text.trim().isEmpty) {
+      CustomToastMessage.warning(context, _locale.fillFileUpload);
+      return;
+    }
 
     setState(() {
       saving = true;
@@ -269,19 +300,12 @@ class _AddFileDialogState extends State<AddFileDialog> {
         .uplodFileInDocument(documentFileRequest)
         .then((value) {
       if (value.statusCode == 200) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return ErrorDialog(
-                icon: Icons.done_all,
-                errorDetails: _locale.done,
-                errorTitle: _locale.addDoneSucess,
-                color: Colors.green,
-                statusCode: 200);
-          },
-        ).then((value) {
+        CustomToastMessage.success(context, _locale.addDoneSucess)
+            .then((value) {
           Navigator.pop(context, true);
         });
+      }else{
+        CustomToastMessage.error(context, _locale.error);
       }
     });
     setState(() {

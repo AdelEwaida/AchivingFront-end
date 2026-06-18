@@ -3,6 +3,7 @@ import 'package:archiving_flutter_project/models/db/document_models/documnet_inf
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
+import 'package:archiving_flutter_project/utils/func/archived_pages_utils.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
@@ -21,8 +22,14 @@ import '../app_dialog.dart';
 class InfoDocumentDialog extends StatefulWidget {
   DocumentModel documentModel;
   bool isEdit;
-  InfoDocumentDialog(
-      {super.key, required this.isEdit, required this.documentModel});
+  final bool showArchivedPagesCount;
+
+  InfoDocumentDialog({
+    super.key,
+    required this.isEdit,
+    required this.documentModel,
+    this.showArchivedPagesCount = false,
+  });
 
   @override
   State<InfoDocumentDialog> createState() => _InfoDocumentDialogState();
@@ -48,12 +55,48 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
   TextEditingController following = TextEditingController();
   DocumentsController documentsController = DocumentsController();
   TextEditingController arrivalDate = TextEditingController();
+  final TextEditingController archivedPagesController = TextEditingController();
   DocumentModel? documentModel;
 
   String selectedDep = "";
   String selectedCat = "";
   String selectedDepName = "";
   String selectedCatName = "";
+  bool _loadingArchivedPages = false;
+  bool _archivedPagesLoadStarted = false;
+
+  @override
+  void dispose() {
+    archivedPagesController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadArchivedPagesCount() async {
+    final hdrKey = widget.documentModel.txtKey?.trim() ?? '';
+    if (hdrKey.isEmpty) {
+      archivedPagesController.text = '0';
+      return;
+    }
+
+    final fromSearch = widget.documentModel.archivedPagesCount;
+    if (fromSearch != null) {
+      archivedPagesController.text = fromSearch.toString();
+      return;
+    }
+
+    setState(() => _loadingArchivedPages = true);
+    try {
+      final files = await documentsController.getFilesByHdrKey(hdrKey);
+      final count = ArchivedPagesUtils.countArchivedPages(files);
+      if (!mounted) return;
+      archivedPagesController.text = count.toString();
+    } catch (_) {
+      if (!mounted) return;
+      archivedPagesController.text = '0';
+    } finally {
+      if (mounted) setState(() => _loadingArchivedPages = false);
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -94,6 +137,15 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
             documentModel!.datArrvialdate == null
         ? Converters.formatDate2(DateTime.now().toString())
         : documentModel!.datArrvialdate)!;
+
+    if (widget.showArchivedPagesCount &&
+        !widget.isEdit &&
+        !_archivedPagesLoadStarted) {
+      _archivedPagesLoadStarted = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _loadArchivedPagesCount();
+      });
+    }
 
     super.didChangeDependencies();
   }
@@ -410,16 +462,47 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
           ],
         ),
         SizedBox(height: rowGap),
-        _formFullRow(
-          CustomTextField2(
-            controller: fileBarcodeController,
-            text: Text(_locale.fileBarcode),
-            onChanged: (value) => documentModel!.txtBarcode = value,
-            height: fieldHeight,
-            readOnly: !widget.isEdit,
-            width: double.infinity,
-          ),
-        ),
+        widget.showArchivedPagesCount && !widget.isEdit
+            ? _formRow(
+                colGap: colGap,
+                children: [
+                  CustomTextField2(
+                    controller: fileBarcodeController,
+                    text: Text(_locale.fileBarcode),
+                    onChanged: (value) => documentModel!.txtBarcode = value,
+                    height: fieldHeight,
+                    readOnly: true,
+                    width: double.infinity,
+                  ),
+                  CustomTextField2(
+                    controller: archivedPagesController,
+                    text: Text(_locale.archivedPagesCount),
+                    readOnly: true,
+                    height: fieldHeight,
+                    width: double.infinity,
+                    customIconSuffix: _loadingArchivedPages
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: Padding(
+                              padding: EdgeInsets.all(2),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : null,
+                  ),
+                ],
+              )
+            : _formFullRow(
+                CustomTextField2(
+                  controller: fileBarcodeController,
+                  text: Text(_locale.fileBarcode),
+                  onChanged: (value) => documentModel!.txtBarcode = value,
+                  height: fieldHeight,
+                  readOnly: !widget.isEdit,
+                  width: double.infinity,
+                ),
+              ),
         SizedBox(height: rowGap),
         _formFullRow(
           _labeledField(

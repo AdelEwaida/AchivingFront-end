@@ -527,6 +527,12 @@ abstract class AppLocalizations {
   /// **'Export To Excel'**
   String get exportToExcel;
 
+  /// No description provided for @importFromExcel.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from Excel'**
+  String get importFromExcel;
+
   /// No description provided for @advanceSearch.
   ///
   /// In en, this message translates to:

@@ -28,7 +28,6 @@ import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:archiving_flutter_project/utils/constants/sorted_by_constant.dart';
 import 'package:archiving_flutter_project/utils/constants/styles.dart';
-import 'package:archiving_flutter_project/utils/func/archived_pages_utils.dart';
 import 'package:archiving_flutter_project/utils/func/converters.dart';
 import 'package:archiving_flutter_project/utils/func/responsive.dart';
 import 'package:archiving_flutter_project/utils/func/save_excel_file.dart';
@@ -129,8 +128,6 @@ class _FileListScreenState extends State<FileListScreen> {
 
   String workflowActive = '0';
   String docTrackingActive = '0';
-  final Map<String, int> _archivedPagesCache = {};
-  final Set<String> _archivedPagesInflight = {};
   List<UserModel> result = [];
   String userCode = "";
   ValueNotifier fileNumberDisplayed = ValueNotifier(0);
@@ -578,7 +575,7 @@ class _FileListScreenState extends State<FileListScreen> {
           builder: (context) {
             return FileExplorDialog(listOfFiles: value);
           },
-        ).then((_) => _refreshArchivedPagesForSelectedRow());
+        );
       });
     } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
@@ -780,6 +777,7 @@ class _FileListScreenState extends State<FileListScreen> {
                 return InfoDocumentDialog(
                   isEdit: false,
                   documentModel: documentModel,
+                  showArchivedPagesCount: docTrackingActive == '1',
                 );
               },
             );
@@ -1673,7 +1671,6 @@ class _FileListScreenState extends State<FileListScreen> {
     for (int i = 0; i < result.length; i++) {
       final row = result[i].toPlutoRow(i + 1, _locale);
       stateManager.appendRows([row]);
-      _enrichArchivedPagesForRow(result[i], row);
     }
     fileNumberDisplayed.value = stateManager.refRows.length;
     documentListProvider.setPage(2);
@@ -1727,7 +1724,6 @@ class _FileListScreenState extends State<FileListScreen> {
     for (int i = 0; i < result.length; i++) {
       final row = result[i].toPlutoRow(i + 1, _locale);
       stateManager.appendRows([row]);
-      _enrichArchivedPagesForRow(result[i], row);
     }
     fileNumberDisplayed.value = stateManager.refRows.length;
 
@@ -1736,71 +1732,8 @@ class _FileListScreenState extends State<FileListScreen> {
     stateManager.setShowLoading(false);
   }
 
-  Future<void> _refreshArchivedPagesForSelectedRow() async {
-    if (docTrackingActive != '1' || selectedRow == null) return;
-    final hdrKey = selectedRow!.cells['txtKey']?.value?.toString() ?? '';
-    if (hdrKey.isEmpty) return;
-
-    _archivedPagesCache.remove(hdrKey);
-    final files = await documentsController.getFilesByHdrKey(hdrKey);
-    final count = ArchivedPagesUtils.countArchivedPages(files);
-    _archivedPagesCache[hdrKey] = count;
-    if (!mounted) return;
-    selectedRow!.cells['archivedPagesCount'] = PlutoCell(value: count);
-    stateManager.notifyListeners(true);
-  }
-
-  void _enrichArchivedPagesForBatch(
-    List<PlutoRow> rows,
-    List<DocumentModel> documents,
-  ) {
-    if (docTrackingActive != '1') return;
-    for (int i = 0; i < documents.length && i < rows.length; i++) {
-      _enrichArchivedPagesForRow(documents[i], rows[i]);
-    }
-  }
-
-  void _enrichArchivedPagesForRow(DocumentModel document, PlutoRow row) {
-    if (docTrackingActive != '1') return;
-
-    final hdrKey = document.txtKey?.trim() ?? '';
-    if (hdrKey.isEmpty) {
-      row.cells['archivedPagesCount'] = PlutoCell(value: 0);
-      return;
-    }
-
-    if (document.archivedPagesCount != null &&
-        document.archivedPagesCount! > 0) {
-      final count = document.archivedPagesCount!;
-      _archivedPagesCache[hdrKey] = count;
-      row.cells['archivedPagesCount'] = PlutoCell(value: count);
-      return;
-    }
-
-    final cached = _archivedPagesCache[hdrKey];
-    if (cached != null) {
-      row.cells['archivedPagesCount'] = PlutoCell(value: cached);
-      return;
-    }
-
-    if (_archivedPagesInflight.contains(hdrKey)) return;
-    _archivedPagesInflight.add(hdrKey);
-
-    documentsController.getFilesByHdrKey(hdrKey).then((files) {
-      final count = ArchivedPagesUtils.countArchivedPages(files);
-      _archivedPagesCache[hdrKey] = count;
-      if (!mounted) return;
-      row.cells['archivedPagesCount'] = PlutoCell(value: count);
-      stateManager.notifyListeners(true);
-    }).whenComplete(() {
-      _archivedPagesInflight.remove(hdrKey);
-    });
-  }
-
   Future<void> refreshTable() async {
     if (!_gridReady) return;
-    _archivedPagesCache.clear();
-    _archivedPagesInflight.clear();
     selectedRow = null;
     stateManager.setShowLoading(true);
     stateManager.removeAllRows();
@@ -1894,6 +1827,7 @@ class _FileListScreenState extends State<FileListScreen> {
           return InfoDocumentDialog(
             isEdit: false,
             documentModel: documentModel,
+            showArchivedPagesCount: docTrackingActive == '1',
           );
         },
       ).then((value) {
@@ -2120,27 +2054,6 @@ class _FileListScreenState extends State<FileListScreen> {
         backgroundColor: columnColors,
         readOnly: true,
       ),
-      if (docTrackingActive == "1")
-        PlutoColumn(
-          title: Localizations.localeOf(context).languageCode == 'ar'
-              ? 'عدد الصفحات المؤرشفة'
-              : 'Archived Pages',
-          field: "archivedPagesCount",
-          type: PlutoColumnType.text(),
-          width: isDesktop ? width * 0.08 : width * 0.16,
-          backgroundColor: columnColors,
-          readOnly: true,
-          enableFilterMenuItem: true,
-          renderer: (rendererContext) {
-            final value = rendererContext.cell.value;
-            return Center(
-              child: Text(
-                value?.toString() ?? '',
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            );
-          },
-        ),
       if (docTrackingActive == "1" && _isAdmin)
         PlutoColumn(
           title: _locale.currentDepTrackLocation,
@@ -2190,6 +2103,12 @@ class _FileListScreenState extends State<FileListScreen> {
           enableRowDrag: false,
           renderer: (rendererContext) {
             try {
+              final hasTrackingSteps =
+                  rendererContext.row.cells['hasTrackingSteps']?.value == true;
+              if (hasTrackingSteps) {
+                return const SizedBox.shrink();
+              }
+
               final DocumentModel doc =
                   DocumentModel.fromPlutoRow(rendererContext.row, _locale);
 
@@ -2435,7 +2354,6 @@ class _FileListScreenState extends State<FileListScreen> {
           resultRows.add(result[i].toPlutoRow(
               (documentListProvider.page! - 1) * 50 + (i + 1), _locale));
         }
-        _enrichArchivedPagesForBatch(resultRows, result);
 
         documentListProvider.setPage(documentListProvider.page! + 1);
         final currentLoaded = stateManager.refRows.length;
@@ -2471,7 +2389,6 @@ class _FileListScreenState extends State<FileListScreen> {
           resultRows.add(result[i].toPlutoRow(
               (documentListProvider.page! - 1) * 50 + (i + 1), _locale));
         }
-        _enrichArchivedPagesForBatch(resultRows, result);
 
         documentListProvider.setPage(documentListProvider.page! + 1);
         final currentLoaded = stateManager.refRows.length; //
@@ -2502,7 +2419,6 @@ class _FileListScreenState extends State<FileListScreen> {
         resultRows.add(result[i].toPlutoRow(
             (documentListProvider.page! - 1) * 50 + (i + 1), _locale));
       }
-      _enrichArchivedPagesForBatch(resultRows, result);
 
       documentListProvider.setPage(documentListProvider.page! + 1);
       final currentLoaded = stateManager.refRows.length; //

@@ -75,6 +75,7 @@
   "edit": "تعديل",
   "view": "عرض",
   "exportToExcel": "تصدير الى اكسل",
+  "importFromExcel": "استيراد اكسل",
   "advanceSearch": "بحث متقدم",
   "add": "إضافة",
   "delete": "حذف",
