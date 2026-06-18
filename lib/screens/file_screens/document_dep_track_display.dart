@@ -178,6 +178,7 @@ Widget buildTrackingStepReceivedRow(
   TrackingStepInfoModel step,
   AppLocalizations locale, {
   bool includeDeptInLabel = false,
+  String? departmentName,
 }) {
   if (!shouldShowTrackingStepReceivedRow(step)) {
     return const SizedBox.shrink();
@@ -185,7 +186,9 @@ Widget buildTrackingStepReceivedRow(
 
   final by = (step.txtReceivedBy ?? '').trim();
   final at = formatTrackingStepDate(step.datReceivedAt);
-  final dept = stepDeptDisplayName(step);
+  final dept = (departmentName ?? '').trim().isNotEmpty
+      ? departmentName!.trim()
+      : stepDeptDisplayName(step);
   if (by.isEmpty && at.isEmpty) return const SizedBox.shrink();
 
   final label = StringBuffer('${locale.receivedBy}:');
@@ -193,7 +196,7 @@ Widget buildTrackingStepReceivedRow(
   if (includeDeptInLabel && dept.isNotEmpty) {
     label.write(' ${formatInDepartmentLabel(locale, dept)}');
   }
-  if (at.isNotEmpty) label.write(' ${locale.txtIn}: $at');
+  if (at.isNotEmpty) label.write(' ${locale.byDate}: $at');
 
   return Padding(
     padding: const EdgeInsets.only(top: 4),
@@ -231,7 +234,7 @@ Widget buildTrackingStepSentRow(
 
   final label = StringBuffer('${locale.sentBy}:');
   if (by.isNotEmpty) label.write(' $by');
-  if (at.isNotEmpty) label.write(' ${locale.txtIn}: $at');
+  if (at.isNotEmpty) label.write(' ${locale.byDate}: $at');
 
   return Padding(
     padding: const EdgeInsets.only(top: 4),
@@ -337,8 +340,8 @@ Widget buildDepTrackColumnCell({
             mainLabel,
             style: const TextStyle(fontSize: 12, height: 1.25),
           ),
-        if (hasReceived) receivedRow,
         if (hasSent) sentRow,
+        if (hasReceived) receivedRow,
       ],
     ),
   );

@@ -90,11 +90,9 @@ class _BarDashboardChartState extends State<BarDashboardChart>
 
     return AnimatedBuilder(
       animation: _animation,
-      builder: (context, child) => Opacity(
+      builder: (context, _) => Opacity(
         opacity: _animation.value,
-        child: child,
-      ),
-      child: ListView.builder(
+        child: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 4),
         itemCount: sorted.length,
         itemBuilder: (context, index) {
@@ -173,10 +171,7 @@ class _BarDashboardChartState extends State<BarDashboardChart>
                         ),
                         // Fill
                         LayoutBuilder(
-                          builder: (context, bc) => AnimatedContainer(
-                            duration:
-                                Duration(milliseconds: 500 + (index * 80)),
-                            curve: Curves.easeOutCubic,
+                          builder: (context, bc) => Container(
                             height: 22,
                             width: bc.maxWidth * barRatio * _animation.value,
                             decoration: BoxDecoration(
@@ -230,6 +225,7 @@ class _BarDashboardChartState extends State<BarDashboardChart>
             ),
           );
         },
+        ),
       ),
     );
   }

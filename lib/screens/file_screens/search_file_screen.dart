@@ -366,14 +366,7 @@ class _SearchFileScreenState extends State<SearchFileScreen> {
         width: isDesktop ? width * 0.08 : width * 0.16,
         backgroundColor: columnColors,
       ),
-      PlutoColumn(
-        enableFilterMenuItem: true,
-        title: _locale.fileName,
-        field: "fileName",
-        type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.14 : width * 0.22,
-        backgroundColor: columnColors,
-      ),
+      
       PlutoColumn(
         enableFilterMenuItem: true,
         title: _locale.dateCreated,

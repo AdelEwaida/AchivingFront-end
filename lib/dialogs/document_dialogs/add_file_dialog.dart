@@ -17,7 +17,9 @@ import '../../service/controller/department_controller/department_cotnroller.dar
 import '../../service/controller/documents_controllers/documents_controller.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/styles.dart';
+import '../../utils/func/document_file_utils.dart';
 import '../../utils/func/responsive.dart';
+import '../../widget/custom_flutter_toast_message.dart';
 import '../../widget/custom_drop_down.dart';
 import '../../widget/custom_drop_down2.dart';
 import '../../widget/date_time_component.dart';
@@ -170,10 +172,19 @@ class _AddFileDialogState extends State<AddFileDialog> {
 
     if (result != null && result.files.isNotEmpty) {
       List<PlatformFile> files1 = result.files;
+      var rejectedFile = false;
       for (int i = 0; i < files1.length; i++) {
+        if (DocumentFileUtils.isBlockedUploadFileName(files1[i].name) ||
+            !DocumentFileUtils.isFileSizeAllowed(files1[i].size)) {
+          rejectedFile = true;
+          continue;
+        }
         filesName.add(files1[i].name);
         filesBlobs.add(base64Encode(files1[i].bytes!));
         sizes.add(files1[i].size);
+      }
+      if (rejectedFile) {
+        CustomToastMessage.warning(context, _locale.cannotUploadVideo);
       }
 
       try {
@@ -188,8 +199,9 @@ class _AddFileDialogState extends State<AddFileDialog> {
         // String encodedFile = base64Encode(fileBytes);
 
         setState(() {
-          fileNameController.text = filesName.toString();
-          txtFilename = filesName.toString();
+          fileNameController.text =
+              DocumentFileUtils.formatSelectedFileNames(filesName);
+          txtFilename = DocumentFileUtils.formatSelectedFileNames(filesName);
           // imgBlob = encodedFile; // Assign the encoded base64 string
           // dblFilesize = selectedFile.size;
           isFileLoading = false;

@@ -35,8 +35,8 @@ const searchDocCritereaFile = "docInfo/searchCrit";
 const searchByContentApi = "docInfo/searchByContent";
 const searchByContentTotalCountApi = "docInfo/searchByContentTotalCount";
 // const getInfoCount = "docInfo/count";
-const searchDocCountFile = "docInfo/searchCrit/count";
-const searchByContentDocCountFile = "docInfo/searchCrit/count";
+const searchDocCountFile = "docInfo/searchCritTotalCount";
+const searchByContentDocCountFile = "docInfo/searchCritTotalCount";
 
 const getFilesByHdrApi = "docFiles/getByHdr";
 const getLatestFile = "docFiles/getLatestFile";

@@ -875,6 +875,18 @@ abstract class AppLocalizations {
   /// **'Copy'**
   String get copy;
 
+  /// No description provided for @duplicateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate created successfully'**
+  String get duplicateSuccess;
+
+  /// No description provided for @noPermissionToDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to duplicate'**
+  String get noPermissionToDuplicate;
+
   /// No description provided for @userStatus.
   ///
   /// In en, this message translates to:
@@ -1487,6 +1499,12 @@ abstract class AppLocalizations {
   /// **'An error occurred while preparing the ZIP.'**
   String get zippingError;
 
+  /// No description provided for @cannotUploadVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot upload video or audio files. Maximum file upload size is 2000MB'**
+  String get cannotUploadVideo;
+
   /// No description provided for @canWrite.
   ///
   /// In en, this message translates to:
@@ -1497,7 +1515,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =0 {No files were packed.} one {1 file has been packed into {zipName}.} other {{count} files have been packed into {zipName}.}}'**
-  String filesPackedIntoZip(int count, String zipName);
+  String filesPackedIntoZip(int count, String zipName, String issueNo);
 
   String get documentTrackingReport;
 

@@ -158,6 +158,8 @@
   "monthly": "Monthly",
   "download": "download",
   "copy": "Copy",
+  "duplicateSuccess": "Duplicate created successfully",
+  "noPermissionToDuplicate": "You do not have permission to duplicate",
   "userStatus": "User Status",
   "email": "Email",
   "active": "active",
@@ -271,13 +273,17 @@
   "welcomeBack": "Welcome back",
   "signInToContinue": "Sign in to your account to continue",
   "pleaseSelectRow": "Please select at least one row",
-  "filesPackedIntoZip": "{count, plural, =0 {No files were packed.} one {1 file has been packed into {zipName}.} other {{count} files have been packed into {zipName}.}}",
+  "cannotUploadVideo": "You cannot upload video or audio files. Maximum file upload size is 2000MB",
+  "filesPackedIntoZip": "{count, plural, =0 {No files were packed.} one {1 file has been packed into {zipName}} other {{count} files have been packed into {zipName}}}",
   "@filesPackedIntoZip": {
     "placeholders": {
       "count": {
         "type": "int"
       },
       "zipName": {
+        "type": "String"
+      },
+      "issueNo": {
         "type": "String"
       }
     }

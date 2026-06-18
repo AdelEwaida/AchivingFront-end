@@ -401,6 +401,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copy => 'Copy';
 
   @override
+  String get duplicateSuccess => 'Duplicate created successfully';
+
+  @override
+  String get noPermissionToDuplicate =>
+      'You do not have permission to duplicate';
+
+  @override
   String get userStatus => 'User Status';
 
   @override
@@ -707,15 +714,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get zippingError => 'An error occurred while preparing the ZIP.';
 
   @override
+  String get cannotUploadVideo =>
+      'You cannot upload video or audio files. Maximum file upload size is 2000MB';
+
+  @override
   String get canWrite => 'can Write';
 
   @override
-  String filesPackedIntoZip(int count, String zipName) {
+  String filesPackedIntoZip(int count, String zipName, String issueNo) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count files have been packed into $zipName.',
-      one: '1 file has been packed into $zipName.',
+      other: '$count files have been packed into $zipName',
+      one: '1 file has been packed into $zipName',
       zero: 'No files were packed.',
     );
     return '$_temp0';

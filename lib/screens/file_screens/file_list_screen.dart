@@ -9,7 +9,7 @@ import 'package:archiving_flutter_project/dialogs/document_dialogs/file_explor_d
 import 'package:archiving_flutter_project/dialogs/document_dialogs/info_document_dialogs.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
-import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
+import 'package:archiving_flutter_project/utils/func/document_file_utils.dart';
 import 'package:archiving_flutter_project/models/db/actions_models/action_model.dart';
 import 'package:archiving_flutter_project/models/db/categories_models/document_category_tree.dart';
 import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
@@ -117,7 +117,9 @@ class _FileListScreenState extends State<FileListScreen> {
 
   TextEditingController sortedByController = TextEditingController();
   String selectedDep = "";
+  String selectedDepName = "";
   int selectedSortedType = 1;
+  int _filterDropdownResetTick = 0;
   List<DepartmentModel> listOfDep = [];
   late PlutoGridStateManager stateManager;
   DocumentModel? documentModel;
@@ -195,7 +197,9 @@ class _FileListScreenState extends State<FileListScreen> {
     if (keep != AssistantSearchField.ref2) ref2Controller.clear();
     if (keep != AssistantSearchField.userCode) userCodeController.clear();
     selectedDep = "";
+    selectedDepName = "";
     selectedSortedType = 1;
+    _filterDropdownResetTick++;
     calssificatonNameAndCodeProvider.setSelectedClassificatonKey("");
     calssificatonNameAndCodeProvider.setSelectedClassificatonName("");
     classificationController.clear();
@@ -643,9 +647,13 @@ class _FileListScreenState extends State<FileListScreen> {
       // Encode ZIP
       final zipBytes = ZipEncoder().encode(archive)!;
 
-      // Name the zip
-      final zipName =
-          "${Converters.formatDate(DateTime.now().toString())}_files.zip";
+      final issueNo =
+          selectedRow!.cells['txtIssueno']?.value?.toString().trim() ?? '';
+      final safeIssueNo = issueNo.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
+      final datePart = Converters.formatDate(DateTime.now().toString());
+      final zipName = safeIssueNo.isNotEmpty
+          ? '${safeIssueNo}_${datePart}_files.zip'
+          : '${datePart}_files.zip';
 
       // Download
       _saveZip(zipBytes, zipName);
@@ -657,7 +665,7 @@ class _FileListScreenState extends State<FileListScreen> {
         context: context,
         builder: (_) => ErrorDialog(
           icon: Icons.done_all,
-          errorDetails: _locale.filesPackedIntoZip(added, zipName),
+          errorDetails: _locale.filesPackedIntoZip(added, zipName, issueNo),
           errorTitle: _locale.downloadReady,
           color: Colors.green,
           statusCode: 200,
@@ -760,31 +768,48 @@ class _FileListScreenState extends State<FileListScreen> {
           },
           doubleTab: (event) async {
             PlutoRow? tappedRow = event.row;
-            documentModel = DocumentModel.fromPlutoRow(tappedRow!, _locale);
+            if (tappedRow == null) return;
             if (context.read<DocumentListProvider>().isViewFile == true) {
-              return null;
-            } else {
-              DocumentModel documentModel =
-                  DocumentModel.fromPlutoRow(tappedRow!, _locale);
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return InfoDocumentDialog(
-                    isEdit: true,
-                    documentModel: documentModel,
-                  );
-                },
-              ).then((value) {
-                if (value) {
-                  documentListProvider.searchDocumentCriteria.page = 0;
-                  selectedRow = null;
-                  setState(() {});
-                  documentListProvider.setDocumentSearchCriterea(
-                      documentListProvider.searchDocumentCriteria);
-                  resetForm();
-                }
-              });
+              return;
             }
+            final documentModel =
+                DocumentModel.fromPlutoRow(tappedRow, _locale);
+            showDialog(
+              context: context,
+              builder: (context) {
+                return InfoDocumentDialog(
+                  isEdit: false,
+                  documentModel: documentModel,
+                );
+              },
+            );
+            // //
+            // PlutoRow? tappedRow = event.row;
+            // documentModel = DocumentModel.fromPlutoRow(tappedRow!, _locale);
+            // if (context.read<DocumentListProvider>().isViewFile == true) {
+            //   return null;
+            // } else {
+            //   DocumentModel documentModel =
+            //       DocumentModel.fromPlutoRow(tappedRow!, _locale);
+            //   showDialog(
+            //     context: context,
+            //     builder: (context) {
+            //       return InfoDocumentDialog(
+            //         isEdit: true,
+            //         documentModel: documentModel,
+            //       );
+            //     },
+            //   ).then((value) {
+            //     if (value) {
+            //       documentListProvider.searchDocumentCriteria.page = 0;
+            //       selectedRow = null;
+            //       setState(() {});
+            //       documentListProvider.setDocumentSearchCriterea(
+            //           documentListProvider.searchDocumentCriteria);
+            //       resetForm();
+            //     }
+            //   });
+            // }
           },
           onSelected: (event) async {
             PlutoRow? tappedRow = event.row;
@@ -802,43 +827,43 @@ class _FileListScreenState extends State<FileListScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 // File count badge
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF185FA5).withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(99),
-                    border: Border.all(
-                        color: const Color(0xFF185FA5).withOpacity(0.2)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.file_present_rounded,
-                          size: 13, color: Color(0xFF185FA5)),
-                      const SizedBox(width: 5),
-                      Text(
-                        '${_locale.numOfFilesNum}: ',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF8A94A6),
-                        ),
-                      ),
-                      ValueListenableBuilder(
-                        valueListenable: fileNumberDisplayed,
-                        builder: (context, value, child) => Text(
-                          '$value',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF185FA5),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 10),
+                // Container(
+                //   padding:
+                //       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                //   decoration: BoxDecoration(
+                //     color: const Color(0xFF185FA5).withOpacity(0.06),
+                //     borderRadius: BorderRadius.circular(99),
+                //     border: Border.all(
+                //         color: const Color(0xFF185FA5).withOpacity(0.2)),
+                //   ),
+                //   child: Row(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [
+                //       const Icon(Icons.file_present_rounded,
+                //           size: 13, color: Color(0xFF185FA5)),
+                //       const SizedBox(width: 5),
+                //       Text(
+                //         '${_locale.numOfFilesNum}: ',
+                //         style: const TextStyle(
+                //           fontSize: 12,
+                //           color: Color(0xFF8A94A6),
+                //         ),
+                //       ),
+                //       ValueListenableBuilder(
+                //         valueListenable: fileNumberDisplayed,
+                //         builder: (context, value, child) => Text(
+                //           '$value',
+                //           style: const TextStyle(
+                //             fontSize: 12,
+                //             fontWeight: FontWeight.w700,
+                //             color: Color(0xFF185FA5),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(width: 10),
 
                 // Total count badge
                 Container(
@@ -954,7 +979,7 @@ class _FileListScreenState extends State<FileListScreen> {
         builder: (context) => ErrorDialog(
           icon: Icons.warning,
           errorDetails: _locale.notAllowedToEditDept,
-          errorTitle: 'Unauthorized',
+          errorTitle: _locale.error401,
           color: Colors.red,
           statusCode: 403,
         ),
@@ -1087,6 +1112,33 @@ class _FileListScreenState extends State<FileListScreen> {
     );
   }
 
+  Widget _departmentFilterDropDown({required double dropdownWidth}) {
+    return DropDown(
+      key: ValueKey('dept_dropdown_$_filterDropdownResetTick'),
+      visiableClearIcon: true,
+      onChanged: (value) {
+        setState(() {
+          if (value == null) {
+            selectedDep = '';
+            selectedDepName = '';
+            _filterDropdownResetTick++;
+            return;
+          }
+          selectedDep = value.txtKey ?? '';
+          selectedDepName = value.txtDescription ?? '';
+        });
+      },
+      initialValue: selectedDepName.isEmpty ? null : selectedDepName,
+      bordeText: _locale.department,
+      width: dropdownWidth,
+      height: height * 0.04,
+      onSearch: (p0) async {
+        return DepartmentController()
+            .search(SearchModel(page: 1, searchField: p0));
+      },
+    );
+  }
+
   void fileViewScreen() {
     if (selectedRow == null) return;
 
@@ -1131,21 +1183,9 @@ class _FileListScreenState extends State<FileListScreen> {
 
       // decode
       final bytes = Uint8List.fromList(base64Decode(file.imgBlob!));
-      final name = (file.txtFilename ?? '').toLowerCase();
+      final name = file.txtFilename ?? 'file';
 
-      // 3) preview
-      if (name.endsWith('.pdf') ||
-          name.endsWith('.jpeg') ||
-          name.endsWith('.png') ||
-          name.endsWith('.jpg')) {
-        showDialog(
-          context: context,
-          builder: (_) => PdfPreview1(
-            pdfFile: bytes,
-            fileName: file.txtFilename ?? 'file',
-          ),
-        );
-      } else {
+      if (!DocumentFileUtils.canPreviewInApp(name)) {
         showDialog(
           context: context,
           builder: (_) => ErrorDialog(
@@ -1156,7 +1196,14 @@ class _FileListScreenState extends State<FileListScreen> {
             statusCode: 500,
           ),
         );
+        return;
       }
+
+      DocumentFileUtils.showPreviewDialog(
+        context,
+        bytes: bytes,
+        fileName: name,
+      );
     }).catchError((e) {
       // close loader if still open
       if (Navigator.canPop(context)) Navigator.pop(context);
@@ -1327,32 +1374,21 @@ class _FileListScreenState extends State<FileListScreen> {
                     ],
                   ),
                   space(0.01),
-                  DropDown(
-                    key: UniqueKey(),
-                    onChanged: (value) {
-                      selectedDep = value.txtKey;
-                      // setState(() {});
-                    },
-                    initialValue: selectedDep.isEmpty ? null : selectedDep,
-                    bordeText: _locale.department,
-                    width:
+                  _departmentFilterDropDown(
+                    dropdownWidth:
                         context.read<DocumentListProvider>().isViewFile == true
                             ? width * 0.19
                             : width * 0.1,
-                    height: height * 0.04,
-                    // items: listOfDep,
-                    onSearch: (p0) async {
-                      return await DepartmentController()
-                          .search(SearchModel(page: 1, searchField: p0));
-                    },
                   ),
                   space(0.01),
                   DropDown(
-                    key: UniqueKey(),
+                    key: ValueKey(
+                        'view_sort_dropdown_$_filterDropdownResetTick'),
                     onChanged: (value) {
                       selectedSortedType = getSortedByTyepsCode(_locale, value);
                     },
-                    initialValue: getSortedByTyepsByCode(_locale, selectedSortedType),
+                    initialValue:
+                        getSortedByTyepsByCode(_locale, selectedSortedType),
                     bordeText: _locale.sortedBy,
                     items: getSortedByTyeps(_locale),
                     width:
@@ -1609,7 +1645,9 @@ class _FileListScreenState extends State<FileListScreen> {
     organizationController.clear();
     followingController.clear();
     selectedDep = "";
+    selectedDepName = "";
     selectedSortedType = 1;
+    _filterDropdownResetTick++;
 
     documentListProvider.setIssueNumber(null);
     documentListProvider.setIsSearch(false);
@@ -1731,7 +1769,8 @@ class _FileListScreenState extends State<FileListScreen> {
       return;
     }
 
-    if (document.archivedPagesCount != null) {
+    if (document.archivedPagesCount != null &&
+        document.archivedPagesCount! > 0) {
       final count = document.archivedPagesCount!;
       _archivedPagesCache[hdrKey] = count;
       row.cells['archivedPagesCount'] = PlutoCell(value: count);
@@ -1822,7 +1861,7 @@ class _FileListScreenState extends State<FileListScreen> {
         builder: (context) => ErrorDialog(
           icon: Icons.warning,
           errorDetails: _locale.notAllowedToEditDept,
-          errorTitle: 'Unauthorized',
+          errorTitle: _locale.error401,
           color: Colors.red,
           statusCode: 403,
         ),
@@ -1893,17 +1932,22 @@ class _FileListScreenState extends State<FileListScreen> {
   }
 
   void copyFile() async {
-    if (selectedRow != null) {
-      DocumentModel documentModel =
-          DocumentModel.fromPlutoRow(selectedRow!, _locale);
-      var response = await documentsController.copyDocument(documentModel);
-      if (response.statusCode == 200) {
-        // log("DONE");
-        documentListProvider.searchDocumentCriteria.page = 0;
-        setState(() {});
-      }
-    } else {
+    if (selectedRow == null) {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
+      return;
+    }
+
+    final documentModel = DocumentModel.fromPlutoRow(selectedRow!, _locale);
+    final response = await documentsController.copyDocument(documentModel);
+
+    if (!mounted) return;
+
+    if (response.statusCode == 200) {
+      CustomToastMessage.success(context, _locale.duplicateSuccess);
+      selectedRow = null;
+      await refreshTable();
+    } else {
+      CustomToastMessage.error(context, _locale.noPermissionToDuplicate);
     }
   }
 
@@ -1942,6 +1986,15 @@ class _FileListScreenState extends State<FileListScreen> {
       PlutoColumn(
         title: _locale.description,
         field: "txtDescription",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.16 : width * 0.4,
+        backgroundColor: columnColors,
+        enableFilterMenuItem: true,
+        readOnly: true,
+      ),
+      PlutoColumn(
+        title: _locale.userCode,
+        field: "txtUsercode",
         type: PlutoColumnType.text(),
         width: isDesktop ? width * 0.16 : width * 0.4,
         backgroundColor: columnColors,
@@ -2230,9 +2283,6 @@ class _FileListScreenState extends State<FileListScreen> {
 //                 ),
 //               );
 
-
-
-
               return Center(
                 child: CustomElevatedButton(
                   text: _locale.deptTrackingSendOnly,
@@ -2311,7 +2361,6 @@ class _FileListScreenState extends State<FileListScreen> {
                 //     }
                 //   },
                 // ),
-
               );
             } catch (e) {
               return const SizedBox.shrink();
@@ -2698,24 +2747,15 @@ class _FileListScreenState extends State<FileListScreen> {
                       ),
                       const SizedBox(width: 6),
                       Expanded(
-                        child: DropDown(
-                          key: const ValueKey('filter_dept_dropdown'),
-                          onChanged: (value) => selectedDep = value.txtKey,
-                          initialValue:
-                              selectedDep.isEmpty ? null : selectedDep,
-                          bordeText: _locale.department,
-                          width: double.infinity,
-                          height: height * 0.04,
-                          onSearch: (p0) async {
-                            return await DepartmentController()
-                                .search(SearchModel(page: 1, searchField: p0));
-                          },
+                        child: _departmentFilterDropDown(
+                          dropdownWidth: double.infinity,
                         ),
                       ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: DropDown(
-                          key: const ValueKey('filter_sort_dropdown'),
+                          key: ValueKey(
+                              'filter_sort_dropdown_$_filterDropdownResetTick'),
                           onChanged: (value) => selectedSortedType =
                               getSortedByTyepsCode(_locale, value),
                           initialValue: getSortedByTyepsByCode(

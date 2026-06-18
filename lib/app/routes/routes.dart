@@ -59,6 +59,8 @@ class AppRoutes {
   static Future<String?> checkUrlParameters(BuildContext context) async {
     String url = html.window.location.href;
     Uri uri = Uri.parse(url);
+    print("URL: $url");
+    print("Query Parameters: ${uri.queryParameters}");
 
     const storage = FlutterSecureStorage();
 

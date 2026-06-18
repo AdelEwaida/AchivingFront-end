@@ -272,16 +272,6 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
       ),
       actions: [
         CustomElevatedButton(
-          text: l10n.close,
-          color: redColor,
-          icon: Icons.close_rounded,
-          width: 110,
-          height: 40,
-          fontSize: 14,
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        const SizedBox(width: 10),
-        CustomElevatedButton(
           text: l10n.deptTrackingSendOnly,
           color: const Color(0xFF1565C0),
           icon: Icons.send_rounded,
@@ -290,6 +280,18 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
           fontSize: 14,
           onPressed: _confirm,
         ),
+        const SizedBox(width: 10),
+        CustomElevatedButton(
+          text: l10n.close,
+          color: redColor,
+          icon: Icons.close_rounded,
+          width: 110,
+          height: 40,
+          fontSize: 14,
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        
+        
       ],
     );
   }

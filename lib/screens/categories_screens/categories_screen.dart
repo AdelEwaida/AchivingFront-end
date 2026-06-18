@@ -51,10 +51,22 @@ class DealClassificationTreeScreenState
 
   final MethodChannel _channel = SystemChannels.contextMenu;
   TextEditingController searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  final GlobalKey _selectedNodeKey = GlobalKey();
+  List<DocumentCategory> _searchMatches = [];
+  int _searchMatchIndex = 0;
+  String _lastSearchQuery = '';
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchFocusNode.dispose();
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -118,8 +130,12 @@ class DealClassificationTreeScreenState
                       width: screenWidth * 0.45,
                       padding: 8,
                       controller: searchController,
+                      focusNode: _searchFocusNode,
                       onChanged: (value) {
                         searchTree(value);
+                      },
+                      onSubmitted: (value) {
+                        searchTree(value, advanceMatch: true);
                       },
                     ),
                   ),
@@ -217,7 +233,9 @@ class DealClassificationTreeScreenState
                             (BuildContext context, TreeEntry<MyNode> entry) {
                           return MyTreeTile(
                             onPointerDown: (p0) {},
-                            key: ValueKey(entry.node),
+                            key: _isSelectedTreeNode(entry.node)
+                                ? _selectedNodeKey
+                                : ValueKey(entry.node),
                             entry: entry,
                             folderOnTap: () {
                               if (entry.node.children.isNotEmpty) {
@@ -387,10 +405,13 @@ class DealClassificationTreeScreenState
     }
   }
 
-  void searchTree(String query) {
-    final normalizedQuery = query.toLowerCase();
+  void searchTree(String query, {bool advanceMatch = false}) {
+    final normalizedQuery = query.trim().toLowerCase();
 
     if (normalizedQuery.isEmpty) {
+      _searchMatches = [];
+      _searchMatchIndex = 0;
+      _lastSearchQuery = '';
       selectedCamp.value = "";
       selectedValue.value = "";
 
@@ -403,25 +424,93 @@ class DealClassificationTreeScreenState
       treeController.toggleExpansion(node);
       treeController.roots = <MyNode>[node];
       setState(() {});
-    } else {
-      for (final node in treeNodes) {
-        if (searchNode(node, normalizedQuery)) {
-          print("IN SEARCH (case-insensitive)");
-          selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
-          selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
+      return;
+    }
 
-          treeController.roots = [];
-          treeNodes = [];
-          convertToTreeList(campClassificationList);
-          MyNode node = MyNode(
-              title: '/', children: treeNodes, extra: null, isRoot: true);
-          treeController.toggleExpansion(node);
-          treeController.roots = <MyNode>[node];
-          setState(() {});
-          break;
-        }
+    if (normalizedQuery != _lastSearchQuery) {
+      _lastSearchQuery = normalizedQuery;
+      _searchMatches = _findAllMatches(normalizedQuery);
+      _searchMatchIndex = 0;
+    } else if (advanceMatch && _searchMatches.isNotEmpty) {
+      _searchMatchIndex = (_searchMatchIndex + 1) % _searchMatches.length;
+    }
+
+    if (_searchMatches.isEmpty) return;
+
+    _selectSearchMatch(
+      _searchMatches[_searchMatchIndex],
+      keepSearchFocus: advanceMatch,
+    );
+  }
+
+  List<DocumentCategory> _findAllMatches(String query) {
+    final matches = <DocumentCategory>[];
+    for (final category in campClassificationList) {
+      _collectCategoryMatches(category, query, matches);
+    }
+    return matches;
+  }
+
+  void _collectCategoryMatches(
+    DocumentCategory category,
+    String query,
+    List<DocumentCategory> matches,
+  ) {
+    final label =
+        '${category.docCatParent!.txtShortcode}@${category.docCatParent!.txtDescription!}'
+            .toLowerCase();
+    if (label.contains(query)) {
+      matches.add(category);
+    }
+    if (category.docCatChildren != null) {
+      for (final child in category.docCatChildren!) {
+        _collectCategoryMatches(child, query, matches);
       }
     }
+  }
+
+  void _selectSearchMatch(
+    DocumentCategory category, {
+    bool keepSearchFocus = false,
+  }) {
+    selectedCategory = category;
+    selectedCamp.value = category.docCatParent!.txtDescription!;
+    selectedValue.value = category.docCatParent!.txtShortcode;
+
+    treeController.roots = [];
+    treeNodes = [];
+    convertToTreeList(campClassificationList);
+    final root =
+        MyNode(title: '/', children: treeNodes, extra: null, isRoot: true);
+    treeController.toggleExpansion(root);
+    treeController.roots = <MyNode>[root];
+    setState(() {});
+    _revealSelectedNode(keepSearchFocus: keepSearchFocus);
+  }
+
+  bool _isSelectedTreeNode(MyNode node) {
+    if (selectedCategory == null || node.extra == null) return false;
+    return (node.extra as DocumentCategory).docCatParent?.txtShortcode ==
+        selectedCategory!.docCatParent?.txtShortcode;
+  }
+
+  void _revealSelectedNode({bool keepSearchFocus = false}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final targetContext = _selectedNodeKey.currentContext;
+        if (targetContext != null) {
+          Scrollable.ensureVisible(
+            targetContext,
+            alignment: 0.35,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+        if (keepSearchFocus) {
+          _searchFocusNode.requestFocus();
+        }
+      });
+    });
   }
 
   void removeNodeFromTree(DocumentCategory? category) {
@@ -468,24 +557,6 @@ class DealClassificationTreeScreenState
     }
 
     return null;
-  }
-
-  bool searchNode(MyNode node, String query) {
-    final nodeTitle = node.title.toLowerCase(); // normalize
-    final searchQuery = query.toLowerCase(); // normalize
-
-    if (nodeTitle.contains(searchQuery)) {
-      selectedCategory = node.extra;
-      selectedCamp.value = selectedCategory!.docCatParent!.txtDescription!;
-      selectedValue.value = selectedCategory!.docCatParent!.txtShortcode;
-      return true;
-    }
-    for (final child in node.children) {
-      if (searchNode(child, query)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   Widget nodeDesign(MyNode node) {

@@ -401,6 +401,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get copy => 'نسخ';
 
   @override
+  String get duplicateSuccess => 'تم عمل النسخ بنجاح';
+
+  @override
+  String get noPermissionToDuplicate => 'ليس لديك صلاحية لعمل نسخ';
+
+  @override
   String get userStatus => 'حالة المستخدم';
 
   @override
@@ -707,15 +713,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get zippingError => 'حدث خطأ أثناء تجهيز الملف المضغوط.';
 
   @override
+  String get cannotUploadVideo =>
+      'لا يمكنك تحميل فيديو ، اقصى حجم لرفع الملف هو 2000M';
+
+  @override
   String get canWrite => 'إمكانية التعديل';
 
   @override
-  String filesPackedIntoZip(int count, String zipName) {
+  String filesPackedIntoZip(int count, String zipName, String issueNo) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'تم تجميع $count ملفًا داخل $zipName.',
-      one: 'تم تجميع ملف واحد داخل $zipName.',
+      other: 'تم تجميع $count ملفًا داخل $zipName',
+      one: 'تم تجميع ملف واحد داخل $zipName',
       zero: 'لم يتم تجميع أي ملفات.',
     );
     return '$_temp0';

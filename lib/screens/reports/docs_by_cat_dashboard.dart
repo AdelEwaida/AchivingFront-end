@@ -33,8 +33,13 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
   @override
   void didChangeDependencies() {
     _locale = AppLocalizations.of(context)!;
-    docByCat();
     super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    docByCat();
+    super.initState();
   }
 
   @override
@@ -73,7 +78,6 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
             child: BarDashboardChart(
-              key: UniqueKey(),
               barChartData: barData,
               isMax: true,
               accentColor: const Color(0xFF534AB7),
@@ -85,6 +89,7 @@ class _DocsByCatDashboardState extends State<DocsByCatDashboard> {
   }
 
   Future<void> docByCat() async {
+    barData.clear();
     await reportsController.getDocByCat(searchCriteria!).then((response) {
       for (var element in response) {
         String temp = element.cat ?? "NO DATE";

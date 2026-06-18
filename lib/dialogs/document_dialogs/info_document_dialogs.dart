@@ -40,6 +40,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
   // TextEditingController department = TextEditingController();
   // TextEditingController categoryController = TextEditingController();
   TextEditingController issueNoController = TextEditingController();
+  TextEditingController fileBarcodeController = TextEditingController();
   TextEditingController issueDateController = TextEditingController();
   TextEditingController refrence2Controller = TextEditingController();
   TextEditingController otherReferences = TextEditingController();
@@ -78,6 +79,8 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
 
     issueNoController.text = documentModel!.txtIssueno ?? "";
 
+    fileBarcodeController.text = documentModel!.txtBarcode ?? "";
+
     issueDateController.text = (documentModel!.datIssuedate!.isEmpty ||
             documentModel!.datIssuedate == null
         ? Converters.formatDate2(DateTime.now().toString())
@@ -105,13 +108,13 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     isDesktop = Responsive.isDesktop(context);
     return AppDialog(
       width: isDesktop ? width * 0.47 : width * 0.8,
-      height: height * 0.6,
+      height: height * 0.65,
       // titlePadding: EdgeInsets.all(0),
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       // backgroundColor: Theme.of(context).dialogBackgroundColor,
       title:
           widget.isEdit ? _locale.editDocumentDetails : _locale.documentDetails,
-      content: formSection(),
+      content: SingleChildScrollView(child: formSection()),
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -255,203 +258,179 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
   }
 
   Widget formSection() {
+    final double fieldHeight = height * 0.05;
+    const double colGap = 8;
+    final double rowGap = height * 0.012;
+
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
+        _formRow(
+          colGap: colGap,
           children: [
-            DropDown(
-              isEnabled: widget.isEdit,
-              key: UniqueKey(),
-              onChanged: (value) {
-                selectedDep = value.txtKey;
-                documentModel!.txtDept = value.txtKey;
-                selectedDepName = value.txtDescription;
-                // setState(() {});
-              },
-              initialValue: selectedDepName.isEmpty ? null : selectedDepName,
-              bordeText: _locale.department,
-              width: width * 0.135,
-              height: height * 0.05,
-              onSearch: (p0) async {
-                return await DepartmentController()
-                    .getDep(SearchModel(page: 1));
-              },
+            _labeledField(
+              label: _locale.department,
+              fieldHeight: fieldHeight,
+              child: DropDown(
+                isEnabled: widget.isEdit,
+                key: const ValueKey('info_doc_dept'),
+                onChanged: (value) {
+                  selectedDep = value.txtKey;
+                  documentModel!.txtDept = value.txtKey;
+                  selectedDepName = value.txtDescription;
+                },
+                initialValue:
+                    selectedDepName.isEmpty ? null : selectedDepName,
+                bordeText: '',
+                width: double.infinity,
+                height: fieldHeight,
+                onSearch: (p0) async {
+                  return await DepartmentController()
+                      .getDep(SearchModel(page: 1));
+                },
+              ),
             ),
-            spaceWidth(0.01),
             DateTimeComponent(
               isInitiaDate: false,
               timeControllerToCompareWith: null,
               dateController: issueDateController,
               label: _locale.issueDate,
               onValue: (isValid, value) {
-                if (isValid) {
-                  issueDateController.text = value;
-                }
+                if (isValid) issueDateController.text = value;
               },
-              // onChanged: (value) {
-              //   documentModel!.datIssuedate = value;
-              // },
               readOnly: !widget.isEdit,
-              height: height * 0.05,
-              dateWidth: width * 0.144,
+              height: fieldHeight,
+              dateWidth: double.infinity,
               dateControllerToCompareWith: null,
             ),
-
-            spaceWidth(0.01),
             DateTimeComponent(
               dateController: arrivalDate,
-              // controller: ,
               readOnly: !widget.isEdit,
               label: _locale.arrivalDate,
               onValue: (isValid, value) {
-                if (isValid) {
-                  arrivalDate.text = value;
-                }
+                if (isValid) arrivalDate.text = value;
               },
-              height: height * 0.05,
-              dateWidth: width * 0.144,
+              height: fieldHeight,
+              dateWidth: double.infinity,
               dateControllerToCompareWith: null,
               isInitiaDate: false,
               timeControllerToCompareWith: null,
             ),
-
-            // spaceWidth(0.01),
           ],
         ),
-        SizedBox(height: height * 0.01),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        SizedBox(height: rowGap),
+        _formRow(
+          colGap: colGap,
           children: [
             CustomTextField2(
               controller: reference1,
               text: Text(_locale.ref1),
-              onChanged: (value) {
-                documentModel!.txtReference1 = value;
-              },
-              height: height * 0.05,
+              onChanged: (value) => documentModel!.txtReference1 = value,
+              height: fieldHeight,
               readOnly: !widget.isEdit,
-              width: width * 0.135,
+              width: double.infinity,
             ),
-            spaceWidth(0.01),
             CustomTextField2(
               controller: refrence2Controller,
               text: Text(_locale.ref2),
-              onChanged: (value) {
-                documentModel!.txtReference2 = value;
-              },
-              height: height * 0.05,
+              onChanged: (value) => documentModel!.txtReference2 = value,
+              height: fieldHeight,
               readOnly: !widget.isEdit,
-              width: width * 0.135,
+              width: double.infinity,
             ),
-            spaceWidth(0.01),
             CustomTextField2(
               controller: otherReferences,
               text: Text(_locale.otherRef),
-              onChanged: (value) {
-                documentModel!.txtOtherRef = value;
-              },
-              height: height * 0.05,
-              width: width * 0.135,
+              onChanged: (value) => documentModel!.txtOtherRef = value,
+              height: fieldHeight,
+              width: double.infinity,
               readOnly: !widget.isEdit,
             ),
           ],
         ),
-        SizedBox(height: height * 0.01),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        SizedBox(height: rowGap),
+        _formRow(
+          colGap: colGap,
           children: [
             CustomTextField2(
               controller: descriptionController,
               text: Text(_locale.description),
-              height: height * 0.05,
-              onChanged: (value) {
-                documentModel!.txtDescription = value;
-              },
+              height: fieldHeight,
+              onChanged: (value) => documentModel!.txtDescription = value,
               readOnly: !widget.isEdit,
-              width: width * 0.135,
+              width: double.infinity,
             ),
-            spaceWidth(0.01),
             CustomTextField2(
               controller: keyWordController,
               readOnly: !widget.isEdit,
-              onChanged: (value) {
-                documentModel!.txtKeywords = value;
-              },
+              onChanged: (value) => documentModel!.txtKeywords = value,
               text: Text(_locale.keyword),
-              height: height * 0.05,
-              width: width * 0.135,
+              height: fieldHeight,
+              width: double.infinity,
             ),
-            spaceWidth(0.01),
             CustomTextField2(
               controller: organization,
               text: Text(_locale.organization),
-              onChanged: (value) {
-                documentModel!.txtOrganization = value;
-              },
-              height: height * 0.05,
-              width: width * 0.135,
+              onChanged: (value) => documentModel!.txtOrganization = value,
+              height: fieldHeight,
+              width: double.infinity,
               readOnly: !widget.isEdit,
             ),
           ],
         ),
-        SizedBox(height: height * 0.01),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        SizedBox(height: rowGap),
+        _formRow(
+          colGap: colGap,
           children: [
             CustomTextField2(
               controller: type,
               text: Text(_locale.type),
-              height: height * 0.05,
+              height: fieldHeight,
               readOnly: !widget.isEdit,
-              onChanged: (value) {
-                documentModel!.intType = int.parse(value);
-              },
-              width: width * 0.135,
+              onChanged: (value) => documentModel!.intType = int.parse(value),
+              width: double.infinity,
             ),
-            spaceWidth(0.01),
             CustomTextField2(
               controller: issueNoController,
               text: Text(_locale.issueNo),
-              onChanged: (value) {
-                documentModel!.txtIssueno = value;
-              },
-              height: height * 0.05,
+              onChanged: (value) => documentModel!.txtIssueno = value,
+              height: fieldHeight,
               readOnly: !widget.isEdit,
               isMandetory: true,
-              width: width * 0.135,
+              width: double.infinity,
             ),
-            spaceWidth(0.01),
             CustomTextField2(
               readOnly: !widget.isEdit,
               controller: following,
               text: Text(_locale.following),
-              onChanged: (value) {
-                documentModel!.txtFollowing = value;
-              },
-              height: height * 0.05,
-              width: width * 0.135,
+              onChanged: (value) => documentModel!.txtFollowing = value,
+              height: fieldHeight,
+              width: double.infinity,
             ),
           ],
         ),
-        SizedBox(height: height * 0.01),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            DropDown(
+        SizedBox(height: rowGap),
+        _formFullRow(
+          CustomTextField2(
+            controller: fileBarcodeController,
+            text: Text(_locale.fileBarcode),
+            onChanged: (value) => documentModel!.txtBarcode = value,
+            height: fieldHeight,
+            readOnly: !widget.isEdit,
+            width: double.infinity,
+          ),
+        ),
+        SizedBox(height: rowGap),
+        _formFullRow(
+          _labeledField(
+            label: _locale.category,
+            fieldHeight: fieldHeight,
+            child: DropDown(
               isEnabled: widget.isEdit,
-
-              key: UniqueKey(),
+              key: const ValueKey('info_doc_category'),
               initialValue: selectedCatName.isEmpty ? null : selectedCatName,
-              width: width * 0.42,
-              height: height * 0.05,
+              width: double.infinity,
+              height: fieldHeight,
               onChanged: (value) {
                 selectedCat = value.txtKey;
                 documentModel!.txtCategory = value.txtKey;
@@ -459,15 +438,71 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
               },
               searchBox: true,
               valSelected: true,
-              bordeText: _locale.category,
-              // width: width * 0.21,
-
+              bordeText: '',
               onSearch: (p0) async {
                 return await DocumentsController().getDocCategoryList();
               },
             ),
-          ],
+          ),
         ),
+      ],
+    );
+  }
+
+  Widget _labeledField({
+    required String label,
+    required double fieldHeight,
+    required Widget child,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF0F172A),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: fieldHeight,
+          child: child,
+        ),
+      ],
+    );
+  }
+
+  Widget _formRow({
+    required double colGap,
+    required List<Widget> children,
+  }) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (int i = 0; i < 3; i++) ...[
+            if (i > 0) SizedBox(width: colGap),
+            Expanded(
+              child: i < children.length
+                  ? children[i]
+                  : const SizedBox.shrink(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _formFullRow(Widget child) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: child),
       ],
     );
   }
@@ -500,6 +535,7 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     documentModel!.datArrvialdate = arrivalDate.text;
     documentModel!.txtDept = selectedDep;
     documentModel!.txtCategory = selectedCat;
+    documentModel!.txtBarcode = fileBarcodeController.text.trim();
 
     var response = await documentsController.updateDocument(documentModel!);
 
@@ -507,20 +543,8 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
       CustomToastMessage.success(context, _locale.editDoneSucess).then((value) {
         Navigator.pop(context, true);
       });
-      // showDialog(
-      //   context: context,
-      //   builder: (context) {
-      //     return ErrorDialog(
-      //       icon: Icons.done_all,
-      //       errorDetails: _locale.done,
-      //       errorTitle: _locale.editDoneSucess,
-      //       color: Colors.green,
-      //       statusCode: 200,
-      //     );
-      //   },
-      // ).then((value) {
-      //   Navigator.pop(context, true);
-      // });
+    } else if (response.statusCode == 406) {
+      CustomToastMessage.error(context, _locale.barcodeAlreadyExists);
     }
   }
 }

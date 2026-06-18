@@ -519,16 +519,6 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
       ),
       actions: [
         CustomElevatedButton(
-          text: _locale.close,
-          color: redColor,
-          icon: Icons.close_rounded,
-          width: _isDesktop ? 120 : 110,
-          height: 40,
-          fontSize: 13,
-          onPressed: _confirming ? () {} : () => Navigator.of(context).pop(),
-        ),
-        SizedBox(width: 10),
-        CustomElevatedButton(
           text: _locale.deptTrackingBulkReceiveConfirm,
           color: greenColor,
           icon: Icons.inbox_rounded,
@@ -538,6 +528,16 @@ class _BulkReceiveFilesDialogState extends State<_BulkReceiveFilesDialog> {
           isLoading: _confirming,
           onPressed:
               _items.isEmpty || _confirming ? () {} : _confirmBulkReceive,
+        ),
+        SizedBox(width: 10),
+         CustomElevatedButton(
+          text: _locale.close,
+          color: redColor,
+          icon: Icons.close_rounded,
+          width: _isDesktop ? 120 : 110,
+          height: 40,
+          fontSize: 13,
+          onPressed: _confirming ? () {} : () => Navigator.of(context).pop(),
         ),
       ],
     );

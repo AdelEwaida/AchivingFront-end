@@ -28,6 +28,7 @@ import '../../utils/constants/storage_keys.dart';
 import '../../utils/constants/styles.dart';
 import '../../utils/constants/user_types_constant/user_types_constant.dart';
 import '../../utils/func/converters.dart';
+import '../../utils/func/document_file_utils.dart';
 // import '../../utils/func/file_barcode_utils.dart';
 import '../../utils/func/responsive.dart';
 import '../../widget/custom_drop_down.dart';
@@ -183,9 +184,13 @@ class _AddFileScreenState extends State<AddFileScreen> {
                     _fieldItem(customTextField(
                         _locale.issueNo, issueNoController, isDesktop, 1, true,
                         focusNode: issueNameFocusNode)),
-                      _fieldItem(customTextField(
-                        _locale.fileBarcode, fileBarcodeController, isDesktop, 1, true,
-                        )),
+                    _fieldItem(customTextField(
+                      _locale.fileBarcode,
+                      fileBarcodeController,
+                      isDesktop,
+                      1,
+                      true,
+                    )),
                     _fieldItem(DateTimeComponent(
                       height: height * 0.05,
                       label: _locale.arrivalDate,
@@ -489,6 +494,15 @@ class _AddFileScreenState extends State<AddFileScreen> {
   }
 
   // ── File upload section ───────────────────────────────────────────
+  void _clearSelectedFiles() {
+    setState(() {
+      filesName.clear();
+      filesBlobs.clear();
+      fileNameController.clear();
+      dblFilesize = null;
+    });
+  }
+
   Widget _buildFileUploadSection() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -512,6 +526,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
               isDesktop,
               1,
               true,
+              showClearButton: true,
+              onClearPressed: _clearSelectedFiles,
             ),
           ),
         ),
@@ -527,23 +543,6 @@ class _AddFileScreenState extends State<AddFileScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              child: DropDown(
-                isMandatory: true,
-                onChanged: (value) {
-                  if (value != null) {
-                    scannerIndex = _cachedScanners.indexOf(value as String);
-                  }
-                },
-                noDataString: "⚠️ No scanners found",
-                initialValue: "",
-                bordeText: _locale.scanners,
-                width: double.infinity,
-                height: height * 0.05,
-                onSearch: _getScanners,
-              ),
-            ),
-            const SizedBox(width: 16),
             CustomElevatedButton(
               text: _locale.scanFile,
               color: _accent,
@@ -575,6 +574,23 @@ class _AddFileScreenState extends State<AddFileScreen> {
                   Navigator.pop(context);
                 });
               },
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: DropDown(
+                isMandatory: true,
+                onChanged: (value) {
+                  if (value != null) {
+                    scannerIndex = _cachedScanners.indexOf(value as String);
+                  }
+                },
+                noDataString: "⚠️ No scanners found",
+                initialValue: "",
+                bordeText: _locale.scanners,
+                width: double.infinity,
+                height: height * 0.05,
+                onSearch: _getScanners,
+              ),
             ),
           ],
         ),
@@ -617,9 +633,11 @@ class _AddFileScreenState extends State<AddFileScreen> {
     double widthFactor,
     bool isMandetory, {
     FocusNode? focusNode,
+    bool showClearButton = false,
+    VoidCallback? onClearPressed,
   }) {
     return CustomTextField2(
-      readOnly: hint == _locale.fileName ,
+      readOnly: hint == _locale.fileName,
       isReport: true,
       isMandetory: isMandetory,
       width: widthFactor == 1 ? double.infinity : width * widthFactor,
@@ -629,6 +647,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
       onSubmitted: (text) {},
       onChanged: (value) {},
       focusNode: focusNode,
+      showClearButton: showClearButton,
+      onClearPressed: onClearPressed,
     );
   }
 
@@ -647,12 +667,22 @@ class _AddFileScreenState extends State<AddFileScreen> {
     FilePickerResult? result =
         await FilePicker.platform.pickFiles(allowMultiple: true);
     if (result != null && result.files.isNotEmpty) {
+      var rejectedFile = false;
       for (final f in result.files) {
+        if (DocumentFileUtils.isBlockedUploadFileName(f.name) ||
+            !DocumentFileUtils.isFileSizeAllowed(f.size)) {
+          rejectedFile = true;
+          continue;
+        }
         filesName.add(f.name);
         filesBlobs.add(base64Encode(f.bytes!));
       }
+      if (rejectedFile) {
+        CustomToastMessage.warning(context, _locale.cannotUploadVideo);
+      }
       setState(() {
-        fileNameController.text = filesName.toString();
+        fileNameController.text =
+            DocumentFileUtils.formatSelectedFileNames(filesName);
         isFileLoading = false;
       });
     } else {
@@ -707,7 +737,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
       txtCategory: selectedCat,
       txtDept: selectedDep,
       txtIssueno: issueNoController.text,
-      datIssuedate: arrivalDateController.text,
+      datIssuedate: fileDateController.text,
       txtUsercode: userName,
       txtInsurance: "",
       txtLicense: "",
@@ -747,7 +777,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
         descriptionController.text.isEmpty ||
         issueNoController.text.isEmpty ||
         fileBarcodeController.text.isEmpty) {
-      CustomToastMessage.error(context, _locale.fillRequiredFields);  
+      CustomToastMessage.error(context, _locale.fillRequiredFields);
       // CoolAlert.show(
       //   width: width * 0.4,
       //   context: context,

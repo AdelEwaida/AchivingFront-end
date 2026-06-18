@@ -149,6 +149,8 @@
   "monthly": "شهري",
   "download": "تنزيل",
   "copy": "نسخ",
+  "duplicateSuccess": "تم عمل النسخ بنجاح",
+  "noPermissionToDuplicate": "ليس لديك صلاحية لعمل نسخ",
   "userStatus": "حالة المستخدم",
   "email": "الايميل",
   "active": "نشط",
@@ -237,7 +239,7 @@
   "pleaseAddExcel": "الرجاء إدخال ملف إكسل يتكون من عمود واحد لرقم الإشارة, سيقوم النظام بفحص الأرقام وإرجاع ملف إكسل",
   "uploadExcelFile": "تحميل ملف اكسل",
   "isLimitAction": "منع تعديل الدوائر الأخرى",
-  "notAllowedToEditDept": "غير مصرح لك التعديل على هذه الدائرة",
+  "notAllowedToEditDept": "لا يمكن تعديل ملفات هذه الدائرة",
   "noScannersFound": "لم يتم العثور على أجهزة ماسح ضوئي",
   "urlError": "يوجد مستخدم بالفعل بهذا الرابط. هل تريد إضافته مرة أخرى؟",
   "numOfFilesNum": "عدد الملفات المعروضة",
@@ -259,13 +261,17 @@
   "signInToContinue": "سجّل دخولك للمتابعة",
   "nodataSelected": "لا توجد بيانات للفترة المحددة",
   "pleaseSelectRow": "يرجى اختيار صف واحد على الأقل",
-  "filesPackedIntoZip": "{count, plural, =0 {لم يتم تجميع أي ملفات.} one {تم تجميع ملف واحد داخل {zipName}.} other {تم تجميع {count} ملفًا داخل {zipName}.}}",
+  "cannotUploadVideo": "لا يمكنك تحميل فيديو ، اقصى حجم لرفع الملف هو 2000M",
+  "filesPackedIntoZip": "{count, plural, =0 {لم يتم تجميع أي ملفات.} one {تم تجميع ملف واحد داخل {zipName}} other {تم تجميع {count} ملفًا داخل {zipName}}}",
   "@filesPackedIntoZip": {
     "placeholders": {
       "count": {
         "type": "int"
       },
       "zipName": {
+        "type": "String"
+      },
+      "issueNo": {
         "type": "String"
       }
     }
@@ -439,7 +445,7 @@
   "cannotCreateNewTrackingUntilAllStepsComplete": "لا يمكن انشاء مسار جديد الا عند الانتهاء من جميع خطواط المسار المفتوح",
   "create": "إنشاء",
   "pleaseFillStepOrDelete": "يرجى ملء الخطوة رقم {stepNumber} أو حذفها",
-    "createTrackingDocByDep": "إنشاء مسار عبر الدوائر",
+  "createTrackingDocByDep": "إنشاء مسار عبر الدوائر",
   "documentTrackingReport": "تقرير تتبع الملفات",
   "fileStatus": "حالة الملف",
   "fileStatusReceived": "مستلمة",

@@ -38,6 +38,8 @@ class CustomTextField2 extends StatefulWidget {
   bool? enabled;
   bool? isMandetory;
   bool? isReport;
+  bool? showClearButton;
+  VoidCallback? onClearPressed;
 
   CustomTextField2({
     Key? key,
@@ -69,6 +71,8 @@ class CustomTextField2 extends StatefulWidget {
     this.obscureText,
     this.isReport = false,
     this.enabled,
+    this.showClearButton = false,
+    this.onClearPressed,
   }) : super(key: key);
 
   @override
@@ -249,15 +253,7 @@ class _CustomTextField2State extends State<CustomTextField2> {
             )
           : null,
 
-      suffixIcon: _isReadOnly
-          ? const Icon(
-              Icons.lock_outline_rounded,
-              size: 14,
-              color: _tfLabel,
-            )
-          : widget.customIconSuffix != null
-              ? widget.customIconSuffix
-              : null,
+      suffixIcon: _buildSuffixIcon(),
 
       errorStyle: const TextStyle(
         height: 0.8,
@@ -271,5 +267,36 @@ class _CustomTextField2State extends State<CustomTextField2> {
         color: _tfLabel.withOpacity(0.6),
       ),
     );
+  }
+
+  Widget? _buildSuffixIcon() {
+    if (widget.showClearButton == true &&
+        _hasValue &&
+        widget.onClearPressed != null) {
+      return IconButton(
+        onPressed: widget.onClearPressed,
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+        icon: const Icon(
+          Icons.close_rounded,
+          size: 18,
+          color: _tfError,
+        ),
+      );
+    }
+
+    if (_isReadOnly) {
+      return const Icon(
+        Icons.lock_outline_rounded,
+        size: 14,
+        color: _tfLabel,
+      );
+    }
+
+    if (widget.customIconSuffix != null) {
+      return widget.customIconSuffix;
+    }
+
+    return null;
   }
 }

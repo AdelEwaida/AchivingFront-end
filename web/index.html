@@ -80,6 +80,21 @@
         return Promise.reject('Conversion failed');
       }
     }
+
+    window.convertDocxBytesToHtml = function (base64Docx) {
+      return new Promise(function (resolve, reject) {
+        try {
+          const arrayBuffer = Uint8Array.from(atob(base64Docx), c => c.charCodeAt(0)).buffer;
+          mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+            .then(function (result) {
+              resolve(result.value);
+            })
+            .catch(reject);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    };
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>

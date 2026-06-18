@@ -284,8 +284,14 @@ class _ViewTrackingDialogState extends State<ViewTrackingDialog> {
                   ],
                 ),
 
-                buildTrackingStepReceivedRow(step, _locale),
                 buildTrackingStepSentRow(step, _locale),
+                buildTrackingStepReceivedRow(
+                  step,
+                  _locale,
+                  includeDeptInLabel: true,
+                  departmentName:
+                      _deptMap[step.txtDeptcode] ?? step.txtDeptcode,
+                ),
 
                 // Notes
                 if (step.txtNotes != null && step.txtNotes!.isNotEmpty) ...[

@@ -5,7 +5,7 @@ import 'package:archiving_flutter_project/dialogs/document_dialogs/send_email_di
 import 'package:archiving_flutter_project/dialogs/document_dialogs/whats_app_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/confirm_dialog.dart';
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
-import 'package:archiving_flutter_project/dialogs/pdf_preview.dart';
+import 'package:archiving_flutter_project/utils/func/document_file_utils.dart';
 import 'package:archiving_flutter_project/models/db/document_models/upload_file_mode.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
@@ -493,19 +493,8 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
         CustomToastMessage.warning(context, _locale.error);
         return;
       }
-      if (selectedRow!.cells['txtFilename']!.value.contains(".pdf") ||
-          selectedRow!.cells['txtFilename']!.value.contains(".jpeg") ||
-          selectedRow!.cells['txtFilename']!.value.contains(".png") ||
-          selectedRow!.cells['txtFilename']!.value.contains(".jpg")) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return PdfPreview1(
-                pdfFile: bytes,
-                fileName: selectedRow!.cells['txtFilename']!.value);
-          },
-        );
-      } else {
+      final fileName = selectedRow!.cells['txtFilename']!.value?.toString() ?? '';
+      if (!DocumentFileUtils.canPreviewInApp(fileName)) {
         showDialog(
           context: context,
           builder: (context) {
@@ -517,7 +506,13 @@ class _FileExplorDialogState extends State<FileExplorDialog> {
                 statusCode: 500);
           },
         );
+        return;
       }
+      DocumentFileUtils.showPreviewDialog(
+        context,
+        bytes: bytes,
+        fileName: fileName,
+      );
     } else {
       CustomToastMessage.warning(context, _locale.pleaseSelectRow);
     }
