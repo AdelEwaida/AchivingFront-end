@@ -212,6 +212,17 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
     );
   }
 
+  DocTrackingReportCriteria _criteriaForPdfExport() {
+    final base = _lastCriteria ?? _buildCriteria(page: 1);
+    return DocTrackingReportCriteria(
+      fromDate: base.fromDate,
+      toDate: base.toDate,
+      status: base.status,
+      deptKey: base.deptKey,
+      page: -1,
+    );
+  }
+
   Future<void> _searchReport() async {
     if (_loading) return;
 
@@ -294,7 +305,7 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
   Future<void> _onDownloadPdf() async {
     if (_loading || _exportingPdf) return;
 
-    final criteria = _lastCriteria ?? _buildCriteria(page: 1);
+    final criteria = _criteriaForPdfExport();
     if (criteria.fromDate == null ||
         criteria.fromDate!.isEmpty ||
         criteria.toDate == null ||

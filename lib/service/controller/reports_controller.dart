@@ -74,7 +74,7 @@ class ReportsController {
   Future<List<int>?> getDocTrackingReportPdf(
       DocTrackingReportCriteria criteria) async {
     final response = await ApiService()
-        .postRequestPdf(getDocTrackingReportPdfApi, criteria.toJson(includePage: false));
+        .postRequestPdf(getDocTrackingReportPdfApi, criteria.toJson());
     if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
       return response.bodyBytes;
     }
