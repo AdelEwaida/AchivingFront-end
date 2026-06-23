@@ -14,6 +14,7 @@ import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.da
 import 'package:cool_alert/cool_alert.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
@@ -167,186 +168,195 @@ class _AddFileScreenState extends State<AddFileScreen> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
 
-    return Scaffold(
-      backgroundColor: _bgPage,
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: _sectionCard(
-              icon: Icons.note_add_rounded,
-              title: _locale.addDocument,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // ── Row 1: Issue No + Arrival Date + Issue Date ──
-                  _fieldRow([
-                    _fieldItem(customTextField(
-                        _locale.issueNo, issueNoController, isDesktop, 1, true,
-                        focusNode: issueNameFocusNode)),
-                    _fieldItem(customTextField(
-                      _locale.fileBarcode,
-                      fileBarcodeController,
-                      isDesktop,
-                      1,
-                      true,
-                    )),
-                    _fieldItem(DateTimeComponent(
-                      height: height * 0.05,
-                      label: _locale.arrivalDate,
-                      dateController: arrivalDateController,
-                      dateWidth: double.infinity,
-                      dateControllerToCompareWith: null,
-                      readOnly: false,
-                      isInitiaDate: true,
-                      onValue: (isValid, value) {
-                        if (isValid) arrivalDateController.text = value;
-                      },
-                      timeControllerToCompareWith: null,
-                    )),
-                    _fieldItem(DateTimeComponent(
-                      height: height * 0.05,
-                      label: _locale.issueDate,
-                      dateController: fileDateController,
-                      dateWidth: double.infinity,
-                      dateControllerToCompareWith: null,
-                      readOnly: false,
-                      isInitiaDate: true,
-                      onValue: (isValid, value) {
-                        if (isValid) fileDateController.text = value;
-                      },
-                      timeControllerToCompareWith: null,
-                    )),
-                  ]),
+    return BarcodeKeyboardListener(
+      onBarcodeScanned: (String barcode) {
+        final cleanBarcode = barcode.trim();
+        setState(() {
+          fileBarcodeController.text = cleanBarcode;
+        });
+        debugPrint(cleanBarcode);
+      },
+      child: Scaffold(
+        backgroundColor: _bgPage,
+        body: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: _sectionCard(
+                icon: Icons.note_add_rounded,
+                title: _locale.addDocument,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // ── Row 1: Issue No + Arrival Date + Issue Date ──
+                    _fieldRow([
+                      _fieldItem(customTextField(_locale.issueNo,
+                          issueNoController, isDesktop, 1, true,
+                          focusNode: issueNameFocusNode)),
+                      _fieldItem(customTextField(
+                        _locale.fileBarcode,
+                        fileBarcodeController,
+                        isDesktop,
+                        1,
+                        true,
+                      )),
+                      _fieldItem(DateTimeComponent(
+                        height: height * 0.05,
+                        label: _locale.arrivalDate,
+                        dateController: arrivalDateController,
+                        dateWidth: double.infinity,
+                        dateControllerToCompareWith: null,
+                        readOnly: false,
+                        isInitiaDate: true,
+                        onValue: (isValid, value) {
+                          if (isValid) arrivalDateController.text = value;
+                        },
+                        timeControllerToCompareWith: null,
+                      )),
+                      _fieldItem(DateTimeComponent(
+                        height: height * 0.05,
+                        label: _locale.issueDate,
+                        dateController: fileDateController,
+                        dateWidth: double.infinity,
+                        dateControllerToCompareWith: null,
+                        readOnly: false,
+                        isInitiaDate: true,
+                        onValue: (isValid, value) {
+                          if (isValid) fileDateController.text = value;
+                        },
+                        timeControllerToCompareWith: null,
+                      )),
+                    ]),
 
-                  // ── Row 2: Description + Department + Category ───
-                  _fieldRow([
-                    _fieldItem(customTextField(_locale.txtDescription,
-                        descriptionController, isDesktop, 1, true)),
-                    _fieldItem(DropDown(
-                      key: const ValueKey('dept_dropdown'),
-                      isMandatory: true,
-                      onChanged: (value) {
-                        selectedDep = value.txtDeptkey;
-                        selctedDepDesc = value.txtDeptName;
-                      },
-                      initialValue:
-                          selctedDepDesc == "" ? null : selctedDepDesc,
-                      bordeText: _locale.department,
-                      width: double.infinity,
-                      items: departmetList,
-                      height: height * 0.055,
-                    )),
-                    _fieldItem(DropDown(
-                      key: const ValueKey('cat_dropdown'),
-                      isMandatory: true,
-                      initialValue:
-                          selectedCatDesc.isEmpty ? null : selectedCatDesc,
-                      width: double.infinity,
-                      height: height * 0.055,
-                      onChanged: (value) {
-                        selectedCat = value.txtKey;
-                        selectedCatDesc = value.txtDescription;
-                      },
-                      items: catList,
-                      searchBox: true,
-                      valSelected: true,
-                      bordeText: _locale.category,
-                    )),
-                  ]),
+                    // ── Row 2: Description + Department + Category ───
+                    _fieldRow([
+                      _fieldItem(customTextField(_locale.txtDescription,
+                          descriptionController, isDesktop, 1, true)),
+                      _fieldItem(DropDown(
+                        key: const ValueKey('dept_dropdown'),
+                        isMandatory: true,
+                        onChanged: (value) {
+                          selectedDep = value.txtDeptkey;
+                          selctedDepDesc = value.txtDeptName;
+                        },
+                        initialValue:
+                            selctedDepDesc == "" ? null : selctedDepDesc,
+                        bordeText: _locale.department,
+                        width: double.infinity,
+                        items: departmetList,
+                        height: height * 0.055,
+                      )),
+                      _fieldItem(DropDown(
+                        key: const ValueKey('cat_dropdown'),
+                        isMandatory: true,
+                        initialValue:
+                            selectedCatDesc.isEmpty ? null : selectedCatDesc,
+                        width: double.infinity,
+                        height: height * 0.055,
+                        onChanged: (value) {
+                          selectedCat = value.txtKey;
+                          selectedCatDesc = value.txtDescription;
+                        },
+                        items: catList,
+                        searchBox: true,
+                        valSelected: true,
+                        bordeText: _locale.category,
+                      )),
+                    ]),
 
-                  // ── Row 3: Keywords + Following + Ref1 ───────────
-                  _fieldRow([
-                    _fieldItem(customTextField(_locale.keyWords,
-                        keyWordsController, isDesktop, 1, false)),
-                    _fieldItem(customTextField(_locale.following,
-                        followingController, isDesktop, 1, false)),
-                    _fieldItem(customTextField(
-                        _locale.ref1, ref1Controller, isDesktop, 1, false)),
-                  ]),
+                    // ── Row 3: Keywords + Following + Ref1 ───────────
+                    _fieldRow([
+                      _fieldItem(customTextField(_locale.keyWords,
+                          keyWordsController, isDesktop, 1, false)),
+                      _fieldItem(customTextField(_locale.following,
+                          followingController, isDesktop, 1, false)),
+                      _fieldItem(customTextField(
+                          _locale.ref1, ref1Controller, isDesktop, 1, false)),
+                    ]),
 
-                  // ── Row 4: Ref2 + OtherRef + Organization ────────
-                  _fieldRow([
-                    _fieldItem(customTextField(
-                        _locale.ref2, ref2Controller, isDesktop, 1, false)),
-                    _fieldItem(customTextField(_locale.otherRef,
-                        otherRefController, isDesktop, 1, false)),
-                    _fieldItem(customTextField(_locale.organization,
-                        organizationController, isDesktop, 1, false)),
-                  ]),
+                    // ── Row 4: Ref2 + OtherRef + Organization ────────
+                    _fieldRow([
+                      _fieldItem(customTextField(
+                          _locale.ref2, ref2Controller, isDesktop, 1, false)),
+                      _fieldItem(customTextField(_locale.otherRef,
+                          otherRefController, isDesktop, 1, false)),
+                      _fieldItem(customTextField(_locale.organization,
+                          organizationController, isDesktop, 1, false)),
+                    ]),
 
-                  // ── Row 5: Toggles ────────────────────────────────
-                  Row(
-                    children: [
-                      if (active == "1") ...[
+                    // ── Row 5: Toggles ────────────────────────────────
+                    Row(
+                      children: [
+                        if (active == "1") ...[
+                          _toggleChip(
+                            label: _locale.submitforWorkflowApproval,
+                            value: approval,
+                            onChanged: (v) => setState(() => approval = v!),
+                            color: _accent,
+                          ),
+                          const SizedBox(width: 12),
+                        ],
                         _toggleChip(
-                          label: _locale.submitforWorkflowApproval,
-                          value: approval,
-                          onChanged: (v) => setState(() => approval = v!),
-                          color: _accent,
+                          label: _locale.uploadFile,
+                          value: _isUploadFileSelected,
+                          onChanged: (v) =>
+                              setState(() => _isUploadFileSelected = v!),
+                          color: _primary,
                         ),
                         const SizedBox(width: 12),
+                        _toggleChip(
+                          label: _locale.scanFile,
+                          value: !_isUploadFileSelected,
+                          onChanged: (v) =>
+                              setState(() => _isUploadFileSelected = !v!),
+                          color: _primary,
+                        ),
                       ],
-                      _toggleChip(
-                        label: _locale.uploadFile,
-                        value: _isUploadFileSelected,
-                        onChanged: (v) =>
-                            setState(() => _isUploadFileSelected = v!),
-                        color: _primary,
-                      ),
-                      const SizedBox(width: 12),
-                      _toggleChip(
-                        label: _locale.scanFile,
-                        value: !_isUploadFileSelected,
-                        onChanged: (v) =>
-                            setState(() => _isUploadFileSelected = !v!),
-                        color: _primary,
-                      ),
-                    ],
-                  ),
+                    ),
 
-                  // ── Row 6: File / Scan ────────────────────────────
-                  if (_isUploadFileSelected) _buildFileUploadSection(),
-                  if (!_isUploadFileSelected) _buildScanSection(),
+                    // ── Row 6: File / Scan ────────────────────────────
+                    if (_isUploadFileSelected) _buildFileUploadSection(),
+                    if (!_isUploadFileSelected) _buildScanSection(),
 
-                  // ── Row 7: Action buttons ─────────────────────────
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomElevatedButton(
-                        text: _locale.save,
-                        color: _primary,
-                        icon: Icons.save_rounded,
-                        width: width * 0.12,
-                        height: height * 0.052,
-                        fontSize: 14,
-                        isLoading: saving,
-                        onPressed: saveDocument,
-                      ),
-                      const SizedBox(width: 12),
-                      CustomElevatedButton(
-                        text: _locale.resetFilter,
-                        color: redColor,
-                        icon: Icons.refresh_rounded,
-                        width: width * 0.12,
-                        height: height * 0.052,
-                        fontSize: 14,
-                        onPressed: resetForm,
-                      ),
-                    ],
-                  ),
-                ],
+                    // ── Row 7: Action buttons ─────────────────────────
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomElevatedButton(
+                          text: _locale.save,
+                          color: _primary,
+                          icon: Icons.save_rounded,
+                          width: width * 0.12,
+                          height: height * 0.052,
+                          fontSize: 14,
+                          isLoading: saving,
+                          onPressed: saveDocument,
+                        ),
+                        const SizedBox(width: 12),
+                        CustomElevatedButton(
+                          text: _locale.resetFilter,
+                          color: redColor,
+                          icon: Icons.refresh_rounded,
+                          width: width * 0.12,
+                          height: height * 0.052,
+                          fontSize: 14,
+                          onPressed: resetForm,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // ── Loading overlay ───────────────────────────────────────
-          if (isFileLoading)
-            BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
-        ],
+            // ── Loading overlay ───────────────────────────────────────
+            if (isFileLoading)
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -637,7 +647,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
     VoidCallback? onClearPressed,
   }) {
     return CustomTextField2(
-      readOnly: hint == _locale.fileName,
+      readOnly: hint == _locale.fileName || hint == _locale.fileBarcode,
       isReport: true,
       isMandetory: isMandetory,
       width: widthFactor == 1 ? double.infinity : width * widthFactor,

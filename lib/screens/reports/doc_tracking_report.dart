@@ -93,10 +93,10 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
         code: 'not_received',
         label: _locale.fileStatusNotReceived,
       ),
-      _FileStatusOption(
-        code: 'sent',
-        label: _locale.fileStatusSent,
-      ),
+      // _FileStatusOption(
+      //   code: 'sent',
+      //   label: _locale.fileStatusSent,
+      // ),
     ];
     _buildColumns();
     _syncColumnsToGrid();
@@ -188,9 +188,10 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
       status = 2;
     } else if (_selectedStatusCode == 'not_received') {
       status = 1;
-    } else if (_selectedStatusCode == 'sent') {
-      status = 3;
-    }
+    } 
+    // else if (_selectedStatusCode == 'sent') {
+    //   status = 3;
+    // }
 
     return DocTrackingReportCriteria(
       fromDate: _fromDateController.text.trim(),

@@ -388,6 +388,7 @@
   "currentLockupLocation": "الموقع الحالي",
   "currentLockupInTransitLabel": "في الطريق للاستلام للدائرة التالية",
   "currentDepTrackLocation": "الدائرة الحالية",
+  "documentStatus": "حالة الملف",
   "currentDepTrackReceivedAt": "تم الاستلام لدى دائرة {name}",
   "@currentDepTrackReceivedAt": {
     "placeholders": {

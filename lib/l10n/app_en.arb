@@ -268,6 +268,7 @@
   "canWrite": "can Write",
   "importFromExcel": "Import from Excel",
   "version": "Version",
+  "documentStatus": "Document Status",
   "pleaseUploadExcelWithOneColumn": "Please upload an Excel file containing a single column for the issue number",
   "invalidFile": "Invalid File",
   "nodataSelected": "No data for selected period",

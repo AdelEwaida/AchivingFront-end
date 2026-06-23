@@ -2056,7 +2056,7 @@ class _FileListScreenState extends State<FileListScreen> {
       ),
       if (docTrackingActive == "1" && _isAdmin)
         PlutoColumn(
-          title: _locale.currentDepTrackLocation,
+          title: _locale.documentStatus,
           field: "txtCurrentLockup",
           type: PlutoColumnType.text(),
           width: isDesktop ? width * 0.30 : width * 0.38,
