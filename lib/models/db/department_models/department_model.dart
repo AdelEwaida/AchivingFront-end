@@ -4,11 +4,16 @@ class DepartmentModel {
   String? txtKey;
   String? txtDescription;
   String? txtShortcode;
+  int? barcodeRequired;
+  int? bolBarcodeRequired;
+  //
 
   DepartmentModel({
     this.txtKey,
     this.txtDescription,
     this.txtShortcode,
+    this.barcodeRequired,
+    this.bolBarcodeRequired,
   });
 
   // Factory constructor to create an instance from a JSON map
@@ -17,6 +22,8 @@ class DepartmentModel {
       txtKey: json['txtKey'],
       txtDescription: json['txtDescription'],
       txtShortcode: json['txtShortcode'],
+      barcodeRequired: json['bolBarcodeRequired'] ?? 0,
+      bolBarcodeRequired: json['bolBarcodeRequired'] ?? 0,
     );
   }
 
@@ -26,6 +33,8 @@ class DepartmentModel {
       'txtKey': txtKey,
       'txtDescription': txtDescription,
       'txtShortcode': txtShortcode,
+      'barcodeRequired': barcodeRequired,
+      'bolBarcodeRequired': bolBarcodeRequired,
     };
   }
 
@@ -34,6 +43,8 @@ class DepartmentModel {
       'id': txtKey,
       'description': txtDescription,
       'shortCode': txtShortcode,
+      'barcodeRequired': barcodeRequired,
+      'bolBarcodeRequired': bolBarcodeRequired,
     };
   }
 
@@ -47,6 +58,7 @@ class DepartmentModel {
     return {
       'shortCode': txtShortcode,
       'description': txtDescription,
+      'barcodeRequired': barcodeRequired,
     };
   }
 
@@ -56,6 +68,7 @@ class DepartmentModel {
       'txtKey': PlutoCell(value: txtKey),
       'txtDescription': PlutoCell(value: txtDescription ?? ""),
       'txtShortcode': PlutoCell(value: txtShortcode ?? ""),
+      'bolBarcodeRequired': PlutoCell(value: bolBarcodeRequired ?? 0),
     });
   }
 
@@ -64,6 +77,7 @@ class DepartmentModel {
       txtKey: row.cells['txtKey']?.value,
       txtDescription: row.cells['txtDescription']?.value,
       txtShortcode: row.cells['txtShortcode']?.value,
+      bolBarcodeRequired: row.cells['bolBarcodeRequired']?.value,
     );
   }
 

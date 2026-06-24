@@ -26,6 +26,7 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
   double radius = 7;
 
   FocusNode codeFocusNode = FocusNode();
+  int barcodeIsRequired = 0;
   TextEditingController codeController = TextEditingController();
   TextEditingController descController = TextEditingController();
   DepartmentController departmentController = DepartmentController();
@@ -35,6 +36,9 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
     if (widget.departmentModel != null) {
       codeController.text = widget.departmentModel!.txtShortcode!;
       descController.text = widget.departmentModel!.txtDescription!;
+      barcodeIsRequired = widget.departmentModel!.bolBarcodeRequired ??
+          widget.departmentModel!.barcodeRequired ??
+          0;
     }
     super.didChangeDependencies();
   }
@@ -57,7 +61,7 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
 
     return AppDialog(
       width: isDesktop ? width * 0.3 : width * 0.8,
-      height: height * 0.74,
+      height: height * 0.80,
       // titlePadding: EdgeInsets.all(0),
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       // backgroundColor: dBackground,
@@ -67,7 +71,7 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
         width: isDesktop ? width * 0.25 : width * 0.8,
-        height: isDesktop ? height * 0.17 : height * 0.5,
+        height: isDesktop ? height * 0.22 : height * 0.5,
         child: SingleChildScrollView(
           child: formSection(),
         ),
@@ -162,6 +166,26 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
         const SizedBox(height: 20),
         customTextField(
             _locale.txtDescription, descController, isDesktop, 0.2, true),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: Row(
+            children: [
+              Checkbox(
+                value: barcodeIsRequired == 1 ? true : false,
+                onChanged: (value) {
+                  setState(() {
+                    barcodeIsRequired = value == true ? 1 : 0;
+                  });
+                },
+              ),
+              Text(
+                _locale.barcodeIsRequired,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
         if (!isDesktop) ...[
           customTextField(
               _locale.txtShortcode, codeController, isDesktop, 0.8, true),
@@ -211,7 +235,7 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
   void addDep() async {
     if (descController.text.trim().isEmpty ||
         codeController.text.trim().isEmpty) {
-          CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
+      CustomToastMessage.error(context, _locale.pleaseAddAllRequiredFields);
       // showDialog(
       //   context: context,
       //   builder: (context) {
@@ -231,7 +255,9 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
       DepartmentModel departmentModel = DepartmentModel(
           txtKey: null,
           txtDescription: descController.text,
-          txtShortcode: codeController.text);
+          txtShortcode: codeController.text,
+          barcodeRequired: barcodeIsRequired,
+          );
       await departmentController.addDep(departmentModel).then((value) {
         print("statusCode ${value.statusCode}");
         if (value.statusCode == 200) {
@@ -250,7 +276,9 @@ class _DepartmentDialogState extends State<DepartmentDialog> {
     DepartmentModel departmentModel = DepartmentModel(
         txtKey: widget.departmentModel!.txtKey!,
         txtDescription: descController.text,
-        txtShortcode: codeController.text);
+        txtShortcode: codeController.text,
+        barcodeRequired: barcodeIsRequired,
+        );
     await departmentController.updateDep(departmentModel).then((value) {
       if (value.statusCode == 200) {
         CustomToastMessage.success(context, _locale.editDoneSucess)

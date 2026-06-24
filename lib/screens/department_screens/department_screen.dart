@@ -69,7 +69,7 @@ class _OfficeScreenState extends State<DepartemntScreen> {
         title: _locale.txtShortcode,
         field: "txtShortcode",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.3 : width * 0.2,
+        width: isDesktop ? width * 0.2 : width * 0.2,
         backgroundColor: columnColors,
         // enableFilterMenuItem: true,
       ),
@@ -80,9 +80,24 @@ class _OfficeScreenState extends State<DepartemntScreen> {
         title: _locale.txtDescription,
         field: "txtDescription",
         type: PlutoColumnType.text(),
-        width: isDesktop ? width * 0.44 : width * 0.4,
+        width: isDesktop ? width * 0.40 : width * 0.4,
         // width: width * 0.2,
         backgroundColor: columnColors,
+      ),
+      PlutoColumn(
+        title: _locale.barcodeIsRequired,
+        field: "bolBarcodeRequired",
+        type: PlutoColumnType.text(),
+        width: isDesktop ? width * 0.40 : width * 0.4,
+        renderer: (context) {
+          final value = context.cell.value ?? 0;
+
+          return Center(
+            child: Text(
+              value == 1 ? _locale.requierd : _locale.notRequierd,
+            ),
+          );
+        },
       ),
     ]);
     getCount();

@@ -5,6 +5,7 @@ import 'package:archiving_flutter_project/providers/file_list_provider.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
 import 'package:archiving_flutter_project/screens/home_page.dart';
 import 'package:archiving_flutter_project/screens/log_in.dart';
+import 'package:archiving_flutter_project/service/controller/work_flow_controllers/setup_controller.dart';
 import 'package:archiving_flutter_project/service/controller/login_controllers/login_controller.dart';
 import 'package:archiving_flutter_project/service/handler/api_service.dart';
 import 'package:archiving_flutter_project/utils/constants/assets_path_constants.dart';
@@ -113,11 +114,11 @@ class AppRoutes {
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
 
     if (response) {
-      fileListProvider.setIsViewFile(true);
+      await SetupController().cacheSetupFlags(storage);
+      fileListProvider.setIsViewFile(false);
       screenContentProvider.setPage1(7);
       return mainScreenRoute;
     } else {
-      fileListProvider.setIsViewFile(true);
       screenContentProvider.setPage1(20);
     }
   }
@@ -154,7 +155,8 @@ class AppRoutes {
         LogInModel(emailEncrypted, ""), AppLocalizations.of(context)!);
     print("responseresponse ${response}");
     if (response) {
-      fileListProvider.setIsViewFile(true);
+      await SetupController().cacheSetupFlags(storage);
+      fileListProvider.setIsViewFile(false);
 
       fileListProvider.setIssueNumber(fld1Param ?? "");
 
@@ -162,8 +164,6 @@ class AppRoutes {
 
       return mainScreenRoute;
     } else {
-      fileListProvider.setIsViewFile(true);
-
       screenContentProvider.setPage1(20);
 
       return;

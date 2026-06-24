@@ -13,6 +13,7 @@ import 'package:archiving_flutter_project/utils/constants/loading.dart';
 import 'package:archiving_flutter_project/widget/custom_flutter_toast_message.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -110,6 +111,32 @@ class _AddFileScreenState extends State<AddFileScreen> {
     });
   }
 
+  void _onBarcodeScanned(String barcode) {
+    final code = barcode.trim();
+    if (code.isEmpty) return;
+
+    for (final controller in [
+      issueNoController,
+      descriptionController,
+      keyWordsController,
+      followingController,
+      ref1Controller,
+      ref2Controller,
+      otherRefController,
+      organizationController,
+      fileNameController,
+      arrivalDateController,
+      fileDateController,
+    ]) {
+      if (controller.text.endsWith(code)) {
+        controller.text =
+            controller.text.substring(0, controller.text.length - code.length);
+      }
+    }
+
+    setState(() => fileBarcodeController.text = code);
+  }
+
   @override
   Future<void> didChangeDependencies() async {
     _locale = AppLocalizations.of(context)!;
@@ -169,13 +196,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
     isDesktop = Responsive.isDesktop(context);
 
     return BarcodeKeyboardListener(
-      onBarcodeScanned: (String barcode) {
-        final cleanBarcode = barcode.trim();
-        setState(() {
-          fileBarcodeController.text = cleanBarcode;
-        });
-        debugPrint(cleanBarcode);
-      },
+       useKeyDownEvent: defaultTargetPlatform == TargetPlatform.windows,
+      onBarcodeScanned: _onBarcodeScanned,
       child: Scaffold(
         backgroundColor: _bgPage,
         body: Stack(
@@ -198,7 +220,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                         fileBarcodeController,
                         isDesktop,
                         1,
-                        true,
+                        false,
                       )),
                       _fieldItem(DateTimeComponent(
                         height: height * 0.05,
@@ -785,8 +807,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
         selectedCat.isEmpty ||
         (fileNameController.text.isEmpty && _isUploadFileSelected) ||
         descriptionController.text.isEmpty ||
-        issueNoController.text.isEmpty ||
-        fileBarcodeController.text.isEmpty) {
+        issueNoController.text.isEmpty 
+        ) {
       CustomToastMessage.error(context, _locale.fillRequiredFields);
       // CoolAlert.show(
       //   width: width * 0.4,
@@ -805,8 +827,13 @@ class _AddFileScreenState extends State<AddFileScreen> {
       if (value.statusCode == 200) {
         CustomToastMessage.success(context, _locale.addDoneSucess)
             .then((_) => resetForm());
-      } else if (value.statusCode == 406) {
-        CustomToastMessage.error(context, _locale.barcodeAlreadyExists);
+      }
+      else if (value.statusCode == 406) {
+        final message = utf8.decode(value.bodyBytes).trim();
+        CustomToastMessage.error(
+          context,
+          message.isNotEmpty ? message : _locale.barcodeAlreadyExists,
+        );
       }
     });
 

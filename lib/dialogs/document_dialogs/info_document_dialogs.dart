@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:archiving_flutter_project/dialogs/error_dialgos/show_error_dialog.dart';
 import 'package:archiving_flutter_project/models/db/document_models/documnet_info_model.dart';
 import 'package:archiving_flutter_project/service/controller/documents_controllers/documents_controller.dart';
@@ -620,14 +622,21 @@ class _InfoDocumentDialogState extends State<InfoDocumentDialog> {
     documentModel!.txtCategory = selectedCat;
     documentModel!.txtBarcode = fileBarcodeController.text.trim();
 
-    var response = await documentsController.updateDocument(documentModel!);
+    var response = await documentsController.updateDocument(documentModel!).then((value) {
+      if (value.statusCode == 200) {
+        CustomToastMessage.success(context, _locale.editDoneSucess)
+            .then((value) {
+          Navigator.pop(context, true);
+        });
+      } else if (value.statusCode == 406) {
+        final message = utf8.decode(value.bodyBytes).trim();
+        CustomToastMessage.error(
+          context,
+          message.isNotEmpty ? message : _locale.barcodeAlreadyExists,
+        );
+      }
+    });
 
-    if (response.statusCode == 200) {
-      CustomToastMessage.success(context, _locale.editDoneSucess).then((value) {
-        Navigator.pop(context, true);
-      });
-    } else if (response.statusCode == 406) {
-      CustomToastMessage.error(context, _locale.barcodeAlreadyExists);
-    }
+    
   }
 }

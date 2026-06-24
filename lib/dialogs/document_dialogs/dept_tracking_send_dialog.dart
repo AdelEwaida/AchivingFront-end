@@ -1,6 +1,4 @@
 import 'package:archiving_flutter_project/dialogs/app_dialog.dart';
-import 'package:archiving_flutter_project/models/db/department_models/department_model.dart';
-import 'package:archiving_flutter_project/service/controller/department_controller/department_cotnroller.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
@@ -55,10 +53,8 @@ class _DeptTrackingSendDialog extends StatefulWidget {
 }
 
 class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
-  final DepartmentController _controller = DepartmentController();
   final storage = const FlutterSecureStorage();
   final UserController _userController = UserController();
-   
 
   late final TextEditingController _notesController;
   late bool _useDefaultDept;
@@ -164,8 +160,8 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
       items: _departments,
       noDataString: l10n.noData,
       onChanged: (value) {
-        if (value is DepartmentModel) {
-          setState(() => _selectedDeptKey = value.txtKey?.trim());
+        if (value is DepartmentUserModel) {
+          setState(() => _selectedDeptKey = value.txtDeptkey?.trim());
         }
       },
     );
@@ -298,8 +294,6 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
           fontSize: 14,
           onPressed: () => Navigator.of(context).pop(),
         ),
-        
-        
       ],
     );
   }

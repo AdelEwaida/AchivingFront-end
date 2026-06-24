@@ -329,6 +329,7 @@ class _DocTrackingReportState extends State<DocTrackingReport> {
 
       await showDialog(
         context: context,
+        
         builder: (_) => PdfPreview1(
           pdfFile: Uint8List.fromList(bytes),
           fileName: 'tracking-report.pdf',

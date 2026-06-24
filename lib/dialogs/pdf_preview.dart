@@ -77,7 +77,7 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
     height = MediaQuery.of(context).size.height;
     isDesktop = Responsive.isDesktop(context);
     return AppDialog(
-      width: isDesktop ? width * 0.4 : width * 0.8,
+      width: isDesktop ? width * 0.6 : width * 0.9,
       height: height * 0.8,
       title: Row(
         children: [
@@ -129,7 +129,7 @@ class _PdfPreviewDialogState extends State<PdfPreview1> {
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
                       height: height * 0.55,
-                      width: width * 0.4, //,
+                      width: width * 0.58, //,
                       child: SfPdfViewer.memory(widget.pdfFile,
                           initialZoomLevel: 1,
                           interactionMode: PdfInteractionMode.pan,
