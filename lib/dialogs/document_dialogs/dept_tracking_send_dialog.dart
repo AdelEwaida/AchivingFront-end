@@ -5,7 +5,10 @@ import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../models/db/user_models/department_user_model.dart';
+import '../../service/controller/users_controller/user_controller.dart';
 import '../../widget/custom_drop_down.dart';
 
 class DeptTrackingSendRequest {
@@ -53,12 +56,15 @@ class _DeptTrackingSendDialog extends StatefulWidget {
 
 class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
   final DepartmentController _controller = DepartmentController();
+  final storage = const FlutterSecureStorage();
+  final UserController _userController = UserController();
+   
 
   late final TextEditingController _notesController;
   late bool _useDefaultDept;
 
   bool _loadingDepts = false;
-  List<DepartmentModel> _departments = [];
+  List<DepartmentUserModel> _departments = [];
   String? _selectedDeptKey;
 
   bool get _hasDefaultNext => widget.defaultDeptCode.trim().isNotEmpty;
@@ -79,19 +85,21 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
 
   Future<void> _loadDepartments() async {
     if (_loadingDepts || _departments.isNotEmpty) return;
-
+    final userName = await storage.read(key: "userName");
+    // departmetList = await _userController.getDepartmentSelectedUser(userName!);
     setState(() => _loadingDepts = true);
 
-    final list = await _controller.getAllDepartmentsFromApi();
+    final list = await _userController.getDepartmentSelectedUser(userName!);
+    //
     if (!mounted) return;
 
     final defaultKey = widget.defaultDeptCode.trim();
     String? selectedKey;
     if (defaultKey.isNotEmpty &&
-        list.any((e) => e.txtKey?.trim() == defaultKey)) {
+        list.any((e) => e.txtDeptkey?.trim() == defaultKey)) {
       selectedKey = defaultKey;
     } else if (list.isNotEmpty) {
-      selectedKey = list.first.txtKey!.trim();
+      selectedKey = list.first.txtDeptkey!.trim();
     }
 
     setState(() {
@@ -101,10 +109,10 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
     });
   }
 
-  DepartmentModel? get _selectedDept {
+  DepartmentUserModel? get _selectedDept {
     if (_selectedDeptKey == null) return null;
     for (final e in _departments) {
-      if (e.txtKey?.trim() == _selectedDeptKey) return e;
+      if (e.txtDeptkey?.trim() == _selectedDeptKey) return e;
     }
     return null;
   }
