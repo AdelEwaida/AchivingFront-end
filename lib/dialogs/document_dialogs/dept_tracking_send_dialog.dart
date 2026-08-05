@@ -3,10 +3,9 @@ import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/widget/dashboard_components/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../models/db/user_models/department_user_model.dart';
-import '../../service/controller/users_controller/user_controller.dart';
+import '../../models/db/department_models/department_model.dart';
+import '../../service/controller/department_controller/department_cotnroller.dart';
 import '../../widget/custom_drop_down.dart';
 
 class DeptTrackingSendRequest {
@@ -24,6 +23,8 @@ Future<DeptTrackingSendRequest?> showDeptTrackingSendDialog(
   required String defaultDeptCode,
   required String defaultDeptName,
   String initialNotes = '',
+  /// Always show department dropdown (all departments) — used from dept approvals.
+  bool forceDeptPicker = false,
 }) {
   return showDialog<DeptTrackingSendRequest>(
     context: context,
@@ -32,6 +33,7 @@ Future<DeptTrackingSendRequest?> showDeptTrackingSendDialog(
       defaultDeptCode: defaultDeptCode,
       defaultDeptName: defaultDeptName,
       initialNotes: initialNotes,
+      forceDeptPicker: forceDeptPicker,
     ),
   );
 }
@@ -41,11 +43,13 @@ class _DeptTrackingSendDialog extends StatefulWidget {
     required this.defaultDeptCode,
     required this.defaultDeptName,
     this.initialNotes = '',
+    this.forceDeptPicker = false,
   });
 
   final String defaultDeptCode;
   final String defaultDeptName;
   final String initialNotes;
+  final bool forceDeptPicker;
 
   @override
   State<_DeptTrackingSendDialog> createState() =>
@@ -53,14 +57,15 @@ class _DeptTrackingSendDialog extends StatefulWidget {
 }
 
 class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
-  final storage = const FlutterSecureStorage();
-  final UserController _userController = UserController();
+  // final storage = const FlutterSecureStorage();
+  // final UserController _userController = UserController();
+  final DepartmentController _departmentController = DepartmentController();
 
   late final TextEditingController _notesController;
   late bool _useDefaultDept;
 
   bool _loadingDepts = false;
-  List<DepartmentUserModel> _departments = [];
+  List<DepartmentModel> _departments = [];
   String? _selectedDeptKey;
 
   bool get _hasDefaultNext => widget.defaultDeptCode.trim().isNotEmpty;
@@ -69,7 +74,8 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
   void initState() {
     super.initState();
     _notesController = TextEditingController(text: widget.initialNotes);
-    _useDefaultDept = _hasDefaultNext;
+    // Force picker: always choose from all departments (no "next dept" radio).
+    _useDefaultDept = widget.forceDeptPicker ? false : _hasDefaultNext;
     _loadDepartments();
   }
 
@@ -81,21 +87,32 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
 
   Future<void> _loadDepartments() async {
     if (_loadingDepts || _departments.isNotEmpty) return;
-    final userName = await storage.read(key: "userName");
-    // departmetList = await _userController.getDepartmentSelectedUser(userName!);
+    // Old: load only departments of the logged-in user
+    // final userName = await storage.read(key: "userName");
+    // final list = await _userController.getDepartmentSelectedUser(userName!);
     setState(() => _loadingDepts = true);
 
-    final list = await _userController.getDepartmentSelectedUser(userName!);
-    //
+    // Use getAll (docDept/getAll) so normal users also get ALL departments
+    // (searchCrit / getAllDepartments is filtered by user for ROLE_USER).
+    final list = await _departmentController.getAllDepartmentsFromApi();
+    // Old (user-scoped via searchCrit):
+    // final list = await _departmentController.getAllDepartments();
     if (!mounted) return;
 
     final defaultKey = widget.defaultDeptCode.trim();
     String? selectedKey;
-    if (defaultKey.isNotEmpty &&
-        list.any((e) => e.txtDeptkey?.trim() == defaultKey)) {
-      selectedKey = defaultKey;
-    } else if (list.isNotEmpty) {
-      selectedKey = list.first.txtDeptkey!.trim();
+    if (defaultKey.isNotEmpty) {
+      for (final e in list) {
+        final key = e.txtKey?.trim() ?? '';
+        final short = e.txtShortcode?.trim() ?? '';
+        if (key == defaultKey || short == defaultKey) {
+          selectedKey = key.isNotEmpty ? key : short;
+          break;
+        }
+      }
+    }
+    if (selectedKey == null && list.isNotEmpty) {
+      selectedKey = list.first.txtKey?.trim();
     }
 
     setState(() {
@@ -105,10 +122,10 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
     });
   }
 
-  DepartmentUserModel? get _selectedDept {
+  DepartmentModel? get _selectedDept {
     if (_selectedDeptKey == null) return null;
     for (final e in _departments) {
-      if (e.txtDeptkey?.trim() == _selectedDeptKey) return e;
+      if (e.txtKey?.trim() == _selectedDeptKey) return e;
     }
     return null;
   }
@@ -160,10 +177,15 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
       items: _departments,
       noDataString: l10n.noData,
       onChanged: (value) {
-        if (value is DepartmentUserModel) {
-          setState(() => _selectedDeptKey = value.txtDeptkey?.trim());
+        if (value is DepartmentModel) {
+          setState(() => _selectedDeptKey = value.txtKey?.trim());
         }
       },
+      // Optional search-all like user dialog:
+      // onSearch: (text) async {
+      //   return DepartmentController()
+      //       .getDep(SearchModel(page: 1, searchField: text));
+      // },
     );
   }
 
@@ -174,7 +196,8 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
     final nextName = widget.defaultDeptName.trim().isEmpty
         ? widget.defaultDeptCode.trim()
         : widget.defaultDeptName.trim();
-    final showDeptPicker = !_useDefaultDept || !_hasDefaultNext;
+    final showDeptPicker =
+        widget.forceDeptPicker || !_useDefaultDept || !_hasDefaultNext;
 
     return AppDialog(
       title: l10n.deptTrackingSendOnly,
@@ -192,7 +215,7 @@ class _DeptTrackingSendDialogState extends State<_DeptTrackingSendDialog> {
             //   style: const TextStyle(fontSize: 14, height: 1.4),
             // ),
             // const SizedBox(height: 20),
-            if (_hasDefaultNext)
+            if (_hasDefaultNext && !widget.forceDeptPicker)
               Row(
                 children: [
                   Expanded(

@@ -10,6 +10,7 @@ class TrailingActions extends StatelessWidget {
   final String userRole;
   final String workflowActive;
   final String docTrackingActive;
+  final String openedFromLink;
 
   final VoidCallback onExportExcel;
 
@@ -18,6 +19,7 @@ class TrailingActions extends StatelessWidget {
     required this.userRole,
     required this.workflowActive,
     required this.docTrackingActive,
+    this.openedFromLink = "0",
     required this.onExportExcel,
   });
 
@@ -28,6 +30,8 @@ class TrailingActions extends StatelessWidget {
     final AppLocalizations locale = AppLocalizations.of(context)!;
     final String normalizedRole = userRole.trim().toUpperCase();
     final bool isAdmin = normalizedRole == USERTYPEADMIN;
+    final bool hideLogoutAndLang =
+        normalizedRole == NORMALUSER && openedFromLink == "true";
     final bool showNotifications =
         workflowActive == "1" || docTrackingActive == "1";
 
@@ -36,10 +40,12 @@ class TrailingActions extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const LogoutTab(isCollapse: true),
-          const SizedBox(width: actionGap),
-          const LanguageSelector(),
-          const SizedBox(width: actionGap),
+          if (!hideLogoutAndLang) ...[
+            const LogoutTab(isCollapse: true),
+            const SizedBox(width: actionGap),
+            const LanguageSelector(),
+            const SizedBox(width: actionGap),
+          ],
           if (isAdmin)
             GlassActionButton(
               tooltip: locale.importFromExcel,

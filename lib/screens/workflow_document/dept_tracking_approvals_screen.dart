@@ -193,6 +193,7 @@ class _DeptTrackingApprovalsScreenState
       defaultDeptCode: deptCode,
       defaultDeptName: deptName,
       initialNotes: initialNotes,
+      forceDeptPicker: true,
     );
     if (!mounted || request == null) return null;
 

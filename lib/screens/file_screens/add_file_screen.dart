@@ -669,7 +669,9 @@ class _AddFileScreenState extends State<AddFileScreen> {
     VoidCallback? onClearPressed,
   }) {
     return CustomTextField2(
-      readOnly: hint == _locale.fileName || hint == _locale.fileBarcode,
+      // Barcode was scanner-only; keep for later if needed:
+      // readOnly: hint == _locale.fileName || hint == _locale.fileBarcode,
+      readOnly: hint == _locale.fileName,
       isReport: true,
       isMandetory: isMandetory,
       width: widthFactor == 1 ? double.infinity : width * widthFactor,

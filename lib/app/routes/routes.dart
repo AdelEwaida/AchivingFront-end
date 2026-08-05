@@ -78,6 +78,9 @@ class AppRoutes {
       } else if (type == 0) {
         await scanMethod(context, queryParams);
       }
+    } else {
+      // Normal run (e.g. #/mainScreenRoute) — show logout / language.
+      storage.write(key: 'openedFromLink', value: "false");
     }
     return null;
   }
@@ -115,6 +118,7 @@ class AppRoutes {
 
     if (response) {
       await SetupController().cacheSetupFlags(storage);
+      storage.write(key: 'openedFromLink', value: "true");
       fileListProvider.setIsViewFile(false);
       screenContentProvider.setPage1(7);
       return mainScreenRoute;
@@ -156,6 +160,7 @@ class AppRoutes {
     print("responseresponse ${response}");
     if (response) {
       await SetupController().cacheSetupFlags(storage);
+      storage.write(key: 'openedFromLink', value: "true");
       fileListProvider.setIsViewFile(false);
 
       fileListProvider.setIssueNumber(fld1Param ?? "");

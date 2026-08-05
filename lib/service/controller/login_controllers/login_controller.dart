@@ -119,6 +119,7 @@ class LoginController {
           DateTime.fromMillisecondsSinceEpoch(payLoad.exp! * 1000);
       await storage.write(key: "expDate", value: expDateTime.toString());
       await storage.write(key: 'roles', value: payLoad.roles![0]);
+      storage.write(key: 'openedFromLink', value: "false");
 
       // SideMenuDate.userType = int.parse(payLoad.roles!.first);
       // storage.write(key: 'roles', value: SideMenuDate.userType.toString());

@@ -521,15 +521,15 @@ List<MenuModel> getMenus(AppLocalizations locale, String type,
                           subMenuList: []),
                     ]
                   : [
-                      MenuModel(
-                        title: locale.dailyReminders,
-                        icon: Icons.dashboard,
-                        pageNumber: 1,
-                        isOpened: true,
-                        isParent: false,
-                        // route: mainScreenRoute,
-                        subMenuList: [],
-                      ),
+                      // MenuModel(
+                      //   title: locale.dailyReminders,
+                      //   icon: Icons.dashboard,
+                      //   pageNumber: 1,
+                      //   isOpened: true,
+                      //   isParent: false,
+                      //   // route: mainScreenRoute,
+                      //   subMenuList: [],
+                      // ),
                       if (docTrackingActive == "1")
                         MenuModel(
                           title: locale.deptApprovals,
@@ -539,34 +539,42 @@ List<MenuModel> getMenus(AppLocalizations locale, String type,
                           isParent: false,
                           subMenuList: [],
                         ),
-                      MenuModel(
-                          title: locale.listOfReminders,
-                          icon: Icons.remember_me,
-                          isParent: false,
-                          pageNumber: 4,
-                          subMenuList: [],
-                          isOpened: false),
-                      MenuModel(
-                          title: locale.documents,
-                          icon: Icons.document_scanner_rounded,
-                          isParent: true,
-                          pageNumber: 5,
-                          subMenuList: [
-                            SubMenuModel(
-                                title: locale.documentExplorer, pageNumber: 6),
-                            SubMenuModel(
-                                title: locale.addDocument, pageNumber: 7),
-                            SubMenuModel(
-                                title: locale.searchByContnet, pageNumber: 8)
-                          ],
-                          isOpened: false),
-                      MenuModel(
-                          title: locale.changePassword,
-                          icon: Icons.password_outlined,
-                          isParent: false,
-                          pageNumber: 15,
-                          isOpened: false,
-                          subMenuList: []),
+                      if (docTrackingActive == "1")
+                        MenuModel(
+                            title: locale.documentExplorer,
+                            icon: Icons.document_scanner_rounded,
+                            isParent: false,
+                            pageNumber: 6,
+                            subMenuList: [],
+                            isOpened: true),
+                      // MenuModel(
+                      //     title: locale.listOfReminders,
+                      //     icon: Icons.remember_me,
+                      //     isParent: false,
+                      //     pageNumber: 4,
+                      //     subMenuList: [],
+                      //     isOpened: false),
+                      // MenuModel(
+                      //     title: locale.documents,
+                      //     icon: Icons.document_scanner_rounded,
+                      //     isParent: true,
+                      //     pageNumber: 5,
+                      //     subMenuList: [
+                      //       SubMenuModel(
+                      //           title: locale.documentExplorer, pageNumber: 6),
+                      //       SubMenuModel(
+                      //           title: locale.addDocument, pageNumber: 7),
+                      //       SubMenuModel(
+                      //           title: locale.searchByContnet, pageNumber: 8)
+                      //     ],
+                      //     isOpened: false),
+                      // MenuModel(
+                      //     title: locale.changePassword,
+                      //     icon: Icons.password_outlined,
+                      //     isParent: false,
+                      //     pageNumber: 15,
+                      //     isOpened: false,
+                      //     subMenuList: []),
                     ]
               : [];
 

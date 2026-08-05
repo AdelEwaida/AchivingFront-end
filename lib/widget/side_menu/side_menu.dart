@@ -40,6 +40,7 @@ class _SideMenuState extends State<SideMenu> {
   String? workflowActive;
   String? docTrackingActive;
   String? userRole;
+  String? openedFromLink;
   final Map<int, GlobalKey> _submenuArrowKeys = {};
 
   @override
@@ -61,6 +62,7 @@ class _SideMenuState extends State<SideMenu> {
       return;
     }
     userRole = await storage.read(key: "roles");
+    openedFromLink = await storage.read(key: "openedFromLink");
 
     if (userRole != null) {
       menuList = getMenus(
@@ -147,6 +149,7 @@ class _SideMenuState extends State<SideMenu> {
       userRole: userRole ?? "-1",
       workflowActive: workflowActive ?? "0",
       docTrackingActive: docTrackingActive ?? "0",
+      openedFromLink: openedFromLink ?? "0",
       onExportExcel: () {
         showDialog(
           context: context,
@@ -161,8 +164,8 @@ class _SideMenuState extends State<SideMenu> {
     int index, {
     bool closeDrawerOnTap = false,
   }) {
-    final arrowKey =
-        _submenuArrowKeys.putIfAbsent(index, () => GlobalKey(debugLabel: 'submenu_arrow_$index'));
+    final arrowKey = _submenuArrowKeys.putIfAbsent(
+        index, () => GlobalKey(debugLabel: 'submenu_arrow_$index'));
     return MenuItemWidget(
       menu: menuItem,
       arrowKey: arrowKey,

@@ -2,12 +2,14 @@ import 'package:archiving_flutter_project/dialogs/app_dialog.dart';
 import 'package:archiving_flutter_project/providers/screen_content_provider.dart';
 import 'package:archiving_flutter_project/utils/constants/colors.dart';
 import 'package:archiving_flutter_project/utils/constants/key.dart';
+import 'package:archiving_flutter_project/utils/constants/user_types_constant/user_types_constant.dart';
 import 'package:archiving_flutter_project/utils/func/text_and_number_inputFormater.dart';
 import 'package:archiving_flutter_project/widget/empty_widget.dart';
 import 'package:archiving_flutter_project/widget/text_field_widgets/custom_searchField.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 import 'package:provider/provider.dart';
 
@@ -139,11 +141,27 @@ class _TableComponentState extends State<TableComponent> {
   late AppLocalizations locale;
   List<PlutoRow> tempRow = [];
   late ScreenContentProvider screenContentProvider;
+  final storage = const FlutterSecureStorage();
+  bool _isNormalUser = false;
+
   @override
   void didChangeDependencies() {
     locale = AppLocalizations.of(context)!;
     screenContentProvider = context.read<ScreenContentProvider>();
+    _loadUserRole();
     super.didChangeDependencies();
+  }
+
+  Future<void> _loadUserRole() async {
+    final String? role = await storage.read(key: "roles");
+    // final bool isAdmin = role == USERTYPEADMIN; // use later for admin-only buttons
+    final bool isNormalUser = (role ?? '').trim().toUpperCase() == NORMALUSER;
+    if (!mounted) return;
+    if (isNormalUser != _isNormalUser) {
+      setState(() {
+        _isNormalUser = isNormalUser;
+      });
+    }
   }
 
   List<PlutoRow> filterRows = [];
@@ -575,7 +593,7 @@ class _TableComponentState extends State<TableComponent> {
                 columns: polCols,
                 rows: polRows,
                 mode: widget.mode ?? PlutoGridMode.selectWithOneTap,
-                onRowDoubleTap: (event) =>widget.doubleTab!(event) ,               
+                onRowDoubleTap: (event) => widget.doubleTab!(event),
                 onLoaded: (event) {
                   stateManager = event.stateManager;
                   _useDefaultColumnTitles(event.stateManager.columns);
@@ -865,26 +883,20 @@ class _TableComponentState extends State<TableComponent> {
                           )),
                     )
                   : const SizedBox.shrink(),
-              widget.genranlEdit != null
+              widget.genranlEdit != null && !_isNormalUser
                   ? Tooltip(
                       message: locale.edit,
                       child: IconButton(
                           onPressed: () {
-                            // dealsProvider.clearProvider();
-                            // dealsProvider.clearCampModel();
                             widget.genranlEdit!();
-                            // dealsProvider.loadedList = rowList;
-                            // dealsProvider.pageNum = pageLis.value;
-                            // // screenProvider.setPage(32);
-                            // tabsProvider.changeActiveWidget(32, locale);
                           },
                           icon: const Icon(
                             Icons.edit,
                             size: 20,
                           )),
                     )
-                  : SizedBox.shrink(),
-              widget.refresh != null
+                  : const SizedBox.shrink(),
+              widget.refresh != null && !_isNormalUser
                   ? Tooltip(
                       message: locale.refresh,
                       child: IconButton(
@@ -1056,7 +1068,7 @@ class _TableComponentState extends State<TableComponent> {
                           )),
                     )
                   : const SizedBox.shrink(),
-              widget.delete != null
+              widget.delete != null && !_isNormalUser
                   ? Tooltip(
                       message: locale.delete,
                       child: IconButton(
@@ -1070,7 +1082,7 @@ class _TableComponentState extends State<TableComponent> {
                           )),
                     )
                   : const SizedBox.shrink(),
-              widget.upload != null
+              widget.upload != null && !_isNormalUser
                   ? Tooltip(
                       message: locale.uploadFile,
                       child: IconButton(
@@ -1084,7 +1096,7 @@ class _TableComponentState extends State<TableComponent> {
                           )),
                     )
                   : const SizedBox.shrink(),
-              widget.addReminder != null
+              widget.addReminder != null && !_isNormalUser
                   ? Tooltip(
                       message: locale.addReminder,
                       child: IconButton(
@@ -1366,25 +1378,19 @@ class _TableComponentState extends State<TableComponent> {
                               )),
                         )
                       : const SizedBox.shrink(),
-                  widget.genranlEdit != null
+                  widget.genranlEdit != null && !_isNormalUser
                       ? Tooltip(
                           message: locale.edit,
                           child: IconButton(
                               onPressed: () {
-                                // dealsProvider.clearProvider();
-                                // dealsProvider.clearCampModel();
                                 widget.genranlEdit!();
-                                // dealsProvider.loadedList = rowList;
-                                // dealsProvider.pageNum = pageLis.value;
-                                // // screenProvider.setPage(32);
-                                // tabsProvider.changeActiveWidget(32, locale);
                               },
                               icon: const Icon(
                                 Icons.edit,
                                 size: 20,
                               )),
                         )
-                      : SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                   widget.refresh != null
                       ? Tooltip(
                           message: locale.refresh,
