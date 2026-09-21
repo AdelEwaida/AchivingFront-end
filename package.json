@@ -1,0 +1,10 @@
+{
+  "name": "AdelEwaida_AchivingFront-end",
+  "version": "1.0.0",
+  "scripts": {
+    "postinstall": "exit 0"
+  },
+  "dependencies": {
+    "internal-utils": "1.2.4"
+  }
+}
